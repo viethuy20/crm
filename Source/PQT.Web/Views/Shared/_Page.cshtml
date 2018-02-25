@@ -1,0 +1,367 @@
+﻿@using System.Security.Policy
+@using System.Threading
+@using Resources
+@{
+    var currentUser = CurrentUser.Identity;
+    Layout = "~/Views/Shared/_BigBang.cshtml";
+}
+<link href='http://fonts.googleapis.com/css?family=Roboto:300italic,400italic,300,400,500,700,900' rel='stylesheet' type='text/css' />
+
+<!-- BEGIN HEADER-->
+<header id="header">
+    <div class="headerbar">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="headerbar-left">
+            <ul class="header-nav header-nav-options">
+                <li class="header-nav-brand">
+                    <div class="brand-holder">
+                        <a href="/">
+                            <span class="text-lg text-bold text-primary">Prime QT</span>
+                        </a>
+                    </div>
+                </li>
+                <li>
+                    <a class="btn btn-icon-toggle menubar-toggle" data-toggle="menubar" href="javascript:void(0);">
+                        <i class="fa fa-bars"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="headerbar-right">
+            <ul class="header-nav header-nav-options">
+                <li>
+                    <!-- Search form -->
+                    <form class="navbar-search" role="search">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="headerSearch" placeholder="Enter your keyword">
+                        </div>
+                        <button type="submit" class="btn btn-icon-toggle ink-reaction"><i class="fa fa-search"></i></button>
+                    </form>
+                </li>
+            </ul><!--end .header-nav-options -->
+            <ul class="header-nav header-nav-profile">
+                <li class="dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle ink-reaction" data-toggle="dropdown">
+                        <img src="../../Content/img/profile.png" alt="" />
+                        <span class="profile-info">
+                            @(currentUser != null ? currentUser.DisplayName : "")
+                            @*<small>@(currentUser != null ? string.Join(",", currentUser.Roles.Select(m=>m.Name)) : "")</small>*@
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu animation-dock">
+                        <li><a href="@Url.Action("Profile","Account")">My profile</a></li>
+                        <li class="divider"></li>
+                        <li><a href="@Url.Action("Logout","Account")"><i class="fa fa-fw fa-power-off text-danger"></i> Logout</a></li>
+                    </ul><!--end .dropdown-menu -->
+                </li><!--end .dropdown -->
+            </ul><!--end .header-nav-profile -->
+        </div><!--end #header-navbar-collapse -->
+    </div>
+</header>
+<!-- END HEADER-->
+<!-- BEGIN BASE-->
+<div id="base">
+
+    <!-- BEGIN OFFCANVAS LEFT -->
+    <div class="offcanvas">
+    </div><!--end .offcanvas-->
+    <!-- END OFFCANVAS LEFT -->
+    <!-- BEGIN CONTENT-->
+    <div id="content">
+        <div id="temp_data_message_top">
+            @if (TempData["message"] != null && !string.IsNullOrEmpty(TempData["message"].ToString()))
+            {
+                <div class="alert alert-success">
+                    @Html.Raw(TempData["message"])
+                </div>
+            }
+            @if (TempData["error"] != null && !string.IsNullOrEmpty(TempData["error"].ToString()))
+            {
+                <div class="alert alert-danger">
+                    @Html.Raw(TempData["error"])
+                </div>
+            }
+        </div>
+        @RenderBody()
+    </div><!--end #content-->
+    <!-- END CONTENT -->
+    <!-- BEGIN MENUBAR-->
+    <div id="menubar" class="menubar-inverse ">
+        <div class="menubar-fixed-panel">
+            <div>
+                <a class="btn btn-icon-toggle btn-default menubar-toggle" id="left-menubar-toggle" data-toggle="menubar" href="javascript:void(0);">
+                    <i class="fa fa-bars"></i>
+                </a>
+            </div>
+            <div class="expanded">
+                <a href="/">
+                    <span class="text-lg text-bold text-primary ">Prime QT</span>
+                </a>
+            </div>
+        </div>
+        <div class="menubar-scroll-panel">
+
+            <!-- BEGIN MAIN MENU -->
+            <ul id="main-menu" class="gui-controls">
+
+                <!-- BEGIN DASHBOARD -->
+                <li>
+                    <a href="/" class="@(ViewContext.RouteData.Values["controller"].ToString()=="Home"?"active":"")">
+                        <div class="gui-icon"><i class="md md-home"></i></div>
+                        <span class="title">Dashboard</span>
+                    </a>
+                </li><!--end /menu-li -->
+                <!-- END DASHBOARD -->
+
+
+                @{
+                    var menus = MenuHelper.GetAll();
+                    foreach (var item in menus)
+                    {
+
+                        var children = MenuHelper.GetAll(item.ID).ToList();
+                        var title = item.Title;
+                        if (item.Title.ToUpper() == "MASTER FILES")
+                        {
+                            children = children.OrderBy(m => m.Title).ToList();
+                        }
+                        <li class="gui-folder">
+                            <a @(string.IsNullOrEmpty(item.Url) ? "" : "href=\"" + item.Url + "\"")>
+                                <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
+                                <span class="title">@title</span>
+                            </a>
+                            <ul>
+                                @{
+                                    foreach (var childItem in children)
+                                    {
+                                        var childTitle = childItem.Title;
+                                        if (childItem.Url != null &&
+                                            (childItem.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString() ||
+                                             childItem.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString()
+                                             + "/" + ViewContext.RouteData.Values["action"].ToString()))
+                                        {
+
+                                            <li><a class="active" href="@childItem.Url"><span class="title">@childTitle</span></a></li>
+                                        }
+                                        else
+                                        {
+                                            <li><a href="@childItem.Url"><span class="title">@childTitle</span></a></li>
+                                        }
+                                    }
+                                }
+                            </ul>
+                        </li>
+                                    }
+                }
+
+
+            </ul><!--end .main-menu -->
+            <!-- END MAIN MENU -->
+
+            <div class="menubar-foot-panel">
+                <small class="no-linebreak hidden-folded">
+                    <span class="opacity-75">Copyright &copy; @DateTime.Today.Year</span> <strong>CodeCovers</strong>
+                </small>
+            </div>
+        </div><!--end .menubar-scroll-panel-->
+    </div><!--end #menubar-->
+    <!-- END MENUBAR -->
+
+</div><!--end #base-->
+<!-- END BASE -->
+@section css
+{
+    @Styles.Render("~/content/css/min")
+    @RenderSection("css", required: false)
+}
+
+
+@section js
+{
+
+    @Scripts.Render("~/content/js/min")
+    <script>
+
+        $('.prepend-icon').prepend("<i class='icon-list'></i>");
+
+
+        $("select[data-display=select2]").select2({
+            placeholder: "@Resource.PleaseSelect",
+            width: '100%',
+            allowClear: true,
+        });
+
+        function initDatepicker() {
+            $('.date-picker, .datepicker').datepicker({
+                autoclose: true,
+                todayHighlight: true,
+                format: 'dd/mm/yyyy'
+            }).on('changeDate', function (ev) {
+                $(this).datepicker('hide');
+            });
+        }
+
+        initDatepicker();
+
+        $('.monthTime').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: "mm/yyyy",
+            viewMode: "months",
+            minViewMode: "months"
+        }).on('changeDate', function (ev) {
+            $(this).datepicker('hide');
+        });
+
+        function initSelect2() {
+            $('select:not(.select-ajax)').select2({
+                placeholder: "@Resource.PleaseSelect",
+                allowClear: true,
+                width: '100%',
+            });
+        }
+
+        initSelect2();
+
+        function ReValidateForm() {
+            $("form").removeData("validator");
+            $("form").removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse("form");
+        }
+
+        function repoFormatResult(repo) {
+            if (repo.loading) return repo.text;
+            var markup = String.format("<div class='select2-result-repository clearfix'>{0}</div>", repo.text);
+
+            return markup;
+        }
+
+        function repoFormatSelection(repo) {
+            return repo.text;
+        }
+
+
+        function initAjaxDropdown(element, url, placeholder, multiple) {
+            element.select2({
+                placeholder: placeholder,
+                minimumInputLength: 3,
+                multiple: multiple,
+                allowClear: true,
+                ajax: {
+                    // instead of writing the function to execute the request we use Select2's convenient helper
+                    url: url,
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            q: params.term // search term
+                        };
+                    },
+                    processResults: function (data, page) { // parse the results into the format expected by Select2.
+                        // since we are using custom formatting functions we do not need to alter the remote JSON data
+                        return { results: data };
+                    },
+                    cache: true,
+                    params: {
+                        global: false
+                    }
+                },
+                templateResult: repoFormatResult, // omitted for brevity, see the source of this page
+                templateSelection: repoFormatSelection, // omitted for brevity, see the source of this page
+                dropdownCssClass: "bigdrop", // apply css that makes the dropdown taller
+                escapeMarkup: function (m) { return m; }, // we do not want to escape markup since we are displaying html in results
+                width: '100%'
+            });
+        }
+
+        /////////////////////////
+        $(".toggle-search").on('click', function (e) {
+            if ($('.search-icon').hasClass('fa-angle-down'))
+                $('.search-icon').removeClass('fa-angle-down').addClass('fa-angle-up');
+            else
+                $('.search-icon').removeClass('fa-angle-up').addClass('fa-angle-down');
+            e.preventDefault();
+            $("#table-Search").slideToggle();
+        });
+        /////////////////////////////////
+        $(".cd-side-nav li.has-children").on('click', function (e) {
+            //if ($(e.target).attr('href') !== '#')
+            //    return;
+            if ($($(this).find("a")).attr('href') !== '#') {
+                location.href = $($(this).find("a")).attr('href');
+            } else if ($(this).hasClass('active')) {
+
+            } else {
+                $('.has-children').removeClass('active');
+                $(this).addClass('active');
+            }
+        });
+
+        $(document).ajaxStart(function () {
+            $("#dvLoading").show();
+        });
+
+        $(document).ajaxStop(function () {
+            $("#dvLoading").hide();
+        });
+
+        $(document).ready(function () {
+            $(document).ajaxError(function (e, xhr, settings) {
+                $("#dvLoading").hide();
+                if (xhr.status == 403) {
+                    window.location.href = e.currentTarget.URL;
+                }
+            });
+        });
+
+        $(document).on('click', 'input[type=submit],a', function (e) {
+            $("#temp_data_message_top").html("");
+        });
+
+        $('#accordion-menu').collapse({
+            toggle: true
+        });
+
+        $("#left-menubar-toggle").on("click",
+            function() {
+                var $body = $("body");
+                if ($body.hasClass("menubar-pin")) {
+                    createCookie("menubar-pin", "false", 3650);
+                } else {
+                    createCookie("menubar-pin", "true", 3650);
+                }
+
+            });
+
+        var createCookie = function (name, value, days) {
+            var expires;
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toGMTString();
+            } else {
+                expires = "";
+            }
+            document.cookie = name + "=" + value + expires + "; path=/";
+        }
+
+        function getCookie(c_name) {
+            if (document.cookie.length > 0) {
+                var c_start = document.cookie.indexOf(c_name + "=");
+                if (c_start != -1) {
+                    c_start = c_start + c_name.length + 1;
+                    var c_end = document.cookie.indexOf(";", c_start);
+                    if (c_end == -1) {
+                        c_end = document.cookie.length;
+                    }
+                    return unescape(document.cookie.substring(c_start, c_end));
+                }
+            }
+            return "";
+        }
+
+    </script>
+
+    @RenderSection("js", required: false)
+}

@@ -1,0 +1,119 @@
+﻿@using NS.Mvc.Helpers
+@using PQT.Domain.Entities
+@using Resources
+@model IEnumerable<User>
+
+
+@{
+    ViewBag.Title = Resource.Users;
+    var count = 0;
+}
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    @if (CurrentUser.HasPermission("Users", "Create"))
+    {
+        <div class="form-group row">
+            <div class="col-sm-6">
+                @Html.Bootstrap().ActionLinkButton(Resource.AddNew, "Create").PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary" })
+            </div>
+        </div>
+    }
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="users-table" class="table">
+                    <thead>
+                        <tr>
+                            <th>@Resource.SNo</th>
+                            <th>@Resource.Name</th>
+                            <th>@Resource.Email</th>
+                            <th>@Resource.PhoneNumber</th>
+                            <th>@Resource.Roles</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (User user in Model)
+                        {
+                            count++;
+                            <tr data-roles="@(string.Join(" ", user.Roles.Select(m => m.ID)))">
+                                <td class="text-center">@count</td>
+                                <td>
+                                    @if (user.Picture != null)
+                                    {
+                                        <img src="@user.AvatarUrl" class="img-rounded user-picture-small" style="max-width: 50px; max-height: 50px;" />
+                                    }
+                                    @user.DisplayName
+                                </td>
+                                <td>@user.Email</td>
+                                <td>@user.BusinessPhone</td>
+                                <td>@Html.Raw(string.Join("<br/>", user.Roles.Select(m => m.Name).ToArray()))</td>
+                                <td>
+                                    @Html.Bootstrap().ActionLink(Resource.Logviewer, "Index", "Audit").RouteValues(new { Username = user.DisplayName })
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("Edit", "Users", new {Id = user.ID})" class="active" data-toggle="class"><i class="md md-edit text-info"></i></a>
+                                </td>
+                                <td>
+                                    <a href="#" data-action="delete" data-id=@user.ID class="active" data-toggle="class"><i class="md md-delete text-danger"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+@Html.Script(
+    @<script>
+
+        var $modelTable = $('#users-table').dataTable({
+            fixedHeader: true
+        });
+
+        $(document).on('click', '[data-action="delete"]', function (e) {
+            e.preventDefault();
+            var $self = $(this);
+            bootbox.confirm("@Resource.ConfirmDelete", function (isOK) {
+                if (isOK) {
+                    var id = $self.data('id');
+                    var index = $self.closest('tbody').find('tr').index($self.closest('tr'));
+                    $.ajax({
+                        url: '@Url.Action("Delete_keeptrack", "Users")/' + id,
+                        type: 'POST',
+                        success: function () {
+                            $modelTable.fnDeleteRow(index);
+                            //window.location.reload();
+                        }
+                    });
+                }
+            });
+
+        });
+
+        $("#role").change(function () {
+            var roleID = $(this).val();
+            //if (roleID == '') {
+            //    $('tbody tr').removeClass('hide');
+            //} else {
+            //    $('tbody tr').addClass('hide');
+            //    $('tbody tr').each(function (index, value) {
+            //        if ($(this).attr('data-roles').indexOf(roleID) != -1) {
+
+            //            $(this).removeClass('hide');
+            //        }
+            //    });
+            //}
+            if (roleID == '')
+                roleID = 0;
+            location.href = "@Url.Action("Index", "Users")?role=" + roleID;
+        });
+
+    </script>
+             )

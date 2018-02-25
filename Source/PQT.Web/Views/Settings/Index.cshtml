@@ -1,0 +1,126 @@
+﻿@using PQT.Domain.Entities
+@using PQT.Domain.Enum
+@using Resources
+@model IEnumerable<Setting>
+
+@{
+    ViewBag.Title = Resource.Settings;
+}
+
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            @using (Html.BeginForm())
+            {
+                List<string> group = Model.Select(j => j.Module).Distinct().ToList();
+                foreach (string g in group)
+                {
+                    <div class="row">
+                        <div class="card card-bordered style-primary">
+                            <div class="card-head">
+                                <header><i class="fa fa-fw fa-tag"></i> @g</header>
+                            </div><!--end .card-head -->
+                            <div class="card-body style-default-bright">
+                                <table class="table" id="lines-table">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <b>@Html.DisplayNameFor(model => model.Name)</b>
+                                            </th>
+                                            <th>
+                                                <b>@Html.DisplayNameFor(model => model.Value)</b>
+                                            </th>
+                                            <th>
+                                                <b>@Html.DisplayNameFor(model => model.Description)</b>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    @{
+                                        List<Setting> itemsGroup = Model.Where(j => j.Module == g).ToList();
+                                        foreach (Setting item in itemsGroup)
+                                        {
+                                            if (CurrentUser.HasSettingPermission(item.Module, item.Name))
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @Html.Hidden("Id", item.ID)
+                                                        @Html.DisplayFor(modelItem => item.Summary)
+                                                    </td>
+                                                    <td>
+                                                        @if (item.Type == "Dropdownlist")
+                                                        {
+                                                            <input type="text" id="input-sortable" name="@item.Name" class="input-sortable demo-default" value="@item.Value">
+                                                        }
+                                                        else if (item.Type == "Checkbox")
+                                                        {
+                                                            <div class="i-checks">
+                                                                <label>
+                                                                    @Html.Bootstrap().CheckBox(item.Name).IsChecked(item.Value.ToLower() == "true")
+                                                                    <i></i>
+                                                                </label>
+                                                            </div>
+                                                        }
+                                                        else if (item.Type == "Textbox")
+                                                        {
+                                                            @(item.MaxLenght > 0 ? Html.Bootstrap().TextBox(item.Name).Value(item.Value).HtmlAttributes(new { maxlength = item.MaxLenght, @class = "form-control nouc" }) : Html.Bootstrap().TextBox(item.Name).Value(item.Value).HtmlAttributes(new { @class = "form-control nouc" }))
+
+                                                        }
+
+                                                        @Html.DisplayFor(modelItem => item.Note)
+                                                    </td>
+                                                    <td>
+                                                        @string.Format(item.Description, item.Value)
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                </table>
+                            </div><!--end .card-body -->
+                        </div><!--end .card -->
+                    </div><!--end .row -->
+                    
+                                        }
+
+
+
+                                        using (Html.Bootstrap().Begin(new FormActions()))
+                                        {
+                                            <div>
+                                                @Html.Bootstrap().SubmitButton().Id("submitbutton").Text("Save").PrependIcon("md md-done").Style(ButtonStyle.Success)
+                                            </div>
+                                            }
+                                        }
+
+        </div>
+    </div>
+</section>
+
+@Html.Script(
+    @<script>
+
+        $("#submitbutton").on('click', function (e) {
+            e.preventDefault();
+            bootbox.confirm("@Resource.ConfirmSave", function (isOK) {
+                if (isOK) {
+                    $('#submitbutton').parents("form").submit();
+                }
+            });
+        });
+
+        $("#accordion").collapse();
+
+        $linesTable = $('#lines-table');
+        $('#add-model-btn').click(function (e) {
+            e.preventDefault();
+            showAddModelDialog(null, function (line) {
+                $linesTable.find('tbody').append(parseModelToRow(line));
+
+                $linesTable.show();
+            });
+        });
+
+    </script>)

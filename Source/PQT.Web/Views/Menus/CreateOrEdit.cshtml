@@ -1,0 +1,65 @@
+﻿@using Resources
+@model PQT.Web.Models.MenuEditModel
+
+
+<div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
+    <div class="card-head">
+        <header>@(Model.Menu.ID > 0 ? "Edit Data" : "Add New Data")</header>
+    </div><!--end .card-head -->
+
+    @using (Ajax.BeginForm("CreateOrEdit", "routeValues", new AjaxOptions { OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form form-validate floating-label" }))
+    {
+        <div class="card-body">
+            <div class="success hide">
+                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Success).Closeable()))
+                {
+                    @Html.Bootstrap().Label("success").HtmlAttributes(new { @class = "textsuccess" }).LabelText(Resource.SaveSuccessful)
+                }
+            </div>
+            <div class="error hide alert-danger">
+                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Error).Closeable()))
+                {
+                    @Html.Bootstrap().Label("error").HtmlAttributes(new { @class = "texterror" }).LabelText(Resource.SaveFailed)
+                }
+            </div>
+            @Html.HiddenFor(m => m.Menu.ID)
+            @Html.HiddenFor(m => m.Menu.ParentID)
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.Menu.Title).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Menu.Title).LabelText("Title").ShowRequiredStar(true)
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.Menu.Url).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Menu.Url).LabelText("Url").ShowRequiredStar(true)
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.Menu.Order).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Menu.Order).LabelText("Order")
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.Menu.Icon).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Menu.Icon).LabelText("Icon")
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Roles</label>
+                <div class="col-sm-9">
+                    @foreach (var role in Model.Roles)
+                    {
+                        <div class="checkbox checkbox-styled">
+                            <label>
+                                <input type="checkbox" name="SelectedRoles" value="@role.ID" @(Model.MenuRoles.Select(r => r.ID).Contains(role.ID)?"checked":"")>
+                                <span>@role.Name</span>
+                            </label>
+                        </div>
+                    }
+                </div><!--end .col -->
+            </div><!--end .form-group -->
+            <div class="form-group">
+                <div class="pull-right">
+                    @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                    @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("submitbutton").PrependIcon("md md-done").Style(ButtonStyle.Success)
+                </div>
+            </div>
+        </div><!--end .card-body -->
+    }
+</div><!--end .card -->

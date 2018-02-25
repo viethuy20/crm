@@ -1,0 +1,159 @@
+﻿@using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical
+@using PQT.Domain.Entities
+@using PQT.Web.Models
+@using PQT.Web.Models
+@using NS
+@using Resources
+@model IEnumerable<Menu>
+
+@{
+    ViewBag.Title = Resource.MenuManagement;
+}
+
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            @Html.Bootstrap().ActionLinkButton(Resource.AddNew, "CreateOrEdit").RouteValues(new { id = 0 }).PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary simple-ajax-popup-align-top" })
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="accordion" id="accordion">
+                @foreach (var menu in Model.Where(m => m.ParentID == 0).OrderBy(m => m.Order))
+                {
+                    var menuModel = new MenuModel(menu);
+                    <div class="row">
+                        <div class="card card-underline card-collapsed">
+                            <div class="card-head">
+                                <header>@menu.Title</header>
+                                <div class="tools">
+                                    <div class="btn-group">
+                                        <a class="btn btn-icon-toggle simple-ajax-popup-align-top" href="@Url.Action("CreateOrEdit", new {id = 0, parentID = menu.ID})" data-action="add"><i class="md md-add text-primary"></i></a>
+                                        <a class="btn btn-icon-toggle simple-ajax-popup-align-top" href="@Url.Action("CreateOrEdit", new {id = menu.ID, parentID = menu.ID})" data-action="edit"><i class="md md-edit text-info"></i></a>
+                                        <a class="btn btn-icon-toggle" href="#" data-action="delete" data-id="@menu.ID"><i class="md md-delete text-danger"></i></a>
+                                        @if (menuModel.Children.Any())
+                                        {
+                                            <a class="btn btn-icon-toggle btn-collapse"><i class="fa fa-angle-down"></i></a>
+                                        }
+                                    </div>
+                                </div>
+                            </div><!--end .card-head -->
+                            <div class="card-body  style-primary" style="display: none;">
+                                @{
+                                    foreach (var child in menuModel.Children.OrderBy(m => m.Order))
+                                    {
+                                        <div class="row">
+                                            <div class="card card-underline">
+                                                <div class="card-head">
+                                                    <header>@child.Title</header>
+                                                    <div class="tools">
+                                                        <div class="btn-group">
+                                                            <a class="btn btn-icon-toggle simple-ajax-popup-align-top" href="@Url.Action("CreateOrEdit", new {id = child.ID,parentID=child.ParentID})" data-action="edit"><i class="md md-edit text-info"></i></a>
+                                                            <a class="btn btn-icon-toggle" href="#" data-action="delete" data-id="@child.ID"><i class="md md-delete text-danger"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div><!--end .card-head -->
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div><!--end .card-body -->
+                        </div><!--end .card -->
+                    </div><!--end .row -->
+
+
+                                    @*<div class="accordion-group menu-parent">
+                                            <div class="accordion-heading">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse@(menu.ID)">
+                                                    <b>@menu.Title</b>
+                                                </a>
+                                            </div>
+                                            <div id="collapse@(menu.ID)" class="accordion-body collapse" style="margin-left: 20px;">
+                                                <div class="accordion-inner">
+                                                    <div style="background-color: #f5f5f5; color: #222; margin-top: -15px; margin-bottom: 2px; padding: 8px 15px;">
+                                                        @Html.ActionLink(Resource.AddChild, "Create", "Menus", new { parentId = menu.ID }, null) |
+                                                        @Html.ActionLink(Resource.Edit, "Edit", "Menus", new { id = menu.ID }, null) |
+                                                        @Html.ActionLink(Resource.Delete, "Delete", "Menus", new { id = menu.ID }, new { data_action = "delete", data_id = menu.ID })
+                                                    </div>
+                                                    @{
+                                                        var menuModel = new MenuModel(menu);
+                                                        foreach (var child in menuModel.Children.OrderBy(m => m.Order))
+                                                        {
+                                                            <div class="accordion-group menu-child">
+                                                                <div class="accordion-heading">
+                                                                    <div class="accordion-toggle" data-toggle="collapse" data-parent="#accordion@(menu.ID)" href="#collapse@(child.ID)" style="background-image: none;">
+                                                                        <a href="@child.Url" style="color: #222;"><b>@child.Title</b></a>
+                                                                        <div class="adMenu">
+                                                                            @Html.ActionLink(Resource.Edit, "Edit", "Menus", new { id = child.ID }, null) |
+                                                                            @Html.ActionLink(Resource.Delete, "Delete", "Menus", new { id = child.ID }, new { data_action = "delete", data_id = child.ID })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>*@
+                                    }
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@Html.Script(
+    @<script>
+        $(document).on('click', '[data-action="delete"]', function (e) {
+            e.preventDefault();
+            var selftr = $(this);
+            bootbox.confirm("@Resource.ConfirmDelete", function (isOK) {
+                if (isOK) {
+                    $.ajax({
+                        url: '@Url.Action("Delete")/' + selftr.data('id'),
+                        type: 'POST',
+                        success: function (data) {
+                            if (data == true) {
+                                location.reload();
+                            } else {
+                                bootbox.alert("@Resource.DeleteFailed");
+                            }
+                        },
+                        error: function () {
+                            bootbox.alert("@Resource.DeleteFailed");
+                        }
+                    });
+                }
+            });
+        });
+        function onFail() {
+            $(".error").removeClass('hide');
+            $(".success").addClass('hide');
+            $(".texterror").text("@Resource.Error");
+        }
+        function onSuccess(data) {
+            $(".error").addClass('hide');
+            $(".success").addClass('hide');
+
+            if (data.Code == 1 || data.Code == 3) {
+                $(".success").removeClass('hide');
+                if (data.Code == 1) {
+                    location.reload();
+                }
+                if (data.Code == 3) {
+                    location.reload();
+                }
+            } else {
+                if (data.Code == 2)
+                    $(".texterror").text('@Resource.AddError');
+                if (data.Code == 4)
+                    $(".texterror").text('@Resource.SaveError');
+                if (data.Code == 5)
+                    $(".texterror").text("@Resource.CodeHasExistedAlready");
+                $(".error").removeClass('hide');
+            }
+        }
+    </script>)

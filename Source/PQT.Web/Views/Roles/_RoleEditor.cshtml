@@ -1,0 +1,58 @@
+﻿@using PQT.Domain.Entities
+@using PQT.Domain.Enum
+@using PQT.Web.Models
+@using PQT.Web.Models
+@using Org.BouncyCastle.Crypto.Prng
+@using Resources
+@model PQT.Web.Models.RoleModel
+
+@Html.HiddenFor(m => m.Role.ID)
+<div class="form-group">
+    @Html.Bootstrap().TextBoxFor(m => m.Role.Name).Class("form-control").ShowValidationMessage(true)
+    @Html.Bootstrap().LabelFor(m => m.Role.Name).LabelText("Role Name").ShowRequiredStar(true)
+</div>
+<div class="form-group">
+    @Html.Bootstrap().TextBoxFor(m => m.Role.Description).Class("form-control").ShowValidationMessage(true)
+    @Html.Bootstrap().LabelFor(m => m.Role.Description).LabelText("Description").ShowRequiredStar(true)
+</div>
+<div class="form-group">
+    @Html.Bootstrap().DropDownListFor(m => m.Role.RoleLevel, EnumerationHelper.ToSelectList<RoleLevel>().Where(m => m.Value != RoleLevel.None.Value)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+    @Html.Bootstrap().LabelFor(m => m.Role.RoleLevel).LabelText("Role Level").ShowRequiredStar(true)
+</div>
+<div class="row col-md-offset-2">
+    <table class="table table-orchard">
+        <thead>
+            <tr>
+                <th style="width: 0; min-width: 200px">@Resource.Target</th>
+                <th>@Resource.Rights</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (string target in Model.PermissionAdmins.Keys.OrderBy(m => m))
+            {
+                <tr>
+                    <td style="white-space: nowrap">@PQT.Domain.Helpers.StringHelper.InsertSpaceByUpperCase(target)</td>
+                    <td>
+                        @foreach (Permission permission in Model.PermissionAdmins[target])
+                        {
+
+                            <div class="checkbox column30per">
+                                @{
+                                    var name = RoleModel.PermissionNameAdminPrefix + permission.Target + "." + permission.Right;
+                                    var val = Model.Role.Permissions.Any(p => p.Target == permission.Target && p.Right == permission.Right);
+                                    <div class="checkbox checkbox-styled">
+                                        <label>
+                                            <input type="checkbox" id="@name" name="@name" @(val ? "checked" : "")>
+                                            <span>@permission.DisplayName</span>
+                                        </label>
+                                    </div>
+                                }
+
+                            </div>
+                                    }
+                    </td>
+                </tr>
+                                    }
+        </tbody>
+    </table>
+</div>

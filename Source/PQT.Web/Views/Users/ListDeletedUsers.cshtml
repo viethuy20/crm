@@ -1,0 +1,93 @@
+﻿@using NS.Mvc.Helpers
+@using PQT.Domain.Entities
+@using Resources
+@model IEnumerable<User>
+
+
+@{
+    ViewBag.Title = Resource.UsersDeleted;
+    var count = 0;
+}
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="users-table" class="table">
+                    <thead>
+                        <tr>
+                            <th>@Resource.UserName</th>
+                            <th>@Resource.Email</th>
+                            <th>@Resource.PhoneNumber</th>
+                            <th class="text-center">@Resource.Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (User user in Model)
+                        {
+                            <tr data-roles="@(string.Join(" ", user.Roles.Select(m => m.ID)))">
+                                <td>
+                                    @if (user.Picture != null)
+                                    {
+                                        <img src="@user.AvatarUrl" class="img-rounded user-picture-small" style="max-width:50px; max-height:50px;" />
+                                    }
+                                    @user.DisplayName
+                                </td>
+                                <td>@user.Email</td>
+                                <td>@user.BusinessPhone</td>
+                                <td class="text-center">
+                                    <a href="@Url.Action("ReActive", new { id = user.ID })" data-action="reactive" data-id="@user.ID"><i class="fa fa-undo text-primary"></i> @Resource.ReActive</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+@Html.Script(
+    @<script>
+
+        var $modelTable = $('#users-table').dataTable();
+
+        $(document).on('click', '[data-action="reactive"]', function (e) {
+            e.preventDefault();
+            var $self = $(this);
+            bootbox.confirm("@Resource.ConfirmReActive", function (isOK) {
+                if (isOK) {
+                    var id = $self.data('id');
+                    var index = $self.closest('tbody').find('tr').index($self.closest('tr'));
+
+                    $.ajax({
+                        url: '@Url.Action("ReActive", "Users")/' + id,
+                        type: 'POST',
+                        success: function () {
+                            $modelTable.fnDeleteRow(index);
+                        }
+                    });
+                }
+            });
+
+        });
+
+        $("#role").change(function () {
+            var roleID = $(this).val();
+            if (roleID == '') {
+                $('tbody tr').removeClass('hide');
+            } else {
+                $('tbody tr').addClass('hide');
+                $('tbody tr').each(function (index, value) {
+                    if ($(this).attr('data-roles').indexOf(roleID) != -1) {
+
+                        $(this).removeClass('hide');
+                    }
+                });
+            }
+        });
+
+    </script>
+                  )

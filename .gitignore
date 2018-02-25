@@ -1,1 +1,9 @@
 # Add any directories, files, or patterns you don't want to be tracked by version control
+
+/Source/TestResults
+/Source/PQT.Domain/bin
+/Source/PQT.Domain/obj
+/Source/PQT.Seed/bin
+/Source/PQT.Seed/obj
+/Source/PQT.Web/bin
+/Source/PQT.Web/obj

@@ -1,0 +1,102 @@
+﻿@using PQT.Web.Infrastructure.Utility
+@using PQT.Web.Models
+@using Resources
+@model PQT.Web.Models.AccountModel
+@{
+    ViewBag.Title = Resource.MyProfile;
+}
+
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            @using (Html.BeginForm("Profile", "Account", null, FormMethod.Post, new {enctype = "multipart/form-data", @class = "form form-validate  floating-label", @novalidate = "novalidate"}))
+            {
+                <div class="form-group">
+                    @Html.Bootstrap().PasswordFor(m => m.OldPassword).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.OldPassword).LabelText("Current password").ShowRequiredStar(true)
+                </div>
+                <div class="form-group">
+                    @Html.Bootstrap().PasswordFor(m => m.Password).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Password).LabelText("New password")
+                </div>
+                <div class="form-group">
+                    @Html.Bootstrap().PasswordFor(m => m.ConfirmPassword).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.ConfirmPassword).LabelText("Retypr new password")
+                </div>
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Username).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Username).LabelText("Name").ShowRequiredStar(true)
+                </div>
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Email).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email").ShowRequiredStar(true)
+                </div>
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.BusinessPhone).LabelText("Business Phone")
+                </div>
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.MobilePhone).LabelText("Mobile Phone")
+                </div>
+
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.MobilePhone).LabelText("Mobile Phone")
+                </div>
+                <div class="form-group">
+                    <div id="profilePicture">
+                        @if (CurrentUser.Identity.Picture != null)
+                        {
+                            <img style="width: 120px; height: 120px;" src="@CurrentUser.Identity.AvatarUrl" class="img-polaroid user-picture-preview"/>
+                        }
+                        else
+                        {
+                            <img style="max-width: 120px; max-height: 120px;" src="~/data/../Content/img/profile.png" class="img-polaroid user-picture-preview"/>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Bootstrap().FileFor(m => m.Picture).ShowValidationMessage(false)
+                </div>
+                <div class="form-group  col-md-offset-2">
+                    @Html.Bootstrap().SubmitButton().Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+                </div>
+            }
+        </div>
+    </div>
+</section>
+@section js
+{
+    <script>
+        $(document).on('change', 'input[type="File"]', function () {
+            var upload = $(this);
+
+            var indicator = upload.next('.selected');
+            if (indicator.length == 0) {
+                indicator = $('<span class="selected"></span>').insertAfter(upload);
+            }
+
+            if (upload.val() == '') {
+                indicator.html('');
+            } else if (window.FileReader) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    if (upload[0].files[0].size > 2000000) {
+                        $.sticky("@Resource.ErrorYourFileIsTooLarge", { type: 'st-danger' });
+                        upload.replaceWith(upload = upload.clone(true));
+                    } else {
+                        $('#profilePicture').html("<img style='width: 120px; height:120px;' src='" + e.target.result + "' class='img-polaroid user-picture-preview'/>");
+                    }
+                };
+                reader.readAsDataURL(upload[0].files[0]);
+            } else {
+                indicator.html("Selected");
+            }
+        });
+
+    </script>
+}

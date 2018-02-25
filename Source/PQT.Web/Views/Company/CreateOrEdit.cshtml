@@ -1,0 +1,73 @@
+﻿@using PQT.Domain.Enum
+@using NS
+@using PQT.Domain.Abstract
+@using PQT.Web.Infrastructure
+@using Resources
+@model PQT.Domain.Entities.Company
+
+@{
+    var unitRepo = DependencyHelper.GetService<IUnitRepository>();
+    var countries = unitRepo.GetAllCountries().OrderBy(m=>m.Name);
+}
+<div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
+    <div class="card-head">
+        <header>@(Model.ID > 0 ? "Edit Data" : "Add New Data")</header>
+    </div><!--end .card-head -->
+
+    @using (Ajax.BeginForm("CreateOrEdit", "routeValues", new AjaxOptions { OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form form-validate"}))
+    {
+        <div class="card-body">
+            <div class="success hide">
+                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Success).Closeable()))
+                {
+                    @Html.Bootstrap().Label("success").HtmlAttributes(new { @class = "textsuccess" }).LabelText(Resource.SaveSuccessful)
+                }
+            </div>
+            <div class="error hide alert-danger">
+                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Error).Closeable()))
+                {
+                    @Html.Bootstrap().Label("error").HtmlAttributes(new { @class = "texterror" }).LabelText(Resource.SaveFailed)
+                }
+            </div>
+            @Html.HiddenFor(m => m.ID)
+            <div class="form-group">
+                @Html.Bootstrap().DropDownListFor(m => m.CountryID, countries.ToSelectList(m => m.ID, m => m.Name)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.CountryID).LabelText("Country").ShowRequiredStar(true)
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.Name).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Name).LabelText("Name").ShowRequiredStar(true)
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextAreaFor(m => m.ProductOrService).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.ProductOrService).LabelText("Product/Service")
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.Sector).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Sector).LabelText("Sector")
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.Industry).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Industry).LabelText("Industry")
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.Ownership).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Ownership).LabelText("Ownership")
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.BusinessUnits).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.BusinessUnits).LabelText("Business Units")
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.Designation).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Designation).LabelText("Designation")
+            </div>
+            <div class="form-group">
+                <div class="pull-right">
+                    @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                    @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("submitbutton").PrependIcon("md md-done").Style(ButtonStyle.Success)
+                </div>
+            </div>
+        </div><!--end .card-body -->
+    }
+</div><!--end .card -->

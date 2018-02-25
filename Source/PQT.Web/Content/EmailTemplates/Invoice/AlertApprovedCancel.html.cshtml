@@ -1,0 +1,120 @@
+﻿@using System.Security.Policy
+@using System.Web.Mvc.Html
+@using ColorCode
+@using ColorCode.Compilation.Languages
+@using CPO.Domain.Abstract
+@using CPO.Domain.Entities
+@using CPO.Domain.Helpers
+@using CPO.Web.Infrastructure.Helpers
+@using CPO.Web.Infrastructure.Utility
+@using CPO.Web.Models
+@using iTextSharp.text.pdf.qrcode
+@using Newtonsoft.Json
+@model Invoice
+@{
+    if (Model == null)
+    {
+        Model = new Invoice();
+    }
+}
+@if (Model != null)
+{
+    <font face="verdana" size="2">
+        Dear Management,
+        <br><br>
+        Below are information of invoice:
+        <br><br>
+        <table class="table">
+            <tr>
+                <td width="200">Approved by</td>
+                <td>:</td>
+                <td style="color: red">
+                    <b>
+                        @if (Model.CancelStatusRecord != null)
+                        {
+                            @Model.CancelStatusRecord.User.DisplayName
+                        }
+                    </b>
+                </td>
+            </tr>
+            <tr>
+                <td width="200">Reason Cancellation</td>
+                <td>:</td>
+                <td style="color: red">
+                    <b>
+                        @Model.DeleteRemark
+                    </b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3"><hr /></td>
+            </tr>
+            <tr>
+                <td width="200">Invoice No.</td>
+                <td>:</td>
+                <td><b>@Model.InvoiceNo</b></td>
+            </tr>
+            <tr>
+                <td width="200">Invoice Date</td>
+                <td>:</td>
+                <td><b>@Model.InvoiceDate.ToString("dd MMM yyyy")</b></td>
+            </tr>
+            <tr>
+                <td colspan="3"><hr /></td>
+            </tr>
+            @if (Model.Booking != null)
+            {
+                <tr>
+                    <td>Model</td>
+                    <td>:</td>
+                    <td><b>@Model.Booking.Vehicle.Model</b></td>
+                </tr>
+                <tr>
+                    <td>Model Year</td>
+                    <td>:</td>
+                    <td><b>@Model.Booking.Vehicle.ModelYear</b></td>
+                </tr>
+                <tr>
+                    <td>Chassis Number</td>
+                    <td>:</td>
+                    <td><b>@Model.Booking.Vehicle.ChassisNumber</b></td>
+                </tr>
+                <tr>
+                    <td>Registration Number</td>
+                    <td>:</td>
+                    <td><b>@Model.Booking.Vehicle.RegistrationNumber</b></td>
+                </tr>
+                <tr>
+                    <td>Registration Date (COE)</td>
+                    <td>:</td>
+                    <td><b>@Model.Booking.Vehicle.GetRegistrationDate</b></td>
+                </tr>
+                <tr>
+                    <td>Listed Sale Price</td>
+                    <td>:</td>
+                    <td><b>@Model.Booking.Vehicle.ListedSalePrice.ToMoneyString()</b></td>
+                </tr>
+                <tr>
+                    <td>Margin</td>
+                    <td>:</td>
+                    <td><b>@Model.Booking.Vehicle.Margin().ToMoneyString()</b></td>
+                </tr>
+                <tr>
+                    <td>Aging</td>
+                    <td>:</td>
+                    <td><b>@Model.Booking.Vehicle.Aging(DateTime.Now)</b></td>
+                </tr>
+            }
+        </table>
+        <br />
+        @if (Model.ID > 0)
+        {
+            <a href="@BypassAuth.Encrypt("/Admin/Invoice/DeletedDetail/" + Model.ID)" target="_blank">Hyperlink here to show all information in detail</a>
+        }
+        else
+        {
+            <a href="#">Hyperlink here to show all information in detail</a>
+        }
+        <br />
+    </font>
+}

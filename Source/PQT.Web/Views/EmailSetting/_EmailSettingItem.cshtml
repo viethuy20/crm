@@ -1,0 +1,29 @@
+﻿@using Resources
+@model PQT.Web.Models.EmailSettingModel
+<div id="sub-list-@Model.Type" class="tab-content" style="overflow: hidden !important;">
+    @{
+        var countItem = 0;
+        foreach (var item in Model.EmailReceiveItems)
+        {
+            countItem++;
+            <div class="tab-pane @(countItem == 1 ? "active" : "")" id="tab-@(item.EmailSetting.Type)-@item.EmailSetting.TemplateName">
+                @Html.Partial("EditorTemplates/EmailSettingItem", item)
+            </div>
+        }
+    }
+</div>
+
+<script>
+    $(document).on('click', '#@(Model.Type)Tab a', function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+    });
+    function onSuccess(data) {
+        bootbox.alert('@Resource.Successful');
+    }
+    function onFail() {
+        bootbox.alert('@Resource.Error');
+    }
+
+    initSelect2();
+</script>

@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Web.Mvc;
+using System.Windows.Forms.VisualStyles;
+using PQT.Domain.Entities;
+using PQT.Domain.Enum;
+
+namespace PQT.Domain.Abstract
+{
+    public interface IUnitRepository
+    {
+
+        #region Country
+        IEnumerable<Country> GetAllCountries();
+        Country GetCountry(int countryID);
+        Country GetCountry(string code);
+        Country CreateCountry(Country info);
+        bool UpdateCountry(Country info);
+        bool DeleteCountry(int countryID);
+        #endregion Country
+
+        #region Counter
+        int GetCounter(string name);
+        Counter SetCounter(string name, int value);
+        IEnumerable<Counter> GetAllCounter();
+        Counter GetCounter(int id);
+        bool UpdateCounter(Counter counter);
+        decimal GetDepositNextCounter(string name, int start);
+
+        #endregion Counter
+
+        #region Email Template setting
+
+        EmailSetting GetEmailSetting(string type, string nameTemplate);
+        bool CreateEmailSetting(EmailSetting email);
+        bool DeleteEmailAllInTemplate(string type, string nameTemplate);
+        IEnumerable<SelectListItem> GetSelectListItemOfEmailTemplate(string type, string nameTemplate, EmailType emailType);
+
+        #endregion
+
+    }
+}

@@ -1,0 +1,21 @@
+﻿@model PQT.Web.Models.EmailSettingModel
+
+@{
+   
+        <div class="tab-pane active" id="@Model.Type">
+            <div style="margin: 20px;">
+                <ul class="nav nav-tabs tab-second" id="@(Model.Type)Tab" style="height: 100%">
+                    @{
+        var count = 0;
+        foreach (var emailReceiveItem in Model.EmailReceiveItems)
+        {
+            count++;
+            var nameTemplate = PQT.Domain.Helpers.StringHelper.InsertSpaceByUpperCase(emailReceiveItem.EmailSetting.TemplateName);
+            <li class="@(count == 1 ? "active" : "")"><a href="#tab-@(emailReceiveItem.EmailSetting.Type)-@emailReceiveItem.EmailSetting.TemplateName">@(nameTemplate)</a></li>
+        }
+                    }
+                </ul>
+                @Html.Partial("_EmailSettingItem", Model)
+            </div>
+        </div>
+}

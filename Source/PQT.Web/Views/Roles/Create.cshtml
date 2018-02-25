@@ -1,0 +1,38 @@
+﻿@using PQT.Web.Models
+@using Resources
+@model PQT.Web.Models.RoleModel
+@{
+    ViewBag.Title = Resource.AddNewRole;
+}
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            @using (Html.BeginForm("Create", "Roles", null, FormMethod.Post, new { @class = "form form-validate floating-label" }))
+            {
+                @Html.Partial("_RoleEditor", Model)
+                using (Html.Bootstrap().Begin(new FormActions()))
+                {
+                    <div class="form-group col-md-offset-2">
+                            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                            @Html.Bootstrap().SubmitButton().Id("submitbutton").Text(Resource.Create).PrependIcon("md md-done").Style(ButtonStyle.Success)
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+@Html.Script(
+    @<script>
+        $("#submitbutton").on('click', function (e) {
+            e.preventDefault();
+            bootbox.confirm("@Resource.ConfirmCreate", function (isOK) {
+                if (isOK) {
+                    $('#submitbutton').parents("form").submit();
+                }
+            });
+        });
+    </script>)

@@ -1,0 +1,100 @@
+﻿@model List<PQT.Web.Models.EmailSettingModel>
+@{
+    ViewBag.Title = "Email Settings";
+}
+<style>
+    .tab-second .active a {
+        background-color: #f5f5f5;
+    }
+
+    .tab-second a {
+        color: #000000;
+    }
+
+    td {
+        font-weight: normal !important;
+    }
+
+    #dvLoading1 {
+        background: rgba(0, 0, 0, 0.5) url(../../Content/img/ajax-loading.svg) no-repeat center center;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 999999999999;
+    }
+</style>
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <ul class="nav nav-tabs" id="RootTab" style="height: 100%">
+                @{
+                    for (var i = 0; i < Model.Count; i++)
+                    {
+                        var name = PQT.Domain.Helpers.StringHelper.InsertSpaceByUpperCase(Model[i].Type);
+                        <li class="template_item @(i == 0 ? "active" : "")"><a href="EmailTemplate" data_type="@Model[i].Type">@name</a></li>
+                    }
+                }
+            </ul>
+            <div id="templatecontent" class="tab-content" style="overflow: hidden !important;margin: 10px 0px 0px 0px;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="dvLoading1"></div>
+@Html.Script(
+    @<script>
+        $('#RootTab a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+
+        });
+    </script>)
+
+@Html.Script(
+    @<script>
+        function LoadReport() {
+            var type = $(".template_item.active a").attr('data_type');
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("EmailTemplate")?type=' + type,
+                success: function (data) {
+                    $("#dvLoading1").addClass('hide');
+                    $("#templatecontent").html(data);
+                },
+                error: function () {
+                    $("#dvLoading1").addClass('hide');
+                    $("#templatecontent").html("<h4 style='text-align:center'>Form Not Found!</h4>");
+                }
+            });
+        }
+
+        $('#RootTab a').click(function (e) {
+            e.preventDefault();
+            $('#RootTab li').removeClass("active");
+            $(this).parent("li").addClass("active");
+
+            LoadReport();
+
+            $(this).tab('show');
+
+        });
+        //$(document).on('click', '#RootTab a', function(e) {
+        //    e.preventDefault();
+        //    //$('#RootTab li').removeClass("active");
+        //    //$(this).parent("li").addClass("active");
+
+        //    //LoadReport();
+
+        //    //$(this).tab('show');
+
+        //});
+
+        LoadReport();
+
+    </script>)
