@@ -26,6 +26,9 @@ namespace PQT.Domain.Entities
         public string Address { get; set; }
         public EntityStatus Status { get; set; }
 
+        public int? TransferUserID { get; set; }
+        [ForeignKey("TransferUserID")]
+        public virtual User TransferUser { get; set; }
         #endregion
 
         #region Navigation properties
@@ -44,7 +47,11 @@ namespace PQT.Domain.Entities
         {
             get
             {
-                return UrlHelper.Root + "/data/user_img/" + ID + "/" + Picture;
+                if (string.IsNullOrEmpty(Picture))
+                {
+                    return "/content/img/profile.png";
+                }
+                return "/data/user_img/" + ID + "/" + Picture;
             }
         }
         #endregion

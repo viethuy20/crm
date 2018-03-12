@@ -17,6 +17,8 @@ namespace PQT.Domain.Entities
         public string Ownership { get; set; }
         public string BusinessUnits { get; set; }
         public string Designation { get; set; }
+        public string Email { get; set; }
+        public string PersonalContact { get; set; }
 
         public string CountryName
         {

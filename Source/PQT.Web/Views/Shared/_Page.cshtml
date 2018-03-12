@@ -29,21 +29,21 @@
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="headerbar-right">
-            <ul class="header-nav header-nav-options">
-                <li>
-                    <!-- Search form -->
-                    <form class="navbar-search" role="search">
-                        <div class="form-group">
-                            <input type="text" class="form-control" name="headerSearch" placeholder="Enter your keyword">
-                        </div>
-                        <button type="submit" class="btn btn-icon-toggle ink-reaction"><i class="fa fa-search"></i></button>
-                    </form>
-                </li>
-            </ul><!--end .header-nav-options -->
+            @*<ul class="header-nav header-nav-options">
+                    <li>
+                        <!-- Search form -->
+                        <form class="navbar-search" role="search">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="headerSearch" placeholder="Enter your keyword">
+                            </div>
+                            <button type="submit" class="btn btn-icon-toggle ink-reaction"><i class="fa fa-search"></i></button>
+                        </form>
+                    </li>
+                </ul><!--end .header-nav-options -->*@
             <ul class="header-nav header-nav-profile">
                 <li class="dropdown">
                     <a href="javascript:void(0);" class="dropdown-toggle ink-reaction" data-toggle="dropdown">
-                        <img src="../../Content/img/profile.png" alt="" />
+                        <img src="@(currentUser!=null?currentUser.AvatarUrl:"~/Content/img/profile.png")" alt="" />
                         <span class="profile-info">
                             @(currentUser != null ? currentUser.DisplayName : "")
                             @*<small>@(currentUser != null ? string.Join(",", currentUser.Roles.Select(m=>m.Name)) : "")</small>*@
@@ -127,32 +127,54 @@
                             children = children.OrderBy(m => m.Title).ToList();
                         }
                         <li class="gui-folder">
-                            <a @(string.IsNullOrEmpty(item.Url) ? "" : "href=\"" + item.Url + "\"")>
-                                <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
-                                <span class="title">@title</span>
-                            </a>
-                            <ul>
-                                @{
-                                    foreach (var childItem in children)
-                                    {
-                                        var childTitle = childItem.Title;
-                                        if (childItem.Url != null &&
-                                            (childItem.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString() ||
-                                             childItem.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString()
-                                             + "/" + ViewContext.RouteData.Values["action"].ToString()))
+                            @if (string.IsNullOrEmpty(item.Url))
+                            {
+                                <a>
+                                    <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
+                                    <span class="title">@title</span>
+                                </a>
+                                <ul>
+                                    @{
+                                        foreach (var childItem in children)
                                         {
+                                            var childTitle = childItem.Title;
+                                            if (childItem.Url != null &&
+                                                (childItem.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString() ||
+                                                 childItem.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString()
+                                                 + "/" + ViewContext.RouteData.Values["action"].ToString()))
+                                            {
 
-                                            <li><a class="active" href="@childItem.Url"><span class="title">@childTitle</span></a></li>
+                                                <li><a class="active" href="@childItem.Url"><span class="title">@childTitle</span></a></li>
+                                            }
+                                            else
+                                            {
+                                                <li><a href="@childItem.Url"><span class="title">@childTitle</span></a></li>
+                                            }
+                                        }
+                                    }
+                                </ul>
                                         }
                                         else
                                         {
-                                            <li><a href="@childItem.Url"><span class="title">@childTitle</span></a></li>
+                                            if (item.Url != null && (item.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString() ||
+                                                                     item.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString()
+                                                                     + "/" + ViewContext.RouteData.Values["action"].ToString()))
+                                            {
+                                                <a href="@item.Url" class="title">
+                                                    <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
+                                                    <span class="title">@title</span>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a href="@item.Url">
+                                                    <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
+                                                    <span class="title">@title</span>
+                                                </a>
+                                            }
                                         }
-                                    }
-                                }
-                            </ul>
                         </li>
-                                    }
+                                        }
                 }
 
 
@@ -324,7 +346,7 @@
         });
 
         $("#left-menubar-toggle").on("click",
-            function() {
+            function () {
                 var $body = $("body");
                 if ($body.hasClass("menubar-pin")) {
                     createCookie("menubar-pin", "false", 3650);

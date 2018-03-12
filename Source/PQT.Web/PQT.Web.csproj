@@ -361,6 +361,8 @@
     <Compile Include="Controllers\MenusController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
+    <Compile Include="Controllers\TrainerController.cs" />
+    <Compile Include="Controllers\SalesGroupController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Infrastructure\Helpers\ImageHelper.cs" />
@@ -370,7 +372,9 @@
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\MenuModel.cs" />
     <Compile Include="Models\RoleModel.cs" />
+    <Compile Include="Models\SalesGroupModel.cs" />
     <Compile Include="Models\SettingModel.cs" />
+    <Compile Include="Models\TrainerModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Controllers\ErrorsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -1112,6 +1116,9 @@
     <Content Include="Content\js\libs\ckeditor\skins\moono\images\lock.png" />
     <Content Include="Content\js\libs\ckeditor\skins\moono\images\refresh.png" />
     <Content Include="Content\js\libs\ckeditor\styles.js" />
+    <Content Include="Content\js\libs\croppie\croppie.css" />
+    <Content Include="Content\js\libs\croppie\croppie.js" />
+    <Content Include="Content\js\libs\croppie\croppie.min.js" />
     <Content Include="Content\js\libs\d3\d3.layout.min.js" />
     <Content Include="Content\js\libs\d3\d3.min.js" />
     <Content Include="Content\js\libs\d3\d3.v2.js" />
@@ -2210,6 +2217,8 @@
     <Content Include="Views\Shared\Forbidden.cshtml" />
     <Content Include="Views\Shared\_BigBang.cshtml" />
     <Content Include="Views\Menus\CreateOrEdit.cshtml" />
+    <Content Include="Views\SalesGroup\Index.cshtml" />
+    <Content Include="Views\SalesGroup\CreateOrEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -25,32 +25,9 @@ namespace PQT.Seed
 
                 Insert_roles_and_users(db);
                 Insert_menu(db);
-                Insert_Country(db);
                 Insert_settings(db);
                 db.SaveChanges();
             }
-        }
-        private void Insert_Country(PQTDb db)
-        {
-            List<string> cultureList = new List<string>();
-            var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures).Where(c => c.Name.Contains("-"));//CultureInfo.GetCultures(CultureTypes.AllCultures & CultureTypes.NeutralCultures);
-            //loop through all the cultures found
-            foreach (CultureInfo culture in cultures.Where(m => !string.IsNullOrEmpty(m.Name)))
-            {
-                try
-                {
-                    var region = new RegionInfo(culture.LCID);
-                    if (!(cultureList.Contains(region.TwoLetterISORegionName)))
-                    {
-                        cultureList.Add(region.TwoLetterISORegionName);
-                        db.Countries.Add(new Country { Code = region.TwoLetterISORegionName, Name = region.EnglishName });
-                    }
-                }
-                catch (Exception)
-                {
-                }
-            }
-            db.SaveChanges();
         }
         private void Insert_settings(PQTDb db)
         {
@@ -69,12 +46,14 @@ namespace PQT.Seed
             var sManager = new Role { Name = "Manager", RoleLevel = RoleLevel.ManagerLevel };
             var sQA = new Role { Name = "QA", RoleLevel = RoleLevel.ManagerLevel };
             var salesman = new Role { Name = "Salesman", RoleLevel = RoleLevel.SalesLevel };
-            var finance = new Role { Name = "Finance", RoleLevel = RoleLevel.SalesLevel };
-            var hR = new Role { Name = "HR", RoleLevel = RoleLevel.SalesLevel };
+            var finance = new Role { Name = "Finance", RoleLevel = RoleLevel.ManagerLevel };
+            var hR = new Role { Name = "HR", RoleLevel = RoleLevel.ManagerLevel };
 
             db.Users.Add(new User { DisplayName = "ADMIN", Password = EncryptHelper.EncryptPassword("123456"), Email = "ADMIN@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { rAdmin, salesman } });
             db.Users.Add(new User { DisplayName = "Manager", Password = EncryptHelper.EncryptPassword("123456"), Email = "QA@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { sQA } });
-            db.Users.Add(new User { DisplayName = "Salesman", Password = EncryptHelper.EncryptPassword("123456"), Email = "SALES@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { salesman } });
+            db.Users.Add(new User { DisplayName = "Salesman1", Password = EncryptHelper.EncryptPassword("123456"), Email = "SALES1@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { salesman } });
+            db.Users.Add(new User { DisplayName = "Salesman2", Password = EncryptHelper.EncryptPassword("123456"), Email = "SALES2@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { salesman } });
+            db.Users.Add(new User { DisplayName = "Salesman3", Password = EncryptHelper.EncryptPassword("123456"), Email = "SALES3@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { salesman } });
             db.Users.Add(new User { DisplayName = "Manager", Password = EncryptHelper.EncryptPassword("123456"), Email = "MANAGER@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { sManager } });
             db.Users.Add(new User { DisplayName = "Finance", Password = EncryptHelper.EncryptPassword("123456"), Email = "FINANCE@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { finance } });
             db.Users.Add(new User { DisplayName = "HR", Password = EncryptHelper.EncryptPassword("123456"), Email = "HR@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { hR } });
@@ -94,6 +73,7 @@ namespace PQT.Seed
             db.MenuItems.Add(new Menu { Title = "Users", Url = "/Users/Index", ParentID = m11.ID, Icon = "i-multi-agents" });
             db.MenuItems.Add(new Menu { Title = "Deleted Users", Url = "/Users/ListDeletedUsers", ParentID = m11.ID, Icon = "i-multi-agents" });
             db.MenuItems.Add(new Menu { Title = "Roles", Url = "/Roles/Index", ParentID = m11.ID, Icon = "i-role" });
+            db.MenuItems.Add(new Menu { Title = "Sales Group", Url = "/SalesGroup/Index", ParentID = m11.ID, Icon = "i-role" });
 
             db.MenuItems.Add(new Menu { Title = "Countries", Url = "/Country/Index", ParentID = m12.ID, Icon = "i-holiday" });
             db.MenuItems.Add(new Menu { Title = "Companies", Url = "/Company/Index", ParentID = m12.ID, Icon = "i-holiday" });

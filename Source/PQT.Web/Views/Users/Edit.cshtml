@@ -43,11 +43,11 @@
                     <div id="profilePicture">
                         @if (Model.UserPicture != null)
                         {
-                            <img style="width: 120px; height:120px;" src="@Model.AvatarUrl" class="img-polaroid user-picture-preview" />
+                            <img style="width: 120px;height:120px;border-radius: 60px;" src="@Model.AvatarUrl" class="img-polaroid user-picture-preview" />
                         }
                         else
                         {
-                            <img style="max-width: 120px; max-height: 120px;" src="~/Content/img/profile.png" class="img-polaroid user-picture-preview" />
+                            <img style="width: 120px;height: 120px;border-radius: 60px;" src="~/Content/img/profile.png" class="img-polaroid user-picture-preview" />
                         }
                     </div>
                 </div>
@@ -96,7 +96,7 @@
                         $.sticky("@Resource.FileToLarge", { type: 'st-danger' });
                         upload.replaceWith(upload = upload.clone(true));
                     } else {
-                        $('#profilePicture').html("<img style='width: 120px; height:120px;' src='" + e.target.result + "' class='img-polaroid user-picture-preview'/>");
+                        $('#profilePicture').html("<img style='width: 120px;height:120px;border-radius: 60px;' src='" + e.target.result + "' class='img-polaroid user-picture-preview'/>");
                     }
                 };
                 reader.readAsDataURL(upload[0].files[0]);

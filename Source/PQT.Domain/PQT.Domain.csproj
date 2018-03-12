@@ -145,12 +145,16 @@
     <Compile Include="Abstract\IAuthenticationService.cs" />
     <Compile Include="Abstract\IAuthorizationService.cs" />
     <Compile Include="Abstract\ICompanyRepository.cs" />
+    <Compile Include="Abstract\ILeadService.cs" />
     <Compile Include="Abstract\ILoginTracker.cs" />
     <Compile Include="Abstract\IMembershipService.cs" />
     <Compile Include="Abstract\IMenuRepository.cs" />
     <Compile Include="Abstract\INotificationService.cs" />
+    <Compile Include="Abstract\IProjectService.cs" />
     <Compile Include="Abstract\IRoleService.cs" />
+    <Compile Include="Abstract\ISalesGroupService.cs" />
     <Compile Include="Abstract\ISettingsRepository.cs" />
+    <Compile Include="Abstract\ITrainerService.cs" />
     <Compile Include="Abstract\IUnitRepository.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -158,10 +162,14 @@
     <Compile Include="Concrete\ConcurrentLoginTracker.cs" />
     <Compile Include="Concrete\EFAuditTracker.cs" />
     <Compile Include="Concrete\EFCompanyRepository.cs" />
+    <Compile Include="Concrete\EFLeadService.cs" />
     <Compile Include="Concrete\EFMembershipService.cs" />
     <Compile Include="Concrete\EFMenuRepository.cs" />
+    <Compile Include="Concrete\EFProjectService.cs" />
     <Compile Include="Concrete\EFRoleBasedAuthorizer.cs" />
+    <Compile Include="Concrete\EFSalesGroupService.cs" />
     <Compile Include="Concrete\EFSettingRepository.cs" />
+    <Compile Include="Concrete\EFTrainerService.cs" />
     <Compile Include="Concrete\EFUnitRepository.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -178,21 +186,31 @@
     <Compile Include="Entities\EmailSetting.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\Lead.cs" />
+    <Compile Include="Entities\LeadStatusRecord.cs" />
+    <Compile Include="Entities\PhoneCall.cs" />
+    <Compile Include="Entities\ProjectSession.cs" />
     <Compile Include="Entities\Menu.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Entities\Permission.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\ProjectEvent.cs" />
+    <Compile Include="Entities\Reservation.cs" />
+    <Compile Include="Entities\ReservationStatusRecord.cs" />
     <Compile Include="Entities\Role.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\SalesGroup.cs" />
     <Compile Include="Entities\Setting.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Entities\StatusRecord.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\Trainer.cs" />
+    <Compile Include="Entities\TrainerBank.cs" />
     <Compile Include="Entities\User.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -201,6 +219,8 @@
     </Compile>
     <Compile Include="EntityBase.cs" />
     <Compile Include="Enum\EmailType.cs" />
+    <Compile Include="Enum\LeadStatus.cs" />
+    <Compile Include="Enum\ReservationStatus.cs" />
     <Compile Include="Enum\RoleLevel.cs">
       <SubType>Code</SubType>
     </Compile>

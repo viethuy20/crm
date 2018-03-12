@@ -94,6 +94,10 @@ namespace PQT.Web
             kernel.Bind<IUnitRepository>().To<EFUnitRepository>();
             kernel.Bind<ISettingRepository>().To<EFSettingRepository>();
             kernel.Bind<ICompanyRepository>().To<EFCompanyRepository>();
+            kernel.Bind<ILeadService>().To<EFLeadService>();
+            kernel.Bind<IProjectService>().To<EFProjectService>();
+            kernel.Bind<ISalesGroupService>().To<EFSalesGroupService>();
+            kernel.Bind<ITrainerService>().To<EFTrainerService>();
 
             //kernel.Bind<INotificationService<Indent>>().To<IndentNotificationService>();
 

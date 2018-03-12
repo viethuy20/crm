@@ -119,8 +119,12 @@ namespace PQT.Web.Controllers
                 {
                     CurrentUser.Identity.Password = EncryptHelper.EncryptPassword(model.Password);
                 }
+
                 if (_membership.UpdateUser(CurrentUser.Identity))
+                {
+
                     FormsAuthentication.SetAuthCookie(CurrentUser.Identity.Email, false);
+                }
 
                 _loginTracker.ReloadUser(CurrentUser.Identity.Email, CurrentUser.Identity);
 

@@ -27,8 +27,10 @@ namespace PQT.Web
                 , "~/Content/css/theme-default/libs/DataTables/extensions/dataTables.colVis.css"
                 , "~/Content/css/theme-default/libs/DataTables/extensions/dataTables.tableTools.css"
                 , "~/Content/js/magnific-popup/magnific-popup.css"
+                , "~/Content/js/libs/croppie/croppie.css"
                 , "~/Content/css/theme-default/libs/rickshaw/rickshaw.css"
                 , "~/Content/css/theme-default/libs/morris/morris.core.css"
+                , "~/Content/css/theme-default/libs/toastr/toastr.css"
                 ));
             bundles.Add(new JsBundle("~/content/js/min").Include(
 
@@ -59,6 +61,7 @@ namespace PQT.Web
                 , "~/Content/js/libs/d3/d3.min.js"
                 , "~/Content/js/libs/d3/d3.v3.js"
                 , "~/Content/js/libs/rickshaw/rickshaw.min.js"
+                , "~/Content/js/libs/toastr/toastr.js"
                 , "~/Content/js/core/source/App.js"
                 , "~/Content/js/core/source/AppNavigation.js"
                 , "~/Content/js/core/source/AppOffcanvas.js"
@@ -69,8 +72,9 @@ namespace PQT.Web
                 , "~/Content/js/core/demo/Demo.js"
                 , "~/Content/js/core/demo/DemoFormComponents.js"
                 , "~/Content/js/core/demo/DemoTableDynamic.js"
-                , "~/Content/js/core/demo/DemoDashboard.js"
 
+
+                , "~/Content/js/libs/croppie/croppie.min.js"
                 , "~/Content/js/magnific-popup/jquery.magnific-popup.js"
                 , "~/Content/js/ultilities/LINQ_JS.js"
                 , "~/Content/js/ultilities/string.js"

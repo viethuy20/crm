@@ -1,0 +1,134 @@
+﻿@using Resources
+@model IEnumerable<PQT.Domain.Entities.SalesGroup>
+@{
+    ViewBag.Title = "Sales Group";
+}
+
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            @Html.Bootstrap().ActionLinkButton(Resource.AddNew, "CreateOrEdit").RouteValues(new { id = 0 }).PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary simple-ajax-popup-align-top" })
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table" id="table">
+                    <thead>
+                        <tr>
+                            <th>@Resource.Name</th>
+                            <th>@Resource.Users</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr data-id="@item.ID">
+                                <td>@item.GroupName</td>
+                                <td>@item.DisplayUsers</td>
+                                <td>
+                                    <a href="@Url.Action("CreateOrEdit", new {id = item.ID})" data-action="edit" class="simple-ajax-popup-align-top">
+                                        <i class="md md-edit text-info"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" data-action="delete" data-id="@item.ID">
+                                        <i class="md md-delete text-danger"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@Html.Script(
+    @<script>
+
+        var $Table = $('#table').dataTable();
+        $Table.on('click', '[data-action="delete"]', function (e) {
+            e.preventDefault();
+            var selftr = $(this);
+            bootbox.confirm("@Resource.ConfirmDelete", function (isOK) {
+                if (isOK) {
+                    $.ajax({
+                        url: '@Url.Action("Delete")/' + selftr.data('id'),
+                        type: 'POST',
+                        success: function (data) {
+                            if (data == true) {
+                                $Table.fnDeleteRow(selftr.closest('tr')[0]);
+                            } else {
+                                bootbox.alert("@Resource.DeleteFailed");
+                            }
+                        },
+                        error: function () {
+                            bootbox.alert("@Resource.DeleteFailed");
+                        }
+                    });
+                }
+            });
+        });
+
+        function onFail() {
+            $(".error").removeClass('hide');
+            $(".success").addClass('hide');
+            $(".texterror").text("@Resource.Error");
+        }
+        function onSuccess(data) {
+            $(".error").addClass('hide');
+            $(".success").addClass('hide');
+
+            if (data.Code == 1 || data.Code == 3) {
+                $(".success").removeClass('hide');
+                if (data.Code == 1) {
+                    $(".textsuccess").text('@Resource.AddSuccessful');
+                    addNewLineItem(data.Model);
+                    $("#CreateOrEditForm").get(0).reset();;
+                }
+                if (data.Code == 3) {
+                    $("textsuccess").data('@Resource.SaveSuccessful');
+                    updateItem(data.Model);
+                }
+            } else {
+                if (data.Code == 2)
+                    $(".texterror").text('@Resource.AddError');
+                if (data.Code == 4)
+                    $(".texterror").text('@Resource.SaveError');
+                if (data.Code == 5)
+                    $(".texterror").text("@Resource.CodeHasExistedAlready");
+                $(".error").removeClass('hide');
+            }
+        }
+
+        function addNewLineItem(data) {
+            var rowIndex = $Table.fnAddData([
+                data.GroupName,
+                data.DisplayUsers,
+                '<a class="simple-ajax-popup-align-top" data-action="edit" href="@Url.Action("CreateOrEdit")?id=' + data.ID + '"><i class="md md-edit text-info"></i></a>',
+                    '<a data-action="delete" data-id="' + data.ID + '" href="#"><i class="md md-delete text-danger"></i></a>'
+            ]);
+            var row = $Table.fnGetNodes(rowIndex);
+            $(row).attr('data-id', data.ID);
+        }
+        function updateItem(data) {
+            var tr = $($Table.fnGetNodes());
+            tr.each(function (index, item) {
+                if ($(item).data('id') == data.ID) {
+                    var td = $(item).find("td");
+                    if (td.length > 0) {
+                        $(td[0]).text(data.GroupName);
+                        $(td[1]).text(data.DisplayUsers);
+                    }
+                }
+            });
+        }
+    </script>)

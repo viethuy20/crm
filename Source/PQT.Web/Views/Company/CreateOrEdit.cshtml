@@ -63,6 +63,14 @@
                 @Html.Bootstrap().LabelFor(m => m.Designation).LabelText("Designation")
             </div>
             <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.Email).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email")
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.PersonalContact).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.PersonalContact).LabelText("Personal Contact")
+            </div>
+            <div class="form-group">
                 <div class="pull-right">
                     @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
                     @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("submitbutton").PrependIcon("md md-done").Style(ButtonStyle.Success)
