@@ -8,7 +8,7 @@
         <header><b>Calling Form</b></header>
     </div><!--end .card-head -->
 
-    @using (Ajax.BeginForm("CallingForm", "routeValues", new AjaxOptions { OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
+    @using (Ajax.BeginForm("CallingForm", "routeValues", new AjaxOptions { OnFailure = "onFailCalling", OnSuccess = "onSuccessCalling" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
     {
         <div class="card-body text-center" style="height: 150px;padding: 30px;">
             <div class="call-animation">
@@ -19,20 +19,9 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="success hide">
-                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Success).Closeable()))
-                {
-                    @Html.Bootstrap().Label("success").HtmlAttributes(new { @class = "textsuccess" }).LabelText(Resource.SaveSuccessful)
-                }
-            </div>
-            <div class="error hide alert-danger">
-                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Error).Closeable()))
-                {
-                    @Html.Bootstrap().Label("error").HtmlAttributes(new { @class = "texterror" }).LabelText(Resource.SaveFailed)
-                }
-            </div>
-            @Html.HiddenFor(m => m.LeadID)
             @Html.HiddenFor(m => m.PhoneCall.StartTime)
+            @Html.HiddenFor(m => m.PhoneCall.LeadID)
+            @Html.HiddenFor(m => m.TypeSubmit, new { @class = "typeSubmit" })
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
@@ -79,9 +68,9 @@
         </div><!--end .card-body -->
         <div class="card-actionbar">
             <div class="card-actionbar-row">
-                <button type="button" class="btn btn-default pull-left"><i class="md md-call-end"></i> End Call & Save</button>
-                <button type="button" class="btn btn-primary"><i class="md md-call-end"></i> End Call & Book</button>
-                <button type="button" class="btn btn-success"><i class="md md-call-end"></i> End Call & Request To NCL</button>
+                <button type="button" class="btn btn-default pull-left" id="endcall_save"><i class="md md-call-end"></i> End Call & Save</button>
+                <button type="button" class="btn btn-primary" id="endcall_book"><i class="md md-call-end"></i> End Call & Book</button>
+                <button type="button" class="btn btn-success" id="endcall_requestncl"><i class="md md-call-end"></i> End Call & Request To NCL</button>
             </div>
         </div>
     }
@@ -99,7 +88,7 @@
             var s = seconds - m * 60;
             m = checkTime(m);
             s = checkTime(s);
-            document.getElementById('call-tick').innerHTML = m + ":" + s;
+            $('#call-tick').html(m + ":" + s);
             var t = setTimeout(tickTime, 500);
         }
         function checkTime(i) {
@@ -107,5 +96,43 @@
             return i;
         }
         tickTime();
+
+
+        function onFailCalling() {
+            toastr.error('@Resource.SaveError', '');
+        }
+        function onSuccessCalling(data) {
+            if (data.Code == 0) {
+                if (data.Message)
+                    toastr.error(data.Message, '');
+                else
+                    toastr.error('@Resource.SaveFailed', '');
+            } else {
+                if (data.Code == 1) {
+                    toastr.success('@Resource.UpdateSuccessful', '');
+                    $.magnificPopup.close();
+                    oTable.fnFilter('');
+                }
+                //if (data) {
+                //    $(".leadcontent").html(data);
+                //}
+
+            }
+        }
+        $(document).on('click', '#endcall_save', function (e) {
+            e.preventDefault();
+            $(".typeSubmit").val("SaveExist");
+            $(this).parents("form").submit();
+        });
+        $(document).on('click', '#endcall_book', function (e) {
+            e.preventDefault();
+            $(".typeSubmit").val("SaveBook");
+            $(this).parents("form").submit();
+        });
+        $(document).on('click', '#endcall_requestncl', function (e) {
+            e.preventDefault();
+            $(".typeSubmit").val("SaveRequestNCL");
+            $(this).parents("form").submit();
+        });
     </script>
 </text>

@@ -28,6 +28,7 @@ namespace PQT.Domain
         public DbSet<Trainer> Trainers { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<UserNotification> UserNotifications { get; set; }
         protected override void OnModelCreating(DbModelBuilder mb)
         {
             mb.Entity<User>().HasMany(u => u.Roles).WithMany().Map(map => map.ToTable("Users_Roles").MapLeftKey("User_Id").MapRightKey("Role_Id"));

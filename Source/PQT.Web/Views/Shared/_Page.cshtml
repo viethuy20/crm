@@ -29,8 +29,8 @@
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="headerbar-right">
-            @*<ul class="header-nav header-nav-options">
-                    <li>
+            <ul class="header-nav header-nav-options">
+                @*<li>
                         <!-- Search form -->
                         <form class="navbar-search" role="search">
                             <div class="form-group">
@@ -38,8 +38,10 @@
                             </div>
                             <button type="submit" class="btn btn-icon-toggle ink-reaction"><i class="fa fa-search"></i></button>
                         </form>
-                    </li>
-                </ul><!--end .header-nav-options -->*@
+                    </li>*@
+                @Html.Partial("_Notification")
+            </ul><!--end .header-nav-options -->
+
             <ul class="header-nav header-nav-profile">
                 <li class="dropdown">
                     <a href="javascript:void(0);" class="dropdown-toggle ink-reaction" data-toggle="dropdown">
@@ -126,7 +128,7 @@
                         {
                             children = children.OrderBy(m => m.Title).ToList();
                         }
-                        <li class="gui-folder">
+                        <li class="@(children.Any()?"gui-folder":"")">
                             @if (string.IsNullOrEmpty(item.Url))
                             {
                                 <a>
@@ -384,6 +386,87 @@
         }
 
     </script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+        $.connection.hub.start();
+    </script>
 
+
+    <script>
+
+///////////////////////////////////////////////////////////////////////////
+// notification
+///////////////////////////////////////////////////////////////////////////
+
+    var notificator = $.connection.notificationHub,
+        $triggerNotify = $('#notify-trigger'),
+        $notifyCounter = $triggerNotify.find('.count'),
+        $notifyFlyerContent = $('.notify-trigger-add-content'),
+        documentTitle = document.title;
+
+    notificator.client.notify = function (dataJson, dataType) {
+        try {
+            var data = eval('(' + dataJson + ')');
+            new window[dataType](data).notify();
+        } catch (e) {
+        }
+    };
+
+
+    var UserNotification = (function () {
+
+        function UserNotification(data) {
+            this.notifyData = data;
+        }
+
+        UserNotification.prototype.notify = function () {
+            this.notifyRequest();
+            toastr.info(this.notifyData.Description, this.notifyData.Title);
+
+            var notifyCount = parseInt($notifyCounter.text()) +1;
+            $notifyCounter.html(notifyCount);
+            $notifyCounter.removeClass('hide');
+            document.title = '(' + notifyCount + ') ' + documentTitle;
+
+        };
+
+        UserNotification.prototype.notifyRequest = function () {
+
+            var row = '<li>\
+                <a class="alert" style="border: 1px solid rgba(83, 88, 88, 0.15); border-left: 4px solid '+ this.notifyData.HighlightColor + ';" href="javascript:void(0);">\
+                <img class="pull-right img-circle dropdown-avatar" src="/Content/img/profile.png?1404026449" alt="">\
+                <strong>'+ this.notifyData.Title + '</strong><br>\
+                <small>'+ this.notifyData.Description + '</small>\
+                </a>\
+                </li>';
+            $(row).insertAfter($notifyFlyerContent);
+            $notifyFlyerContent.html(this.notifyData.NotifyTypeDisplay +"'s messages");
+//            $notifyFlyerContent.append(row);
+
+        };
+
+        return UserNotification;
+
+    })();
+
+    $triggerNotify.on('click', function (e) {
+        e.preventDefault();
+        $notifyCounter.addClass('hide');
+        $notifyCounter.html('0');
+        document.title = documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
+        $(document).unbind('ajaxStart');
+        $.ajax({
+            url: '@Url.Action("RemoveNotifyCounter","Home")',
+            type: 'POST',
+            success: function (data) {
+                $(document).bind('ajaxStart');
+            },
+            error: function () {
+                $(document).bind('ajaxStart');
+            }
+        });
+        });
+
+    </script>
     @RenderSection("js", required: false)
 }

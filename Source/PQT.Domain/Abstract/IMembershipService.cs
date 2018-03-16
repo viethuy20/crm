@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using PQT.Domain.Concrete;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
 
@@ -19,11 +20,16 @@ namespace PQT.Domain.Abstract
         bool DeleteUser(int id);
         IEnumerable<User> GetUsersInRole(params string[] roleName);
         IEnumerable<User> GetUsersContainsInRole(params string[] roleName);
-        IEnumerable<User> GetAllUserOfEmailTemplate(string type, string nameTemplate,EmailType emailType);
+        IEnumerable<User> GetAllUserOfEmailTemplate(string type, string nameTemplate, EmailType emailType);
 
         bool ReActiveUser(int id);
 
         IEnumerable<User> GetAllUserByEmail(string email);
         IEnumerable<User> GetAllSalesmans();
+
+        IEnumerable<UserNotification> GetAllUserNotifications(int userId, int page = 1, int pageSize = 10);
+        UserNotification CreateUserNotification(UserNotification notify);
+        bool UpdateUserNotification(UserNotification notify);
+        bool SeenUserNotification(int notifyId);
     }
 }

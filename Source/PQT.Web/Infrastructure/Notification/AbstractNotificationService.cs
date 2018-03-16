@@ -6,6 +6,7 @@ using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
 using NS.Mail;
+using PQT.Web.Hubs;
 
 namespace PQT.Web.Infrastructure.Notification
 {
@@ -47,6 +48,7 @@ namespace PQT.Web.Infrastructure.Notification
                     emailBccs.AddRange(emails);
                 }
 
+
                 SendEmail(emailTos.Select(m => m.Email).ToArray(),
                     emailCcs.Select(m => m.Email).ToArray(), emailBccs.ToArray(), subject,
                     message);
@@ -60,9 +62,9 @@ namespace PQT.Web.Infrastructure.Notification
 
         public abstract void NotifyAll(T entity);
 
-        public abstract void NotifyUser(User user, T entity = null);
+        public abstract void NotifyUser(User user, T entity);
 
-        public abstract void NotifyRole(Role role, T entity = null);
+        public abstract void NotifyRole(Role role, T entity);
 
         #endregion
     }

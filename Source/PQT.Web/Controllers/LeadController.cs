@@ -17,10 +17,12 @@ namespace PQT.Web.Controllers
         //
         // GET: /Lead/
         private readonly ILeadService _repo;
+        private readonly ICompanyRepository _companyRepo;
 
-        public LeadController(ILeadService repo)
+        public LeadController(ILeadService repo, ICompanyRepository companyRepo)
         {
             _repo = repo;
+            _companyRepo = companyRepo;
         }
         /// <summary>
         /// 
@@ -45,11 +47,47 @@ namespace PQT.Web.Controllers
             var model = new CallSheetModel(eventId);
             return PartialView(model);
         }
+        [HttpPost]
+        public ActionResult CallSheet(CallSheetModel model)
+        {
+            if (model.Lead.CompanyID == 0)
+            {
+                return Json(new { Code = 0, Message = "Please select company" });
+            }
+
+            if (model.TypeSubmit == "SaveCall")
+            {
+                if (model.Save())
+                {
+                    var callingModel = new CallingModel
+                    {
+                        Lead = model.Lead,
+                        PhoneCall = {LeadID = model.Lead.ID}
+                    };
+                    return PartialView("CallingForm", callingModel);
+                }
+                return Json(new { Code = 0, Message = "Save failed" });
+            }
+            if (model.Save())
+            {
+                return Json(new { Code = 1, Model = model.Lead });
+            }
+            return Json(new { Code = 0, Message = "Save failed" });
+        }
 
         public ActionResult CallingForm(int leadId)
         {
             var model = new CallingModel(leadId);
             return PartialView(model);
+        }
+        [HttpPost]
+        public ActionResult CallingForm(CallingModel model)
+        {
+            if (model.Save())
+            {
+                return Json(new { Code = 1 });
+            }
+            return Json(new { Code = 0, Message = "Save failed" });
         }
 
         [AjaxOnly]
@@ -98,11 +136,11 @@ namespace PQT.Web.Controllers
                     case "CreatedTime":
                         leads = leads.OrderBy(s => s.CreatedTime).ThenBy(s => s.ID);
                         break;
-                    case "CompanyName":
+                    case "Company":
                         leads = leads.OrderBy(s => s.Company.CompanyName).ThenBy(s => s.ID);
                         break;
-                    case "CountryName":
-                        leads = leads.OrderBy(s => s.Company.CountryName).ThenBy(s => s.ID);
+                    case "Country":
+                        leads = leads.OrderBy(s => s.Company.CountryCode).ThenBy(s => s.ID);
                         break;
                     case "ClientName":
                         leads = leads.OrderBy(s => s.ClientName).ThenBy(s => s.ID);
@@ -125,11 +163,11 @@ namespace PQT.Web.Controllers
                     case "CreatedTime":
                         leads = leads.OrderByDescending(s => s.CreatedTime).ThenBy(s => s.ID);
                         break;
-                    case "CompanyName":
+                    case "Company":
                         leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenBy(s => s.ID);
                         break;
-                    case "CountryName":
-                        leads = leads.OrderByDescending(s => s.Company.CountryName).ThenBy(s => s.ID);
+                    case "Country":
+                        leads = leads.OrderByDescending(s => s.Company.CountryCode).ThenBy(s => s.ID);
                         break;
                     case "ClientName":
                         leads = leads.OrderByDescending(s => s.ClientName).ThenBy(s => s.ID);
@@ -163,9 +201,9 @@ namespace PQT.Web.Controllers
                 {
                     m.ID,
                     m.EventID,
-                    CreateTime = m.CreatedTime.ToString("dd/MM/yyyy"),
-                    m.Company.CompanyName,
-                    m.Company.CountryName,
+                    CreatedTime = m.CreatedTime.ToString("dd/MM/yyyy"),
+                    Company = m.Company.CompanyName,
+                    Country = m.Company.CountryCode,
                     m.GeneralLine,
                     m.ClientName,
                     m.DirectLine,
@@ -224,10 +262,10 @@ namespace PQT.Web.Controllers
                     case "CreatedTime":
                         leads = leads.OrderBy(s => s.CreatedTime).ThenBy(s => s.ID);
                         break;
-                    case "CompanyName":
+                    case "Company":
                         leads = leads.OrderBy(s => s.Company.CompanyName).ThenBy(s => s.ID);
                         break;
-                    case "CountryName":
+                    case "Country":
                         leads = leads.OrderBy(s => s.Company.CountryCode).ThenBy(s => s.ID);
                         break;
                     case "ClientName":
@@ -237,7 +275,7 @@ namespace PQT.Web.Controllers
                         leads = leads.OrderBy(s => s.User.DisplayName).ThenBy(s => s.ID);
                         break;
                     case "StatusDisplay":
-                        leads = leads.OrderBy(s => s.LeadStatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
                     default:
                         leads = leads.OrderBy(s => s.ID);
@@ -251,10 +289,10 @@ namespace PQT.Web.Controllers
                     case "CreatedTime":
                         leads = leads.OrderByDescending(s => s.CreatedTime).ThenBy(s => s.ID);
                         break;
-                    case "CompanyName":
+                    case "Company":
                         leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenBy(s => s.ID);
                         break;
-                    case "CountryName":
+                    case "Country":
                         leads = leads.OrderByDescending(s => s.Company.CountryCode).ThenBy(s => s.ID);
                         break;
                     case "ClientName":
@@ -264,7 +302,7 @@ namespace PQT.Web.Controllers
                         leads = leads.OrderByDescending(s => s.User.DisplayName).ThenBy(s => s.ID);
                         break;
                     case "StatusDisplay":
-                        leads = leads.OrderByDescending(s => s.LeadStatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
                     default:
                         leads = leads.OrderByDescending(s => s.ID);
@@ -290,11 +328,11 @@ namespace PQT.Web.Controllers
                     m.ID,
                     m.EventID,
                     Salesman = m.User.DisplayName,
-                    CreateTime = m.DateCreatedDisplay,
-                    m.Company.CompanyName,
-                    CountryName = m.Company.CountryCode,
+                    CreatedTime = m.DateCreatedDisplay,
+                    Company = m.Company.CompanyName,
+                    Country = m.Company.CountryCode,
                     m.ClientName,
-                    StatusDisplay = m.LeadStatusDisplay
+                    StatusDisplay = m.StatusDisplay
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

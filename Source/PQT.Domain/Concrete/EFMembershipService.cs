@@ -31,9 +31,9 @@ namespace PQT.Domain.Concrete
         public IEnumerable<User> GetUsers()
         {
             return GetAll<User>(u => new
-                                     {
-                                         Roles = u.Roles.Select(r => r.Permissions),
-                                     })
+            {
+                Roles = u.Roles.Select(r => r.Permissions),
+            })
                 .OrderBy(u => u.DisplayName)
                 .AsEnumerable();
         }
@@ -49,29 +49,6 @@ namespace PQT.Domain.Concrete
 
         public bool UpdateUser(User userInfo)
         {
-            //var user = Get<User>(userInfo.ID);
-            //if (user == null) return false;
-
-            //user.DisplayName = userInfo.DisplayName;
-            //user.Email = userInfo.Email;
-            //user.Phone = userInfo.Phone;
-            //user.Picture = userInfo.Picture;
-            //user.BranchID = userInfo.BranchID;
-            //user.MobilePhone = userInfo.MobilePhone;
-            //user.Active = userInfo.Active;
-            //user.SalesmanType = userInfo.SalesmanType;
-            //user.IncentiveDate = userInfo.IncentiveDate;
-            ////user.Language = null;
-            ////user.LanguageID = userInfo.LanguageID;
-            //if (!string.IsNullOrEmpty(userInfo.Password))
-            //{
-            //    user.Password = EncryptHelper.EncryptPassword(userInfo.Password);
-            //}
-            //else
-            //{
-            //    DbPropertyEntry<User, string> property = _db.Entry(user).Property(u => u.Password);
-            //    property.CurrentValue = property.OriginalValue;
-            //}
             return Update(userInfo);
         }
 
@@ -208,7 +185,7 @@ namespace PQT.Domain.Concrete
                 }
                 else if (emailType == EmailType.Cc)
                 {
-                    if (emailSetting.EmailCc==null)
+                    if (emailSetting.EmailCc == null)
                     {
                         return usersResult;
                     }
@@ -276,8 +253,26 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<User> GetAllSalesmans()
         {
-            return GetAll<User>().AsEnumerable().Where(u => u.Roles.Any(r => r.RoleLevel==RoleLevel.SalesLevel ));
+            return GetAll<User>().AsEnumerable().Where(u => u.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel));
         }
 
+        public IEnumerable<UserNotification> GetAllUserNotifications(int userId,int page = 1, int pageSize = 10)
+        {
+            return GetAll<UserNotification>(m => m.UserID == userId).ToList().Skip((page - 1) * pageSize).Take(pageSize);
+        }
+        public UserNotification CreateUserNotification(UserNotification notify)
+        {
+            return Create(notify);
+        }
+        public bool UpdateUserNotification(UserNotification notify)
+        {
+            return Update(notify);
+        }
+        public bool SeenUserNotification(int notifyId)
+        {
+            var notify = Get<UserNotification>(notifyId);
+            notify.Seen = true;
+            return Update(notify);
+        }
     }
 }

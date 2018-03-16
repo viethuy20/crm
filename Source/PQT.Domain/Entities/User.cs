@@ -29,6 +29,8 @@ namespace PQT.Domain.Entities
         public int? TransferUserID { get; set; }
         [ForeignKey("TransferUserID")]
         public virtual User TransferUser { get; set; }
+
+        public int NotifyNumber { get; set; }
         #endregion
 
         #region Navigation properties

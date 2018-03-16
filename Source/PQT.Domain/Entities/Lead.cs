@@ -37,7 +37,7 @@ namespace PQT.Domain.Entities
         {
             get
             {
-                if (Company!=null)
+                if (Company != null)
                 {
                     return Company.CompanyName;
                 }
@@ -50,7 +50,7 @@ namespace PQT.Domain.Entities
             get
             {
                 var call = PhoneCalls.LastOrDefault();
-                if (call != null && call.CallBackDate!=null)
+                if (call != null && call.CallBackDate != null)
                 {
                     return Convert.ToDateTime(call.CallBackDate);
                 }
@@ -58,7 +58,7 @@ namespace PQT.Domain.Entities
             }
         }
 
-        public string LeadStatusDisplay
+        public string StatusDisplay
         {
             get
             {
@@ -78,6 +78,30 @@ namespace PQT.Domain.Entities
                     return LeadStatusRecord.UpdatedTime.ToString("dd/MM/yyyy");
                 }
                 return CreatedTime.ToString("dd/MM/yyyy");
+            }
+        }
+
+        public int StatusCode
+        {
+            get
+            {
+                if (LeadStatusRecord != null)
+                {
+                    return Convert.ToInt32(LeadStatusRecord.Status.Value);
+                }
+                return 0;
+            }
+        }
+        public string EventColor
+        {
+            get
+            {
+                if (Event != null)
+                {
+                    return Event.BackgroundColor;
+                }
+
+                return "#0aa89e";
             }
         }
     }

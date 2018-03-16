@@ -178,6 +178,7 @@ namespace PQT.Seed
     {
         Func<string, Role> getRoleByName =
             roleName => db.Roles.FirstOrDefault(r => r.Name == roleName);
+        Menu m10 = db.MenuItems.Add(new Menu { Title = "Events", Url = "/Event/Index", Icon = "md md-event" });
         Menu m11 = db.MenuItems.Add(new Menu { Title = "Users", Icon = "fa fa-users" });
         Menu m13 = db.MenuItems.Add(new Menu { Title = "System Settings", Icon = "fa fa-cogs" });
         Menu m12 = db.MenuItems.Add(new Menu { Title = "Master Files", Icon = "fa fa-cubes" });

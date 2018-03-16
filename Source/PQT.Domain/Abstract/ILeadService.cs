@@ -14,5 +14,8 @@ namespace PQT.Domain.Abstract
         Lead CreateLead(Lead info);
         bool UpdateLead(Lead info);
         bool DeleteLead(int id);
+
+
+        PhoneCall CreatePhoneCall(PhoneCall info);
     }
 }

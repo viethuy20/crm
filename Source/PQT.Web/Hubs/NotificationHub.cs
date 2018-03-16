@@ -54,7 +54,7 @@ namespace PQT.Web.Hubs
 
         private void AddConnectionIntoGroups()
         {
-            User user = MembershipService.GetUserByName(Context.User.Identity.Name);
+            User user = MembershipService.GetUserByEmail(Context.User.Identity.Name);
             if (user != null)
             {
                 // add connection to group by role
@@ -68,7 +68,7 @@ namespace PQT.Web.Hubs
 
         private void RemoveConnectionFromGroups()
         {
-            User user = MembershipService.GetUserByName(Context.User.Identity.Name);
+            User user = MembershipService.GetUserByEmail(Context.User.Identity.Name);
             if (user != null)
             {
                 foreach (Role role in user.Roles)
@@ -86,6 +86,11 @@ namespace PQT.Web.Hubs
         {
             IHubContext context = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
             context.Clients.All.notify(message, dataType);
+        }
+
+        public static void Notify(UserNotification notify)
+        {
+            Notify(Json.Encode(notify), GetEntityName(notify));
         }
 
 

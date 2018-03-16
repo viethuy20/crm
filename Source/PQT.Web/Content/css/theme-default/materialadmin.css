@@ -9584,3 +9584,24 @@ li.L8 {
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-timing-function: linear;
 }
+
+
+#dvLoading {
+    background: rgba(0,0,0,0.5) url(/Content/img/ajax-loading.svg) no-repeat center center;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999999999999;
+}
+
+#dvLoading1 {
+    background: rgba(0, 0, 0, 0.5) url(/Content/img/ajax-loading.svg) no-repeat center center;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999999999999;
+}

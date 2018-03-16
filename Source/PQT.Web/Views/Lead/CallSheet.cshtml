@@ -4,54 +4,96 @@
 @{
 }
 <div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
-    <div class="card-head">
-        <header><b>Call Sheet</b></header>
-    </div><!--end .card-head -->
+    <div class="leadcontent">
+        <div class="card-head">
+            <header><b>Call Sheet</b></header>
+        </div><!--end .card-head -->
+        @using (Ajax.BeginForm("CallSheet", "routeValues", new AjaxOptions { OnFailure = "onFailCallSheet", OnSuccess = "onSuccessCallSheet" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
+        {
+            <div class="card-body">
+                @Html.HiddenFor(m => m.Lead.ID)
+                @Html.HiddenFor(m => m.Lead.EventID)
+                @Html.HiddenFor(m => m.Lead.UserID)
+                @Html.HiddenFor(m => m.TypeSubmit, new { @class = "typeSubmit" })
+                <div class="form-group">
+                    <select class="form-control select2-list" name="@Html.NameFor(m => m.Lead.CompanyID)">
+                        <option value=""></option>
+                        @foreach (var user in Model.Companies)
+                        {
+                            <option value="@user.ID" selected="@(Model.Lead.CompanyID == user.ID)">@user.CompanyName</option>
+                        }
+                    </select>
+                    <label>COMPANY NAME</label>
+                </div>
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Lead.GeneralLine).Class("form-control code").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Lead.GeneralLine).LabelText("GENERAL LINE").ShowRequiredStar(true)
+                </div>
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Lead.ClientName).Class("form-control code").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Lead.ClientName).LabelText("CLIENT NAME/ JOB TITLE").ShowRequiredStar(true)
+                </div>
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Lead.DirectLine).Class("form-control code").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Lead.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER").ShowRequiredStar(true)
+                </div>
 
-    @using (Ajax.BeginForm("CallSheet", "routeValues", new AjaxOptions { OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
-    {
-        <div class="card-body">
-            <div class="success hide">
-                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Success).Closeable()))
-                {
-                    @Html.Bootstrap().Label("success").HtmlAttributes(new { @class = "textsuccess" }).LabelText(Resource.SaveSuccessful)
-                }
+            </div><!--end .card-body -->
+            <div class="card-actionbar">
+                <div class="card-actionbar-row">
+                    <a href="#" class="btn btn-default pull-left" id="leadsave_exist"><i class="md md-done"></i> Save & Exit</a>
+                    <a href="#" class="btn btn-success" id="leadsave_call"><i class="md md-phone"></i> Save & Call</a>
+                </div>
             </div>
-            <div class="error hide alert-danger">
-                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Error).Closeable()))
-                {
-                    @Html.Bootstrap().Label("error").HtmlAttributes(new { @class = "texterror" }).LabelText(Resource.SaveFailed)
-                }
-            </div>
-            @Html.HiddenFor(m => m.Lead.ID)
-            <div class="form-group">
-                <select multiple class="form-control select2-list" name="@Html.NameFor(m=>m.Lead.CompanyID)">
-                    @foreach (var user in Model.Companies)
-                    {
-                        <option value="@user.ID" selected="@(Model.Lead.CompanyID == user.ID)">@user.CompanyName</option>
-                    }
-                </select>
-                <label>COMPANY NAME</label>
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Lead.GeneralLine).Class("form-control code").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Lead.GeneralLine).LabelText("GENERAL LINE").ShowRequiredStar(true)
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Lead.ClientName).Class("form-control code").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Lead.ClientName).LabelText("CLIENT NAME/ JOB TITLE").ShowRequiredStar(true)
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Lead.DirectLine).Class("form-control code").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Lead.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER").ShowRequiredStar(true)
-            </div>
-            
-        </div><!--end .card-body -->
-        <div class="card-actionbar">
-            <div class="card-actionbar-row">
-                <a href="javascript:void(0);" class="btn btn-default pull-left"><i class="md md-done"></i> Save & Exit</a>
-                <a href="@Url.Action("CallingForm",new{leadId=Model.Lead.ID})" class="btn btn-success simple-ajax-popup-align-top"><i class="md md-phone"></i> Save & Call</a>
-            </div>
-        </div>
-    }
+        }
+    </div>
 </div><!--end .card -->
+<text>
+    <script>
+
+        function onFailCallSheet() {
+            toastr.error('@Resource.SaveError', '');
+        }
+        function onSuccessCallSheet(data) {
+            if (data.Code == 0) {
+                if (data.Message)
+                    toastr.error(data.Message, '');
+                else
+                    toastr.error('@Resource.SaveFailed', '');
+            } else {
+                if (data.Code == 1) {
+                    toastr.success('@Resource.UpdateSuccessful', '');
+                    $.magnificPopup.close();
+                    oTable.fnFilter('');
+                }
+                if (data) {
+                    $(".leadcontent").html(data);
+
+
+                    $('.mfp-container .date-picker,.mfp-container .datepicker').datepicker({
+                        autoclose: true,
+                        todayHighlight: true,
+                        format: 'dd/mm/yyyy'
+                    }).on('changeDate', function (ev) {
+                        $(this).datepicker('hide');
+                        });
+
+                    $("form").removeData("validator");
+                    $("form").removeData("unobtrusiveValidation");
+                    $.validator.unobtrusive.parse("form");
+                }
+
+            }
+        }
+        $(document).on('click', '#leadsave_exist', function (e) {
+            e.preventDefault();
+            $(".typeSubmit").val("SaveExist");
+            $(this).parents("form").submit();
+        });
+        $(document).on('click', '#leadsave_call', function (e) {
+            e.preventDefault();
+            $(".typeSubmit").val("SaveCall");
+            $(this).parents("form").submit();
+        });
+    </script>
+</text>

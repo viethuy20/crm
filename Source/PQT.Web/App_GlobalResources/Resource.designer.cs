@@ -376,7 +376,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AddSuccessful.
+        ///   Looks up a localized string similar to Add Successful.
         /// </summary>
         internal static string AddSuccessful {
             get {

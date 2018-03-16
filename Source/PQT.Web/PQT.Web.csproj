@@ -130,19 +130,19 @@
     <Reference Include="MarkdownSharp">
       <HintPath>..\packages\MarkdownSharp.1.13.0.0\lib\35\MarkdownSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.Core">
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.1.1.3\lib\net40\Microsoft.AspNet.SignalR.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Owin">
       <HintPath>..\packages\Microsoft.AspNet.SignalR.Owin.1.1.3\lib\net40\Microsoft.AspNet.SignalR.Owin.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb">
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.1.1.3\lib\net40\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp">
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Owin.Host.SystemWeb">
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.1.0.1\lib\net40\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure">
@@ -369,6 +369,8 @@
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Infrastructure\Helpers\ImageHelper.cs" />
+    <Compile Include="Infrastructure\Notification\LeadNotificationService.cs" />
+    <Compile Include="Infrastructure\Notification\LeadNotificator.cs" />
     <Compile Include="Infrastructure\Utility\PhotoUpload.cs" />
     <Compile Include="Models\AjaxResult.cs" />
     <Compile Include="Models\EmailSettingModel.cs" />
@@ -517,6 +519,7 @@
     <Content Include="Content\css\theme-default\libs\select2\select2.css" />
     <Content Include="Content\css\theme-default\libs\summernote\summernote.css" />
     <Content Include="Content\css\theme-default\libs\toastr\toastr.css" />
+    <Content Include="Content\css\theme-default\libs\toastr\toastr.min.css" />
     <Content Include="Content\css\theme-default\libs\typeahead\typeahead.css" />
     <Content Include="Content\css\theme-default\libs\wizard\wizard.css" />
     <Content Include="Content\css\theme-default\material-design-iconic-font.css" />
@@ -1840,6 +1843,8 @@
     <Content Include="Content\fonts\linea-basic-10.ttf" />
     <Content Include="Content\fonts\linea-basic-10.woff" />
     <Content Include="Content\EmailTemplates\Logs\Exception.html.cshtml" />
+    <Content Include="Scripts\jquery.signalR-1.1.3.js" />
+    <Content Include="Scripts\jquery.signalR-1.1.3.min.js" />
     <Content Include="Views\Country\Index.cshtml" />
     <Content Include="Views\Country\CreateOrEdit.cshtml" />
     <Content Include="Views\Company\CreateOrEdit.cshtml" />
@@ -2188,8 +2193,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Content Include="Scripts\jquery.signalR-1.1.3.js" />
-    <Content Include="Scripts\jquery.signalR-1.1.3.min.js" />
     <Content Include="Scripts\jQuery.tmpl.js" />
     <Content Include="Scripts\jQuery.tmpl.min.js" />
     <Content Include="Scripts\jquery.uploadify.js" />
@@ -2245,6 +2248,8 @@
     <Content Include="Views\Lead\Index.cshtml" />
     <Content Include="Views\Lead\CallSheet.cshtml" />
     <Content Include="Views\Lead\CallingForm.cshtml" />
+    <Content Include="Views\Home\FlyerTrigger.cshtml" />
+    <Content Include="Views\Shared\_Notification.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

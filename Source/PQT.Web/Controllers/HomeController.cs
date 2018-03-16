@@ -34,17 +34,47 @@ namespace PQT.Web.Controllers
 
     public class HomeController : Controller
     {
-        private readonly IUnitRepository _unitRepository;
+        private readonly IMembershipService _memRepository;
 
-        public HomeController(IUnitRepository unitRepository)
+        public HomeController(IMembershipService memRepository)
         {
-            _unitRepository = unitRepository;
+            _memRepository = memRepository;
         }
 
         public ActionResult Index()
         {
             var model = new BrowseModel();
             return View(model);
+        }
+
+
+        [AjaxOnly]
+        public ActionResult FlyerTrigger()
+        {
+            var notify = new List<UserNotification>();
+            if (CurrentUser.Identity != null)
+            {
+                notify = _memRepository.GetAllUserNotifications(CurrentUser.Identity.ID).OrderByDescending(m=>m.CreatedTime).ToList();
+            }
+            return PartialView(notify);
+        }
+
+        [AjaxOnly]
+        public ActionResult RemoveNotifyCounter()
+        {
+            if (CurrentUser.Identity != null)
+            {
+                CurrentUser.Identity.NotifyNumber = 0;
+                _memRepository.UpdateUser(CurrentUser.Identity);
+            }
+            return Json(true);
+        }
+
+        [AjaxOnly]
+        public ActionResult SeenNotify(int notifyId)
+        {
+            _memRepository.SeenUserNotification(notifyId);
+            return Json(true);
         }
     }
 }

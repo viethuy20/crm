@@ -30,7 +30,7 @@ namespace PQT.Web
                 , "~/Content/js/libs/croppie/croppie.css"
                 , "~/Content/css/theme-default/libs/rickshaw/rickshaw.css"
                 , "~/Content/css/theme-default/libs/morris/morris.core.css"
-                , "~/Content/css/theme-default/libs/toastr/toastr.css"
+                , "~/Content/css/theme-default/libs/toastr/toastr.min.css"
                 ));
             bundles.Add(new JsBundle("~/content/js/min").Include(
 
@@ -62,7 +62,7 @@ namespace PQT.Web
                 , "~/Content/js/libs/d3/d3.min.js"
                 , "~/Content/js/libs/d3/d3.v3.js"
                 , "~/Content/js/libs/rickshaw/rickshaw.min.js"
-                , "~/Content/js/libs/toastr/toastr.js"
+                , "~/Content/js/libs/toastr/toastr.min.js"
                 , "~/Content/js/core/source/App.js"
                 , "~/Content/js/core/source/AppNavigation.js"
                 , "~/Content/js/core/source/AppOffcanvas.js"
@@ -85,6 +85,7 @@ namespace PQT.Web
                 , "~/Scripts/jquery.validate.js"
                 , "~/Scripts/jquery.validate.unobtrusive.js"
                 , "~/Scripts/jquery.unobtrusive-ajax.js"
+                , "~/Scripts/jquery.signalR-{version}.js"
                 , "~/Content/js/cldrjs-0.4.4/dist/cldr.js"
                 , "~/Content/js/cldrjs-0.4.4/dist/cldr/event.js"
                 , "~/Content/js/cldrjs-0.4.4/dist/cldr/supplemental.js"

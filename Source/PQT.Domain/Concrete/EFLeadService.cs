@@ -17,16 +17,16 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<Lead> GetAllLeads()
         {
-            return GetAll<Lead>().AsEnumerable();
+            return GetAll<Lead>(m => m.Event).AsEnumerable();
         }
         public IEnumerable<Lead> GetAllLeads(Func<Lead, bool> predicate)
         {
-            return GetAll(predicate).AsEnumerable();
+            return GetAll(predicate, m => m.Event).AsEnumerable();
         }
 
         public Lead GetLead(int id)
         {
-            return Get<Lead>(id);
+            return Get<Lead>(m => m.ID == id, m => m.Event, m => m.Company);
         }
 
         public Lead CreateLead(Lead info)
@@ -42,6 +42,10 @@ namespace PQT.Domain.Concrete
         public bool DeleteLead(int id)
         {
             return Delete<Lead>(id);
+        }
+        public PhoneCall CreatePhoneCall(PhoneCall info)
+        {
+            return Create(info);
         }
     }
 }

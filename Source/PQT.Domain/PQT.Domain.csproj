@@ -214,12 +214,14 @@
     <Compile Include="Entities\User.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\UserNotification.cs" />
     <Compile Include="Entity.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="EntityBase.cs" />
     <Compile Include="Enum\EmailType.cs" />
     <Compile Include="Enum\LeadStatus.cs" />
+    <Compile Include="Enum\NotifyType.cs" />
     <Compile Include="Enum\ReservationStatus.cs" />
     <Compile Include="Enum\RoleLevel.cs">
       <SubType>Code</SubType>
