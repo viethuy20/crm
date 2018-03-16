@@ -10,7 +10,7 @@ namespace PQT.Domain.Entities
     {
         public Reservation()
         {
-            ProjectSessions = new HashSet<ProjectSession>();
+            ProjectSessions = new HashSet<EventSession>();
         }
         public DateTime ReservationDate { get; set; }
         public int? ReservationStatusID { get; set; }
@@ -20,6 +20,6 @@ namespace PQT.Domain.Entities
         [ForeignKey("LeadID")]
         public virtual Lead Lead { get; set; }
 
-        public virtual ICollection<ProjectSession> ProjectSessions { get; set; }
+        public virtual ICollection<EventSession> ProjectSessions { get; set; }
     }
 }

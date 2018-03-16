@@ -10,6 +10,7 @@ namespace PQT.Domain.Abstract
     {
         #region FinanceCompany
         IEnumerable<Company> GetAllCompanies();
+        IEnumerable<Company> GetAllCompanies(Func<Company, bool> predicate);
         Company GetCompany(int companyID);
         Company CreateCompany(Company company);
         bool UpdateCompany(Company company);

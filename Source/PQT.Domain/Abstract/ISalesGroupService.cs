@@ -14,5 +14,6 @@ namespace PQT.Domain.Abstract
         SalesGroup CreateSalesGroup(SalesGroup info, IEnumerable<int> users);
         SalesGroup UpdateSalesGroup(int id, string groupName, IEnumerable<int> users);
         bool DeleteSalesGroup(int id);
+        IEnumerable<User> GetAllSalesmans();
     }
 }

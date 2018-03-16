@@ -27,7 +27,49 @@ namespace PQT.Web.Controllers
             var models = _repo.GetAllTrainers();
             return View(models);
         }
+        public ActionResult Create()
+        {
+            var model = new TrainerModel{};
+            return View(model);
+        }
 
+        [HttpPost]
+        public ActionResult Create(TrainerModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (model.Create())
+                {
+                    TempData["message"] = "Created successful";
+                    return RedirectToAction("Index");
+                }
+            }
+            return View(model);
+        }
+
+
+        public ActionResult Edit(int id)
+        {
+            var model = new TrainerModel
+            {
+                Trainer = _repo.GetTrainer(id),
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(TrainerModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (model.Update())
+                {
+                    TempData["message"] = "Updated successful";
+                    return RedirectToAction("Index");
+                }
+            }
+            return View(model);
+        }
         public ActionResult Delete(int id)
         {
             if (_repo.DeleteTrainer(id))

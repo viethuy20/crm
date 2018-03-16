@@ -1,0 +1,111 @@
+﻿@using Resources
+@model PQT.Web.Models.CallingModel
+
+@{
+}
+<div class="card card-underline" style="background: white; margin: auto; max-width: 800px; position: relative;">
+    <div class="card-head">
+        <header><b>Calling Form</b></header>
+    </div><!--end .card-head -->
+
+    @using (Ajax.BeginForm("CallingForm", "routeValues", new AjaxOptions { OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
+    {
+        <div class="card-body text-center" style="height: 150px;padding: 30px;">
+            <div class="call-animation">
+                <i class="md md-phone-in-talk"></i>
+            </div>
+            <div class="row text-center" style="margin-top: 20px;font-size: 26px;">
+                <span id="call-tick">00:00</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="success hide">
+                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Success).Closeable()))
+                {
+                    @Html.Bootstrap().Label("success").HtmlAttributes(new { @class = "textsuccess" }).LabelText(Resource.SaveSuccessful)
+                }
+            </div>
+            <div class="error hide alert-danger">
+                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Error).Closeable()))
+                {
+                    @Html.Bootstrap().Label("error").HtmlAttributes(new { @class = "texterror" }).LabelText(Resource.SaveFailed)
+                }
+            </div>
+            @Html.HiddenFor(m => m.LeadID)
+            @Html.HiddenFor(m => m.PhoneCall.StartTime)
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.CompanyName).LabelText("COMPANY NAME")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.GeneralLine).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.GeneralLine).LabelText("GENERAL LINE")
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.ClientName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.ClientName).LabelText("CLIENT NAME/ JOB TITLE")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.DirectLine).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER")
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextAreaFor(m => m.PhoneCall.Remark).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.PhoneCall.Remark).LabelText("HIGHLIGHTS").ShowRequiredStar(true)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.DatePickerFor(m => m.PhoneCall.CallBackDate, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.PhoneCall.CallBackDate)
+                        @Html.Bootstrap().LabelFor(m => m.PhoneCall.CallBackDate).LabelText("CALL BACK DATE")
+                    </div>
+                </div>
+            </div>
+        </div><!--end .card-body -->
+        <div class="card-actionbar">
+            <div class="card-actionbar-row">
+                <button type="button" class="btn btn-default pull-left"><i class="md md-call-end"></i> End Call & Save</button>
+                <button type="button" class="btn btn-primary"><i class="md md-call-end"></i> End Call & Book</button>
+                <button type="button" class="btn btn-success"><i class="md md-call-end"></i> End Call & Request To NCL</button>
+            </div>
+        </div>
+    }
+</div><!--end .card -->
+<text>
+    <script>
+        function precisionRound(number, precision) {
+            var factor = Math.pow(10, precision);
+            return Math.round(number * factor) / factor;
+        }
+        var startTime = new Date();
+        function tickTime() {
+            var seconds = precisionRound((new Date() - startTime) / 1000, 0);
+            var m = Math.floor(seconds / 60);
+            var s = seconds - m * 60;
+            m = checkTime(m);
+            s = checkTime(s);
+            document.getElementById('call-tick').innerHTML = m + ":" + s;
+            var t = setTimeout(tickTime, 500);
+        }
+        function checkTime(i) {
+            if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
+            return i;
+        }
+        tickTime();
+    </script>
+</text>

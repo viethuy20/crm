@@ -1,0 +1,61 @@
+﻿@using NS.Entity
+@using Resources
+@model PQT.Domain.Entities.Event
+
+<section class="panel panel-default" style="min-height: calc(100vh - 150px);">
+    <h3 class="tilte_l">
+        @Resource.Detail
+    </h3>
+    <div>
+        @Html.Bootstrap().ActionLinkButton("Back to list", "Index").PrependIcon(Icons.arrow_left)
+    </div>
+    <br />
+
+    <div class="form-horizontal">
+        <div>
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label class="col-sm-3 control-label">@Resource.Name</label>
+                    <div class="col-sm-9">
+                        <div class="form-control" readonly="readonly">
+                            @Model.EventName
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-striped" id="table">
+            <thead>
+                <tr>
+                    <th>Session Title</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Trainer Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var item in Model.EventSessions)
+                    {
+                        <tr>
+                            <td>
+                                @item.SessionTitle
+                            </td>
+                            <td>
+                                @item.StartDate
+                            </td>
+                            <td>
+                                @item.EndDate
+                            </td>
+                            <td>
+                                @item.TrainerName
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+    </div>
+</section>

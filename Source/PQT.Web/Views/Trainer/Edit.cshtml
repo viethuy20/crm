@@ -1,0 +1,36 @@
+@using Resources
+@model PQT.Web.Models.TrainerModel
+@{
+    ViewBag.Title = "Edit Trainer";
+}
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="card">
+        @using (Html.BeginForm("Edit", "Trainer", null, FormMethod.Post, new { enctype = "multipart / form-data", @class = "form form-validate floating-label" }))
+        {
+            <div class="card-body">
+                @Html.HiddenFor(m => m.Trainer.ID)
+                @Html.Partial("_CreateOrEdit", Model)
+                <div class="row">
+                    <div class="form-group  col-md-offset-2">
+                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon(Icons.arrow_left)
+                        @Html.Bootstrap().SubmitButton().Id("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+@Html.Script(
+    @<script>
+        $("#submitbutton").on('click', function (e) {
+            e.preventDefault();
+            bootbox.confirm('@Resource.ConfirmSave', function (isOK) {
+                if (isOK) {
+                    $('#submitbutton').parents("form").submit();
+                }
+            });
+        });
+    </script>)

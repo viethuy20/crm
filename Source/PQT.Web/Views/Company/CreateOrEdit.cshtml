@@ -35,8 +35,8 @@
                 @Html.Bootstrap().LabelFor(m => m.CountryID).LabelText("Country").ShowRequiredStar(true)
             </div>
             <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Name).Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Name).LabelText("Name").ShowRequiredStar(true)
+                @Html.Bootstrap().TextBoxFor(m => m.CompanyName).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.CompanyName).LabelText("Name").ShowRequiredStar(true)
             </div>
             <div class="form-group">
                 @Html.Bootstrap().TextAreaFor(m => m.ProductOrService).Class("form-control").ShowValidationMessage(true)
@@ -70,12 +70,14 @@
                 @Html.Bootstrap().TextBoxFor(m => m.PersonalContact).Class("form-control").ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.PersonalContact).LabelText("Personal Contact")
             </div>
-            <div class="form-group">
-                <div class="pull-right">
-                    @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
-                    @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("submitbutton").PrependIcon("md md-done").Style(ButtonStyle.Success)
-                </div>
-            </div>
+
         </div><!--end .card-body -->
+
+        <div class="card-actionbar">
+            <div class="card-actionbar-row">
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("submitbutton").PrependIcon("md md-done").Style(ButtonStyle.Success)
+            </div>
+        </div>
     }
 </div><!--end .card -->

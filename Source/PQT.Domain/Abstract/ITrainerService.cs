@@ -12,6 +12,7 @@ namespace PQT.Domain.Abstract
         IEnumerable<Trainer> GetAllTrainers();
         Trainer GetTrainer(int id);
         Trainer CreateTrainer(Trainer info);
+        bool UpdateTrainerIncludeUpdateCollection(Trainer info);
         bool UpdateTrainer(Trainer info);
         bool DeleteTrainer(int id);
     }

@@ -29,6 +29,7 @@
     <SkipPostSharp>True</SkipPostSharp>
     <DontImportPostSharp>True</DontImportPostSharp>
     <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <Target Name="CustomCollectFiles">
     <ItemGroup>
@@ -358,7 +359,9 @@
     <Compile Include="Controllers\AuditController.cs" />
     <Compile Include="Controllers\EmailSettingController.cs" />
     <Compile Include="Controllers\ExportToPdfController.cs" />
+    <Compile Include="Controllers\LeadController.cs" />
     <Compile Include="Controllers\MenusController.cs" />
+    <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\TrainerController.cs" />
@@ -366,11 +369,16 @@
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Infrastructure\Helpers\ImageHelper.cs" />
+    <Compile Include="Infrastructure\Utility\PhotoUpload.cs" />
     <Compile Include="Models\AjaxResult.cs" />
     <Compile Include="Models\EmailSettingModel.cs" />
+    <Compile Include="Models\EventModelView.cs" />
     <Compile Include="Models\HomeSearchModel.cs" />
+    <Compile Include="Models\LeadModel.cs" />
+    <Compile Include="Models\LeadModelView.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\MenuModel.cs" />
+    <Compile Include="Models\EventModel.cs" />
     <Compile Include="Models\RoleModel.cs" />
     <Compile Include="Models\SalesGroupModel.cs" />
     <Compile Include="Models\SettingModel.cs" />
@@ -440,6 +448,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Validation\LeadValidator.cs" />
+    <Compile Include="Validation\TrainerValidator.cs" />
+    <Compile Include="Validation\EventValidator.cs" />
     <Compile Include="Validation\CompanyValidator.cs" />
     <Compile Include="Validation\CountryValidator.cs" />
     <Compile Include="Validation\MenuValidator.cs" />
@@ -2219,6 +2230,21 @@
     <Content Include="Views\Menus\CreateOrEdit.cshtml" />
     <Content Include="Views\SalesGroup\Index.cshtml" />
     <Content Include="Views\SalesGroup\CreateOrEdit.cshtml" />
+    <Content Include="Views\Trainer\Index.cshtml" />
+    <Content Include="Views\Trainer\Create.cshtml" />
+    <Content Include="Views\Trainer\Details.cshtml" />
+    <Content Include="Views\Trainer\Edit.cshtml" />
+    <Content Include="Views\Trainer\_CreateOrEdit.cshtml" />
+    <Content Include="Views\Trainer\EditorTemplates\TrainerBank.cshtml" />
+    <Content Include="Views\Event\Index.cshtml" />
+    <Content Include="Views\Event\_CreateOrEdit.cshtml" />
+    <Content Include="Views\Event\Create.cshtml" />
+    <Content Include="Views\Event\Details.cshtml" />
+    <Content Include="Views\Event\Edit.cshtml" />
+    <Content Include="Views\Event\EditorTemplates\EventSession.cshtml" />
+    <Content Include="Views\Lead\Index.cshtml" />
+    <Content Include="Views\Lead\CallSheet.cshtml" />
+    <Content Include="Views\Lead\CallingForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

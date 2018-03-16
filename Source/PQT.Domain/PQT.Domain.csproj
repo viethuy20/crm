@@ -150,7 +150,7 @@
     <Compile Include="Abstract\IMembershipService.cs" />
     <Compile Include="Abstract\IMenuRepository.cs" />
     <Compile Include="Abstract\INotificationService.cs" />
-    <Compile Include="Abstract\IProjectService.cs" />
+    <Compile Include="Abstract\IEventService.cs" />
     <Compile Include="Abstract\IRoleService.cs" />
     <Compile Include="Abstract\ISalesGroupService.cs" />
     <Compile Include="Abstract\ISettingsRepository.cs" />
@@ -165,7 +165,7 @@
     <Compile Include="Concrete\EFLeadService.cs" />
     <Compile Include="Concrete\EFMembershipService.cs" />
     <Compile Include="Concrete\EFMenuRepository.cs" />
-    <Compile Include="Concrete\EFProjectService.cs" />
+    <Compile Include="Concrete\EFEventService.cs" />
     <Compile Include="Concrete\EFRoleBasedAuthorizer.cs" />
     <Compile Include="Concrete\EFSalesGroupService.cs" />
     <Compile Include="Concrete\EFSettingRepository.cs" />
@@ -189,14 +189,14 @@
     <Compile Include="Entities\Lead.cs" />
     <Compile Include="Entities\LeadStatusRecord.cs" />
     <Compile Include="Entities\PhoneCall.cs" />
-    <Compile Include="Entities\ProjectSession.cs" />
+    <Compile Include="Entities\EventSession.cs" />
     <Compile Include="Entities\Menu.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Entities\Permission.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Entities\ProjectEvent.cs" />
+    <Compile Include="Entities\Event.cs" />
     <Compile Include="Entities\Reservation.cs" />
     <Compile Include="Entities\ReservationStatusRecord.cs" />
     <Compile Include="Entities\Role.cs">

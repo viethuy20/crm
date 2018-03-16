@@ -30,7 +30,7 @@ namespace PQT.Domain.Concrete
             return Create(info);
         }
 
-        public bool UpdateTrainer(Trainer info)
+        public bool UpdateTrainerIncludeUpdateCollection(Trainer info)
         {
             return TransactionWrapper.Do(() =>
             {
@@ -40,6 +40,7 @@ namespace PQT.Domain.Concrete
                 {
                     foreach (var photo in itemExist.TrainerBanks.Where(m => !info.TrainerBanks.Select(n => n.ID).Contains(m.ID)).ToList())
                     {
+                        itemExist.TrainerBanks.Remove(photo);
                         Delete(photo);
                     }
                     UpdateCollection(info, m => m.ID == info.ID, m => m.TrainerBanks, m => m.ID);
@@ -47,11 +48,17 @@ namespace PQT.Domain.Concrete
                 else if (itemExist.TrainerBanks != null)
                     foreach (var photo in itemExist.TrainerBanks.ToList())
                     {
+                        itemExist.TrainerBanks.Remove(photo);
                         Delete(photo);
                     }
                 Update(itemExist);
                 return true;
             });
+        }
+
+        public bool UpdateTrainer(Trainer info)
+        {
+            return Update(info);
         }
 
         public bool DeleteTrainer(int id)

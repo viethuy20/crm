@@ -36,7 +36,7 @@
                         {
                             <tr data-id="@item.ID">
                                 <td>@item.CountryName</td>
-                                <td>@item.Name</td>
+                                <td>@item.CompanyName</td>
                                 <td>@item.ProductOrService</td>
                                 <td>@item.Sector</td>
                                 <td>@item.Industry</td>
@@ -114,6 +114,8 @@
                     $(".texterror").text('@Resource.SaveError');
                 if (data.Code == 5)
                     $(".texterror").text("@Resource.DataInvalid");
+                if (data.Code == 6)
+                    $(".texterror").text(data.error);
                 $(".error").removeClass('hide');
             }
         }

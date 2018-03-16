@@ -19,6 +19,10 @@ namespace PQT.Domain.Concrete
         {
             return GetAll<Lead>().AsEnumerable();
         }
+        public IEnumerable<Lead> GetAllLeads(Func<Lead, bool> predicate)
+        {
+            return GetAll(predicate).AsEnumerable();
+        }
 
         public Lead GetLead(int id)
         {

@@ -19,7 +19,12 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<Company> GetAllCompanies()
         {
-            return GetAll<Company>();
+            return GetAll<Company>(m=>m.Country).AsEnumerable();
+        }
+
+        public IEnumerable<Company> GetAllCompanies(Func<Company, bool> predicate)
+        {
+            return GetAll(predicate).AsEnumerable();
         }
 
         public Company GetCompany(int companyID)

@@ -1,0 +1,123 @@
+﻿@using NS.Entity
+@using Resources
+@model PQT.Domain.Entities.Trainer
+
+<section class="panel panel-default" style="min-height: calc(100vh - 150px);">
+    <h3 class="tilte_l">
+        @Resource.Detail
+    </h3>
+    <div>
+        @Html.Bootstrap().ActionLinkButton("Back to list", "Index").PrependIcon(Icons.arrow_left)
+    </div>
+    <br />
+
+    <div class="form-horizontal">
+        <div>
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label class="col-sm-3 control-label">@Resource.Name</label>
+                    <div class="col-sm-9">
+                        <div class="form-control" readonly="readonly">
+                            @Model.Name
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-3 control-label">Passport</label>
+                    <div class="col-sm-9">
+                        <div class="form-control" readonly="readonly">
+                            @Model.Passport
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label class="col-sm-3 control-label">@Resource.Email</label>
+                    <div class="col-sm-9">
+                        <div class="form-control" readonly="readonly">
+                            @Model.Email
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-3 control-label">Business Phone</label>
+                    <div class="col-sm-9">
+                        <div class="form-control" readonly="readonly">
+                            @Model.BusinessPhone
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label class="col-sm-3 control-label">Mobile Phone</label>
+                    <div class="col-sm-9">
+                        <div class="form-control" readonly="readonly">
+                            @Model.MobilePhone
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-3 control-label">Address</label>
+                    <div class="col-sm-9">
+                        <div class="form-control" readonly="readonly">
+                            @Model.Address
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label class="col-sm-3 control-label">Fields</label>
+                    <div class="col-sm-9">
+                        <div class="form-control" readonly="readonly">
+                            @Model.Fields
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-striped" id="table">
+            <thead>
+                <tr>
+                    <th>Bank Name</th>
+                    <th>Bank Account Holder Name</th>
+                    <th>Bank Account Holder Address</th>
+                    <th>Bank Account Number</th>
+                    <th>Branch</th>
+                    <th>Swift Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var item in Model.TrainerBanks)
+                    {
+                        <tr>
+                            <td>
+                                @item.BankName
+                            </td>
+                            <td>
+                                @item.BankAccountHolderName
+                            </td>
+                            <td>
+                                @item.BankAccountHolderAddress
+                            </td>
+                            <td>
+                                @item.BankAccountNumber
+                            </td>
+                            <td>
+                                @item.Branch
+                            </td>
+                            <td>
+                                @item.SwiftCode
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+    </div>
+</section>

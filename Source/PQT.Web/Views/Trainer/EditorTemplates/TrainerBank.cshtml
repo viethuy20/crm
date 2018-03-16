@@ -1,0 +1,50 @@
+﻿@model PQT.Domain.Entities.TrainerBank
+
+
+@using (Html.BeginCollectionItem())
+{
+    <div class="row floating-label">
+        <div class="col-sm-2">
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.BankName).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.BankName).ShowRequiredStar(true)
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.BankAccountHolderName).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.BankAccountHolderName)
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.BankAccountHolderAddress).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.BankAccountHolderAddress)
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.BankAccountNumber).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.BankAccountNumber)
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.Branch).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Branch)
+            </div>
+        </div>
+        <div class="col-sm-1">
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.SwiftCode).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.SwiftCode)
+            </div>
+        </div>
+        <div class="col-sm-1">
+            <div class="btn-group pull-right">
+                <a onclick="return sub.remove(this);" data-action="remove" class="btn btn-danger btn-flat"><i class="md md-delete"></i> Remove</a>
+            </div>
+            @Html.HiddenFor(m => m.ID)
+        </div>
+    </div>
+}

@@ -188,8 +188,8 @@
     <comment>Cancel Reason</comment>
   </data>
   <data name="CannotAddItem" xml:space="preserve">
-    <value>Cannot add this Item! \nPlease check data field again!</value>
-    <comment>Cannot add this Item! \nPlease check data field again!</comment>
+    <value>Cannot add this item. \nPlease check data field again.</value>
+    <comment>Cannot add this item. \nPlease check data field again.</comment>
   </data>
   <data name="CannotAddStock" xml:space="preserve">
     <value>Cannot Add...Generate Stocktaking record first</value>
@@ -204,8 +204,8 @@
     <comment>Cannot delete</comment>
   </data>
   <data name="CannotDeleteItem" xml:space="preserve">
-    <value>Cannot delete this item, please try again!</value>
-    <comment>Cannot delete this item, please try again!</comment>
+    <value>Cannot delete this item, please try again.</value>
+    <comment>Cannot delete this item, please try again.</comment>
   </data>
   <data name="CannotFoundBarcodeStringFromFile" xml:space="preserve">
     <value>Cannot found barcode string from file</value>
@@ -223,8 +223,8 @@
     <comment>Cannot Reject for this payment</comment>
   </data>
   <data name="CannotSaveItem" xml:space="preserve">
-    <value>Cannot save this Item! \nPlease check field data again!</value>
-    <comment>Cannot save this Item! \nPlease check data field again!</comment>
+    <value>Cannot save this item. \nPlease check field data again.</value>
+    <comment>Cannot save this item. \nPlease check data field again.</comment>
   </data>
   <data name="Code" xml:space="preserve">
     <value>Code</value>
@@ -369,12 +369,12 @@
     <comment>Deleted Date</comment>
   </data>
   <data name="DeleteFailed" xml:space="preserve">
-    <value>Delete Failed!</value>
-    <comment>Delete Failed!</comment>
+    <value>Delete failed</value>
+    <comment>Delete failed</comment>
   </data>
   <data name="CancelFailed" xml:space="preserve">
-    <value>Cancel Failed!</value>
-    <comment>Cancel Failed!</comment>
+    <value>Cancel failed</value>
+    <comment>Cancel failed</comment>
   </data>
   <data name="DeleteMenu" xml:space="preserve">
     <value>Delete Menu</value>
@@ -385,16 +385,16 @@
     <comment>Delete Successful</comment>
   </data>
   <data name="RequestCancellationSuccessfully" xml:space="preserve">
-    <value>Request of cancellation successfully</value>
-    <comment>Request Of Cancellation Successfully</comment>
+    <value>Request of cancellation successful</value>
+    <comment>Request Of Cancellation Successful</comment>
   </data>
   <data name="RejectCancellationSuccessfully" xml:space="preserve">
-    <value>Reject Of Cancellation Successfully</value>
-    <comment>Reject Of Cancellation Successfully</comment>
+    <value>Reject Of Cancellation Successful</value>
+    <comment>Reject Of Cancellation Successful</comment>
   </data>
   <data name="ApprovalCancellationSuccessfully" xml:space="preserve">
-    <value>Approval Of Cancellation Successfully</value>
-    <comment>Approval Of Cancellation Successfully</comment>
+    <value>Approval Of Cancellation Successful</value>
+    <comment>Approval Of Cancellation Successful</comment>
   </data>
   <data name="Description" xml:space="preserve">
     <value>Description</value>
@@ -456,8 +456,8 @@
     <comment>Message</comment>
   </data>
   <data name="ErrorPermission" xml:space="preserve">
-    <value>Error! You don't have permission.</value>
-    <comment>Error! You don't have permission.</comment>
+    <value>Error... You don't have permission.</value>
+    <comment>Error... You don't have permission.</comment>
   </data>
   <data name="ErrorTransferPayment" xml:space="preserve">
     <value>Contract No.(Old) and Contract No.(New) are the same</value>
@@ -548,8 +548,8 @@
     <comment>Import</comment>
   </data>
   <data name="ImportError" xml:space="preserve">
-    <value>Import error!</value>
-    <comment>Import error!</comment>
+    <value>Import error.</value>
+    <comment>Import error.</comment>
   </data>
   <data name="ImportFromExcel" xml:space="preserve">
     <value>Import From Excel</value>
@@ -1126,7 +1126,7 @@
     <value>Handover</value>
   </data>
   <data name="NoBookingRecord" xml:space="preserve">
-    <value>No booking record!</value>
+    <value>No booking record</value>
   </data>
   <data name="PleaseSelectVehicleForBooking" xml:space="preserve">
     <value>Please select vehicle for booking</value>
@@ -2067,10 +2067,10 @@
     <value>Exist some bugs</value>
   </data>
   <data name="FileUploadEmpty" xml:space="preserve">
-    <value>File upload empty!</value>
+    <value>File upload empty</value>
   </data>
   <data name="FileUploadMustBeExcelFile" xml:space="preserve">
-    <value>File Upload must be excel file!</value>
+    <value>File Upload must be excel file</value>
   </data>
   <data name="UploadError" xml:space="preserve">
     <value>Upload Error</value>

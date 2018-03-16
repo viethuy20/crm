@@ -1,0 +1,133 @@
+﻿@using PQT.Domain.Enum
+@using NS
+@using Resources
+@model PQT.Web.Models.TrainerModel
+
+@Html.HiddenFor(m => m.Trainer.Picture)
+
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group floating-label">
+                    @Html.Bootstrap().TextBoxFor(m => m.Trainer.Name).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Trainer.Name).ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group floating-label">
+                    @Html.Bootstrap().TextBoxFor(m => m.Trainer.Passport).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Trainer.Passport)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group floating-label">
+                    @Html.Bootstrap().TextBoxFor(m => m.Trainer.Email).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Trainer.Email)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group floating-label">
+                    @Html.Bootstrap().TextBoxFor(m => m.Trainer.BusinessPhone).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Trainer.BusinessPhone)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group floating-label">
+                    @Html.Bootstrap().TextBoxFor(m => m.Trainer.Fields).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Trainer.Fields)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group floating-label">
+                    @Html.Bootstrap().TextBoxFor(m => m.Trainer.MobilePhone).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Trainer.MobilePhone)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group floating-label">
+                    @Html.Bootstrap().TextBoxFor(m => m.Trainer.Address).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Trainer.Address)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Passport Image<br /></label>
+                    <div class="col-sm-9" style="margin-top: 15px">
+                        @Html.Bootstrap().FileFor(m => m.Picture).ShowValidationMessage(false)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card card-underline">
+    <div class="card-head">
+        <header>Trainer Banks</header>
+    </div>
+    <div class="card-body text-default-light">
+        <div class="row">
+            <div class="form-group">
+                <div class="col-sm-12" id="lines-table">
+                    @Html.CollectionEditorFor(m => m.Trainer.TrainerBanks)
+
+                </div>
+                @Html.JqueryTemplateFor(m => m.Trainer.TrainerBanks, "sub-tmpl")
+            </div>
+        </div>
+    </div><!--end .card-body -->
+    <div class="card-actionbar">
+        <div class="card-actionbar-row">
+            <a class="btn btn-info pull-left" onclick="return sub.addNewModule();"><i class="md md-add"></i> Add Bank</a>
+        </div>
+    </div>
+</div>
+@Html.Script(
+    @<script>
+
+        var sub = {
+            addNewModule: function () {
+                this._addNew('#sub-tmpl');
+                return false;
+            },
+
+            _addNew: function (templateID) {
+                $(templateID).tmpl({ index: this._generateGuid() }).appendTo('#lines-table');
+
+                $('.floating-label .form-control').on('keyup change', function (e) {
+                    var input = $(e.currentTarget);
+
+                    if ($.trim(input.val()) !== '') {
+                        input.addClass('dirty').removeClass('static');
+                    } else {
+                        input.removeClass('dirty').removeClass('static');
+                    }
+                });
+
+                $('.floating-label .form-control').each(function () {
+                    var input = $(this);
+
+                    if ($.trim(input.val()) !== '') {
+                        input.addClass('static').addClass('dirty');
+                    }
+                });
+
+                $('.form-horizontal .form-control').each(function () {
+                    $(this).after('<div class="form-control-line"></div>');
+                });
+            },
+
+            remove: function (sender) {
+                $(sender).closest('.row').remove();
+            },
+
+            _generateGuid: function () {
+                // Source: http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/105074#105074
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+        };
+    </script>)

@@ -95,7 +95,7 @@ namespace PQT.Web
             kernel.Bind<ISettingRepository>().To<EFSettingRepository>();
             kernel.Bind<ICompanyRepository>().To<EFCompanyRepository>();
             kernel.Bind<ILeadService>().To<EFLeadService>();
-            kernel.Bind<IProjectService>().To<EFProjectService>();
+            kernel.Bind<IEventService>().To<EFEventService>();
             kernel.Bind<ISalesGroupService>().To<EFSalesGroupService>();
             kernel.Bind<ITrainerService>().To<EFTrainerService>();
 
@@ -107,6 +107,9 @@ namespace PQT.Web
             kernel.Bind<IValidator<Menu>>().To<MenuValidator>();
             kernel.Bind<IValidator<Company>>().To<CompanyValidator>();
             kernel.Bind<IValidator<Country>>().To<CountryValidator>();
+            kernel.Bind<IValidator<Event>>().To<EventValidator>();
+            kernel.Bind<IValidator<Trainer>>().To<TrainerValidator>();
+            kernel.Bind<IValidator<Lead>>().To<LeadValidator>();
             // cache configurations.
             kernel.Bind<ICacheStorageLocation>().To<RequestCacheSolution>().Named("InRequest");
             kernel.Bind<ICacheStorageLocation>().To<SessionCacheSolution>().Named("InSession");

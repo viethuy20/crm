@@ -1,0 +1,86 @@
+﻿@using Resources
+@model System.Collections.Generic.IEnumerable<PQT.Domain.Entities.Trainer>
+
+@{
+    ViewBag.Title = "Trainer";
+}
+
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            @Html.Bootstrap().ActionLinkButton(Resource.AddNew, "Create").PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary" })
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table" id="table">
+                    <thead>
+                        <tr>
+                            <th>@Resource.Name</th>
+                            <th>Passport</th>
+                            <th>@Resource.Email</th>
+                            <th>Business Phone</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr data-id="@item.ID">
+                                <td>@item.Name</td>
+                                <td>@item.Passport</td>
+                                <td>@item.Email</td>
+                                <td>@item.BusinessPhone</td>
+                                <td>
+                                    <a href="@Url.Action("Edit", new {id = item.ID})" data-action="edit">
+                                        <i class="md md-edit text-info"> Edit</i> 
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" data-action="delete" data-id="@item.ID">
+                                        <i class="md md-delete text-danger"> Delete</i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@Html.Script(
+    @<script>
+
+        var $Table = $('#table').dataTable();
+        $Table.on('click', '[data-action="delete"]', function (e) {
+            e.preventDefault();
+            var selftr = $(this);
+            bootbox.confirm("@Resource.ConfirmDelete", function (isOK) {
+                if (isOK) {
+                    $.ajax({
+                        url: '@Url.Action("Delete")/' + selftr.data('id'),
+                        type: 'POST',
+                        success: function (data) {
+                            if (data == true) {
+                                $Table.fnDeleteRow(selftr.closest('tr')[0]);
+                            } else {
+                                bootbox.alert("@Resource.DeleteFailed");
+                            }
+                        },
+                        error: function () {
+                            bootbox.alert("@Resource.DeleteFailed");
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>)

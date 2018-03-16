@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
+using PQT.Domain.Enum;
 using PQT.Domain.Helpers;
 
 namespace PQT.Domain.Concrete
@@ -38,18 +39,26 @@ namespace PQT.Domain.Concrete
 
         public SalesGroup UpdateSalesGroup(int id, string groupName, IEnumerable<int> users)
         {
-            var groupExist = Get<SalesGroup>(id);
-            if (groupExist == null) return null;
-            groupExist.GroupName = groupName;
-            groupExist.Users.Clear();
-            groupExist.Users = GetAll<User>(r => users.Contains(r.ID)).ToList();
-            Update(groupExist);
-            return groupExist;
+            return TransactionWrapper.Do(() =>
+            {
+                var groupExist = Get<SalesGroup>(id);
+                if (groupExist == null) return null;
+                groupExist.GroupName = groupName;
+                groupExist.Users.Clear();
+                groupExist.Users = GetAll<User>(r => users.Contains(r.ID)).ToList();
+                Update(groupExist);
+                return groupExist;
+            });
         }
 
         public bool DeleteSalesGroup(int id)
         {
             return Delete<SalesGroup>(id);
         }
+        public IEnumerable<User> GetAllSalesmans()
+        {
+            return GetAll<User>().AsEnumerable().Where(u => u.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel));
+        }
+
     }
 }

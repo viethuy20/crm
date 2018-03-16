@@ -46,6 +46,7 @@ namespace PQT.Web
                 , "~/Content/js/libs/inputmask/jquery.inputmask.bundle.min.js"
                 , "~/Content/js/libs/moment/moment.min.js"
                 , "~/Content/js/libs/bootstrap-datepicker/bootstrap-datepicker.js"
+                , "~/Content/js/libs/bootstrap-colorpicker/bootstrap-colorpicker.min.js"
                 , "~/Content/js/libs/DataTables/jquery.dataTables.min.js"
                 , "~/Content/js/libs/DataTables/extensions/ColVis/js/dataTables.colVis.min.js"
                 , "~/Content/js/libs/DataTables/extensions/TableTools/js/dataTables.tableTools.min.js"

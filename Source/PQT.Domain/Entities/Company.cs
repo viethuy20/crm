@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Forms.VisualStyles;
 
@@ -7,10 +8,12 @@ namespace PQT.Domain.Entities
 {
     public class Company : Entity
     {
+
+        [Range(1, int.MaxValue, ErrorMessage = "Please choose company")]
         public int CountryID { get; set; }
         [ForeignKey("CountryID")]
         public virtual Country Country { get; set; }
-        public string Name { get; set; }
+        public string CompanyName { get; set; }
         public string ProductOrService { get; set; }
         public string Sector { get; set; }
         public string Industry { get; set; }
@@ -27,6 +30,18 @@ namespace PQT.Domain.Entities
                 if (Country!=null)
                 {
                     return Country.Name;
+                }
+
+                return "";
+            }
+        }
+        public string CountryCode
+        {
+            get
+            {
+                if (Country!=null)
+                {
+                    return Country.Code;
                 }
 
                 return "";

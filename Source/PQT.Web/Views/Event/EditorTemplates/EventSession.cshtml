@@ -1,0 +1,55 @@
+﻿@using PQT.Domain.Abstract
+@using PQT.Web.Infrastructure
+@model PQT.Domain.Entities.EventSession
+@{
+    var repo = DependencyHelper.GetService<ITrainerService>();
+    var trainers = repo.GetAllTrainers();
+
+}
+
+@using (Html.BeginCollectionItem())
+{
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group floating-label">
+                @Html.Bootstrap().TextBoxFor(m => m.SessionTitle).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.SessionTitle).ShowRequiredStar(true)
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <select class="form-control  select2-list" name="@Html.NameFor(m => m.TrainerID)">
+                    <option value=""></option>
+                    @foreach (var trainer in trainers)
+                    {
+                        <option value="@trainer.ID" selected="@(Model.TrainerID == trainer.ID)">@trainer.Name</option>
+                    }
+                </select>
+                <label>Trainer</label>
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <div class="form-group">
+                <div class="input-daterange input-group" id="demo-date-range">
+                    <div class="input-group-content">
+                        @Html.DatePickerFor(m => m.StartDate, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.StartDate)
+                        @Html.Bootstrap().LabelFor(m => m.StartDate).ShowRequiredStar(true)
+                    </div>
+                    <span class="input-group-addon">to</span>
+                    <div class="input-group-content">
+                        @Html.DatePickerFor(m => m.EndDate, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.EndDate)
+                        @Html.Bootstrap().LabelFor(m => m.EndDate).ShowRequiredStar(true)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-1">
+            <div class="btn-group pull-right">
+                <a onclick="return sub.remove(this);" data-action="remove" class="btn btn-danger btn-flat"><i class="md md-delete"></i> Remove</a>
+            </div>
+            @Html.HiddenFor(m => m.ID)
+        </div>
+    </div>
+}

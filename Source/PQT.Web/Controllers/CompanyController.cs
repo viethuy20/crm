@@ -12,7 +12,7 @@ namespace PQT.Web.Controllers
 {
     public class CompanyController : Controller
     {
-        
+
         private readonly ICompanyRepository _comRepo;
         private readonly IUnitRepository _unitRepo;
 
@@ -42,13 +42,21 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Create Or Edit")]
         public ActionResult CreateOrEdit(Company model)
         {
+            if (model.CountryID == 0)
+            {
+                return Json(new
+                {
+                    Code = 6,
+                    error = "Country should not be empty."
+                });
+            }
             if (ModelState.IsValid)
             {
                 if (model.ID == 0)
                 {
                     if (_comRepo.CreateCompany(model) != null)
                     {
-                        model.Country = _unitRepo.GetCountry(model.CountryID);
+                        model.Country = _unitRepo.GetCountry((int)model.CountryID);
                         return Json(new
                         {
                             Code = 1,
@@ -59,10 +67,10 @@ namespace PQT.Web.Controllers
                     {
                         Code = 2
                     });
-                } 
+                }
                 if (_comRepo.UpdateCompany(model))
                 {
-                    model.Country = _unitRepo.GetCountry(model.CountryID);
+                    model.Country = _unitRepo.GetCountry((int)model.CountryID);
                     return Json(new
                     {
                         Code = 3,

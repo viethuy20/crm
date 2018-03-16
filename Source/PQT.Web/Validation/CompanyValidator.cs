@@ -14,7 +14,7 @@ namespace PQT.Web.Validation
             _repo = repo;
             RuleFor(m => m.CountryID).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.CountryID).GreaterThan(0).WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(m => m.Name).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
+            RuleFor(m => m.CompanyName).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
         }
     }
 }

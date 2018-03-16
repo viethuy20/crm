@@ -19,7 +19,7 @@ namespace Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option or rebuild the Visual Studio project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Web.Application.StronglyTypedResourceProxyBuilder", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Web.Application.StronglyTypedResourceProxyBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resource {
@@ -556,7 +556,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Approval Of Cancellation Successfully.
+        ///   Looks up a localized string similar to Approval Of Cancellation Successful.
         /// </summary>
         internal static string ApprovalCancellationSuccessfully {
             get {
@@ -1006,7 +1006,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel Failed!.
+        ///   Looks up a localized string similar to Cancel failed.
         /// </summary>
         internal static string CancelFailed {
             get {
@@ -1078,7 +1078,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot add this Item! \nPlease check data field again!.
+        ///   Looks up a localized string similar to Cannot add this item. \nPlease check data field again..
         /// </summary>
         internal static string CannotAddItem {
             get {
@@ -1123,7 +1123,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot delete this item, please try again!.
+        ///   Looks up a localized string similar to Cannot delete this item, please try again..
         /// </summary>
         internal static string CannotDeleteItem {
             get {
@@ -1168,7 +1168,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot save this Item! \nPlease check field data again!.
+        ///   Looks up a localized string similar to Cannot save this item. \nPlease check field data again..
         /// </summary>
         internal static string CannotSaveItem {
             get {
@@ -2365,7 +2365,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete Failed!.
+        ///   Looks up a localized string similar to Delete failed.
         /// </summary>
         internal static string DeleteFailed {
             get {
@@ -2851,7 +2851,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error! You don&apos;t have permission..
+        ///   Looks up a localized string similar to Error... You don&apos;t have permission..
         /// </summary>
         internal static string ErrorPermission {
             get {
@@ -3094,7 +3094,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File upload empty!.
+        ///   Looks up a localized string similar to File upload empty.
         /// </summary>
         internal static string FileUploadEmpty {
             get {
@@ -3103,7 +3103,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File Upload must be excel file!.
+        ///   Looks up a localized string similar to File Upload must be excel file.
         /// </summary>
         internal static string FileUploadMustBeExcelFile {
             get {
@@ -3526,7 +3526,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Import error!.
+        ///   Looks up a localized string similar to Import error..
         /// </summary>
         internal static string ImportError {
             get {
@@ -4273,7 +4273,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No booking record!.
+        ///   Looks up a localized string similar to No booking record.
         /// </summary>
         internal static string NoBookingRecord {
             get {
@@ -5551,7 +5551,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reject Of Cancellation Successfully.
+        ///   Looks up a localized string similar to Reject Of Cancellation Successful.
         /// </summary>
         internal static string RejectCancellationSuccessfully {
             get {
@@ -5641,7 +5641,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Request of cancellation successfully.
+        ///   Looks up a localized string similar to Request of cancellation successful.
         /// </summary>
         internal static string RequestCancellationSuccessfully {
             get {

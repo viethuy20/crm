@@ -97,8 +97,9 @@
 		}
 		$('#cp1').colorpicker();
 		$('#cp2').colorpicker();
-		$('#cp3').colorpicker().on('changeColor', function (ev) {
-			$(ev.currentTarget).closest('.card-body').css('background', ev.color.toHex());
+        $('#cp3').colorpicker().on('changeColor', function (ev) {
+            $(ev.currentTarget).css('background', ev.color.toHex());
+            /*$(ev.currentTarget).closest('.card-body').css('background', ev.color.toHex());*/
 		});
 	};
 

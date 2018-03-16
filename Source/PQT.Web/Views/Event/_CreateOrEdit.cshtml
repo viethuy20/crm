@@ -1,0 +1,167 @@
+﻿@using PQT.Domain.Enum
+@using NS
+@using Resources
+@model PQT.Web.Models.EventModel
+
+
+@Html.HiddenFor(m=>m.Event.UserID)
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group floating-label">
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.EventCode).Class("form-control code").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.EventCode).ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group floating-label">
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.EventName).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.EventName).ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group floating-label">
+                    @Html.Bootstrap().TextAreaFor(m => m.Event.ShortDescription).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.ShortDescription)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group floating-label">
+                    @Html.Bootstrap().TextAreaFor(m => m.Event.Description).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.Description)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <div class="input-daterange input-group" id="demo-date-range">
+                        <div class="input-group-content">
+                            @Html.DatePickerFor(m => m.Event.StartDate, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Event.StartDate)
+                            @Html.Bootstrap().LabelFor(m => m.Event.StartDate).ShowRequiredStar(true)
+                        </div>
+                        <span class="input-group-addon">to</span>
+                        <div class="input-group-content">
+                            @Html.DatePickerFor(m => m.Event.EndDate, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Event.EndDate)
+                            @Html.Bootstrap().LabelFor(m => m.Event.EndDate).ShowRequiredStar(true)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <select multiple class="form-control  select2-list" name="@Html.NameFor(m=>m.CompaniesSelected)">
+                        @foreach (var country in Model.Companies.Select(m => m.Country).Distinct().OrderBy(m => m.Name))
+                        {
+                            <optgroup label="@country.Name">
+                                @foreach (var com in Model.Companies.Where(m => m.CountryID == country.ID))
+                                {
+                                    <option value="@com.ID" selected="@(Model.CompaniesSelected.Contains(com.ID))">@com.CompanyName</option>
+                                }
+                            </optgroup>
+                        }
+                    </select>
+                    <label>Companies</label>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <select multiple class="form-control  select2-list" name="@Html.NameFor(m=>m.GroupsSelected)">
+                        @foreach (var com in Model.SalesGroups.OrderBy(m => m.GroupName))
+                        {
+                            <option value="@com.ID" selected="@(Model.GroupsSelected.Contains(com.ID))">@com.GroupName</option>
+                        }
+                    </select>
+                    <label>Sales Group</label>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <select multiple class="form-control  select2-list" name="@Html.NameFor(m=>m.UsersSelected)">
+                        @foreach (var com in Model.Users.OrderBy(m => m.DisplayName))
+                        {
+                            <option value="@com.ID" selected="@(Model.UsersSelected.Contains(com.ID))">@com.DisplayName</option>
+                        }
+                    </select>
+                    <label>Salesman</label>
+                </div>
+            </div>
+            <div class="col-sm-6" style="width:150px">
+                <div class="form-group" style="padding-top: 20px;">
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.BackgroundColor).HtmlAttributes(new { @style = "color:#fff;background:" + Model.Event.BackgroundColor }).Class("form-control").Id("cp3").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.BackgroundColor)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card card-underline">
+    <div class="card-head">
+        <header>Event Sessions</header>
+    </div>
+    <div class="card-body text-default-light">
+        <div class="row">
+            <div class="form-group">
+                <div class="col-sm-12" id="lines-table">
+                    @Html.CollectionEditorFor(m => m.Event.EventSessions)
+                </div>
+                @Html.JqueryTemplateFor(m => m.Event.EventSessions, "sub-tmpl")
+            </div>
+        </div>
+    </div><!--end .card-body -->
+    <div class="card-actionbar">
+        <div class="card-actionbar-row">
+            <a class="btn btn-info pull-left" onclick="return sub.addNewModule();"><i class="md md-add"></i> Add Event Session</a>
+        </div>
+    </div>
+</div>
+@Html.Script(
+    @<script>
+
+        var sub = {
+            addNewModule: function () {
+                this._addNew('#sub-tmpl');
+                return false;
+            },
+
+            _addNew: function (templateID) {
+                $(templateID).tmpl({ index: this._generateGuid() }).appendTo('#lines-table');
+                $('.floating-label .form-control').on('keyup change', function (e) {
+                    var input = $(e.currentTarget);
+
+                    if ($.trim(input.val()) !== '') {
+                        input.addClass('dirty').removeClass('static');
+                    } else {
+                        input.removeClass('dirty').removeClass('static');
+                    }
+                });
+
+                $('.floating-label .form-control').each(function () {
+                    var input = $(this);
+
+                    if ($.trim(input.val()) !== '') {
+                        input.addClass('static').addClass('dirty');
+                    }
+                });
+
+                $('.form-horizontal .form-control').each(function () {
+                    $(this).after('<div class="form-control-line"></div>');
+                });
+                initDatepicker();
+                initSelect2();
+            },
+
+            remove: function (sender) {
+                $(sender).closest('.row').remove();
+            },
+
+            _generateGuid: function () {
+                // Source: http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/105074#105074
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+        };
+    </script>)
