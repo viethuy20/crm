@@ -49,12 +49,12 @@ namespace PQT.Web.Controllers
 
 
         [AjaxOnly]
-        public ActionResult FlyerTrigger()
+        public ActionResult PanelNotification()
         {
             var notify = new List<UserNotification>();
             if (CurrentUser.Identity != null)
             {
-                notify = _memRepository.GetAllUserNotifications(CurrentUser.Identity.ID).OrderByDescending(m=>m.CreatedTime).ToList();
+                notify = _memRepository.GetAllUserNotifications(CurrentUser.Identity.ID).ToList();
             }
             return PartialView(notify);
         }

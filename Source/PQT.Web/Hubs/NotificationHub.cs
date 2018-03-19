@@ -88,9 +88,28 @@ namespace PQT.Web.Hubs
             context.Clients.All.notify(message, dataType);
         }
 
+        public static void NotifyUser(User user,string message, string dataType)
+        {
+            IHubContext context = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
+            context.Clients.Group(GetUserGroupName(user)).notify(message, dataType);
+        }
+        public static void NotifyRole(Role role,string message, string dataType)
+        {
+            IHubContext context = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
+            context.Clients.Group(GetRoleGroupName(role)).notify(message, dataType);
+        }
+
         public static void Notify(UserNotification notify)
         {
             Notify(Json.Encode(notify), GetEntityName(notify));
+        }
+        public static void NotifyUser(User user, UserNotification notify)
+        {
+            NotifyUser(user,Json.Encode(notify), GetEntityName(notify));
+        }
+        public static void NotifyRole(Role role, UserNotification notify)
+        {
+            NotifyRole(role,Json.Encode(notify), GetEntityName(notify));
         }
 
 

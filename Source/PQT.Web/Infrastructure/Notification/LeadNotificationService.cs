@@ -21,13 +21,13 @@ namespace PQT.Web.Infrastructure.Notification
             SendEmailNotify(lead);
         }
 
-        public override void NotifyUser(User user, Lead lead)
+        public override void NotifyUser(IEnumerable<User> users, Lead lead)
         {
             if (lead == null)
                 return;
         }
 
-        public override void NotifyRole(Role role, Lead lead)
+        public override void NotifyRole(IEnumerable<Role> roles, Lead lead)
         {
             if (lead == null)
                 return;

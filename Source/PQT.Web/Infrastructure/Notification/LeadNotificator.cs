@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -18,10 +19,10 @@ namespace PQT.Web.Infrastructure.Notification
             get { return DependencyResolver.Current.GetService<INotificationService<Lead>>(); }
         }
 
-        //private static ILeadService LeadRepository
-        //{
-        //    get { return DependencyResolver.Current.GetService<ILeadService>(); }
-        //}
+        private static ILeadService LeadRepository
+        {
+            get { return DependencyResolver.Current.GetService<ILeadService>(); }
+        }
 
         private static IMembershipService MemberService
         {
@@ -30,8 +31,14 @@ namespace PQT.Web.Infrastructure.Notification
         public static void NotifyAll(Lead lead, bool email = false)
         {
             var users = MemberService.GetUsers();
+            if (lead == null || !users.Any())
+                return;
             foreach (var user in users)
             {
+                if (CurrentUser.Identity.ID == user.ID)
+                {
+                    continue;
+                }
                 var notify = new UserNotification
                 {
                     UserID = user.ID,
@@ -44,11 +51,7 @@ namespace PQT.Web.Infrastructure.Notification
                 notify = MemberService.CreateUserNotification(notify);
                 user.NotifyNumber++;
                 MemberService.UpdateUser(user);
-                if (CurrentUser.Identity.ID == user.ID)
-                {
-                    CurrentUser.Identity.NotifyNumber++;
-                    NotificationHub.Notify(notify);
-                }
+                NotificationHub.Notify(notify);
             }
             if (email)
             {
@@ -56,44 +59,49 @@ namespace PQT.Web.Infrastructure.Notification
             }
         }
 
-        public void NotifyUser(IEnumerable<User> users, Lead lead, bool email = false)
+        public static void NotifyUser(IEnumerable<User> users, Lead lead, bool email = false)
         {
-            if (lead == null)
+            if (lead == null || !users.Any())
                 return;
             foreach (var user in users)
             {
+                if (CurrentUser.Identity.ID == user.ID)
+                {
+                    continue;
+                }
                 var notify = new UserNotification
                 {
                     UserID = user.ID,
                     EntryId = lead.ID,
                     NotifyType = NotifyType.Lead,
-                    Title = "Called by " + lead.User.DisplayName,
+                    Title = lead.LeadStatusRecord.Status.DisplayName + " by " + lead.LeadStatusRecord.User.DisplayName,
                     Description = lead.CompanyName,
                     HighlightColor = lead.EventColor
                 };
                 notify = MemberService.CreateUserNotification(notify);
                 user.NotifyNumber++;
                 MemberService.UpdateUser(user);
-                if (CurrentUser.Identity.ID == user.ID)
-                {
-                    CurrentUser.Identity.NotifyNumber++;
-                    NotificationHub.Notify(notify);
-                }
+                NotificationHub.NotifyUser(user, notify);
             }
             if (email)
             {
-                NotificationService.NotifyAll(lead);
+                NotificationService.NotifyUser(users, lead);
             }
         }
 
-        public void NotifyRole(IEnumerable<Role> roles, Lead lead, bool email = false)
+        public static void NotifyRole(IEnumerable<Role> roles, Lead lead, bool email = false)
         {
-            if (lead == null)
+            if (lead == null || !roles.Any())
                 return;
-            var users = MemberService.GetUsersContainsInRole(roles.Select(m=>m.Name).ToArray());
+            var users = MemberService.GetUsersContainsInRole(roles.Select(m => m.Name).ToArray());
+            UserNotification notify = null;
             foreach (var user in users)
             {
-                var notify = new UserNotification
+                if (CurrentUser.Identity.ID == user.ID)
+                {
+                    continue;
+                }
+                notify = new UserNotification
                 {
                     UserID = user.ID,
                     EntryId = lead.ID,
@@ -105,15 +113,19 @@ namespace PQT.Web.Infrastructure.Notification
                 notify = MemberService.CreateUserNotification(notify);
                 user.NotifyNumber++;
                 MemberService.UpdateUser(user);
-                if (CurrentUser.Identity.ID == user.ID)
+            }
+
+            if (notify != null)
+            {
+                notify.UserID = 0;
+                foreach (var role in roles)
                 {
-                    CurrentUser.Identity.NotifyNumber++;
-                    NotificationHub.Notify(notify);
+                    NotificationHub.NotifyRole(role, notify);
                 }
             }
             if (email)
             {
-                NotificationService.NotifyAll(lead);
+                NotificationService.NotifyRole(roles, lead);
             }
         }
     }

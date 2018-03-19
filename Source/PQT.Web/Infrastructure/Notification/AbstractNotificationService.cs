@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
@@ -28,6 +29,37 @@ namespace PQT.Web.Infrastructure.Notification
                   .SendAsync();
         }
 
+        public void SendEmail(IEnumerable<string> to, string subject, string typeTemplate, string template, object model, object viewBag = null)
+        {
+            var message = new RazorMailMessage(typeTemplate + "/" + template, model, viewBag).Render();
+            var membershipService = DependencyHelper.GetService<IMembershipService>();
+            var emailTos =
+                membershipService.GetAllUserOfEmailTemplate(typeTemplate, template, EmailType.To).ToList();
+            if (emailTos.Any() || (to != null && to.Any()))
+            {
+                var emailCcs =
+                membershipService.GetAllUserOfEmailTemplate(typeTemplate, template, EmailType.Cc).ToList();
+                var emailBccs =
+                membershipService.GetAllUserOfEmailTemplate(typeTemplate, template, EmailType.Bcc).Select(m => m.Email).ToList();
+
+                var bccAddition = ConfigurationManager.AppSettings["BccAllEmails"];
+                if (bccAddition != null && !string.IsNullOrEmpty(bccAddition))
+                {
+                    var emails = bccAddition.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    emailBccs.AddRange(emails);
+                }
+
+                var tos = emailTos.Select(m => m.Email).ToList();
+                if (to != null)
+                {
+                    tos.AddRange(to);
+                }
+
+                SendEmail(tos.Distinct().ToArray(),
+                    emailCcs.Select(m => m.Email).ToArray(), emailBccs.ToArray(), subject,
+                    message);
+            }
+        }
         public void SendEmail(string subject, string typeTemplate, string template, object model, object viewBag = null)
         {
             var message = new RazorMailMessage(typeTemplate + "/" + template, model, viewBag).Render();
@@ -62,9 +94,9 @@ namespace PQT.Web.Infrastructure.Notification
 
         public abstract void NotifyAll(T entity);
 
-        public abstract void NotifyUser(User user, T entity);
+        public abstract void NotifyUser(IEnumerable<User> users, T entity);
 
-        public abstract void NotifyRole(Role role, T entity);
+        public abstract void NotifyRole(IEnumerable<Role> roles, T entity);
 
         #endregion
     }

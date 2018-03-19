@@ -6,8 +6,11 @@ using System.Web;
 using System.Web.Mvc;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
+using PQT.Domain.Enum;
 using PQT.Web.Infrastructure.Filters;
 using PQT.Web.Infrastructure.Helpers;
+using PQT.Web.Infrastructure.Notification;
+using PQT.Web.Infrastructure.Utility;
 using PQT.Web.Models;
 
 namespace PQT.Web.Controllers
@@ -17,12 +20,10 @@ namespace PQT.Web.Controllers
         //
         // GET: /Lead/
         private readonly ILeadService _repo;
-        private readonly ICompanyRepository _companyRepo;
 
-        public LeadController(ILeadService repo, ICompanyRepository companyRepo)
+        public LeadController(ILeadService repo)
         {
             _repo = repo;
-            _companyRepo = companyRepo;
         }
         /// <summary>
         /// 
@@ -42,12 +43,14 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
+        [DisplayName(@"Call Sheet")]
         public ActionResult CallSheet(int eventId)
         {
             var model = new CallSheetModel(eventId);
             return PartialView(model);
         }
         [HttpPost]
+        [DisplayName(@"Call Sheet")]
         public ActionResult CallSheet(CallSheetModel model)
         {
             if (model.Lead.CompanyID == 0)
@@ -62,7 +65,7 @@ namespace PQT.Web.Controllers
                     var callingModel = new CallingModel
                     {
                         Lead = model.Lead,
-                        PhoneCall = {LeadID = model.Lead.ID}
+                        PhoneCall = { LeadID = model.Lead.ID }
                     };
                     return PartialView("CallingForm", callingModel);
                 }
@@ -75,12 +78,14 @@ namespace PQT.Web.Controllers
             return Json(new { Code = 0, Message = "Save failed" });
         }
 
+        [DisplayName(@"Calling Form")]
         public ActionResult CallingForm(int leadId)
         {
             var model = new CallingModel(leadId);
             return PartialView(model);
         }
         [HttpPost]
+        [DisplayName(@"Calling Form")]
         public ActionResult CallingForm(CallingModel model)
         {
             if (model.Save())
@@ -88,6 +93,38 @@ namespace PQT.Web.Controllers
                 return Json(new { Code = 1 });
             }
             return Json(new { Code = 0, Message = "Save failed" });
+        }
+
+        [DisplayName(@"Request Action")]
+        public ActionResult RequestAction(int id, string requestType)
+        {
+            var model = new LeadModel(id, requestType);
+            return PartialView(model);
+        }
+
+        [DisplayName(@"Request Action")]
+        [HttpPost]
+        public ActionResult RequestAction(LeadModel model)
+        {
+            return Json(model.RequestAction());
+        }
+
+        [DisplayName(@"Cancel Request")]
+        [HttpPost]
+        public ActionResult CancelRequest(LeadModel model)
+        {
+            return Json(model.CancelRequest());
+        }
+
+        [DisplayName(@"Block")]
+        public ActionResult BlockLead(LeadModel model)
+        {
+            return Json(model.BlockLead());
+        }
+        [DisplayName(@"Unblock")]
+        public ActionResult UnblockLead(LeadModel model)
+        {
+            return Json(model.UnblockLead());
         }
 
         [AjaxOnly]
@@ -209,13 +246,17 @@ namespace PQT.Web.Controllers
                     m.DirectLine,
                     CallBackDate = m.CallBackDate == default(DateTime) ? "" : m.CallBackDate.ToString("dd/MM/yyyy"),
                     m.Event.EventName,
-                    m.Event.EventCode
+                    m.Event.EventCode,
+                    m.StatusDisplay,
+                    m.StatusCode,
+                    m.ClassStatus,
+                    actionBlock = m.LeadStatusRecord == LeadStatus.Blocked ? "Unblock" : "Block"
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
-
+        [HttpPost]
         [AjaxOnly]
         public ActionResult AjaxGetNCList(int eventId)
         {
@@ -332,7 +373,8 @@ namespace PQT.Web.Controllers
                     Company = m.Company.CompanyName,
                     Country = m.Company.CountryCode,
                     m.ClientName,
-                    StatusDisplay = m.StatusDisplay
+                    m.ClassStatus,
+                    StatusDisplay = m.StatusDisplay,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

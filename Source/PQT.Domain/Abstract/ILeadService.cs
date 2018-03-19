@@ -13,6 +13,7 @@ namespace PQT.Domain.Abstract
         Lead GetLead(int id);
         Lead CreateLead(Lead info);
         bool UpdateLead(Lead info);
+        bool UpdateAttachment(LeadStatusRecord record);
         bool DeleteLead(int id);
 
 

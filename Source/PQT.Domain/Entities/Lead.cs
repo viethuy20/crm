@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Web.Compilation;
+using PQT.Domain.Helpers;
 
 namespace PQT.Domain.Entities
 {
@@ -102,6 +103,14 @@ namespace PQT.Domain.Entities
                 }
 
                 return "#0aa89e";
+            }
+        }
+
+        public string ClassStatus
+        {
+            get
+            {
+                return StringHelper.RemoveSpecialCharacters(StatusDisplay);
             }
         }
     }

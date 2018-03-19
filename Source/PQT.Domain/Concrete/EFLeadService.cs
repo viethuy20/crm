@@ -26,7 +26,11 @@ namespace PQT.Domain.Concrete
 
         public Lead GetLead(int id)
         {
-            return Get<Lead>(m => m.ID == id, m => m.Event, m => m.Company);
+            return Get<Lead>(m => m.ID == id, u => new
+            {
+                u.Event,
+                u.Company
+            });
         }
 
         public Lead CreateLead(Lead info)
@@ -37,6 +41,10 @@ namespace PQT.Domain.Concrete
         public bool UpdateLead(Lead info)
         {
             return Update(info);
+        }
+        public bool UpdateAttachment(LeadStatusRecord record)
+        {
+            return Update(record);
         }
 
         public bool DeleteLead(int id)

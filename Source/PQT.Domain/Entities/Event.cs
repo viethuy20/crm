@@ -23,6 +23,7 @@ namespace PQT.Domain.Entities
         public string BackgroundColor { get; set; }
         public string ShortDescription { get; set; }
         public string Description { get; set; }
+        public string CallFilterKeywords { get; set; }
         public string Remark { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

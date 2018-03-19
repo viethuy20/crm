@@ -258,7 +258,10 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<UserNotification> GetAllUserNotifications(int userId,int page = 1, int pageSize = 10)
         {
-            return GetAll<UserNotification>(m => m.UserID == userId).ToList().Skip((page - 1) * pageSize).Take(pageSize);
+            return _db.Set<UserNotification>()
+                .Where(m => m.UserID == userId).OrderByDescending(m => m.CreatedTime)
+                .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
+            //return GetAll<UserNotification>(m => m.UserID == userId).ToList().Skip((page - 1) * pageSize).Take(pageSize);
         }
         public UserNotification CreateUserNotification(UserNotification notify)
         {

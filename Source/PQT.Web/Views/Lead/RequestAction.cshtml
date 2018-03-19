@@ -1,0 +1,44 @@
+﻿@using NS
+@using PQT.Domain.Enum
+@model PQT.Web.Models.LeadModel
+
+@{
+    var title = "Update Attachment";
+    if (!string.IsNullOrEmpty(Model.requestType))
+    {
+        var leadStatus = Enumeration.FromValue<LeadStatus>(Model.requestType);
+        if (leadStatus != null)
+        {
+            title = leadStatus.DisplayName;
+        }
+    }
+}
+
+<div class="card card-underline" style="background: white; margin: auto; max-width: 600px; position: relative;">
+    <div>
+        <div class="card-head">
+            <header><b>@title</b></header>
+        </div><!--end .card-head -->
+        @using (Ajax.BeginForm("RequestAction", "routeValues", new AjaxOptions { OnFailure = "onFailRequestAction", OnSuccess = "onSuccessRequestAction" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
+            {
+            <div class="card-body">
+                @Html.HiddenFor(m => m.id, new { @id = "request_id" })
+                @Html.HiddenFor(m => m.requestType, new { @id = "request_Type" })
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Attachment File<br /></label>
+                        <div class="col-sm-9" style="margin-top: 15px">
+                            @Html.Bootstrap().FileFor(m => m.AttachmentFile).Id("request-attachment").ShowValidationMessage(false)
+                        </div>
+                    </div>
+                </div>
+            </div><!--end .card-body -->
+            <div class="card-actionbar">
+                <div class="card-actionbar-row">
+                    <a href="#" class="btn btn-default" id="request_close"><i class="md md-close"></i> Close</a>
+                    <a href="#" class="btn btn-success" id="request_submit"><i class="md md-done"></i> @(!string.IsNullOrEmpty(Model.requestType) ? "Submit to Manage" : "Save Change")r</a>
+                </div>
+            </div>
+        }
+    </div>
+</div><!--end .card -->

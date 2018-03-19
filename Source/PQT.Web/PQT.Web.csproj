@@ -371,7 +371,7 @@
     <Compile Include="Infrastructure\Helpers\ImageHelper.cs" />
     <Compile Include="Infrastructure\Notification\LeadNotificationService.cs" />
     <Compile Include="Infrastructure\Notification\LeadNotificator.cs" />
-    <Compile Include="Infrastructure\Utility\PhotoUpload.cs" />
+    <Compile Include="Infrastructure\Utility\FileUpload.cs" />
     <Compile Include="Models\AjaxResult.cs" />
     <Compile Include="Models\EmailSettingModel.cs" />
     <Compile Include="Models\EventModelView.cs" />
@@ -2248,8 +2248,9 @@
     <Content Include="Views\Lead\Index.cshtml" />
     <Content Include="Views\Lead\CallSheet.cshtml" />
     <Content Include="Views\Lead\CallingForm.cshtml" />
-    <Content Include="Views\Home\FlyerTrigger.cshtml" />
+    <Content Include="Views\Home\PanelNotification.cshtml" />
     <Content Include="Views\Shared\_Notification.cshtml" />
+    <Content Include="Views\Lead\RequestAction.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

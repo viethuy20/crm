@@ -22,7 +22,11 @@ namespace PQT.Domain.Concrete
 
         public Event GetEvent(int id)
         {
-            return Get<Event>(id);
+            return Get<Event>(u => u.ID == id, u => new
+            {
+                u.Users,
+                u.SalesGroups
+            });
         }
         public Event GetEvent(string code)
         {

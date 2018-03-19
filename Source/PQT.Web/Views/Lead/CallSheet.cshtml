@@ -1,15 +1,14 @@
 ﻿@using Resources
 @model PQT.Web.Models.CallSheetModel
 
-@{
-}
+
 <div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
     <div class="leadcontent">
         <div class="card-head">
             <header><b>Call Sheet</b></header>
         </div><!--end .card-head -->
         @using (Ajax.BeginForm("CallSheet", "routeValues", new AjaxOptions { OnFailure = "onFailCallSheet", OnSuccess = "onSuccessCallSheet" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
-        {
+            {
             <div class="card-body">
                 @Html.HiddenFor(m => m.Lead.ID)
                 @Html.HiddenFor(m => m.Lead.EventID)
@@ -48,52 +47,3 @@
         }
     </div>
 </div><!--end .card -->
-<text>
-    <script>
-
-        function onFailCallSheet() {
-            toastr.error('@Resource.SaveError', '');
-        }
-        function onSuccessCallSheet(data) {
-            if (data.Code == 0) {
-                if (data.Message)
-                    toastr.error(data.Message, '');
-                else
-                    toastr.error('@Resource.SaveFailed', '');
-            } else {
-                if (data.Code == 1) {
-                    toastr.success('@Resource.UpdateSuccessful', '');
-                    $.magnificPopup.close();
-                    oTable.fnFilter('');
-                }
-                if (data) {
-                    $(".leadcontent").html(data);
-
-
-                    $('.mfp-container .date-picker,.mfp-container .datepicker').datepicker({
-                        autoclose: true,
-                        todayHighlight: true,
-                        format: 'dd/mm/yyyy'
-                    }).on('changeDate', function (ev) {
-                        $(this).datepicker('hide');
-                        });
-
-                    $("form").removeData("validator");
-                    $("form").removeData("unobtrusiveValidation");
-                    $.validator.unobtrusive.parse("form");
-                }
-
-            }
-        }
-        $(document).on('click', '#leadsave_exist', function (e) {
-            e.preventDefault();
-            $(".typeSubmit").val("SaveExist");
-            $(this).parents("form").submit();
-        });
-        $(document).on('click', '#leadsave_call', function (e) {
-            e.preventDefault();
-            $(".typeSubmit").val("SaveCall");
-            $(this).parents("form").submit();
-        });
-    </script>
-</text>

@@ -4,6 +4,12 @@
 @{
     var currentUser = CurrentUser.Identity;
     Layout = "~/Views/Shared/_BigBang.cshtml";
+
+    var count = 0;
+    if (currentUser != null)
+    {
+        count = currentUser.NotifyNumber;
+    }
 }
 <link href='http://fonts.googleapis.com/css?family=Roboto:300italic,400italic,300,400,500,700,900' rel='stylesheet' type='text/css' />
 
@@ -30,6 +36,11 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="headerbar-right">
             <ul class="header-nav header-nav-options">
+                <li>
+                    <a href="#offcanvas-notify" data-toggle="offcanvas" class="btn btn-icon-toggle btn-default" data-backdrop="false" id="notify-trigger">
+                        <i class="fa fa-bell"></i><sup class="badge style-danger count @(count == 0? "hide":"")">@(count)</sup>
+                    </a>
+                </li>
                 @*<li>
                         <!-- Search form -->
                         <form class="navbar-search" role="search">
@@ -39,7 +50,6 @@
                             <button type="submit" class="btn btn-icon-toggle ink-reaction"><i class="fa fa-search"></i></button>
                         </form>
                     </li>*@
-                @Html.Partial("_Notification")
             </ul><!--end .header-nav-options -->
 
             <ul class="header-nav header-nav-profile">
@@ -162,7 +172,7 @@
                                                                      item.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString()
                                                                      + "/" + ViewContext.RouteData.Values["action"].ToString()))
                                             {
-                                                <a href="@item.Url" class="title">
+                                                <a href="@item.Url" class="active">
                                                     <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
                                                     <span class="title">@title</span>
                                                 </a>
@@ -182,7 +192,7 @@
 
             </ul><!--end .main-menu -->
             <!-- END MAIN MENU -->
-
+            
             <div class="menubar-foot-panel">
                 <small class="no-linebreak hidden-folded">
                     <span class="opacity-75">Copyright &copy; @DateTime.Today.Year</span> <strong>CodeCovers</strong>
@@ -191,7 +201,9 @@
         </div><!--end .menubar-scroll-panel-->
     </div><!--end #menubar-->
     <!-- END MENUBAR -->
+    
 
+    @Html.Action("PanelNotification", "Home")
 </div><!--end #base-->
 <!-- END BASE -->
 @section css
@@ -401,7 +413,7 @@
     var notificator = $.connection.notificationHub,
         $triggerNotify = $('#notify-trigger'),
         $notifyCounter = $triggerNotify.find('.count'),
-        $notifyFlyerContent = $('.notify-trigger-add-content'),
+        $notifyFlyerContent = $('.notify-trigger-no-content'),
         documentTitle = document.title;
 
     notificator.client.notify = function (dataJson, dataType) {
@@ -432,15 +444,19 @@
 
         UserNotification.prototype.notifyRequest = function () {
 
-            var row = '<li>\
-                <a class="alert" style="border: 1px solid rgba(83, 88, 88, 0.15); border-left: 4px solid '+ this.notifyData.HighlightColor + ';" href="javascript:void(0);">\
-                <img class="pull-right img-circle dropdown-avatar" src="/Content/img/profile.png?1404026449" alt="">\
-                <strong>'+ this.notifyData.Title + '</strong><br>\
-                <small>'+ this.notifyData.Description + '</small>\
+            var row =
+                '<li class="tile" style="border-bottom: 1px solid rgba(150, 156, 156, 0.3);\
+                    border-left: 4px solid '+ this.notifyData.HighlightColor + ';">\
+                <a class="tile-content ink-reaction" href="javascript:void(0);" data-toggle="offcanvas" data-backdrop="false">\
+                <div class="tile-icon">\
+                <img src="/Content/img/profile.png?1404026791" alt="" />\
+                </div>\
+                <div class="tile-text">'+ this.notifyData.Title + '<small>'+ this.notifyData.Description + '</small>\
+                </div>\
                 </a>\
                 </li>';
             $(row).insertAfter($notifyFlyerContent);
-            $notifyFlyerContent.html(this.notifyData.NotifyTypeDisplay +"'s messages");
+            $notifyFlyerContent.addClass('hide');
 //            $notifyFlyerContent.append(row);
 
         };

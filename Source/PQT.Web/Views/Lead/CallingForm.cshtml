@@ -3,53 +3,62 @@
 
 @{
 }
-<div class="card card-underline" style="background: white; margin: auto; max-width: 800px; position: relative;">
+<div class="card card-underline" style="background: white; margin: auto; max-width: 900px; position: relative;">
     <div class="card-head">
         <header><b>Calling Form</b></header>
     </div><!--end .card-head -->
 
     @using (Ajax.BeginForm("CallingForm", "routeValues", new AjaxOptions { OnFailure = "onFailCalling", OnSuccess = "onSuccessCalling" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
     {
-        <div class="card-body text-center" style="height: 150px;padding: 30px;">
-            <div class="call-animation">
-                <i class="md md-phone-in-talk"></i>
-            </div>
-            <div class="row text-center" style="margin-top: 20px;font-size: 26px;">
-                <span id="call-tick">00:00</span>
-            </div>
-        </div>
-        <div class="card-body">
-            @Html.HiddenFor(m => m.PhoneCall.StartTime)
-            @Html.HiddenFor(m => m.PhoneCall.LeadID)
-            @Html.HiddenFor(m => m.TypeSubmit, new { @class = "typeSubmit" })
-            <div class="row">
-                <div class="col-sm-6">
+        <div class="card-body" style="height: 150px; padding: 30px;">
+
+            <div class="col-sm-4">
+                <div class="row">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Lead.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Lead.CompanyName).LabelText("COMPANY NAME")
                     </div>
                 </div>
-                <div class="col-sm-6">
+                <div class="row">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Lead.GeneralLine).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Lead.GeneralLine).LabelText("GENERAL LINE")
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-6">
+            <div class="col-sm-4  text-center">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="call-animation">
+                            <i class="md md-phone-in-talk"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="row text-center" style="margin-top: 20px; font-size: 26px;">
+                            <span id="call-tick">00:00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="row">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Lead.ClientName).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Lead.ClientName).LabelText("CLIENT NAME/ JOB TITLE")
                     </div>
                 </div>
-                <div class="col-sm-6">
+                <div class="row">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Lead.DirectLine).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Lead.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER")
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="card-body">
+            @Html.HiddenFor(m => m.PhoneCall.StartTime)
+            @Html.HiddenFor(m => m.PhoneCall.LeadID)
+            @Html.HiddenFor(m => m.TypeSubmit, new { @class = "typeSubmit" })
             <div class="row">
                 <div class="col-sm-8">
                     <div class="form-group">
@@ -96,43 +105,5 @@
             return i;
         }
         tickTime();
-
-
-        function onFailCalling() {
-            toastr.error('@Resource.SaveError', '');
-        }
-        function onSuccessCalling(data) {
-            if (data.Code == 0) {
-                if (data.Message)
-                    toastr.error(data.Message, '');
-                else
-                    toastr.error('@Resource.SaveFailed', '');
-            } else {
-                if (data.Code == 1) {
-                    toastr.success('@Resource.UpdateSuccessful', '');
-                    $.magnificPopup.close();
-                    oTable.fnFilter('');
-                }
-                //if (data) {
-                //    $(".leadcontent").html(data);
-                //}
-
-            }
-        }
-        $(document).on('click', '#endcall_save', function (e) {
-            e.preventDefault();
-            $(".typeSubmit").val("SaveExist");
-            $(this).parents("form").submit();
-        });
-        $(document).on('click', '#endcall_book', function (e) {
-            e.preventDefault();
-            $(".typeSubmit").val("SaveBook");
-            $(this).parents("form").submit();
-        });
-        $(document).on('click', '#endcall_requestncl', function (e) {
-            e.preventDefault();
-            $(".typeSubmit").val("SaveRequestNCL");
-            $(this).parents("form").submit();
-        });
     </script>
 </text>

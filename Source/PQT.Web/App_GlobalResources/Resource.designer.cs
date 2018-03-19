@@ -1618,11 +1618,29 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you want to block this item?.
+        /// </summary>
+        internal static string ConfirmBlock {
+            get {
+                return ResourceManager.GetString("ConfirmBlock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to cancel?.
         /// </summary>
         internal static string ConfirmCancel {
             get {
                 return ResourceManager.GetString("ConfirmCancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to cancel request?.
+        /// </summary>
+        internal static string ConfirmCancelRequest {
+            get {
+                return ResourceManager.GetString("ConfirmCancelRequest", resourceCulture);
             }
         }
         
@@ -1753,6 +1771,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you want to request to NCL?.
+        /// </summary>
+        internal static string ConfirmRequestNCL {
+            get {
+                return ResourceManager.GetString("ConfirmRequestNCL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to save all changes?.
         /// </summary>
         internal static string ConfirmSave {
@@ -1785,6 +1812,15 @@ namespace Resources {
         internal static string ConfirmUnarchive {
             get {
                 return ResourceManager.GetString("ConfirmUnarchive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to unblock this item?.
+        /// </summary>
+        internal static string ConfirmUnblock {
+            get {
+                return ResourceManager.GetString("ConfirmUnblock", resourceCulture);
             }
         }
         

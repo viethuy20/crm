@@ -271,6 +271,22 @@
     <value>Do you want to add this item?</value>
     <comment>Do you want to add this item?</comment>
   </data>
+  <data name="ConfirmBlock" xml:space="preserve">
+    <value>Do you want to block this item?</value>
+    <comment>Do you want to block this item?</comment>
+  </data>
+  <data name="ConfirmCancelRequest" xml:space="preserve">
+    <value>Do you want to cancel request?</value>
+    <comment>Do you want to cancel request?</comment>
+  </data>
+  <data name="ConfirmRequestNCL" xml:space="preserve">
+    <value>Do you want to request to NCL?</value>
+    <comment>Do you want to request to NCL?</comment>
+  </data>
+  <data name="ConfirmUnblock" xml:space="preserve">
+    <value>Do you want to unblock this item?</value>
+    <comment>Do you want to unblock this item?</comment>
+  </data>
   <data name="YouHaveUnsavedChanges" xml:space="preserve">
     <value>Are you sure you want to discard the data?</value>
     <comment>Are you sure you want to discard the data?</comment>

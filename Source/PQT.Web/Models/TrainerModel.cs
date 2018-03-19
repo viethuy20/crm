@@ -21,7 +21,7 @@ namespace PQT.Web.Models
                 var repo = DependencyHelper.GetService<ITrainerService>();
                 if (Picture != null)
                 {
-                    string uploadPicture = PhotoUpload.Upload(PhotoUploadType.Trainer, Picture);
+                    string uploadPicture = FileUpload.Upload(FileUploadType.Trainer, Picture);
                     if (!string.IsNullOrEmpty(uploadPicture))
                     {
                         Trainer.Picture = uploadPicture;
@@ -41,7 +41,7 @@ namespace PQT.Web.Models
                 var repo = DependencyHelper.GetService<ITrainerService>();
                 if (Picture != null)
                 {
-                    string uploadPicture = PhotoUpload.Upload(PhotoUploadType.Trainer, Picture);
+                    string uploadPicture = FileUpload.Upload(FileUploadType.Trainer, Picture);
                     if (!string.IsNullOrEmpty(uploadPicture))
                     {
                         Trainer.Picture = uploadPicture;
