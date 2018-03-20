@@ -28,38 +28,38 @@ namespace PQT.Web.Infrastructure.Notification
         {
             get { return DependencyResolver.Current.GetService<IMembershipService>(); }
         }
-        public static void NotifyAll(Lead lead, bool email = false)
-        {
-            var users = MemberService.GetUsers();
-            if (lead == null || !users.Any())
-                return;
-            foreach (var user in users)
-            {
-                if (CurrentUser.Identity.ID == user.ID)
-                {
-                    continue;
-                }
-                var notify = new UserNotification
-                {
-                    UserID = user.ID,
-                    EntryId = lead.ID,
-                    NotifyType = NotifyType.Lead,
-                    Title = "Called by " + lead.User.DisplayName,
-                    Description = lead.CompanyName,
-                    HighlightColor = lead.EventColor
-                };
-                notify = MemberService.CreateUserNotification(notify);
-                user.NotifyNumber++;
-                MemberService.UpdateUser(user);
-                NotificationHub.Notify(notify);
-            }
-            if (email)
-            {
-                NotificationService.NotifyAll(lead);
-            }
-        }
+        //public static void NotifyAll(Lead lead, bool email = false)
+        //{
+        //    var users = MemberService.GetUsers();
+        //    if (lead == null || !users.Any())
+        //        return;
+        //    foreach (var user in users)
+        //    {
+        //        if (CurrentUser.Identity.ID == user.ID)
+        //        {
+        //            continue;
+        //        }
+        //        var notify = new UserNotification
+        //        {
+        //            UserID = user.ID,
+        //            EntryId = lead.ID,
+        //            NotifyType = NotifyType.Lead,
+        //            Title = "Called by " + lead.User.DisplayName,
+        //            Description = lead.CompanyName,
+        //            HighlightColor = lead.EventColor
+        //        };
+        //        notify = MemberService.CreateUserNotification(notify);
+        //        user.NotifyNumber++;
+        //        MemberService.UpdateUser(user);
+        //        NotificationHub.Notify(notify);
+        //    }
+        //    if (email)
+        //    {
+        //        NotificationService.NotifyAll(lead);
+        //    }
+        //}
 
-        public static void NotifyUser(IEnumerable<User> users, Lead lead, bool email = false)
+        public static void NotifyUser(IEnumerable<User> users, Lead lead, string title = null, bool email = false)
         {
             if (lead == null || !users.Any())
                 return;
@@ -74,14 +74,26 @@ namespace PQT.Web.Infrastructure.Notification
                     UserID = user.ID,
                     EntryId = lead.ID,
                     NotifyType = NotifyType.Lead,
-                    Title = lead.LeadStatusRecord.Status.DisplayName + " by " + lead.LeadStatusRecord.User.DisplayName,
+                    Title = lead.StatusDisplay,
                     Description = lead.CompanyName,
                     HighlightColor = lead.EventColor
                 };
+                if (!string.IsNullOrEmpty(title))
+                {
+                    notify.Title = title;
+                }
                 notify = MemberService.CreateUserNotification(notify);
                 user.NotifyNumber++;
                 MemberService.UpdateUser(user);
                 NotificationHub.NotifyUser(user, notify);
+            }
+
+            if (lead.LeadStatusRecord == LeadStatus.Live ||
+                lead.LeadStatusRecord == LeadStatus.LOI ||
+                lead.LeadStatusRecord == LeadStatus.Blocked ||
+                lead.LeadStatusRecord == LeadStatus.Booked)
+            {
+                NotificationHub.Notify(lead);
             }
             if (email)
             {

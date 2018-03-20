@@ -465,6 +465,35 @@
 
     })();
 
+
+
+    var Lead = (function () {
+
+        function Lead(data) {
+            this.lead = data;
+        }
+
+        Lead.prototype.notify = function () {
+            if ($nclTable) {
+                var rowIndex = $nclTable.fnAddData([
+                    {
+                        DateCreatedDisplay: this.lead.DateCreatedDisplay,
+                        Salesman: this.lead.Salesman,
+                        CountryCode: this.lead.CountryCode,
+                        CompanyName: this.lead.CompanyName,
+                        ClientName: this.lead.ClientName,
+                        StatusDisplay: this.lead.StatusDisplay,
+                    }
+                ]);
+                //var row = $nclTable.fnGetNodes(rowIndex);
+                //$(row).attr('data-id', data.ID);
+            }
+        };
+
+        return Lead;
+
+    })();
+
     $triggerNotify.on('click', function (e) {
         e.preventDefault();
         $notifyCounter.addClass('hide');

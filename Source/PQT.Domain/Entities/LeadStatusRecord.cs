@@ -19,10 +19,6 @@ namespace PQT.Domain.Entities
         {
         }
 
-        public LeadStatusRecord(int entryId, LeadStatus status, string message = "")
-            : base(entryId, status, message)
-        {
-        }
         public LeadStatusRecord(int entryId, LeadStatus status, int? userId, string message = "")
             : base(entryId, status, userId, message)
         {

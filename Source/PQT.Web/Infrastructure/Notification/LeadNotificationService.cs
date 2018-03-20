@@ -18,13 +18,13 @@ namespace PQT.Web.Infrastructure.Notification
 
         public override void NotifyAll(Lead lead)
         {
-            SendEmailNotify(lead);
         }
 
         public override void NotifyUser(IEnumerable<User> users, Lead lead)
         {
             if (lead == null)
                 return;
+            SendEmailNotify(lead, users.Select(m => m.Email).ToArray());
         }
 
         public override void NotifyRole(IEnumerable<Role> roles, Lead lead)
@@ -35,27 +35,17 @@ namespace PQT.Web.Infrastructure.Notification
 
         #endregion
 
-        private void SendEmailNotify(Lead lead)
+        private void SendEmailNotify(Lead lead, string[] users)
         {
             if (lead == null) return;
-            if (lead.LeadStatusRecord == LeadStatus.RequestNCL)
-                SendEmail_RequestNCL(lead);
-            else if (lead.LeadStatusRecord == LeadStatus.RequestLOI)
-                SendEmail_RequestLOI(lead);
-            else if (lead.LeadStatusRecord == LeadStatus.RequestNCL)
-                SendEmail_RequestNCL(lead);
+            SendEmail_RequestNCL(lead, users);
 
         }
 
-        private void SendEmail_RequestNCL(Lead lead)
+        private void SendEmail_RequestNCL(Lead lead, string[] users)
         {
-            string subject = "Request NCL " + lead.ID;
-            SendEmail(subject, "Lead", "RequestNoCallList", lead);
-        }
-        private void SendEmail_RequestLOI(Lead lead)
-        {
-            string subject = "Request LOI " + lead.ID;
-            SendEmail(subject, "Lead", "RequestLOI", lead);
+            string subject = lead.StatusDisplay + " #" + lead.ID;
+            SendEmail(users, subject, "Lead", "RequestNoCallList", lead);
         }
 
     }

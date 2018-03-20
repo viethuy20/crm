@@ -56,7 +56,7 @@ namespace PQT.Web.Infrastructure.Notification
                 }
 
                 SendEmail(tos.Distinct().ToArray(),
-                    emailCcs.Select(m => m.Email).ToArray(), emailBccs.ToArray(), subject,
+                    emailCcs.Select(m => m.Email).Distinct().ToArray(), emailBccs.Distinct().ToArray(), subject,
                     message);
             }
         }

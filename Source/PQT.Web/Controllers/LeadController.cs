@@ -31,7 +31,7 @@ namespace PQT.Web.Controllers
         /// <param name="id">event id</param>
         /// <returns></returns>
         [DisplayName(@"Lead management")]
-        public ActionResult Index(int id)
+        public ActionResult Index(int id = 0)
         {
             var model = new LeadModelView();
             model.Prepare(id);
@@ -39,6 +39,19 @@ namespace PQT.Web.Controllers
             {
                 TempData["error"] = "Event not found";
                 return RedirectToAction("Index", "Home");
+            }
+            return View(model);
+        }
+
+        [DisplayName(@"Lead Detail")]
+        public ActionResult Detail(int id = 0, int eventId = 0)
+        {
+            var model = new LeadModelView();
+            model.PrepareDetail(id);
+            if (model.Lead == null)
+            {
+                TempData["error"] = "Call not found";
+                return RedirectToAction("Index", new { id = eventId });
             }
             return View(model);
         }
@@ -58,6 +71,17 @@ namespace PQT.Web.Controllers
                 return Json(new { Code = 0, Message = "Please select company" });
             }
 
+            var leadExists = _repo.GetAllLeads(m =>
+                m.EventID == model.Lead.EventID && m.UserID != CurrentUser.Identity.ID &&
+                m.CompanyID == model.Lead.CompanyID &&
+                (m.LeadStatusRecord == LeadStatus.Blocked ||
+                 m.LeadStatusRecord == LeadStatus.Live ||
+                 m.LeadStatusRecord == LeadStatus.LOI ||
+                 m.LeadStatusRecord == LeadStatus.Booked));
+            if (leadExists.Any())
+            {
+                return Json(new { Code = 0, Message = "Cannot process... This company is existing in NCL" });
+            }
             if (model.TypeSubmit == "SaveCall")
             {
                 if (model.Save())
@@ -84,25 +108,26 @@ namespace PQT.Web.Controllers
             var model = new CallingModel(leadId);
             return PartialView(model);
         }
+
         [HttpPost]
         [DisplayName(@"Calling Form")]
         public ActionResult CallingForm(CallingModel model)
         {
             if (model.Save())
             {
-                return Json(new { Code = 1 });
+                return Json(new { Code = 1, TypeSubmit = model.TypeSubmit, LeadID = model.PhoneCall.LeadID });
             }
             return Json(new { Code = 0, Message = "Save failed" });
         }
 
-        [DisplayName(@"Request Action")]
+        [DisplayName(@"Request NCL")]
         public ActionResult RequestAction(int id, string requestType)
         {
             var model = new LeadModel(id, requestType);
             return PartialView(model);
         }
 
-        [DisplayName(@"Request Action")]
+        [DisplayName(@"Request NCL")]
         [HttpPost]
         public ActionResult RequestAction(LeadModel model)
         {
@@ -121,12 +146,25 @@ namespace PQT.Web.Controllers
         {
             return Json(model.BlockLead());
         }
+
         [DisplayName(@"Unblock")]
         public ActionResult UnblockLead(LeadModel model)
         {
             return Json(model.UnblockLead());
         }
 
+        [DisplayName(@"Approval NCL")]
+        [HttpPost]
+        public ActionResult ApprovalAction(LeadModel model)
+        {
+            return Json(model.RequestAction());
+        }
+        [DisplayName(@"Reject NCL")]
+        [HttpPost]
+        public ActionResult RejectAction(LeadModel model)
+        {
+            return Json(model.RequestAction());
+        }
         [AjaxOnly]
         public ActionResult AjaxGetLeads(int eventId)
         {
@@ -238,7 +276,7 @@ namespace PQT.Web.Controllers
                 {
                     m.ID,
                     m.EventID,
-                    CreatedTime = m.CreatedTime.ToString("dd/MM/yyyy"),
+                    CreatedTime = m.CreatedTime.ToString("dd/MM/yyyy HH:mm:ss"),
                     Company = m.Company.CompanyName,
                     Country = m.Company.CountryCode,
                     m.GeneralLine,
@@ -287,11 +325,17 @@ namespace PQT.Web.Controllers
             IEnumerable<Lead> leads = new HashSet<Lead>();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId && (saleId == 0 || m.UserID == saleId || (m.User != null && m.User.TransferUserID == saleId)));
+                leads = _repo.GetAllLeads(m => m.EventID == eventId && (m.LeadStatusRecord == LeadStatus.Live || 
+                                                                        m.LeadStatusRecord == LeadStatus.LOI || 
+                                                                        m.LeadStatusRecord == LeadStatus.Booked || 
+                                                                        m.LeadStatusRecord == LeadStatus.Blocked ));
             }
             else
             {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId && (saleId == 0 || m.UserID == saleId || (m.User != null && m.User.TransferUserID == saleId)));
+                leads = _repo.GetAllLeads(m => m.EventID == eventId && (m.LeadStatusRecord == LeadStatus.Live ||
+                                                                        m.LeadStatusRecord == LeadStatus.LOI ||
+                                                                        m.LeadStatusRecord == LeadStatus.Booked ||
+                                                                        m.LeadStatusRecord == LeadStatus.Blocked));
             }
             // ReSharper disable once AssignNullToNotNullAttribute
 
@@ -300,13 +344,13 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
-                    case "CreatedTime":
-                        leads = leads.OrderBy(s => s.CreatedTime).ThenBy(s => s.ID);
+                    case "DateCreatedDisplay":
+                        leads = leads.OrderBy(s => s.LeadStatusRecord.UpdatedTime).ThenBy(s => s.ID);
                         break;
-                    case "Company":
+                    case "CompanyName":
                         leads = leads.OrderBy(s => s.Company.CompanyName).ThenBy(s => s.ID);
                         break;
-                    case "Country":
+                    case "CountryCode":
                         leads = leads.OrderBy(s => s.Company.CountryCode).ThenBy(s => s.ID);
                         break;
                     case "ClientName":
@@ -327,13 +371,13 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
-                    case "CreatedTime":
-                        leads = leads.OrderByDescending(s => s.CreatedTime).ThenBy(s => s.ID);
+                    case "DateCreatedDisplay":
+                        leads = leads.OrderByDescending(s => s.LeadStatusRecord.UpdatedTime).ThenBy(s => s.ID);
                         break;
-                    case "Company":
+                    case "CompanyName":
                         leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenBy(s => s.ID);
                         break;
-                    case "Country":
+                    case "CountryCode":
                         leads = leads.OrderByDescending(s => s.Company.CountryCode).ThenBy(s => s.ID);
                         break;
                     case "ClientName":
@@ -368,13 +412,13 @@ namespace PQT.Web.Controllers
                 {
                     m.ID,
                     m.EventID,
-                    Salesman = m.User.DisplayName,
-                    CreatedTime = m.DateCreatedDisplay,
-                    Company = m.Company.CompanyName,
-                    Country = m.Company.CountryCode,
+                    m.Salesman,
+                    m.DateCreatedDisplay,
+                    m.CompanyName,
+                    m.CountryCode,
                     m.ClientName,
                     m.ClassStatus,
-                    StatusDisplay = m.StatusDisplay,
+                    m.StatusDisplay,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

@@ -21,7 +21,8 @@ namespace PQT.Domain.Entities
         public string Description { get; set; }
         public string HighlightColor { get; set; }
         public DateTime CreatedTime { get; set; }
-
+        [NotMapped]
+        public int ReloadNCL { get; set; }
         public string NotifyTypeDisplay
         {
             get { return NotifyType.DisplayName; }

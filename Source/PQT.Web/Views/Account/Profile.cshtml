@@ -31,7 +31,7 @@
                     @Html.Bootstrap().LabelFor(m => m.Username).LabelText("Name").ShowRequiredStar(true)
                 </div>
                 <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Email).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().TextBoxFor(m => m.Email).Readonly().Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email").ShowRequiredStar(true)
                 </div>
                 <div class="form-group">

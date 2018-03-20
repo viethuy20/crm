@@ -15,7 +15,7 @@
                 @Html.Partial("_CreateOrEdit", Model)
                 <div class="row">
                     <div class="form-group  col-md-offset-2">
-                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon(Icons.arrow_left)
+                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
                         @Html.Bootstrap().SubmitButton().Id("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
                     </div>
                 </div>

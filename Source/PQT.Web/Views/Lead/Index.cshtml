@@ -23,47 +23,47 @@
     }*/
 
     #tableLead tbody tr.Reject {
-        background-color: #f44336 !important;
+        background-color: #faebd4 !important;
     }
 
-        #tableLead tbody tr.Reject td {
+    /*#tableLead tbody tr.Reject td {
             color: #fff !important;
-        }
+        }*/
 
     #tableLead tbody tr.Blocked {
-        background-color: #ff9800 !important;
+        background-color: #fad7d4 !important;
     }
 
-        #tableLead tbody tr.Blocked td {
+    /*#tableLead tbody tr.Blocked td {
             color: #fff !important;
-        }
+        }*/
 
     #tableLead tbody tr.LOI {
-        background-color: #7dd8d2 !important;
+        background-color: #d4e9fa !important;
     }
 
     #tableLead tbody tr.Live {
-        background-color: #7dd8d2 !important;
+        background-color: #d4e9fa !important;
     }
 
     #tableLead tbody tr.Booked {
-        background-color: #4caf50 !important;
+        background-color: #d4fad6 !important;
     }
 
-        #tableLead tbody tr.Booked td {
+    /*#tableLead tbody tr.Booked td {
             color: #fff !important;
-        }
+        }*/
 
     #tableLead tbody tr.RequestNCL {
-        background-color: #f8f995 !important;
+        background-color: #faf9d4 !important;
     }
 
     #tableLead tbody tr.RequestLOI {
-        background-color: #f8f995 !important;
+        background-color: #faf9d4 !important;
     }
 
     #tableLead tbody tr.RequestBook {
-        background-color: #f8f995 !important;
+        background-color: #faf9d4 !important;
     }
 </style>
 <section>
@@ -84,7 +84,10 @@
                 <div class="card-head">
                     <div class="tools">
                         <div class="btn-group">
-                            <a href="@Url.Action("CallSheet",new{eventId=Model.Event.ID,leadId=Model.Event.ID})" class="btn btn-icon-toggle text-success simple-ajax-popup-align-top-custom" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Start New Call"><i class="fa fa-phone-square fa-2x"></i></a>
+                            @if (CurrentUser.HasPermission("Lead", "CallSheet"))
+                            {
+                                <a href="@Url.Action("CallSheet", new {eventId = Model.Event.ID, leadId = Model.Event.ID})" class="btn btn-icon-toggle text-success simple-ajax-popup-align-top-custom" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Start New Call"><i class="fa fa-phone-square fa-2x"></i></a>
+                            }
                             <a class="btn btn-icon-toggle btn-Expand"><i class="fa fa-expand"></i></a>
                         </div>
                     </div>
@@ -198,9 +201,12 @@
              "iDisplayLength": 25,
              "aaSorting": [[0, "desc"]],
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 @*$(nRow).find('td:eq(1)').attr("style", "text-align:center");
-                $(nRow).find('td:eq(4)').html('<a href="@Url.Action("Detail","Audit")/' + aData["ID"] + '" target="_blank"><i class="md md-more"></i></a>');*@
+                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' + aData["ID"] + '">' + aData["CreatedTime"] + '</a>');
                  var dropdowns = "";
+                 dropdowns +=
+                     '<li><a href="@Url.Action("Detail")?id=' +
+                     aData["ID"] +
+                     '&eventId=@Model.Event.ID"><span class=" text-default"><i class="fa fa-fw fa-eye"></i> Detail</span></a></li>';
                  dropdowns +=
                      '<li><a class="simple-ajax-popup-align-top-custom" href="@Url.Action("CallingForm")?leadId=' +
                          aData["ID"] +
@@ -234,14 +240,14 @@
                  if (aData["StatusCode"] == '@LeadStatus.RequestNCL'||aData["StatusCode"] == '@LeadStatus.RequestBook'||aData["StatusCode"] == '@LeadStatus.RequestLOI') {
                      dropdowns += '<li><a href="#" data-action="CancelRequest" data-id="' +
                          aData["ID"] +
-                         '"><span class=" text-warning"><i class="md fa-fw md-cancel"></i> Cancel Request</span></a></li>';
+                         '"><span class=" text-warning"><i class="md fa-fw md-cancel"></i> Cancel ' + aData["StatusDisplay"] +'</span></a></li>';
                  };
                  if (aData["StatusCode"] != '@LeadStatus.Booked') {
                      dropdowns += '<li><a href="#" data-action="' +
                          aData["actionBlock"] +
                          '" data-id="' +
                          aData["ID"] +
-                         '"><span class=" text-danger"><i class="md fa-fw md-block"></i> ' +
+                         '"><span class=" text-danger"><i class="md fa-fw md-lock-outline"></i> ' +
                          aData["actionBlock"] +
                          '</span></a></li>';
                  };
@@ -370,8 +376,8 @@
 
 
 
-         var nclTable = $("#tableNCList");
-         nclTable.dataTable({
+         var $nclTable = $("#tableNCList");
+         $nclTable.dataTable({
              "processing": true, // for show progress bar
              "serverSide": true, // for process server side
              "filter": true, // this is for disable filter (search box)
@@ -385,10 +391,10 @@
                  }
              },
              "columns": [
-                 { "data": "CreatedTime", "name": "CreatedTime", "orderable": true },
+                 { "data": "DateCreatedDisplay", "name": "DateCreatedDisplay", "orderable": true },
                  { "data": "Salesman", "name": "Salesman", "orderable": true },
-                 { "data": "Country", "name": "Country", "orderable": true },
-                 { "data": "Company", "name": "Company", "orderable": true },
+                 { "data": "CountryCode", "name": "CountryCode", "orderable": true },
+                 { "data": "CompanyName", "name": "CompanyName", "orderable": true },
                  { "data": "ClientName", "name": "ClientName", "orderable": true },
                  { "data": "StatusDisplay", "name": "StatusDisplay", "orderable": true },
              ],
@@ -442,7 +448,7 @@
                      $(this).parents(".card").parent().removeClass("col-md-4");
                      $(this).find('i').addClass("fa-compress");
                      $(this).find('i').removeClass("fa-expand");
-                     nclTable.css("width","100%");
+                     $nclTable.css("width","100%");
                  } else {
                      $(this).parents(".card").parent().removeClass("col-md-12");
                      $(this).parents(".card").parent().addClass("col-md-4");
@@ -559,8 +565,30 @@
              } else {
                  if (data.Code == 1) {
                      toastr.success('@Resource.UpdateSuccessful');
-                     $.magnificPopup.close();
-                     oTable.fnFilter('');
+                     if (data.TypeSubmit == "SaveRequestNCL") {
+                         bootbox.confirm("@Resource.ConfirmRequestNCL", function (isOK) {
+                             if (isOK) {
+                                 $.ajax({
+                                     url: '@Url.Action("RequestAction")?id=' + data.LeadID + '&requestType=@LeadStatus.RequestNCL',
+                                     type: 'POST',
+                                     success: function (data) {
+                                         if (data == "") {
+                                             toastr.success("Request successful");
+                                             oTable.fnFilter('');
+                                         } else {
+                                             toastr.error(data);
+                                         }
+                                     },
+                                     error: function () {
+                                         toastr.error("Request failed");
+                                     }
+                                 });
+                             }
+                         });
+                     } else {
+                         $.magnificPopup.close();
+                         oTable.fnFilter('');
+                     }
                  }
                  //if (data) {
                  //    $(".leadcontent").html(data);

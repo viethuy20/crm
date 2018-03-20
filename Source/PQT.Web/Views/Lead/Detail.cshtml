@@ -1,0 +1,322 @@
+﻿@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.LeadModelView
+
+@{
+    ViewBag.Title = "Call Detail";
+}
+
+<section>
+
+    <div class="row section-header" style="height: auto">
+        <h2 class="text-primary col-sm-3">@ViewBag.Title</h2>
+
+        <div class="pull-right" style="padding-right: 12px">
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
+
+            @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
+                                                                        Model.Lead.LeadStatusRecord == LeadStatus.Reject))
+            {
+                @Html.Bootstrap().ActionLinkButton("Request To NCL", "RequestAction").Id("request_ncl").Class("btn-info").PrependIcon("md md-phone-locked")
+            }
+            @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
+                                                                       Model.Lead.LeadStatusRecord == LeadStatus.Reject ||
+                                                                       Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
+                                                                       Model.Lead.LeadStatusRecord == LeadStatus.Live))
+            {
+                @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.Lead.EventID, requestType = @LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
+            }
+            @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord != LeadStatus.RequestBook &&
+                                                                       Model.Lead.LeadStatusRecord != LeadStatus.Booked))
+            {
+                @Html.Bootstrap().ActionLinkButton("Request To Book", "RequestAction").RouteValues(new { id = Model.Lead.EventID, requestType = @LeadStatus.RequestBook }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")
+            }
+            @if (CurrentUser.HasPermission("Lead", "CancelRequest") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
+                                                                       Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI ||
+                                                                       Model.Lead.LeadStatusRecord == LeadStatus.RequestBook))
+            {
+                @Html.Bootstrap().ActionLinkButton("Cancel " + Model.Lead.StatusDisplay, "CancelRequest").Id("cancel_request").Class("btn-warning").PrependIcon("md md-cancel")
+            }
+            @if ((Model.Lead.LeadStatusRecord != LeadStatus.Booked))
+            {
+                if (Model.Lead.LeadStatusRecord != LeadStatus.Blocked)
+                {
+                    if (CurrentUser.HasPermission("Lead", "BlockLead"))
+                    {
+                        @Html.Bootstrap().ActionLinkButton("Block ", "BlockLead").Id("lead_block").Class("btn-danger").PrependIcon("md md-lock-outline")
+                    }
+                }
+                else
+                {
+                    if (CurrentUser.HasPermission("Lead", "UnblockLead"))
+                    {
+                        @Html.Bootstrap().ActionLinkButton("Unblock ", "UnblockLead").Id("lead_unblock").Class("btn-danger").PrependIcon("md md-lock-open")
+                    }
+                }
+
+
+            }
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body form form-validate">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.CompanyName).LabelText("COMPANY NAME")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.GeneralLine).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.GeneralLine).LabelText("GENERAL LINE")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.ClientName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.ClientName).LabelText("CLIENT NAME/ JOB TITLE")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.DirectLine).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER")
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Call Sessions</header>
+        </div>
+        <div class="card-body text-default-light">
+            <div class="row">
+                <table class="table no-margin">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Time</th>
+                            <th>Highlight</th>
+                            <th>Call Back Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var phonecall in Model.Lead.PhoneCalls)
+                        {
+                            <tr>
+                                <td>@phonecall.StartTime.ToString("dd-MMM-yy HH:mm:ss")</td>
+                                <td>@((phonecall.EndTime - phonecall.StartTime))</td>
+                                <td>@phonecall.Remark</td>
+                                <td>@(phonecall.CallBackDate != null ? Convert.ToDateTime(phonecall.CallBackDate).ToString("dd/MM/yyyy") : "")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div><!--end .card-body -->
+        <div class="card-actionbar">
+            <div class="card-actionbar-row">
+                @if (CurrentUser.HasPermission("Lead", "CallingForm"))
+                {
+                    <a class="btn btn-success pull-left simple-ajax-popup-align-top-custom" href="@Url.Action("CallingForm")?leadId=@Model.Lead.ID"><i class="md md-phone"></i> Start Call</a>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+@Html.Script(
+    @<script>
+
+
+        $(document).on('click', '#lead_block', function (e) {
+             e.preventDefault();
+             bootbox.confirm("@Resource.ConfirmBlock", function (isOK) {
+                 if (isOK) {
+                     $.ajax({
+                         url: '@Url.Action("BlockLead")/@Model.Lead.ID',
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 location.reload();
+                             } else {
+                                 toastr.error(data);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Block failed");
+                         }
+                     });
+                 }
+             });
+         });
+        $(document).on('click', '#lead_unblock', function (e) {
+             e.preventDefault();
+             bootbox.confirm("@Resource.ConfirmUnblock", function (isOK) {
+                 if (isOK) {
+                     $.ajax({
+                         url: '@Url.Action("UnblockLead")/@Model.Lead.ID',
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 location.reload();
+                             } else {
+                                 toastr.error(data);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Unblock failed");
+                         }
+                     });
+                 }
+             });
+         });
+
+        $(document).on('click', '#request_ncl', function (e) {
+             e.preventDefault();
+             bootbox.confirm("@Resource.ConfirmRequestNCL", function (isOK) {
+                 if (isOK) {
+                     $.ajax({
+                         url: '@Url.Action("RequestAction")?id=@Model.Lead.ID&requestType=@LeadStatus.RequestNCL',
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 //toastr.success("Request successful");
+                                 location.reload();
+                             } else {
+                                 toastr.error(data);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Request failed");
+                         }
+                     });
+                 }
+             });
+         });
+        $(document).on('click', '#cancel_request', function (e) {
+             e.preventDefault();
+             bootbox.confirm("@Resource.ConfirmCancelRequest", function (isOK) {
+                 if (isOK) {
+                     $.ajax({
+                         url: '@Url.Action("CancelRequest")?id=@Model.Lead.ID',
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 //toastr.success("Cancel successful");
+                                 location.reload();
+                             } else {
+                                 toastr.error(data);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Cancel failed");
+                         }
+                     });
+                 }
+             });
+        });
+
+
+
+         $(document).on('click', '.simple-ajax-popup-align-top-custom', function (e) {
+             e.preventDefault();
+             $(this).magnificPopup({
+                 type: 'ajax',
+                 closeOnBgClick:false,
+                 callbacks: {
+                     ajaxContentAdded: function () {
+                         $('.mfp-container .date-picker,.mfp-container .datepicker').datepicker({
+                             autoclose: true,
+                             todayHighlight: true,
+                             format: 'dd/mm/yyyy'
+                         }).on('changeDate', function (ev) {
+                             $(this).datepicker('hide');
+                         });
+
+                         $(".mfp-container select:not(.select-ajax)").select2({
+                             placeholder: "@Resource.PleaseSelect",
+                             width: '100%',
+                             allowClear: true,
+                         });
+
+                         $(".mfp-container select[data-display=select2]").select2({
+                             placeholder: "@Resource.PleaseSelect",
+                             width: '100%',
+                             allowClear: true,
+                         });
+
+                         $("form").removeData("validator");
+                         $("form").removeData("unobtrusiveValidation");
+                         $.validator.unobtrusive.parse("form");
+                     }
+                 }
+             }).magnificPopup('open');
+         });
+    </script>)
+
+
+@Html.Script(
+    @<script>
+
+         function onFailCalling() {
+             toastr.error('@Resource.SaveError');
+         }
+         function onSuccessCalling(data) {
+             if (data.Code == 0) {
+                 if (data.Message)
+                     toastr.error(data.Message);
+                 else
+                     toastr.error('@Resource.SaveFailed');
+             } else {
+                 if (data.TypeSubmit == "SaveRequestNCL") {
+                     $.magnificPopup.close();
+                     bootbox.confirm("@Resource.ConfirmRequestNCL", function (isOK) {
+                         if (isOK) {
+                             $.ajax({
+                                 url: '@Url.Action("RequestAction")?id=' + data.LeadID + '&requestType=@LeadStatus.RequestNCL',
+                                 type: 'POST',
+                                 success: function (data) {
+                                     if (data == "") {
+                                         //toastr.success("Request successful");
+                                         location.reload();
+                                     } else {
+                                         toastr.error(data);
+                                     }
+                                 },
+                                 error: function () {
+                                     toastr.error("Request failed");
+                                 }
+                             });
+                         }
+                     });
+                 } else {
+                     $.magnificPopup.close();
+                     location.reload();
+                 }
+                 //if (data) {
+                 //    $(".leadcontent").html(data);
+                 //}
+
+             }
+         }
+         $(document).on('click', '#endcall_save', function (e) {
+             e.preventDefault();
+             $(".typeSubmit").val("SaveExist");
+             $(this).parents("form").submit();
+         });
+         $(document).on('click', '#endcall_book', function (e) {
+             e.preventDefault();
+             $(".typeSubmit").val("SaveBook");
+             $(this).parents("form").submit();
+         });
+         $(document).on('click', '#endcall_requestncl', function (e) {
+             e.preventDefault();
+             $(".typeSubmit").val("SaveRequestNCL");
+             $(this).parents("form").submit();
+         });
+    </script>)

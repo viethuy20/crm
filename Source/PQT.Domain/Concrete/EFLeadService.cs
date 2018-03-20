@@ -21,7 +21,7 @@ namespace PQT.Domain.Concrete
         }
         public IEnumerable<Lead> GetAllLeads(Func<Lead, bool> predicate)
         {
-            return GetAll(predicate, m => m.Event).AsEnumerable();
+            return GetAll(predicate, m => m.Event, m => m.LeadStatusRecord).AsEnumerable();
         }
 
         public Lead GetLead(int id)

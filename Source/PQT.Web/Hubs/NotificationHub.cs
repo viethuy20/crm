@@ -99,9 +99,9 @@ namespace PQT.Web.Hubs
             context.Clients.Group(GetRoleGroupName(role)).notify(message, dataType);
         }
 
-        public static void Notify(UserNotification notify)
+        public static void Notify(Lead lead)
         {
-            Notify(Json.Encode(notify), GetEntityName(notify));
+            Notify(Json.Encode(lead), GetEntityName(lead));
         }
         public static void NotifyUser(User user, UserNotification notify)
         {

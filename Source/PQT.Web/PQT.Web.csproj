@@ -369,6 +369,7 @@
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Infrastructure\Helpers\ImageHelper.cs" />
+    <Compile Include="Infrastructure\Helpers\LeadHelper.cs" />
     <Compile Include="Infrastructure\Notification\LeadNotificationService.cs" />
     <Compile Include="Infrastructure\Notification\LeadNotificator.cs" />
     <Compile Include="Infrastructure\Utility\FileUpload.cs" />
@@ -2184,6 +2185,7 @@
     <Content Include="Content\EmailTemplates\Invoice\AlertApprovedCancel.html.cshtml" />
     <Content Include="Content\EmailTemplates\Invoice\AlertRejectedCancel.html.cshtml" />
     <Content Include="Content\EmailTemplates\Invoice\RequestCancel.html.cshtml" />
+    <Content Include="Content\EmailTemplates\Lead\RequestNoCallList.html.cshtml" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -2251,6 +2253,7 @@
     <Content Include="Views\Home\PanelNotification.cshtml" />
     <Content Include="Views\Shared\_Notification.cshtml" />
     <Content Include="Views\Lead\RequestAction.cshtml" />
+    <Content Include="Views\Lead\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

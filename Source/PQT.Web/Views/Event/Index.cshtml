@@ -32,13 +32,15 @@
                         @foreach (var item in Model)
                         {
                             <tr data-id="@item.ID">
-                                <td>@item.EventCode</td>
+                                <td>
+                                    <a class="text-primary" href="@Url.Action("Index","Lead",new{id = item.ID})" style="text-decoration: underline;">@item.EventCode</a>
+                                </td>
                                 <td>@item.EventName</td>
                                 <td>@item.StartDate.ToString("dd/MM/yyyy")</td>
                                 <td>@item.EndDate.ToString("dd/MM/yyyy")</td>
                                 <td>
                                     <a href="@Url.Action("Edit", new {id = item.ID})" data-action="edit">
-                                        <i class="md md-edit text-info"> Edit</i> 
+                                        <i class="md md-edit text-info"> Edit</i>
                                     </a>
                                 </td>
                                 <td>

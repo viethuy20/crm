@@ -70,6 +70,28 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
+        public string CountryCode
+        {
+            get
+            {
+                if (Company != null)
+                {
+                    return Company.CountryCode;
+                }
+                return "";
+            }
+        }
+        public string Salesman
+        {
+            get
+            {
+                if (User != null)
+                {
+                    return User.DisplayName;
+                }
+                return "";
+            }
+        }
         public string DateCreatedDisplay
         {
             get
