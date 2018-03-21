@@ -23,6 +23,10 @@ namespace PQT.Web.Models
         public LeadModel()
         {
         }
+        public LeadModel(int leadId)
+        {
+            id = leadId;
+        }
 
         public LeadModel(int leadId, string type)
         {
@@ -41,7 +45,11 @@ namespace PQT.Web.Models
             var maxBlock = Settings.Lead.MaxBlockeds();
             if (leads.Count(m => m.UserID == CurrentUser.Identity.ID && m.LeadStatusRecord == LeadStatus.Blocked) >= maxBlock)
                 return "Limit blocked is not exceed " + maxBlock;
-            if (leads.Any(m => m.UserID != CurrentUser.Identity.ID && m.CompanyID == lead.CompanyID && m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject))
+            if (leads.Any(m => m.UserID != CurrentUser.Identity.ID &&
+                               m.CompanyID == lead.CompanyID &&
+                               m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
+                               (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
+                                DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))))
                 return "Cannot block this company... Company is requesting to NCL or exists in NCL";
 
             if (lead.LeadStatusRecord == LeadStatus.Blocked) return "Block failed";
@@ -51,7 +59,8 @@ namespace PQT.Web.Models
             users.AddRange(lead.Event.Users);
             users.AddRange(lead.Event.SalesGroups.SelectMany(m => m.Users));
             //users.Add(lead.Event.User);//notify for manager
-            LeadNotificator.NotifyUser(users, lead);
+            //LeadNotificator.NotifyUser(users, lead);
+            LeadNotificator.NotifyUpdateNCL(lead);
             return "";
 
         }
@@ -66,7 +75,9 @@ namespace PQT.Web.Models
                 return "Cannot process ... This item has been booked";
             lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Initial, CurrentUser.Identity.ID,
                 "action unblock");
-            return leadRepo.UpdateLead(lead) ? "" : "Unblock failed";
+            if (!leadRepo.UpdateLead(lead)) return "Unblock failed";
+            LeadNotificator.NotifyUpdateNCL(lead);
+            return "";
         }
 
         public string RequestAction()
@@ -91,6 +102,15 @@ namespace PQT.Web.Models
             }
 
             if (lead.LeadStatusRecord != LeadStatus.Initial && lead.LeadStatusRecord != LeadStatus.Reject) return "Submit failed";
+
+            var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
+            if (leads.Any(m => m.UserID != CurrentUser.Identity.ID &&
+                               m.CompanyID == lead.CompanyID &&
+                               m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
+                               (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
+                                DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))))
+                return "Cannot block this company... Company is requesting to NCL or exists in NCL";
+
             string fileName = null;
             if (AttachmentFile != null)
             {
@@ -103,6 +123,7 @@ namespace PQT.Web.Models
             lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, Enumeration.FromValue<LeadStatus>(requestType), CurrentUser.Identity.ID, fileName);
             if (!leadRepo.UpdateLead(lead)) return "Submit failed";
             LeadNotificator.NotifyUser(new List<User> { lead.Event.User }, lead); // notify for manager
+            LeadNotificator.NotifyUpdateNCL(lead);
             return "";
         }
 
@@ -134,6 +155,16 @@ namespace PQT.Web.Models
                 lead.LeadStatusRecord != LeadStatus.RequestNCL &&
                 lead.LeadStatusRecord != LeadStatus.RequestBook)
                 return "Approval failed";
+
+            var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
+            if (leads.Any(m => m.UserID != CurrentUser.Identity.ID &&
+                               m.CompanyID == lead.CompanyID &&
+                               m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
+                               (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
+                                DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))))
+                return "Cannot block this company... Company is requesting to NCL or exists in NCL";
+
+
             var titleNotify = lead.LeadStatusRecord.Status.DisplayName + " approved";
             if (lead.LeadStatusRecord == LeadStatus.RequestNCL)
             {
@@ -149,6 +180,7 @@ namespace PQT.Web.Models
             }
             if (!leadRepo.UpdateLead(lead)) return "Approval failed";
             LeadNotificator.NotifyUser(new List<User> { lead.User }, lead, titleNotify); // notify for manager
+            LeadNotificator.NotifyUpdateNCL(lead);
             return "";
         }
         public string RejectRequest()
@@ -163,7 +195,7 @@ namespace PQT.Web.Models
                 lead.LeadStatusRecord != LeadStatus.RequestBook)
                 return "Reject failed";
             var titleNotify = lead.LeadStatusRecord.Status.DisplayName + " rejected";
-            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Initial, CurrentUser.Identity.ID);
+            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Reject, CurrentUser.Identity.ID);
             if (!leadRepo.UpdateLead(lead)) return "Reject failed";
             LeadNotificator.NotifyUser(new List<User> { lead.User }, lead, titleNotify); // notify for manager
             return "";
@@ -200,6 +232,7 @@ namespace PQT.Web.Models
                 var leadRepo = DependencyHelper.GetService<ILeadService>();
                 var eventRepo = DependencyHelper.GetService<IEventService>();
                 var comRepo = DependencyHelper.GetService<ICompanyRepository>();
+
                 var result = leadRepo.CreateLead(Lead);
                 if (result != null)
                 {

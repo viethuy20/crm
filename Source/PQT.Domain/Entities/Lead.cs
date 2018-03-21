@@ -135,5 +135,20 @@ namespace PQT.Domain.Entities
                 return StringHelper.RemoveSpecialCharacters(StatusDisplay);
             }
         }
+
+        public object Serializing()
+        {
+            return new
+            {
+                EventColor,
+                StatusCode,
+                Salesman,
+                DateCreatedDisplay,
+                CountryCode,
+                StatusDisplay,
+                CompanyName,
+                ID
+            };
+        }
     }
 }

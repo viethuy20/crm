@@ -19,17 +19,33 @@
             {
                 @Html.Bootstrap().ActionLinkButton("Request To NCL", "RequestAction").Id("request_ncl").Class("btn-info").PrependIcon("md md-phone-locked")
             }
+
+            @if (CurrentUser.HasPermission("Lead", "ApprovalAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
+                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
+                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
+            {
+                @Html.Bootstrap().ActionLinkButton("Approve " + Model.Lead.StatusDisplay, "ApprovalAction").Id("approve_action").Class("btn-success").PrependIcon("md md-done")
+            }
+
+            @if (CurrentUser.HasPermission("Lead", "RejectAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
+                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
+                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
+            {
+                @Html.Bootstrap().ActionLinkButton("Reject " + Model.Lead.StatusDisplay, "RejectAction").RouteValues(new { id = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
+            }
+
+
             @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.Reject ||
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.Live))
             {
-                @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.Lead.EventID, requestType = @LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
+                @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
             }
             @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord != LeadStatus.RequestBook &&
                                                                        Model.Lead.LeadStatusRecord != LeadStatus.Booked))
             {
-                @Html.Bootstrap().ActionLinkButton("Request To Book", "RequestAction").RouteValues(new { id = Model.Lead.EventID, requestType = @LeadStatus.RequestBook }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")
+                @Html.Bootstrap().ActionLinkButton("Request To Book", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestBook }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")
             }
             @if (CurrentUser.HasPermission("Lead", "CancelRequest") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI ||
@@ -133,7 +149,7 @@
     @<script>
 
 
-        $(document).on('click', '#lead_block', function (e) {
+         $(document).on('click', '#lead_block', function (e) {
              e.preventDefault();
              bootbox.confirm("@Resource.ConfirmBlock", function (isOK) {
                  if (isOK) {
@@ -154,7 +170,7 @@
                  }
              });
          });
-        $(document).on('click', '#lead_unblock', function (e) {
+         $(document).on('click', '#lead_unblock', function (e) {
              e.preventDefault();
              bootbox.confirm("@Resource.ConfirmUnblock", function (isOK) {
                  if (isOK) {
@@ -176,7 +192,7 @@
              });
          });
 
-        $(document).on('click', '#request_ncl', function (e) {
+         $(document).on('click', '#request_ncl', function (e) {
              e.preventDefault();
              bootbox.confirm("@Resource.ConfirmRequestNCL", function (isOK) {
                  if (isOK) {
@@ -198,7 +214,7 @@
                  }
              });
          });
-        $(document).on('click', '#cancel_request', function (e) {
+         $(document).on('click', '#cancel_request', function (e) {
              e.preventDefault();
              bootbox.confirm("@Resource.ConfirmCancelRequest", function (isOK) {
                  if (isOK) {
@@ -219,7 +235,29 @@
                      });
                  }
              });
-        });
+         });
+
+         $(document).on('click', '#approve_action', function (e) {
+             e.preventDefault();
+             bootbox.confirm("@Resource.ConfirmApprove", function (isOK) {
+                 if (isOK) {
+                     $.ajax({
+                         url: '@Url.Action("ApprovalAction")?id=@Model.Lead.ID',
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 location.reload();
+                             } else {
+                                 toastr.error(data);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Cancel failed");
+                         }
+                     });
+                 }
+             });
+         });
 
 
 
@@ -319,4 +357,65 @@
              $(".typeSubmit").val("SaveRequestNCL");
              $(this).parents("form").submit();
          });
+    </script>)
+
+@Html.Script(
+    @<script>
+
+         $(document).on('click', '#request_close', function (e) {
+             e.preventDefault();
+             $.magnificPopup.close();
+         });
+
+         $(document).on('click', '#request_submit', function (e) {
+             e.preventDefault();
+             var formdata = new FormData();
+             formdata.append("id", $("#request_id").val());
+             formdata.append("requestType", $("#request_Type").val());
+             var getfile = $('#request-attachment')[0];
+             if (getfile) {
+                 for (var i = 0; i < getfile.files.length; i++) {
+                     if (getfile.files[i].name) {
+                         formdata.append("AttachmentFile", getfile.files[i]);
+                     }
+                 }
+             }
+             $.ajax({
+                 url: '@Url.Action("RequestAction")',
+                 data: formdata,
+                 contentType: false,
+                 processData: false,
+                 async: false,
+                 type: 'POST',
+                 success: function (data) {
+                     if (data == "") {
+                         toastr.success("Submit successful");
+                         location.reload();
+                     } else {
+                         toastr.error(data);
+                     }
+                 },
+                 error: function () {
+                     toastr.error("Submit failed");
+                 }
+             });
+         });
+
+    </script>)
+
+@Html.Script(
+    @<script>
+
+         function onFailRejectAction() {
+             toastr.error('@Resource.SaveError');
+         }
+         function onSuccessRejectAction(data) {
+             if (data == "") {
+                 toastr.success("Reject successful");
+                 $.magnificPopup.close();
+                 location.reload();
+             } else {
+                 toastr.error(data);
+             }
+         }
     </script>)

@@ -101,7 +101,7 @@ namespace PQT.Web.Hubs
 
         public static void Notify(Lead lead)
         {
-            Notify(Json.Encode(lead), GetEntityName(lead));
+            Notify(Json.Encode(lead.Serializing()), GetEntityName(lead));
         }
         public static void NotifyUser(User user, UserNotification notify)
         {

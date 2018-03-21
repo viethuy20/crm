@@ -28,6 +28,14 @@ namespace PQT.Web.Infrastructure.Notification
         {
             get { return DependencyResolver.Current.GetService<IMembershipService>(); }
         }
+
+        public static void NotifyUpdateNCL(Lead lead)
+        {
+            if (lead == null)
+                return;
+            NotificationHub.Notify(lead);
+        }
+
         //public static void NotifyAll(Lead lead, bool email = false)
         //{
         //    var users = MemberService.GetUsers();
@@ -61,7 +69,7 @@ namespace PQT.Web.Infrastructure.Notification
 
         public static void NotifyUser(IEnumerable<User> users, Lead lead, string title = null, bool email = false)
         {
-            if (lead == null || !users.Any())
+            if (lead == null)
                 return;
             foreach (var user in users)
             {
@@ -88,57 +96,50 @@ namespace PQT.Web.Infrastructure.Notification
                 NotificationHub.NotifyUser(user, notify);
             }
 
-            if (lead.LeadStatusRecord == LeadStatus.Live ||
-                lead.LeadStatusRecord == LeadStatus.LOI ||
-                lead.LeadStatusRecord == LeadStatus.Blocked ||
-                lead.LeadStatusRecord == LeadStatus.Booked)
-            {
-                NotificationHub.Notify(lead);
-            }
             if (email)
             {
                 NotificationService.NotifyUser(users, lead);
             }
         }
 
-        public static void NotifyRole(IEnumerable<Role> roles, Lead lead, bool email = false)
-        {
-            if (lead == null || !roles.Any())
-                return;
-            var users = MemberService.GetUsersContainsInRole(roles.Select(m => m.Name).ToArray());
-            UserNotification notify = null;
-            foreach (var user in users)
-            {
-                if (CurrentUser.Identity.ID == user.ID)
-                {
-                    continue;
-                }
-                notify = new UserNotification
-                {
-                    UserID = user.ID,
-                    EntryId = lead.ID,
-                    NotifyType = NotifyType.Lead,
-                    Title = "Called by " + lead.User.DisplayName,
-                    Description = lead.CompanyName,
-                    HighlightColor = lead.EventColor
-                };
-                notify = MemberService.CreateUserNotification(notify);
-                user.NotifyNumber++;
-                MemberService.UpdateUser(user);
-            }
+        //public static void NotifyRole(IEnumerable<Role> roles, Lead lead, bool email = false)
+        //{
+        //    if (lead == null || !roles.Any())
+        //        return;
+        //    var users = MemberService.GetUsersContainsInRole(roles.Select(m => m.Name).ToArray());
+        //    UserNotification notify = null;
+        //    foreach (var user in users)
+        //    {
+        //        if (CurrentUser.Identity.ID == user.ID)
+        //        {
+        //            continue;
+        //        }
+        //        notify = new UserNotification
+        //        {
+        //            UserID = user.ID,
+        //            EntryId = lead.ID,
+        //            NotifyType = NotifyType.Lead,
+        //            Title = "Called by " + lead.User.DisplayName,
+        //            Description = lead.CompanyName,
+        //            HighlightColor = lead.EventColor
+        //        };
+        //        notify = MemberService.CreateUserNotification(notify);
+        //        user.NotifyNumber++;
+        //        MemberService.UpdateUser(user);
+        //    }
 
-            if (notify != null)
-            {
-                notify.UserID = 0;
-                foreach (var role in roles)
-                {
-                    NotificationHub.NotifyRole(role, notify);
-                }
-            }
-            if (email)
-            {
-                NotificationService.NotifyRole(roles, lead);
-            }
-        }
+        //    if (notify != null)
+        //    {
+        //        notify.UserID = 0;
+        //        foreach (var role in roles)
+        //        {
+        //            NotificationHub.NotifyRole(role, notify);
+        //        }
+        //    }
+        //    if (email)
+        //    {
+        //        NotificationService.NotifyRole(roles, lead);
+        //    }
+        //}
     }
 }

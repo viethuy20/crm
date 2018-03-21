@@ -65,6 +65,69 @@
     #tableLead tbody tr.RequestBook {
         background-color: #faf9d4 !important;
     }
+
+    #tableNCList tbody tr.lead_owner {
+        background-color: #d4e9fa !important;
+    }
+
+    #tableNCList tbody tr.booked {
+        background-color: #d4fad6 !important;
+    }
+
+    @@-webkit-keyframes glowing {
+        0% {
+            background-color: #ffffff;
+        }
+        50% {
+            background-color: #ffffa3;
+        }
+        100% {
+            background-color: #ffffff;
+        }
+    }
+
+    @@-moz-keyframes glowing {
+        0% {
+            background-color: #ffffff;
+        }
+        50% {
+            background-color: #ffffa3;
+        }
+        100% {
+            background-color: #ffffff;
+        }
+    }
+
+    @@-o-keyframes glowing {
+        0% {
+            background-color: #ffffff;
+        }
+        50% {
+            background-color: #ffffa3;
+        }
+        100% {
+            background-color: #ffffff;
+        }
+    }
+
+    @@keyframes glowing {
+        0% {
+            background-color: #ffffff;
+        }
+        50% {
+            background-color: #ffffa3;
+        }
+        100% {
+            background-color: #ffffff;
+        }
+    }
+
+    #tableNCList tbody tr.ncl_new {
+        -webkit-animation: glowing 1000ms infinite;
+        -moz-animation: glowing 1000ms infinite;
+        -o-animation: glowing 1000ms infinite;
+        animation: glowing 1000ms infinite;
+    }
 </style>
 <section>
     <div class="row">
@@ -173,6 +236,8 @@
 
 @Html.Script(
     @<script>
+         $(document).unbind('ajaxStart');
+
 
          var oTable = $("#tableLead");
          oTable.dataTable({
@@ -209,8 +274,8 @@
                      '&eventId=@Model.Event.ID"><span class=" text-default"><i class="fa fa-fw fa-eye"></i> Detail</span></a></li>';
                  dropdowns +=
                      '<li><a class="simple-ajax-popup-align-top-custom" href="@Url.Action("CallingForm")?leadId=' +
-                         aData["ID"] +
-                         '"><span class=" text-primary"><i class="fa fa-fw fa-phone"></i> Start Call</span></a></li>';
+                     aData["ID"] +
+                     '"><span class=" text-primary"><i class="fa fa-fw fa-phone"></i> Start Call</span></a></li>';
                  if (aData["StatusCode"] == '@LeadStatus.Initial' || aData["StatusCode"] == '@LeadStatus.Reject') {
                      dropdowns += '<li><a href="#" data-action="RequestNCL" data-id="' +
                          aData["ID"] +
@@ -219,6 +284,15 @@
                      @*dropdowns += '<li><a class="simple-ajax-popup-align-top" href="@Url.Action("RequestAction")?id=' +
                          aData["ID"] +
                          '&requestType=@LeadStatus.RequestNCL"><span class=" text-info"><i class="md fa-fw md-phone-locked"></i> Request To NCL</span></a></li>';*@
+                 }
+                 if (aData["StatusCode"] == '@LeadStatus.RequestNCL' || aData["StatusCode"] == '@LeadStatus.RequestBook'|| aData["StatusCode"] == '@LeadStatus.RequestLOI') {
+                     dropdowns += '<li><a href="#" data-action="Approval" data-id="' +
+                         aData["ID"] +
+                         '"><span class=" text-success"><i class="md fa-fw md-done"></i> Approve ' + aData["StatusDisplay"] +'</span></a></li>';
+                 }
+                 if (aData["StatusCode"] == '@LeadStatus.RequestNCL' || aData["StatusCode"] == '@LeadStatus.RequestBook'|| aData["StatusCode"] == '@LeadStatus.RequestLOI') {
+                     dropdowns += '<li><a class="simple-ajax-popup-align-top" href="@Url.Action("RejectAction")?id=' +
+                         aData["ID"] + '"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject ' + aData["StatusDisplay"] +'</span></a></li>';
                  }
                  if (aData["StatusCode"] == '@LeadStatus.Initial' ||
                      aData["StatusCode"] == '@LeadStatus.Reject' ||
@@ -274,6 +348,7 @@
              var $sefl = $(this);
              bootbox.confirm("@Resource.ConfirmRequestNCL", function (isOK) {
                  if (isOK) {
+                     $("#dvLoading").show();
                      $.ajax({
                          url: '@Url.Action("RequestAction")?id=' + $sefl.data('id')+'&requestType=@LeadStatus.RequestNCL',
                          type: 'POST',
@@ -297,6 +372,7 @@
              var $sefl = $(this);
              bootbox.confirm("@Resource.ConfirmCancelRequest", function (isOK) {
                  if (isOK) {
+                     $("#dvLoading").show();
                      $.ajax({
                          url: '@Url.Action("CancelRequest")?id=' + $sefl.data('id'),
                          type: 'POST',
@@ -320,6 +396,7 @@
              var $sefl = $(this);
              bootbox.confirm("@Resource.ConfirmBlock", function (isOK) {
                  if (isOK) {
+                     $("#dvLoading").show();
                      $.ajax({
                          url: '@Url.Action("BlockLead")/' + $sefl.data('id'),
                          type: 'POST',
@@ -349,6 +426,7 @@
              var $sefl = $(this);
              bootbox.confirm("@Resource.ConfirmUnblock", function (isOK) {
                  if (isOK) {
+                     $("#dvLoading").show();
                      $.ajax({
                          url: '@Url.Action("UnblockLead")/' + $sefl.data('id'),
                          type: 'POST',
@@ -367,6 +445,30 @@
                          },
                          error: function () {
                              toastr.error("Unblock failed");
+                         }
+                     });
+                 }
+             });
+         });
+         oTable.on('click', '[data-action="Approval"]', function (e) {
+             e.preventDefault();
+             var $sefl = $(this);
+             bootbox.confirm("@Resource.ConfirmApprove", function (isOK) {
+                 if (isOK) {
+                     $("#dvLoading").show();
+                     $.ajax({
+                         url: '@Url.Action("ApprovalAction")?id=' + $sefl.data('id'),
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 toastr.success("Approved successful");
+                                 oTable.fnFilter('');
+                             } else {
+                                 toastr.error(data);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Approve failed");
                          }
                      });
                  }
@@ -400,9 +502,16 @@
              ],
              "iDisplayLength": 100,
              "aaSorting": [[0, "desc"]],
+             "fnDrawCallback": function () {
+                 setTimeout(function () {
+                     $('.ncl_new').removeClass("ncl_new");
+                 }, 60000);
+             },
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  @*$(nRow).find('td:eq(1)').attr("style", "text-align:center");
                 $(nRow).find('td:eq(4)').html('<a href="@Url.Action("Detail","Audit")/' + aData["ID"] + '" target="_blank"><i class="md md-more"></i></a>');*@
+                 $(nRow).addClass(aData["ClassHighlight"]);
+                 $(nRow).addClass(aData["ClassNewHighlight"]);
              },
              initComplete: function () {
                  var _table = this;
@@ -458,7 +567,7 @@
              });
 
 
-    </script>
+     </script>
                          )
 
 @Html.Script(
@@ -498,7 +607,7 @@
                  }
              }).magnificPopup('open');
          });
-    </script>)
+     </script>)
 
 
 @Html.Script(
@@ -541,14 +650,16 @@
          $(document).on('click', '#leadsave_exist', function (e) {
              e.preventDefault();
              $(".typeSubmit").val("SaveExist");
+             $("#dvLoading").show();
              $(this).parents("form").submit();
          });
          $(document).on('click', '#leadsave_call', function (e) {
              e.preventDefault();
              $(".typeSubmit").val("SaveCall");
+             $("#dvLoading").show();
              $(this).parents("form").submit();
          });
-    </script>)
+     </script>)
 
 @Html.Script(
     @<script>
@@ -565,6 +676,7 @@
              } else {
                  if (data.Code == 1) {
                      toastr.success('@Resource.UpdateSuccessful');
+                     $.magnificPopup.close();
                      if (data.TypeSubmit == "SaveRequestNCL") {
                          bootbox.confirm("@Resource.ConfirmRequestNCL", function (isOK) {
                              if (isOK) {
@@ -577,16 +689,17 @@
                                              oTable.fnFilter('');
                                          } else {
                                              toastr.error(data);
+                                             oTable.fnFilter('');
                                          }
                                      },
                                      error: function () {
                                          toastr.error("Request failed");
+                                         oTable.fnFilter('');
                                      }
                                  });
                              }
                          });
                      } else {
-                         $.magnificPopup.close();
                          oTable.fnFilter('');
                      }
                  }
@@ -599,19 +712,22 @@
          $(document).on('click', '#endcall_save', function (e) {
              e.preventDefault();
              $(".typeSubmit").val("SaveExist");
+             $("#dvLoading").show();
              $(this).parents("form").submit();
          });
          $(document).on('click', '#endcall_book', function (e) {
              e.preventDefault();
              $(".typeSubmit").val("SaveBook");
+             $("#dvLoading").show();
              $(this).parents("form").submit();
          });
          $(document).on('click', '#endcall_requestncl', function (e) {
              e.preventDefault();
              $(".typeSubmit").val("SaveRequestNCL");
+             $("#dvLoading").show();
              $(this).parents("form").submit();
          });
-    </script>)
+     </script>)
 
 @Html.Script(
     @<script>
@@ -634,6 +750,7 @@
                      }
                  }
              }
+             $("#dvLoading").show();
              $.ajax({
                  url: '@Url.Action("RequestAction")',
                  data: formdata,
@@ -655,4 +772,20 @@
              });
          });
 
-    </script>)
+     </script>)
+
+@Html.Script(
+    @<script>
+         function onFailRejectAction() {
+             toastr.error('@Resource.SaveError');
+         }
+         function onSuccessRejectAction(data) {
+             if (data == "") {
+                 toastr.success("Reject successful");
+                 $.magnificPopup.close();
+                 oTable.fnFilter('');
+             } else {
+                 toastr.error(data);
+             }
+         }
+     </script>)

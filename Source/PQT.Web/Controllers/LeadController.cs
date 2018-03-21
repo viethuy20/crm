@@ -74,6 +74,8 @@ namespace PQT.Web.Controllers
             var leadExists = _repo.GetAllLeads(m =>
                 m.EventID == model.Lead.EventID && m.UserID != CurrentUser.Identity.ID &&
                 m.CompanyID == model.Lead.CompanyID &&
+                (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
+                 DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired())) &&
                 (m.LeadStatusRecord == LeadStatus.Blocked ||
                  m.LeadStatusRecord == LeadStatus.Live ||
                  m.LeadStatusRecord == LeadStatus.LOI ||
@@ -157,13 +159,28 @@ namespace PQT.Web.Controllers
         [HttpPost]
         public ActionResult ApprovalAction(LeadModel model)
         {
-            return Json(model.RequestAction());
+            return Json(model.ApprovalRequest());
+        }
+        [DisplayName(@"Reject NCL")]
+        public ActionResult RejectAction(int id)
+        {
+            var model = new LeadModel(id);
+            var lead = _repo.GetLead(id);
+            if (lead!=null)
+            {
+                model.requestType = lead.StatusCode.ToString();
+            }
+            return PartialView(model);
         }
         [DisplayName(@"Reject NCL")]
         [HttpPost]
         public ActionResult RejectAction(LeadModel model)
         {
-            return Json(model.RequestAction());
+            if (string.IsNullOrEmpty(model.Reason))
+            {
+                return Json("`Reason` must not be empty");
+            }
+            return Json(model.RejectRequest());
         }
         [AjaxOnly]
         public ActionResult AjaxGetLeads(int eventId)
@@ -321,21 +338,26 @@ namespace PQT.Web.Controllers
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
 
-            var saleId = PermissionHelper.SalesmanId();
             IEnumerable<Lead> leads = new HashSet<Lead>();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId && (m.LeadStatusRecord == LeadStatus.Live || 
-                                                                        m.LeadStatusRecord == LeadStatus.LOI || 
-                                                                        m.LeadStatusRecord == LeadStatus.Booked || 
-                                                                        m.LeadStatusRecord == LeadStatus.Blocked ));
+                leads = _repo.GetAllLeads(m => m.EventID == eventId &&
+                                               (m.LeadStatusRecord == LeadStatus.Live ||
+                                                m.LeadStatusRecord == LeadStatus.LOI ||
+                                                m.LeadStatusRecord == LeadStatus.Booked ||
+                                                m.LeadStatusRecord == LeadStatus.Blocked) &&
+                                               (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
+                                                DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired())));
             }
             else
             {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId && (m.LeadStatusRecord == LeadStatus.Live ||
-                                                                        m.LeadStatusRecord == LeadStatus.LOI ||
-                                                                        m.LeadStatusRecord == LeadStatus.Booked ||
-                                                                        m.LeadStatusRecord == LeadStatus.Blocked));
+                leads = _repo.GetAllLeads(m => m.EventID == eventId &&
+                                               (m.LeadStatusRecord == LeadStatus.Live ||
+                                                m.LeadStatusRecord == LeadStatus.LOI ||
+                                                m.LeadStatusRecord == LeadStatus.Booked ||
+                                                m.LeadStatusRecord == LeadStatus.Blocked) &&
+                                               (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
+                                                DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired())));
             }
             // ReSharper disable once AssignNullToNotNullAttribute
 
@@ -418,6 +440,8 @@ namespace PQT.Web.Controllers
                     m.CountryCode,
                     m.ClientName,
                     m.ClassStatus,
+                    ClassHighlight = m.LeadStatusRecord == LeadStatus.Booked ? "booked" : (m.UserID == CurrentUser.Identity.ID ? "lead_owner" : ""),
+                    ClassNewHighlight = m.UserID != CurrentUser.Identity.ID && m.UpdatedTime >= DateTime.Now.AddMinutes(-1) ? "ncl_new" : "",
                     m.StatusDisplay,
                 })
             };

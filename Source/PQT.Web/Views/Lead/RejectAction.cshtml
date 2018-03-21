@@ -1,15 +1,16 @@
 ﻿@using NS
 @using PQT.Domain.Enum
+@using Resources
 @model PQT.Web.Models.LeadModel
 
 @{
-    var title = "Update Attachment";
+    var title = "Reject ";
     if (!string.IsNullOrEmpty(Model.requestType))
     {
         var leadStatus = Enumeration.FromValue<LeadStatus>(Model.requestType);
         if (leadStatus != null)
         {
-            title = leadStatus.DisplayName;
+            title += leadStatus.DisplayName;
         }
     }
 }
@@ -19,24 +20,21 @@
         <div class="card-head">
             <header><b>@title</b></header>
         </div><!--end .card-head -->
-        @using (Ajax.BeginForm("RequestAction", "routeValues", new AjaxOptions { OnFailure = "onFailRequestAction", OnSuccess = "onSuccessRequestAction" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
+        @using (Ajax.BeginForm("RejectAction", "routeValues", new AjaxOptions { OnFailure = "onFailRejectAction", OnSuccess = "onSuccessRejectAction" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
             {
             <div class="card-body">
-                @Html.HiddenFor(m => m.id, new { @id = "request_id" })
-                @Html.HiddenFor(m => m.requestType, new { @id = "request_Type" })
+                @Html.HiddenFor(m => m.id)
                 <div class="col-sm-12">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Attachment File<br /></label>
-                        <div class="col-sm-9" style="margin-top: 15px">
-                            @Html.Bootstrap().FileFor(m => m.AttachmentFile).Id("request-attachment").ShowValidationMessage(false)
-                        </div>
+                        @Html.Bootstrap().TextBoxFor(m => m.Reason).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Reason).LabelText("Reject Reason").ShowRequiredStar(true)
                     </div>
                 </div>
             </div><!--end .card-body -->
             <div class="card-actionbar">
                 <div class="card-actionbar-row">
                     <a href="#" class="btn btn-default" id="request_close"><i class="md md-close"></i> Close</a>
-                    <a href="#" class="btn btn-success" id="request_submit"><i class="md md-done"></i> @(!string.IsNullOrEmpty(Model.requestType) ? "Submit to Manage" : "Save Change")</a>
+                    @Html.Bootstrap().SubmitButton().Text(Resource.Reject).PrependIcon("md md-done").Style(ButtonStyle.Danger)
                 </div>
             </div>
         }

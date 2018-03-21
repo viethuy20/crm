@@ -475,16 +475,18 @@
 
         Lead.prototype.notify = function () {
             if ($nclTable) {
-                var rowIndex = $nclTable.fnAddData([
-                    {
-                        DateCreatedDisplay: this.lead.DateCreatedDisplay,
-                        Salesman: this.lead.Salesman,
-                        CountryCode: this.lead.CountryCode,
-                        CompanyName: this.lead.CompanyName,
-                        ClientName: this.lead.ClientName,
-                        StatusDisplay: this.lead.StatusDisplay,
-                    }
-                ]);
+                //$(document).unbind('ajaxStart');
+                $nclTable.fnFilter('');
+                //var rowIndex = $nclTable.fnAddData([
+                //    {
+                //        DateCreatedDisplay: this.lead.DateCreatedDisplay,
+                //        Salesman: this.lead.Salesman,
+                //        CountryCode: this.lead.CountryCode,
+                //        CompanyName: this.lead.CompanyName,
+                //        ClientName: this.lead.ClientName,
+                //        StatusDisplay: this.lead.StatusDisplay,
+                //    }
+                //]);
                 //var row = $nclTable.fnGetNodes(rowIndex);
                 //$(row).attr('data-id', data.ID);
             }

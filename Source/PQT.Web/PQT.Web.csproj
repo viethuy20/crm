@@ -2254,6 +2254,7 @@
     <Content Include="Views\Shared\_Notification.cshtml" />
     <Content Include="Views\Lead\RequestAction.cshtml" />
     <Content Include="Views\Lead\Detail.cshtml" />
+    <Content Include="Views\Lead\RejectAction.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
