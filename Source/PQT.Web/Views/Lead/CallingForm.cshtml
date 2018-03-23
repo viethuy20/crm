@@ -60,7 +60,55 @@
             @Html.HiddenFor(m => m.PhoneCall.StartTime)
             @Html.HiddenFor(m => m.PhoneCall.LeadID)
             @Html.HiddenFor(m => m.TypeSubmit, new { @class = "typeSubmit" })
-            <div class="row">
+            <div class="row" style="margin-top: 30px;">
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Bootstrap().DropDownListFor(m => m.Salutation, EnumerationHelper.ToSelectList<NameTitle>()).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Salutation).LabelText("Salutation")
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.FirstName).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.FirstName).LabelText("First Name")
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.LastName).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.LastName).LabelText("Last Name")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.BusinessPhone).LabelText("Business Phone")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.MobilePhone).LabelText("Mobile Phone")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.WorkEmailAddress).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.WorkEmailAddress).LabelText("Work Email Address")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.WorkEmailAddress1).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.WorkEmailAddress1).LabelText("Work Email Address1")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.PersonalEmailAddress).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.PersonalEmailAddress).LabelText("Personal Email Address")
+                    </div>
+                </div>
                 <div class="col-sm-8">
                     <div class="form-group">
                         @Html.Bootstrap().TextAreaFor(m => m.PhoneCall.Remark).Class("form-control").ShowValidationMessage(true)
@@ -69,7 +117,7 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        @Html.DatePickerFor(m => m.PhoneCall.CallBackDate, new { @class = "form-control" })
+                        @Html.DatePickerFor(m => m.PhoneCall.CallBackDate, new {@class = "form-control"})
                         @Html.ValidationMessageFor(m => m.PhoneCall.CallBackDate)
                         @Html.Bootstrap().LabelFor(m => m.PhoneCall.CallBackDate).LabelText("CALL BACK DATE")
                     </div>

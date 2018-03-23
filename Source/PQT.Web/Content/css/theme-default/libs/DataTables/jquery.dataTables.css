@@ -620,7 +620,7 @@ table.dataTable thead .sorting_desc_disabled {
   cursor: pointer;
   *cursor: hand;
 }
-table.dataTable thead .sorting:before,
+/*table.dataTable thead .sorting:before,
 table.dataTable thead .sorting_asc:before,
 table.dataTable thead .sorting_asc_disabled:before,
 table.dataTable thead .sorting_desc:before,
@@ -668,6 +668,24 @@ table.dataTable thead .sorting:before,
 table.dataTable thead .sorting_asc_disabled:before,
 table.dataTable thead .sorting_desc_disabled:before {
   color: #bfbfbf;
+}*/
+.table  .dataTables_sizing {
+    display: none;
+}
+.table tr:first-child th {
+    background-color: #F5F5F5;
+}
+table.dataTable thead .sorting {
+    background: url(./img/sort_both.png) no-repeat center right 5px #f5f5f5!important;
+    vertical-align: middle;
+}
+table.dataTable thead .sorting_asc {
+    background: url(./img/sort_asc.png) no-repeat center right 5px #f5f5f5!important;
+    vertical-align: middle;
+}
+table.dataTable thead .sorting_desc {
+    background: url(./img/sort_desc.png) no-repeat center right 5px #f5f5f5;
+    vertical-align: middle;
 }
 table.dataTable tbody tr {
   background-color: transparent;

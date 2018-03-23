@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using NS;
@@ -10,6 +11,7 @@ using PQT.Domain.Enum;
 using PQT.Web.Infrastructure;
 using PQT.Web.Infrastructure.Notification;
 using PQT.Web.Infrastructure.Utility;
+using Resources;
 
 namespace PQT.Web.Models
 {
@@ -34,6 +36,14 @@ namespace PQT.Web.Models
             requestType = type;
         }
 
+        public string DeleteLead()
+        {
+            var leadRepo = DependencyHelper.GetService<ILeadService>();
+            var lead = leadRepo.GetLead(id);
+            if (lead.LeadStatusRecord != LeadStatus.Initial && lead.LeadStatusRecord != LeadStatus.Reject)
+                return "Cannot process ... Call status: " + lead.StatusDisplay;
+            return leadRepo.DeleteLead(id) ? "" : "Delete failed";
+        }
         public string BlockLead()
         {
             var leadRepo = DependencyHelper.GetService<ILeadService>();
@@ -89,16 +99,11 @@ namespace PQT.Web.Models
                 return "Cannot process ... This item has been booked";
             if (string.IsNullOrEmpty(requestType))
             {
-                if (AttachmentFile != null)
-                {
-                    string uploadPicture = FileUpload.Upload(FileUploadType.Lead, AttachmentFile);
-                    if (!string.IsNullOrEmpty(uploadPicture))
-                    {
-                        lead.LeadStatusRecord.Attachment = uploadPicture;
-                        return leadRepo.UpdateAttachment(lead.LeadStatusRecord) ? "" : "Update failed";
-                    }
-                }
-                return "Please check your input";
+                if (AttachmentFile == null) return "Please check your input";
+                string uploadPicture = FileUpload.Upload(FileUploadType.Lead, AttachmentFile);
+                if (string.IsNullOrEmpty(uploadPicture)) return "Please check your input";
+                lead.LeadStatusRecord.Attachment = uploadPicture;
+                return leadRepo.UpdateAttachment(lead.LeadStatusRecord) ? "" : "Update failed";
             }
 
             if (lead.LeadStatusRecord != LeadStatus.Initial && lead.LeadStatusRecord != LeadStatus.Reject) return "Submit failed";
@@ -109,7 +114,7 @@ namespace PQT.Web.Models
                                m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
                                (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
                                 DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))))
-                return "Cannot block this company... Company is requesting to NCL or exists in NCL";
+                return "Cannot block this company... Company is requesting to NCL or exists in NCL by another";
 
             string fileName = null;
             if (AttachmentFile != null)
@@ -195,7 +200,7 @@ namespace PQT.Web.Models
                 lead.LeadStatusRecord != LeadStatus.RequestBook)
                 return "Reject failed";
             var titleNotify = lead.LeadStatusRecord.Status.DisplayName + " rejected";
-            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Reject, CurrentUser.Identity.ID);
+            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Reject, CurrentUser.Identity.ID, Reason);
             if (!leadRepo.UpdateLead(lead)) return "Reject failed";
             LeadNotificator.NotifyUser(new List<User> { lead.User }, lead, titleNotify); // notify for manager
             return "";
@@ -252,6 +257,23 @@ namespace PQT.Web.Models
     public class CallingModel
     {
         public Lead Lead { get; set; }
+
+        public string Salutation { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        [DataType(DataType.PhoneNumber)]
+        [RegularExpression(@"^[0-9\+]{1,}[0-9\-\ ]{3,15}$", ErrorMessage = "Phone number is invalid")]
+        public string BusinessPhone { get; set; }
+        [DataType(DataType.PhoneNumber)]
+        [RegularExpression(@"^[0-9\+]{1,}[0-9\-\ ]{3,15}$", ErrorMessage = "Phone number is invalid")]
+        public string MobilePhone { get; set; }
+        [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessage = "Email is invalid")]
+        public string WorkEmailAddress { get; set; }
+        [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessage = "Email is invalid")]
+        public string WorkEmailAddress1 { get; set; }
+        [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessage = "Email is invalid")]
+        public string PersonalEmailAddress { get; set; }
+
         public string TypeSubmit { get; set; }
         public PhoneCall PhoneCall { get; set; }
         public CallingModel()
@@ -263,6 +285,17 @@ namespace PQT.Web.Models
             var leadRepo = DependencyHelper.GetService<ILeadService>();
             Lead = leadRepo.GetLead(leadId);
             PhoneCall = new PhoneCall { LeadID = leadId };
+            if (Lead != null)
+            {
+                Salutation = Lead.Salutation;
+                FirstName = Lead.FirstName;
+                LastName = Lead.LastName;
+                BusinessPhone = Lead.BusinessPhone;
+                MobilePhone = Lead.MobilePhone;
+                WorkEmailAddress = Lead.WorkEmailAddress;
+                WorkEmailAddress1 = Lead.WorkEmailAddress1;
+                PersonalEmailAddress = Lead.PersonalEmailAddress;
+            }
         }
 
         public bool Save()
@@ -274,6 +307,16 @@ namespace PQT.Web.Models
                 var result = leadRepo.CreatePhoneCall(PhoneCall);
                 if (result != null)
                 {
+                    var lead = leadRepo.GetLead(PhoneCall.LeadID);
+                    lead.Salutation = Salutation;
+                    lead.FirstName = FirstName;
+                    lead.LastName = LastName;
+                    lead.BusinessPhone = BusinessPhone;
+                    lead.MobilePhone = MobilePhone;
+                    lead.WorkEmailAddress = WorkEmailAddress;
+                    lead.WorkEmailAddress1 = WorkEmailAddress1;
+                    lead.PersonalEmailAddress = PersonalEmailAddress;
+                    leadRepo.UpdateLead(lead);
                     return true;
                 }
                 return false;

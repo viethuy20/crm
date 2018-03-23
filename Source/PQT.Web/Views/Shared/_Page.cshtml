@@ -37,7 +37,7 @@
         <div class="headerbar-right">
             <ul class="header-nav header-nav-options">
                 <li>
-                    <a href="#offcanvas-notify" data-toggle="offcanvas" class="btn btn-icon-toggle btn-default" data-backdrop="false" id="notify-trigger">
+                    <a href="#offcanvas-notify" data-toggle="offcanvas" class="btn btn-icon-toggle btn-default" id="notify-trigger">
                         <i class="fa fa-bell"></i><sup class="badge style-danger count @(count == 0? "hide":"")">@(count)</sup>
                     </a>
                 </li>
@@ -476,7 +476,10 @@
         Lead.prototype.notify = function () {
             if ($nclTable) {
                 //$(document).unbind('ajaxStart');
-                $nclTable.fnFilter('');
+                var $eventIdNCList = $("#eventIdNCList");
+                if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
+                    $nclTable.fnFilter('');
+                }
                 //var rowIndex = $nclTable.fnAddData([
                 //    {
                 //        DateCreatedDisplay: this.lead.DateCreatedDisplay,

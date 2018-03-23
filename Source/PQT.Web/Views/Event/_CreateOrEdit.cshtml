@@ -4,7 +4,7 @@
 @model PQT.Web.Models.EventModel
 
 
-@Html.HiddenFor(m=>m.Event.UserID)
+@Html.HiddenFor(m => m.Event.UserID)
 <div class="card">
     <div class="card-body">
         <div class="row">
@@ -85,6 +85,13 @@
                         }
                     </select>
                     <label>Salesman</label>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group floating-label">
+                    <input type="text" name="@Html.NameFor(m=>m.Event.CallFilterKeywords)" value="@Model.Event.CallFilterKeywords" data-role="tagsinput" />
+                    @Html.ValidationMessageFor(m => m.Event.CallFilterKeywords)
+                    @Html.Bootstrap().LabelFor(m => m.Event.CallFilterKeywords)
                 </div>
             </div>
             <div class="col-sm-6" style="width:150px">

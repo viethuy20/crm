@@ -18,7 +18,15 @@ namespace PQT.Domain.Entities
         public string GeneralLine { get; set; }
         public string DirectLine { get; set; } //Direct Line/Mobile number
         public string ClientName { get; set; } //Client Name/Job Title
-        public string Remark { get; set; }//Date/Highlights
+        public string Remark { get; set; }
+        public string Salutation { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string BusinessPhone { get; set; }
+        public string MobilePhone { get; set; }
+        public string WorkEmailAddress { get; set; }
+        public string WorkEmailAddress1 { get; set; }
+        public string PersonalEmailAddress { get; set; }
         public int? LeadStatusID { get; set; }
         [ForeignKey("LeadStatusID")]
         public virtual LeadStatusRecord LeadStatusRecord { get; set; }
@@ -58,6 +66,18 @@ namespace PQT.Domain.Entities
                 return default(DateTime);
             }
         }
+        public string CallBackDateDisplay
+        {
+            get
+            {
+                var call = PhoneCalls.LastOrDefault();
+                if (call != null && call.CallBackDate != null)
+                {
+                    return Convert.ToDateTime(call.CallBackDate).ToString("dd/MM/yyyy");
+                }
+                return "";
+            }
+        }
 
         public string StatusDisplay
         {
@@ -66,6 +86,28 @@ namespace PQT.Domain.Entities
                 if (LeadStatusRecord != null)
                 {
                     return LeadStatusRecord.Status.DisplayName;
+                }
+                return "";
+            }
+        }
+        public string StatusUser
+        {
+            get
+            {
+                if (LeadStatusRecord != null && LeadStatusRecord.User != null)
+                {
+                    return LeadStatusRecord.User.DisplayName;
+                }
+                return "";
+            }
+        }
+        public string StatusUpdateTime
+        {
+            get
+            {
+                if (LeadStatusRecord != null)
+                {
+                    return LeadStatusRecord.UpdatedTime.ToString("dd-MMM-yyyy HH:mm:ss");
                 }
                 return "";
             }
@@ -98,9 +140,9 @@ namespace PQT.Domain.Entities
             {
                 if (LeadStatusRecord != null)
                 {
-                    return LeadStatusRecord.UpdatedTime.ToString("dd/MM/yyyy");
+                    return LeadStatusRecord.UpdatedTime.ToString("dd/MM/yy");
                 }
-                return CreatedTime.ToString("dd/MM/yyyy");
+                return "";
             }
         }
 
@@ -140,6 +182,7 @@ namespace PQT.Domain.Entities
         {
             return new
             {
+                EventID,
                 EventColor,
                 StatusCode,
                 Salesman,

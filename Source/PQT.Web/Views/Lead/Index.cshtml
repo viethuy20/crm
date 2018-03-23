@@ -9,78 +9,99 @@
 
 
 <style>
+    .DTFC_Cloned {
+        background: #fff;
+    }
+
+    .DTFC_Cloned td {
+        background-color: #fff;
+    }
+
+    .DTFC_Cloned th {
+        background-color: #f5f5f5 !important;
+    }
+
     #tableLead td, table th {
         text-align: center;
         color: #000;
     }
 
-    /*#tableLead tr:nth-child(2n) td {
-        background-color: transparent !important;
+
+
+    #tableLead tbody tr.Reject td {
+        color: #8a6d3b;
+        background-color: #ffefd5;
     }
 
-    #tableLead tbody tr td.sorting_1 {
-        background-color: rgba(0, 0, 0, 0.05) !important;
-    }*/
-
-    #tableLead tbody tr.Reject {
-        background-color: #faebd4 !important;
+    .DTFC_Cloned tbody tr.Reject td {
+        color: #8a6d3b;
+        background-color: #fee8c7;
     }
 
-    /*#tableLead tbody tr.Reject td {
-            color: #fff !important;
-        }*/
-
-    #tableLead tbody tr.Blocked {
-        background-color: #fad7d4 !important;
+    #tableLead tbody tr.Blocked td {
+        color: #a94442;
+        background-color: #ffdad7;
     }
 
-    /*#tableLead tbody tr.Blocked td {
-            color: #fff !important;
-        }*/
-
-    #tableLead tbody tr.LOI {
-        background-color: #d4e9fa !important;
+    .DTFC_Cloned tbody tr.Blocked td {
+        color: #a94442;
+        background-color: #feccc7;
     }
 
-    #tableLead tbody tr.Live {
-        background-color: #d4e9fa !important;
+    .DTFC_Cloned tbody tr.Initial td {
+        color: #000;
+        background-color: #f5f5f5;
     }
 
-    #tableLead tbody tr.Booked {
-        background-color: #d4fad6 !important;
+    #tableLead tbody tr.Live td,
+    #tableLead tbody tr.LOI td {
+        color: #31708f;
+        background-color: #d8edff !important;
     }
 
-    /*#tableLead tbody tr.Booked td {
-            color: #fff !important;
-        }*/
-
-    #tableLead tbody tr.RequestNCL {
-        background-color: #faf9d4 !important;
+    .DTFC_Cloned tbody tr.Live td,
+    .DTFC_Cloned tbody tr.LOI td,
+    #tableNCList tbody tr.lead_owner td {
+        color: #31708f;
+        background-color: #c8e4fa !important;
     }
 
-    #tableLead tbody tr.RequestLOI {
-        background-color: #faf9d4 !important;
+
+    #tableLead tbody tr.Booked td {
+        color: #3c763d;
+        background-color: #deffe0;
     }
 
-    #tableLead tbody tr.RequestBook {
-        background-color: #faf9d4 !important;
+    .DTFC_Cloned tbody tr.Booked td,
+    #tableNCList tbody tr.booked td {
+        color: #3c763d;
+        background-color: #c7fcca;
     }
 
-    #tableNCList tbody tr.lead_owner {
-        background-color: #d4e9fa !important;
+    #tableLead tbody tr.RequestNCL td,
+    #tableLead tbody tr.RequestLOI td,
+    #tableLead tbody tr.RequestBook td {
+        color: #a5a100;
+        background-color: #fffed5;
     }
 
-    #tableNCList tbody tr.booked {
-        background-color: #d4fad6 !important;
+    .DTFC_Cloned tbody tr.RequestNCL td,
+    .DTFC_Cloned tbody tr.RequestLOI td,
+    .DTFC_Cloned tbody tr.RequestBook td {
+        color: #a5a100;
+        background-color: #fffdb7;
     }
+
 
     @@-webkit-keyframes glowing {
         0% {
             background-color: #ffffff;
         }
+
         50% {
             background-color: #ffffa3;
         }
+
         100% {
             background-color: #ffffff;
         }
@@ -90,9 +111,11 @@
         0% {
             background-color: #ffffff;
         }
+
         50% {
             background-color: #ffffa3;
         }
+
         100% {
             background-color: #ffffff;
         }
@@ -102,9 +125,11 @@
         0% {
             background-color: #ffffff;
         }
+
         50% {
             background-color: #ffffa3;
         }
+
         100% {
             background-color: #ffffff;
         }
@@ -114,9 +139,11 @@
         0% {
             background-color: #ffffff;
         }
+
         50% {
             background-color: #ffffa3;
         }
+
         100% {
             background-color: #ffffff;
         }
@@ -129,6 +156,9 @@
         animation: glowing 1000ms infinite;
     }
 </style>
+<a class="btn ink-reaction btn-floating-action btn-primary" title="Open No Call List"
+   href="#offcanvas-ncl"  data-toggle="offcanvas" 
+   style="position: fixed;top: 85px;right: 0;display: block;z-index: 1006;"><i class="md md-list"></i></a>
 <section>
     <div class="row">
         <div class="col-lg-12">
@@ -142,101 +172,85 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="card  card-underline">
                 <div class="card-head">
                     <div class="tools">
                         <div class="btn-group">
                             @if (CurrentUser.HasPermission("Lead", "CallSheet"))
                             {
-                                <a href="@Url.Action("CallSheet", new {eventId = Model.Event.ID, leadId = Model.Event.ID})" class="btn btn-icon-toggle text-success simple-ajax-popup-align-top-custom" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Start New Call"><i class="fa fa-phone-square fa-2x"></i></a>
+                                <a href="@Url.Action("CallSheet", new {eventId = Model.Event.ID, leadId = Model.Event.ID})" class="btn ink-reaction btn-floating-action btn-success simple-ajax-popup-align-top-custom" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Start New Call"><i class="fa fa-phone fa-2x"></i></a>
                             }
-                            <a class="btn btn-icon-toggle btn-Expand"><i class="fa fa-expand"></i></a>
+                            @*<a class="btn btn-icon-toggle btn-Expand"><i class="fa fa-expand"></i></a>*@
                         </div>
                     </div>
                     <header><i class="fa fa-fw fa-phone"></i> My Call List</header>
                 </div><!--end .card-head -->
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table" id="tableLead">
-                            <thead>
-                                <tr>
-                                    <th>Date Created</th>
-                                    <th>Country</th>
-                                    <th>Company</th>
-                                    <th>Client Name/Job Title</th>
-                                    <th>Direct Line/Mobile number</th>
-                                    <th>Call Back</th>
-                                    <th>Status</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                </div><!--end .card-body -->
-            </div><!--end .card -->
-        </div>
-
-        <div class="col-md-4">
-            <div class="card card-bordered style-primary" style="background-color: @Model.Event.BackgroundColor;border-color:@Model.Event.BackgroundColor">
-                <div class="card-head">
-                    <div class="tools">
-                        <div class="btn-group">
-                            @*<div class="btn-group">
-                                    <a href="#" class="btn btn-icon-toggle dropdown-toggle" data-toggle="dropdown"><i class="md md-colorize"></i></a>
-                                    <ul class="dropdown-menu animation-dock pull-right menu-card-styling" role="menu" style="text-align: left;">
-                                        <li><a href="javascript:void(0);" data-style="style-default-dark"><i class="fa fa-circle fa-fw text-default-dark"></i> Default dark</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-default"><i class="fa fa-circle fa-fw text-muted"></i> Default</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-default-light"><i class="fa fa-circle fa-fw text-default-light"></i> Default light</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-default-bright"><i class="fa fa-circle fa-fw text-default-bright"></i> Default bright</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-primary-dark"><i class="fa fa-circle fa-fw text-primary-dark"></i> Primary dark</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-primary"><i class="fa fa-circle fa-fw text-primary"></i> Primary</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-primary-light"><i class="fa fa-circle fa-fw text-primary-light"></i> Primary light</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-primary-bright"><i class="fa fa-circle fa-fw text-primary-bright"></i> Primary bright</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-accent-dark"><i class="fa fa-circle fa-fw text-accent-dark"></i> Accent dark</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-accent"><i class="fa fa-circle fa-fw text-accent"></i> Accent</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-accent-light"><i class="fa fa-circle fa-fw text-accent-light"></i> Accent light</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-accent-bright"><i class="fa fa-circle fa-fw text-accent-bright"></i> Accent bright</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-danger"><i class="fa fa-circle fa-fw text-danger"></i> Danger</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-warning"><i class="fa fa-circle fa-fw text-warning"></i> Warning</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-success"><i class="fa fa-circle fa-fw text-success"></i> Success</a></li>
-                                        <li><a href="javascript:void(0);" data-style="style-info"><i class="fa fa-circle fa-fw text-info"></i> Info</a></li>
-                                    </ul>
-                                </div>
-                                <a class="btn btn-icon-toggle btn-refresh"><i class="md md-refresh"></i></a>
-                                <a class="btn btn-icon-toggle btn-collapse"><i class="fa fa-angle-down"></i></a>
-                                <a class="btn btn-icon-toggle btn-close"><i class="md md-close"></i></a>*@
-
-                            <a class="btn btn-icon-toggle btn-Expand-NCL"><i class="fa fa-expand"></i></a>
-                        </div>
-                    </div>
-                    <header><i class="fa fa-fw fa-tag"></i> NCL</header>
-                </div><!--end .card-head -->
-                <div class="card-body style-default-bright">
-                    <div class="table-responsive">
-                        <table class="table" id="tableNCList">
-                            <thead>
-                                <tr>
-                                    <th>Date Created</th>
-                                    <th>Sales</th>
-                                    <th>Country</th>
-                                    <th>Organisation</th>
-                                    <th>Role</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
+                    <table class="table" id="tableLead">
+                        <thead>
+                            <tr>
+                                <th>Date Created</th>
+                                <th>Country</th>
+                                <th>Company</th>
+                                <th>Client Name/Job Title</th>
+                                <th>Direct Line/Mobile number</th>
+                                <th>Salutation</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Business Phone</th>
+                                <th>Mobile Phone</th>
+                                <th>Work Email Address</th>
+                                <th>Work Email Address1</th>
+                                <th>Personal Email Address</th>
+                                <th>Call Back</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div><!--end .card-body -->
             </div><!--end .card -->
         </div>
     </div>
 </section>
 
+<div class="offcanvas">
+    <div id="offcanvas-ncl" class="offcanvas-pane width-12">
+        <div class="offcanvas-head">
+            <header>No Call List</header>
+            <div class="offcanvas-tools">
+                <a class="btn btn-icon-toggle btn-default-light pull-right" data-dismiss="offcanvas">
+                    <i class="md md-close"></i>
+                </a>
+            </div>
+        </div>
+        <div class="offcanvas-body">
+                <input type="hidden" value="@Model.Event.ID" id="eventIdNCList" />
+                <table class="table" id="tableNCList">
+                    <thead>
+                    <tr>
+                        <th>Date Created</th>
+                        <th>Sales</th>
+                        <th>Country</th>
+                        <th>Organisation</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                </table>
+        </div>
+    </div>
+</div>
 
 @Html.Script(
     @<script>
          $(document).unbind('ajaxStart');
+
+         var windowW = $(window).width();
+         var windowH = $(window).height();
+         var fixedColumn = false;
+         var sizeLenght = 10;
 
 
          var oTable = $("#tableLead");
@@ -259,11 +273,19 @@
                  { "data": "Company", "name": "Company", "orderable": true },
                  { "data": "ClientName", "name": "ClientName", "orderable": true },
                  { "data": "DirectLine", "name": "DirectLine", "orderable": true },
+                 { "data": "Salutation", "name": "Salutation", "orderable": true },
+                 { "data": "FirstName", "name": "FirstName", "orderable": true },
+                 { "data": "LastName", "name": "LastName", "orderable": true },
+                 { "data": "BusinessPhone", "name": "BusinessPhone", "orderable": true },
+                 { "data": "MobilePhone", "name": "MobilePhone", "orderable": true },
+                 { "data": "WorkEmailAddress", "name": "WorkEmailAddress", "orderable": true },
+                 { "data": "WorkEmailAddress1", "name": "WorkEmailAddress1", "orderable": true },
+                 { "data": "PersonalEmailAddress", "name": "PersonalEmailAddress", "orderable": true },
                  { "data": "CallBackDate", "name": "CallBackDate", "orderable": true },
-                 { "data": "StatusDisplay", "name": "StatusDisplay", "orderable": false },
+                 { "data": "StatusDisplay", "name": "StatusDisplay", "orderable": true },
                  { "data": "ID", "name": "ID", "orderable": false },
              ],
-             "iDisplayLength": 25,
+             "iDisplayLength": sizeLenght,
              "aaSorting": [[0, "desc"]],
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' + aData["ID"] + '">' + aData["CreatedTime"] + '</a>');
@@ -321,11 +343,16 @@
                          aData["actionBlock"] +
                          '" data-id="' +
                          aData["ID"] +
-                         '"><span class=" text-danger"><i class="md fa-fw md-lock-outline"></i> ' +
+                         '"><span class=" text-warning"><i class="md fa-fw md-lock-outline"></i> ' +
                          aData["actionBlock"] +
                          '</span></a></li>';
                  };
-                 $(nRow).find('td:eq(7)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
+                 if (aData["StatusCode"] == '@LeadStatus.Initial' || aData["StatusCode"] == '@LeadStatus.Reject') {
+                     dropdowns += '<li><a href="#" data-action="Delete" data-id="' +
+                         aData["ID"] +
+                         '"><span class=" text-danger"><i class="md fa-fw md-delete"></i> Delete</span></a></li>';
+                 };
+                 $(nRow).find('td:eq(15)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
                      dropdowns +
                      '</ul></div>');
 
@@ -342,6 +369,62 @@
                      }, 600);
                  });
              },
+             scrollY: false,
+             scrollX: true,
+             "bScrollCollapse": false,
+             "drawCallback": function (settings, json) {
+                 FixedTable();
+             },
+         });
+        function FixedTable() {
+            if (!fixedColumn) {
+                fixedColumn = true;
+                var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
+                    leftColumns: 5,
+                    sHeightMatch: "auto",
+                    rightColumns: 3
+                });
+                //var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                //if ($leftWrappers.length > 1) {
+                //    $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                //}
+                //var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                //if ($rightWrappers.length > 1) {
+                //    $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                //}
+            }
+        }
+         $(document).on("click", ".paginate_button", function () {
+             fixedColumn = false;
+         });
+         $(document).on("change", "select[name=table_length]", function () {
+             fixedColumn = false;
+         });
+
+
+         oTable.on('click', '[data-action="Delete"]', function (e) {
+             e.preventDefault();
+             var $sefl = $(this);
+             bootbox.confirm("@Resource.ConfirmDelete", function (isOK) {
+                 if (isOK) {
+                     $("#dvLoading").show();
+                     $.ajax({
+                         url: '@Url.Action("Delete")?id=' + $sefl.data('id'),
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 toastr.success("Delete successful");
+                                 oTable.fnDeleteRow($sefl.closest('tr')[0]);
+                             } else {
+                                 toastr.error(data);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Delete failed");
+                         }
+                     });
+                 }
+             });
          });
          oTable.on('click', '[data-action="RequestNCL"]', function (e) {
              e.preventDefault();
@@ -485,6 +568,7 @@
              "filter": true, // this is for disable filter (search box)
              "orderMulti": false, // for disable multiple column at once
              "stateSave": false,
+             "fixedHeader": true,
              "ajax": {
                  "url": "@Url.Action("AjaxGetNCList")?eventId=@Model.Event.ID",
                  "type": "POST",
@@ -500,7 +584,7 @@
                  { "data": "ClientName", "name": "ClientName", "orderable": true },
                  { "data": "StatusDisplay", "name": "StatusDisplay", "orderable": true },
              ],
-             "iDisplayLength": 100,
+             "iDisplayLength": 25,
              "aaSorting": [[0, "desc"]],
              "fnDrawCallback": function () {
                  setTimeout(function () {
@@ -534,40 +618,44 @@
          //    oTable.fnDraw();
          //});
 
-         $(".btn-Expand").on("click",
-             function () {
-                 if ($(this).find('i').hasClass("fa-expand")) {
-                     $(this).parents(".card").parent().addClass("col-md-12");
-                     $(this).parents(".card").parent().removeClass("col-md-8");
-                     $(this).find('i').addClass("fa-compress");
-                     $(this).find('i').removeClass("fa-expand");
-                     oTable.css("width","100%");
-                 } else {
-                     $(this).parents(".card").parent().removeClass("col-md-12");
-                     $(this).parents(".card").parent().addClass("col-md-8");
-                     $(this).find('i').removeClass("fa-compress");
-                     $(this).find('i').addClass("fa-expand");
-                 }
-             });
+         //$(".btn-Expand").on("click",
+         //    function () {
+         //        if ($(this).find('i').hasClass("fa-expand")) {
+         //            $(this).parents(".card").parent().addClass("col-md-12");
+         //            $(this).parents(".card").parent().removeClass("col-md-8");
+         //            $(this).find('i').addClass("fa-compress");
+         //            $(this).find('i').removeClass("fa-expand");
+         //            oTable.css("width", "100%");
+         //            fixedColumn = false;
+         //            FixedTable();
+         //        } else {
+         //            $(this).parents(".card").parent().removeClass("col-md-12");
+         //            $(this).parents(".card").parent().addClass("col-md-8");
+         //            $(this).find('i').removeClass("fa-compress");
+         //            $(this).find('i').addClass("fa-expand");
+         //            fixedColumn = false;
+         //            FixedTable();
+         //        }
+         //    });
 
-         $(".btn-Expand-NCL").on("click",
-             function () {
-                 if ($(this).find('i').hasClass("fa-expand")) {
-                     $(this).parents(".card").parent().addClass("col-md-12");
-                     $(this).parents(".card").parent().removeClass("col-md-4");
-                     $(this).find('i').addClass("fa-compress");
-                     $(this).find('i').removeClass("fa-expand");
-                     $nclTable.css("width","100%");
-                 } else {
-                     $(this).parents(".card").parent().removeClass("col-md-12");
-                     $(this).parents(".card").parent().addClass("col-md-4");
-                     $(this).find('i').removeClass("fa-compress");
-                     $(this).find('i').addClass("fa-expand");
-                 }
-             });
+         //$(".btn-Expand-NCL").on("click",
+         //    function () {
+         //        if ($(this).find('i').hasClass("fa-expand")) {
+         //            $(this).parents(".card").parent().addClass("col-md-12");
+         //            $(this).parents(".card").parent().removeClass("col-md-4");
+         //            $(this).find('i').addClass("fa-compress");
+         //            $(this).find('i').removeClass("fa-expand");
+         //            $nclTable.css("width","100%");
+         //        } else {
+         //            $(this).parents(".card").parent().removeClass("col-md-12");
+         //            $(this).parents(".card").parent().addClass("col-md-4");
+         //            $(this).find('i').removeClass("fa-compress");
+         //            $(this).find('i').addClass("fa-expand");
+         //        }
+         //    });
 
 
-     </script>
+    </script>
                          )
 
 @Html.Script(
@@ -607,7 +695,7 @@
                  }
              }).magnificPopup('open');
          });
-     </script>)
+    </script>)
 
 
 @Html.Script(
@@ -650,16 +738,14 @@
          $(document).on('click', '#leadsave_exist', function (e) {
              e.preventDefault();
              $(".typeSubmit").val("SaveExist");
-             $("#dvLoading").show();
              $(this).parents("form").submit();
          });
          $(document).on('click', '#leadsave_call', function (e) {
              e.preventDefault();
              $(".typeSubmit").val("SaveCall");
-             $("#dvLoading").show();
              $(this).parents("form").submit();
          });
-     </script>)
+    </script>)
 
 @Html.Script(
     @<script>
@@ -712,22 +798,19 @@
          $(document).on('click', '#endcall_save', function (e) {
              e.preventDefault();
              $(".typeSubmit").val("SaveExist");
-             $("#dvLoading").show();
              $(this).parents("form").submit();
          });
          $(document).on('click', '#endcall_book', function (e) {
              e.preventDefault();
              $(".typeSubmit").val("SaveBook");
-             $("#dvLoading").show();
              $(this).parents("form").submit();
          });
          $(document).on('click', '#endcall_requestncl', function (e) {
              e.preventDefault();
              $(".typeSubmit").val("SaveRequestNCL");
-             $("#dvLoading").show();
              $(this).parents("form").submit();
          });
-     </script>)
+    </script>)
 
 @Html.Script(
     @<script>
@@ -772,7 +855,7 @@
              });
          });
 
-     </script>)
+    </script>)
 
 @Html.Script(
     @<script>
@@ -788,4 +871,4 @@
                  toastr.error(data);
              }
          }
-     </script>)
+    </script>)

@@ -5,7 +5,53 @@
 @{
     ViewBag.Title = "Call Detail";
 }
+<style>
+    .card .Reject {
+        background-color: #faebd4 !important;
+    }
 
+        .card .Reject input {
+            color: #8a6d3b;
+        }
+
+    .card .Blocked {
+        background-color: #fad7d4 !important;
+    }
+
+        .card .Blocked input {
+            color: #a94442;
+        }
+
+    .card .LOI,
+    .card .Live {
+        background-color: #d4e9fa !important;
+    }
+
+        .card .LOI input,
+        .card .Live input {
+            color: #31708f;
+        }
+
+    .card .Booked {
+        background-color: #d4fad6 !important;
+    }
+
+        .card .Booked input {
+            color: #3c763d;
+        }
+
+    .card.RequestNCL,
+    .card.RequestLOI,
+    .card.RequestBook {
+        background-color: #faf9d4 !important;
+    }
+
+        .card.RequestNCL input,
+        .card.RequestLOI input,
+        .card.RequestBook input {
+            color: #a5a100;
+        }
+</style>
 <section>
 
     <div class="row section-header" style="height: auto">
@@ -17,21 +63,21 @@
             @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.Reject))
             {
-                @Html.Bootstrap().ActionLinkButton("Request To NCL", "RequestAction").Id("request_ncl").Class("btn-info").PrependIcon("md md-phone-locked")
+            @Html.Bootstrap().ActionLinkButton("Request To NCL", "RequestAction").Id("request_ncl").Class("btn-info").PrependIcon("md md-phone-locked")
             }
 
             @if (CurrentUser.HasPermission("Lead", "ApprovalAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
             {
-                @Html.Bootstrap().ActionLinkButton("Approve " + Model.Lead.StatusDisplay, "ApprovalAction").Id("approve_action").Class("btn-success").PrependIcon("md md-done")
+            @Html.Bootstrap().ActionLinkButton("Approve " + Model.Lead.StatusDisplay, "ApprovalAction").Id("approve_action").Class("btn-success").PrependIcon("md md-done")
             }
 
             @if (CurrentUser.HasPermission("Lead", "RejectAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
             {
-                @Html.Bootstrap().ActionLinkButton("Reject " + Model.Lead.StatusDisplay, "RejectAction").RouteValues(new { id = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
+            @Html.Bootstrap().ActionLinkButton("Reject " + Model.Lead.StatusDisplay, "RejectAction").RouteValues(new { id = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
             }
 
 
@@ -40,18 +86,18 @@
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.Live))
             {
-                @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
+            @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
             }
             @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord != LeadStatus.RequestBook &&
                                                                        Model.Lead.LeadStatusRecord != LeadStatus.Booked))
             {
-                @Html.Bootstrap().ActionLinkButton("Request To Book", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestBook }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")
+            @Html.Bootstrap().ActionLinkButton("Request To Book", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestBook }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")
             }
             @if (CurrentUser.HasPermission("Lead", "CancelRequest") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI ||
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestBook))
             {
-                @Html.Bootstrap().ActionLinkButton("Cancel " + Model.Lead.StatusDisplay, "CancelRequest").Id("cancel_request").Class("btn-warning").PrependIcon("md md-cancel")
+            @Html.Bootstrap().ActionLinkButton("Cancel " + Model.Lead.StatusDisplay, "CancelRequest").Id("cancel_request").Class("btn-warning").PrependIcon("md md-cancel")
             }
             @if ((Model.Lead.LeadStatusRecord != LeadStatus.Booked))
             {
@@ -59,19 +105,50 @@
                 {
                     if (CurrentUser.HasPermission("Lead", "BlockLead"))
                     {
-                        @Html.Bootstrap().ActionLinkButton("Block ", "BlockLead").Id("lead_block").Class("btn-danger").PrependIcon("md md-lock-outline")
+            @Html.Bootstrap().ActionLinkButton("Block ", "BlockLead").Id("lead_block").Class("btn-warning").PrependIcon("md md-lock-outline")
                     }
                 }
                 else
                 {
                     if (CurrentUser.HasPermission("Lead", "UnblockLead"))
                     {
-                        @Html.Bootstrap().ActionLinkButton("Unblock ", "UnblockLead").Id("lead_unblock").Class("btn-danger").PrependIcon("md md-lock-open")
+            @Html.Bootstrap().ActionLinkButton("Unblock ", "UnblockLead").Id("lead_unblock").Class("btn-warning").PrependIcon("md md-lock-open")
                     }
                 }
-
-
             }
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body @Model.Lead.ClassStatus form form-validate">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.StatusDisplay).LabelText("CALL STATUS")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.StatusUser).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.StatusUser).LabelText("CHANGE BY")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.StatusUpdateTime).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.StatusUpdateTime).LabelText("UPDATE TIME")
+                    </div>
+                </div>
+                @if (Model.Lead.LeadStatusRecord == LeadStatus.Reject)
+                {
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.LeadStatusRecord.Message).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.LeadStatusRecord.Message).LabelText("REASON OF REJECT")
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     </div>
     <div class="card">

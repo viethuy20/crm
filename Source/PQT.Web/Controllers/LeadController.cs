@@ -56,6 +56,11 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public ActionResult Delete(LeadModel model)
+        {
+            return Json(model.DeleteLead());
+        }
         [DisplayName(@"Call Sheet")]
         public ActionResult CallSheet(int eventId)
         {
@@ -143,6 +148,7 @@ namespace PQT.Web.Controllers
             return Json(model.CancelRequest());
         }
 
+
         [DisplayName(@"Block")]
         public ActionResult BlockLead(LeadModel model)
         {
@@ -166,7 +172,7 @@ namespace PQT.Web.Controllers
         {
             var model = new LeadModel(id);
             var lead = _repo.GetLead(id);
-            if (lead!=null)
+            if (lead != null)
             {
                 model.requestType = lead.StatusCode.ToString();
             }
@@ -207,12 +213,28 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
-
             var saleId = PermissionHelper.SalesmanId();
             IEnumerable<Lead> leads = new HashSet<Lead>();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId && (saleId == 0 || m.UserID == saleId || (m.User != null && m.User.TransferUserID == saleId)));
+                leads = _repo.GetAllLeads(m => m.EventID == eventId &&
+                                               (saleId == 0 || m.UserID == saleId ||
+                                                (m.User != null && m.User.TransferUserID == saleId)) && (
+                                                   m.StatusUpdateTime.Contains(searchValue) ||
+                                                   m.StatusDisplay.Contains(searchValue) ||
+                                                   m.CompanyName.Contains(searchValue) ||
+                                                   m.CountryCode.Contains(searchValue) ||
+                                                   m.ClientName.Contains(searchValue) ||
+                                                   m.DirectLine.Contains(searchValue) ||
+                                                   m.CallBackDateDisplay.Contains(searchValue) ||
+                                                   m.Salutation.Contains(searchValue) ||
+                                                   m.FirstName.Contains(searchValue) ||
+                                                   m.LastName.Contains(searchValue) ||
+                                                   m.BusinessPhone.Contains(searchValue) ||
+                                                   m.MobilePhone.Contains(searchValue) ||
+                                                   m.WorkEmailAddress.Contains(searchValue) ||
+                                                   m.WorkEmailAddress1.Contains(searchValue) ||
+                                                   m.PersonalEmailAddress.Contains(searchValue)));
             }
             else
             {
@@ -220,7 +242,7 @@ namespace PQT.Web.Controllers
             }
             // ReSharper disable once AssignNullToNotNullAttribute
 
-
+            #region sort
             if (sortColumnDir == "asc")
             {
                 switch (sortColumn)
@@ -242,6 +264,33 @@ namespace PQT.Web.Controllers
                         break;
                     case "CallBackDate":
                         leads = leads.OrderBy(s => s.CallBackDate).ThenBy(s => s.ID);
+                        break;
+                    case "Salutation":
+                        leads = leads.OrderBy(s => s.Salutation).ThenBy(s => s.ID);
+                        break;
+                    case "FirstName":
+                        leads = leads.OrderBy(s => s.FirstName).ThenBy(s => s.ID);
+                        break;
+                    case "LastName":
+                        leads = leads.OrderBy(s => s.LastName).ThenBy(s => s.ID);
+                        break;
+                    case "BusinessPhone":
+                        leads = leads.OrderBy(s => s.BusinessPhone).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone":
+                        leads = leads.OrderBy(s => s.MobilePhone).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmailAddress":
+                        leads = leads.OrderBy(s => s.WorkEmailAddress).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmailAddress1":
+                        leads = leads.OrderBy(s => s.WorkEmailAddress1).ThenBy(s => s.ID);
+                        break;
+                    case "PersonalEmailAddress":
+                        leads = leads.OrderBy(s => s.PersonalEmailAddress).ThenBy(s => s.ID);
+                        break;
+                    case "StatusDisplay":
+                        leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
                     default:
                         leads = leads.OrderBy(s => s.ID);
@@ -270,12 +319,40 @@ namespace PQT.Web.Controllers
                     case "CallBackDate":
                         leads = leads.OrderByDescending(s => s.CallBackDate).ThenBy(s => s.ID);
                         break;
+                    case "Salutation":
+                        leads = leads.OrderByDescending(s => s.Salutation).ThenBy(s => s.ID);
+                        break;
+                    case "FirstName":
+                        leads = leads.OrderByDescending(s => s.FirstName).ThenBy(s => s.ID);
+                        break;
+                    case "LastName":
+                        leads = leads.OrderByDescending(s => s.LastName).ThenBy(s => s.ID);
+                        break;
+                    case "BusinessPhone":
+                        leads = leads.OrderByDescending(s => s.BusinessPhone).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone":
+                        leads = leads.OrderByDescending(s => s.MobilePhone).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmailAddress":
+                        leads = leads.OrderByDescending(s => s.WorkEmailAddress).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmailAddress1":
+                        leads = leads.OrderByDescending(s => s.WorkEmailAddress1).ThenBy(s => s.ID);
+                        break;
+                    case "PersonalEmailAddress":
+                        leads = leads.OrderByDescending(s => s.PersonalEmailAddress).ThenBy(s => s.ID);
+                        break;
+                    case "StatusDisplay":
+                        leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
+                        break;
                     default:
                         leads = leads.OrderByDescending(s => s.ID);
                         break;
                 }
             }
 
+            #endregion sort
 
             recordsTotal = leads.Count();
             if (pageSize > recordsTotal)
@@ -303,6 +380,14 @@ namespace PQT.Web.Controllers
                     m.Event.EventName,
                     m.Event.EventCode,
                     m.StatusDisplay,
+                    m.Salutation,
+                    m.FirstName,
+                    m.LastName,
+                    m.BusinessPhone,
+                    m.MobilePhone,
+                    m.WorkEmailAddress,
+                    m.WorkEmailAddress1,
+                    m.PersonalEmailAddress,
                     m.StatusCode,
                     m.ClassStatus,
                     actionBlock = m.LeadStatusRecord == LeadStatus.Blocked ? "Unblock" : "Block"
