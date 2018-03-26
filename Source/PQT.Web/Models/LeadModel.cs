@@ -256,7 +256,12 @@ namespace PQT.Web.Models
     }
     public class CallingModel
     {
+        public int LeadID { get; set; }
         public Lead Lead { get; set; }
+
+        public string GeneralLine { get; set; }
+        public string ClientName { get; set; }
+        public string DirectLine { get; set; }
 
         public string Salutation { get; set; }
         public string FirstName { get; set; }
@@ -287,6 +292,10 @@ namespace PQT.Web.Models
             PhoneCall = new PhoneCall { LeadID = leadId };
             if (Lead != null)
             {
+                LeadID = leadId;
+                GeneralLine = Lead.GeneralLine;
+                ClientName = Lead.ClientName;
+                DirectLine = Lead.DirectLine;
                 Salutation = Lead.Salutation;
                 FirstName = Lead.FirstName;
                 LastName = Lead.LastName;
@@ -298,6 +307,31 @@ namespace PQT.Web.Models
             }
         }
 
+        public bool SaveEdit()
+        {
+            return TransactionWrapper.Do(() =>
+            {
+                var leadRepo = DependencyHelper.GetService<ILeadService>();
+                var lead = leadRepo.GetLead(LeadID);
+                if (lead != null)
+                {
+                    lead.GeneralLine = GeneralLine;
+                    lead.ClientName = ClientName;
+                    lead.DirectLine = DirectLine;
+                    lead.Salutation = Salutation;
+                    lead.FirstName = FirstName;
+                    lead.LastName = LastName;
+                    lead.BusinessPhone = BusinessPhone;
+                    lead.MobilePhone = MobilePhone;
+                    lead.WorkEmailAddress = WorkEmailAddress;
+                    lead.WorkEmailAddress1 = WorkEmailAddress1;
+                    lead.PersonalEmailAddress = PersonalEmailAddress;
+                    leadRepo.UpdateLead(lead);
+                    return true;
+                }
+                return false;
+            });
+        }
         public bool Save()
         {
             return TransactionWrapper.Do(() =>

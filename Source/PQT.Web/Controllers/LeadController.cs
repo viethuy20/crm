@@ -43,6 +43,22 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
+        public ActionResult Edit(int leadId)
+        {
+            var model = new CallingModel(leadId);
+            return PartialView(model);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(CallingModel model)
+        {
+            if (model.SaveEdit())
+            {
+                return Json(new { Code = 1, TypeSubmit = model.TypeSubmit, LeadID = model.PhoneCall.LeadID });
+            }
+            return Json(new { Code = 0, Message = "Save failed" });
+        }
+
         [DisplayName(@"Lead Detail")]
         public ActionResult Detail(int id = 0, int eventId = 0)
         {

@@ -149,14 +149,18 @@
         }
     }
 
-    #tableNCList tbody tr.ncl_new {
+    .ncl_new {
         -webkit-animation: glowing 1000ms infinite;
         -moz-animation: glowing 1000ms infinite;
         -o-animation: glowing 1000ms infinite;
         animation: glowing 1000ms infinite;
+        color: #0aa89e
     }
+        .ncl_new:hover {
+            color: #0aa89e
+        }
 </style>
-<a class="btn ink-reaction btn-floating-action btn-primary" title="Open No Call List"
+<a class="btn ink-reaction btn-floating-action btn-primary expand_new_ncl" title="Open No Call List"
    href="#offcanvas-ncl"  data-toggle="offcanvas" 
    style="position: fixed;top: 85px;right: 0;display: block;z-index: 1006;"><i class="md md-list"></i></a>
 <section>
@@ -288,8 +292,20 @@
              "iDisplayLength": sizeLenght,
              "aaSorting": [[0, "desc"]],
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' + aData["ID"] + '">' + aData["CreatedTime"] + '</a>');
+                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
+                     aData["ID"] +
+                     '">' +
+                     aData["CreatedTime"] +
+                     '</a>');
                  var dropdowns = "";
+
+                 if (aData["StatusCode"] != '@LeadStatus.Booked') {
+
+                     dropdowns += '<li><a class="simple-ajax-popup-align-top" href="@Url.Action("Edit")?leadId=' +
+                         aData["ID"] +
+                         '"><span class=" text-primary"><i class="md fa-fw md-edit"></i> Edit</span></a></li>';
+                 }
+
                  dropdowns +=
                      '<li><a href="@Url.Action("Detail")?id=' +
                      aData["ID"] +
@@ -339,6 +355,7 @@
                          '"><span class=" text-warning"><i class="md fa-fw md-cancel"></i> Cancel ' + aData["StatusDisplay"] +'</span></a></li>';
                  };
                  if (aData["StatusCode"] != '@LeadStatus.Booked') {
+
                      dropdowns += '<li><a href="#" data-action="' +
                          aData["actionBlock"] +
                          '" data-id="' +
@@ -515,13 +532,14 @@
                          type: 'POST',
                          success: function (data) {
                              if (data == "") {
-                                 var tr = $sefl.closest('tr')[0];
+                                 @*var tr = $sefl.closest('tr')[0];
                                  var td = $(tr).find("td");
                                  $(tr).removeClass("@LeadStatus.Blocked.DisplayName");
                                  $(td[6]).text('@LeadStatus.Initial.DisplayName');
                                  $sefl.attr('data-action', 'Block');
-                                 $sefl.html('<span class=" text-danger"><i class="md fa-fw md-block"></i> Block</span>');
+                                 $sefl.html('<span class=" text-danger"><i class="md fa-fw md-block"></i> Block</span>');*@
                                  toastr.success("Unblock successful");
+                                 oTable.fnFilter('');
                              } else {
                                  toastr.error(data);
                              }
@@ -596,6 +614,9 @@
                 $(nRow).find('td:eq(4)').html('<a href="@Url.Action("Detail","Audit")/' + aData["ID"] + '" target="_blank"><i class="md md-more"></i></a>');*@
                  $(nRow).addClass(aData["ClassHighlight"]);
                  $(nRow).addClass(aData["ClassNewHighlight"]);
+                 if (aData["ClassNewHighlight"]) {
+                    $('.expand_new_ncl').addClass('ncl_new');
+                 }
              },
              initComplete: function () {
                  var _table = this;
@@ -617,6 +638,9 @@
          //$('#btnSearch').click(function () {
          //    oTable.fnDraw();
          //});
+         $('.expand_new_ncl').click(function () {
+             $('.expand_new_ncl').removeClass('ncl_new');
+         });
 
          //$(".btn-Expand").on("click",
          //    function () {
@@ -869,6 +893,29 @@
                  oTable.fnFilter('');
              } else {
                  toastr.error(data);
+             }
+         }
+    </script>)
+
+
+@Html.Script(
+    @<script>
+
+         function onFailEdit() {
+             toastr.error('@Resource.SaveError');
+         }
+         function onSuccessEdit(data) {
+             if (data.Code == 0) {
+                 if (data.Message)
+                     toastr.error(data.Message);
+                 else
+                     toastr.error('@Resource.SaveFailed');
+             } else {
+                 if (data.Code == 1) {
+                     toastr.success('@Resource.UpdateSuccessful');
+                     $.magnificPopup.close();
+                     oTable.fnFilter('');
+                 }
              }
          }
     </script>)

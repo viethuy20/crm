@@ -60,24 +60,31 @@
         <div class="pull-right" style="padding-right: 12px">
             @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
 
+            @if ((Model.Lead.LeadStatusRecord != LeadStatus.Booked))
+            {
+                if (CurrentUser.HasPermission("Lead", "Edit"))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { leadId = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
+                }
+            }
             @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.Reject))
             {
-            @Html.Bootstrap().ActionLinkButton("Request To NCL", "RequestAction").Id("request_ncl").Class("btn-info").PrependIcon("md md-phone-locked")
+                @Html.Bootstrap().ActionLinkButton("Request To NCL", "RequestAction").Id("request_ncl").Class("btn-info").PrependIcon("md md-phone-locked")
             }
 
             @if (CurrentUser.HasPermission("Lead", "ApprovalAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
             {
-            @Html.Bootstrap().ActionLinkButton("Approve " + Model.Lead.StatusDisplay, "ApprovalAction").Id("approve_action").Class("btn-success").PrependIcon("md md-done")
+                @Html.Bootstrap().ActionLinkButton("Approve " + Model.Lead.StatusDisplay, "ApprovalAction").Id("approve_action").Class("btn-success").PrependIcon("md md-done")
             }
 
             @if (CurrentUser.HasPermission("Lead", "RejectAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
             {
-            @Html.Bootstrap().ActionLinkButton("Reject " + Model.Lead.StatusDisplay, "RejectAction").RouteValues(new { id = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
+                @Html.Bootstrap().ActionLinkButton("Reject " + Model.Lead.StatusDisplay, "RejectAction").RouteValues(new { id = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
             }
 
 
@@ -86,18 +93,18 @@
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.Live))
             {
-            @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
+                @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
             }
             @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord != LeadStatus.RequestBook &&
                                                                        Model.Lead.LeadStatusRecord != LeadStatus.Booked))
             {
-            @Html.Bootstrap().ActionLinkButton("Request To Book", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestBook }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")
+                @Html.Bootstrap().ActionLinkButton("Request To Book", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestBook }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")
             }
             @if (CurrentUser.HasPermission("Lead", "CancelRequest") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI ||
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestBook))
             {
-            @Html.Bootstrap().ActionLinkButton("Cancel " + Model.Lead.StatusDisplay, "CancelRequest").Id("cancel_request").Class("btn-warning").PrependIcon("md md-cancel")
+                @Html.Bootstrap().ActionLinkButton("Cancel " + Model.Lead.StatusDisplay, "CancelRequest").Id("cancel_request").Class("btn-warning").PrependIcon("md md-cancel")
             }
             @if ((Model.Lead.LeadStatusRecord != LeadStatus.Booked))
             {
@@ -105,14 +112,14 @@
                 {
                     if (CurrentUser.HasPermission("Lead", "BlockLead"))
                     {
-            @Html.Bootstrap().ActionLinkButton("Block ", "BlockLead").Id("lead_block").Class("btn-warning").PrependIcon("md md-lock-outline")
+                        @Html.Bootstrap().ActionLinkButton("Block ", "BlockLead").Id("lead_block").Class("btn-warning").PrependIcon("md md-lock-outline")
                     }
                 }
                 else
                 {
                     if (CurrentUser.HasPermission("Lead", "UnblockLead"))
                     {
-            @Html.Bootstrap().ActionLinkButton("Unblock ", "UnblockLead").Id("lead_unblock").Class("btn-warning").PrependIcon("md md-lock-open")
+                        @Html.Bootstrap().ActionLinkButton("Unblock ", "UnblockLead").Id("lead_unblock").Class("btn-warning").PrependIcon("md md-lock-open")
                     }
                 }
             }
@@ -176,6 +183,55 @@
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Lead.DirectLine).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Lead.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER")
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.Salutation).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.Salutation).LabelText("Salutation")
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.FirstName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.FirstName).LabelText("First Name")
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.LastName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.LastName).LabelText("Last Name")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.BusinessPhone).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.BusinessPhone).LabelText("Business Phone")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.MobilePhone).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.MobilePhone).LabelText("Mobile Phone")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.WorkEmailAddress).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.WorkEmailAddress).LabelText("Work Email Address")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.WorkEmailAddress1).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.WorkEmailAddress1).LabelText("Work Email Address1")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.PersonalEmailAddress).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.PersonalEmailAddress).LabelText("Personal Email Address")
                     </div>
                 </div>
             </div>
@@ -493,6 +549,27 @@
                  location.reload();
              } else {
                  toastr.error(data);
+             }
+         }
+    </script>)
+
+
+@Html.Script(
+    @<script>
+
+         function onFailEdit() {
+             toastr.error('@Resource.SaveError');
+         }
+         function onSuccessEdit(data) {
+             if (data.Code == 0) {
+                 if (data.Message)
+                     toastr.error(data.Message);
+                 else
+                     toastr.error('@Resource.SaveFailed');
+             } else if (data.Code == 1) {
+                toastr.success('@Resource.UpdateSuccessful');
+                $.magnificPopup.close();
+                location.reload();
              }
          }
     </script>)

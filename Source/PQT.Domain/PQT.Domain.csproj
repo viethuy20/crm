@@ -197,6 +197,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Entities\Event.cs" />
+    <Compile Include="Entities\Registration.cs" />
     <Compile Include="Entities\Reservation.cs" />
     <Compile Include="Entities\ReservationStatusRecord.cs" />
     <Compile Include="Entities\Role.cs">

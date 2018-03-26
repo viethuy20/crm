@@ -1,0 +1,99 @@
+﻿@using NS
+@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.CallingModel
+
+@{
+}
+<div class="card card-underline" style="background: white; margin: auto; max-width: 900px; position: relative;">
+    <div class="card-head">
+        <header><b>Edit Form</b></header>
+    </div><!--end .card-head -->
+
+    @using (Ajax.BeginForm("Edit", "routeValues", new AjaxOptions { OnFailure = "onFailEdit", OnSuccess = "onSuccessEdit" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
+    {
+        @Html.HiddenFor(m => m.LeadID)
+        <div class="card-body">
+            <div class="row" style="margin-top: 30px;">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.CompanyName).LabelText("COMPANY NAME")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.GeneralLine).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.GeneralLine).LabelText("GENERAL LINE")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.ClientName).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.ClientName).LabelText("CLIENT NAME/ JOB TITLE")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.DirectLine).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER")
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Bootstrap().DropDownListFor(m => m.Salutation, Enumeration.GetAll<NameTitle>().ToSelectList(m => m.DisplayName, m => m.DisplayName)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Salutation).LabelText("Salutation")
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.FirstName).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.FirstName).LabelText("First Name")
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.LastName).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.LastName).LabelText("Last Name")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.BusinessPhone).LabelText("Business Phone")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.MobilePhone).LabelText("Mobile Phone")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.WorkEmailAddress).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.WorkEmailAddress).LabelText("Work Email Address")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.WorkEmailAddress1).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.WorkEmailAddress1).LabelText("Work Email Address1")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.PersonalEmailAddress).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.PersonalEmailAddress).LabelText("Personal Email Address")
+                    </div>
+                </div>
+            </div>
+        </div><!--end .card-body -->
+        <div class="card-actionbar">
+            <div class="card-actionbar-row">
+                <button type="submit" class="btn btn-primary"><i class="md md-done"></i> Save</button>
+            </div>
+        </div>
+    }
+</div><!--end .card -->

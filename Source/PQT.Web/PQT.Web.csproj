@@ -2440,6 +2440,7 @@
     <Content Include="Views\Lead\RequestAction.cshtml" />
     <Content Include="Views\Lead\Detail.cshtml" />
     <Content Include="Views\Lead\RejectAction.cshtml" />
+    <Content Include="Views\Lead\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
