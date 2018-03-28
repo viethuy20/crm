@@ -14,6 +14,7 @@ namespace PQT.Domain.Entities
         public string SessionTitle { get; set; }
         public string ShortDescription { get; set; }
         public string Description { get; set; }
+        public string Address { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int? EventID { get; set; }

@@ -39,5 +39,18 @@ namespace PQT.Domain.Abstract
 
         #endregion
 
+
+
+        #region Holiday
+        IEnumerable<Holiday> GetAllHolidays();
+        IEnumerable<Holiday> GetAllHolidays(int year);
+        Holiday GetHoliday(int holidayID);
+        Holiday GetHoliday(DateTime holidayDate);
+        Holiday CreateHoliday(Holiday holiday);
+        bool UpdateHoliday(Holiday holiday);
+        bool DeleteHoliday(DateTime date);
+        IEnumerable<Holiday> GetAllHolidaysbyMonthAndYear(int month, int year);
+        #endregion Holiday
+
     }
 }

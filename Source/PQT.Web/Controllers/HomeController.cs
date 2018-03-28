@@ -35,15 +35,18 @@ namespace PQT.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IMembershipService _memRepository;
+        private readonly IEventService _eventService;
 
-        public HomeController(IMembershipService memRepository)
+        public HomeController(IMembershipService memRepository, IEventService eventService)
         {
             _memRepository = memRepository;
+            _eventService = eventService;
         }
 
         public ActionResult Index()
         {
-            var model = new BrowseModel();
+            var model = new HomeModel();
+            model.Events = _eventService.GetAllEvents();
             return View(model);
         }
 

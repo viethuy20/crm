@@ -145,6 +145,7 @@
     <Compile Include="Abstract\IAuthenticationService.cs" />
     <Compile Include="Abstract\IAuthorizationService.cs" />
     <Compile Include="Abstract\ICompanyRepository.cs" />
+    <Compile Include="Abstract\IRegistrationService.cs" />
     <Compile Include="Abstract\ILeadService.cs" />
     <Compile Include="Abstract\ILoginTracker.cs" />
     <Compile Include="Abstract\IMembershipService.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Concrete\ConcurrentLoginTracker.cs" />
     <Compile Include="Concrete\EFAuditTracker.cs" />
     <Compile Include="Concrete\EFCompanyRepository.cs" />
+    <Compile Include="Concrete\EFRegistrationService.cs" />
     <Compile Include="Concrete\EFLeadService.cs" />
     <Compile Include="Concrete\EFMembershipService.cs" />
     <Compile Include="Concrete\EFMenuRepository.cs" />
@@ -186,6 +188,7 @@
     <Compile Include="Entities\EmailSetting.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\Holiday.cs" />
     <Compile Include="Entities\Lead.cs" />
     <Compile Include="Entities\LeadStatusRecord.cs" />
     <Compile Include="Entities\PhoneCall.cs" />
@@ -198,6 +201,7 @@
     </Compile>
     <Compile Include="Entities\Event.cs" />
     <Compile Include="Entities\Registration.cs" />
+    <Compile Include="Entities\Delegate.cs" />
     <Compile Include="Entities\Reservation.cs" />
     <Compile Include="Entities\ReservationStatusRecord.cs" />
     <Compile Include="Entities\Role.cs">

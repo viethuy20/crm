@@ -50,19 +50,19 @@
 			$('.sparkline-revenue').sparkline(points, options);
 		});
 
-		materialadmin.App.callOnResize(function () {
-			var parent = $('.sparkline-visits').closest('.card-body');
-			var barWidth = 6;
-			var spacing = (parent.width() - (points.length * barWidth)) / points.length;
+		//materialadmin.App.callOnResize(function () {
+		//	var parent = $('.sparkline-visits').closest('.card-body');
+		//	var barWidth = 6;
+		//	var spacing = (parent.width() - (points.length * barWidth)) / points.length;
 
-			var options = $('.sparkline-visits').data();
-			options.type = 'bar';
-			options.barWidth = barWidth;
-			options.barSpacing = spacing;
-			options.height = $('.sparkline-visits').height() + 'px';
-			options.fillColor = false;
-			$('.sparkline-visits').sparkline(points, options);
-		});
+		//	var options = $('.sparkline-visits').data();
+		//	options.type = 'bar';
+		//	options.barWidth = barWidth;
+		//	options.barSpacing = spacing;
+		//	options.height = $('.sparkline-visits').height() + 'px';
+		//	options.fillColor = false;
+		//	$('.sparkline-visits').sparkline(points, options);
+		//});
 	};
 	
 	// =========================================================================

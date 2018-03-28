@@ -222,7 +222,14 @@ namespace PQT.Web.Models
             var eventLead = eventRepo.GetEvent(eventId);
             if (eventLead != null)
             {
-                Companies = eventLead.Companies;
+                var leadRepo = DependencyHelper.GetService<ILeadService>();
+                var companyIds = leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
+                    m.UserID != CurrentUser.Identity.ID &&
+                    m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
+                    (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked ||
+                     m.LeadStatusRecord.UpdatedTime.Date >=
+                     DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))).Select(m => m.CompanyID).Distinct();// get list company blocked
+                Companies = eventLead.Companies.Where(m => !companyIds.Contains(m.ID));
             }
             else
             {

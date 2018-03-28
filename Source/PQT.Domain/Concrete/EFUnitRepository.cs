@@ -240,5 +240,60 @@ namespace PQT.Domain.Concrete
         }
 
         #endregion
+
+
+        #region Holiday
+
+        public IEnumerable<Holiday> GetAllHolidays()
+        {
+            return GetAll<Holiday>().ToList();
+        }
+
+        public IEnumerable<Holiday> GetAllHolidays(int year)
+        {
+            return GetAll<Holiday>(m => m.Date.Year == year).ToList();
+        }
+
+        public Holiday GetHoliday(int holidayID)
+        {
+            return Get<Holiday>(holidayID);
+        }
+
+        public Holiday GetHoliday(DateTime holidayDate)
+        {
+            return Get<Holiday>(m => m.Date.Date == holidayDate.Date);
+        }
+
+        public Holiday CreateHoliday(Holiday holiday)
+        {
+            Holiday holidayExist = GetHoliday(holiday.Date);
+            if (holidayExist != null)
+            {
+                holidayExist.Description = holiday.Description;
+                Update(holidayExist);
+                return holidayExist;
+            }
+            return Create(holiday);
+        }
+
+        public bool UpdateHoliday(Holiday holiday)
+        {
+            return Update(holiday);
+        }
+
+        public bool DeleteHoliday(DateTime date)
+        {
+            Holiday holidayExist = GetHoliday(date);
+            if (holidayExist != null)
+                return Delete<Holiday>(holidayExist.ID);
+            return false;
+        }
+
+        public IEnumerable<Holiday> GetAllHolidaysbyMonthAndYear(int month, int year)
+        {
+            return GetAll<Holiday>(m => m.Date.Month == month && m.Date.Year == year);
+        }
+
+        #endregion
     }
 }

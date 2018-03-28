@@ -439,7 +439,7 @@
     <Compile Include="Infrastructure\Utility\RequestPermissionProvider.cs" />
     <Compile Include="Infrastructure\Utility\StringHelper.cs" />
     <Compile Include="Infrastructure\Utility\UserPicture.cs" />
-    <Compile Include="Models\BrowseModel.cs" />
+    <Compile Include="Models\HomeModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
