@@ -11,6 +11,7 @@ namespace PQT.Domain.Entities
         public Registration()
         {
             Delegates = new HashSet<Delegate>();
+            EventSessions = new HashSet<EventSession>();
         }
         public decimal FeePerDelegate { get; set; }
         public double DiscountPercent { get; set; }
@@ -19,5 +20,6 @@ namespace PQT.Domain.Entities
         public virtual Company Company { get; set; }
 
         public virtual ICollection<Delegate> Delegates { get; set; }
+        public virtual ICollection<EventSession> EventSessions { get; set; }
     }
 }
