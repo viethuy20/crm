@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Web.Mvc;
 using System.Windows.Forms.VisualStyles;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
@@ -35,7 +34,7 @@ namespace PQT.Domain.Abstract
         EmailSetting GetEmailSetting(string type, string nameTemplate);
         bool CreateEmailSetting(EmailSetting email);
         bool DeleteEmailAllInTemplate(string type, string nameTemplate);
-        IEnumerable<SelectListItem> GetSelectListItemOfEmailTemplate(string type, string nameTemplate, EmailType emailType);
+        IEnumerable<object> GetSelectListItemOfEmailTemplate(string type, string nameTemplate, EmailType emailType);
 
         #endregion
 

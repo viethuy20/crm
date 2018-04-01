@@ -111,7 +111,7 @@ namespace PQT.Web.Models
         {
             get
             {
-                return UrlHelper.Root + "/data/user_img/" + ID + "/" + UserPicture;
+                return "/data/user_img/" + ID + "/" + UserPicture;
             }
         }
     }

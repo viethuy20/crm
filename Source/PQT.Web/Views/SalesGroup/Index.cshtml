@@ -92,11 +92,13 @@
                 if (data.Code == 1) {
                     $(".textsuccess").text('@Resource.AddSuccessful');
                     addNewLineItem(data.Model);
-                    $("#CreateOrEditForm").get(0).reset();;
+                    $("#CreateOrEditForm").get(0).reset();
+                    $.magnificPopup.close();
                 }
                 if (data.Code == 3) {
                     $("textsuccess").data('@Resource.SaveSuccessful');
                     updateItem(data.Model);
+                    $.magnificPopup.close();
                 }
             } else {
                 if (data.Code == 2)

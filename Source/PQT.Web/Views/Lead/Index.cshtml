@@ -191,8 +191,9 @@
                     <header><i class="fa fa-fw fa-phone"></i> My Call List</header>
                 </div><!--end .card-head -->
                 <div class="card-body">
-                    <table class="table" id="tableLead">
-                        <thead>
+                    <div class="table-responsive">
+                        <table class="table" id="tableLead">
+                            <thead>
                             <tr>
                                 <th>Date Created</th>
                                 <th>Country</th>
@@ -205,14 +206,15 @@
                                 <th>Business Phone</th>
                                 <th>Mobile Phone</th>
                                 <th>Work Email Address</th>
-                                <th>Work Email Address1</th>
+                                @*<th>Work Email Address1</th>*@
                                 <th>Personal Email Address</th>
                                 <th>Call Back</th>
                                 <th>Status</th>
                                 <th></th>
                             </tr>
-                        </thead>
-                    </table>
+                            </thead>
+                        </table>
+                    </div>
                 </div><!--end .card-body -->
             </div><!--end .card -->
         </div>
@@ -283,7 +285,7 @@
                  { "data": "BusinessPhone", "name": "BusinessPhone", "orderable": true },
                  { "data": "MobilePhone", "name": "MobilePhone", "orderable": true },
                  { "data": "WorkEmailAddress", "name": "WorkEmailAddress", "orderable": true },
-                 { "data": "WorkEmailAddress1", "name": "WorkEmailAddress1", "orderable": true },
+                 //{ "data": "WorkEmailAddress1", "name": "WorkEmailAddress1", "orderable": true },
                  { "data": "PersonalEmailAddress", "name": "PersonalEmailAddress", "orderable": true },
                  { "data": "CallBackDate", "name": "CallBackDate", "orderable": true },
                  { "data": "StatusDisplay", "name": "StatusDisplay", "orderable": true },
@@ -369,7 +371,7 @@
                          aData["ID"] +
                          '"><span class=" text-danger"><i class="md fa-fw md-delete"></i> Delete</span></a></li>';
                  };
-                 $(nRow).find('td:eq(15)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
+                 $(nRow).find('td:eq(14)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
                      dropdowns +
                      '</ul></div>');
 
@@ -386,12 +388,12 @@
                      }, 600);
                  });
              },
-             scrollY: false,
-             scrollX: true,
-             "bScrollCollapse": false,
-             "drawCallback": function (settings, json) {
-                 FixedTable();
-             },
+             //scrollY: false,
+             //scrollX: true,
+             //"bScrollCollapse": false,
+             //"drawCallback": function (settings, json) {
+             //    //FixedTable();
+             //},
          });
         function FixedTable() {
             if (!fixedColumn) {

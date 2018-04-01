@@ -27,6 +27,7 @@ namespace PQT.Domain
         public DbSet<SalesGroup> SalesGroups { get; set; }
         public DbSet<Trainer> Trainers { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<Lead> Leads { get; set; }
         public DbSet<UserNotification> UserNotifications { get; set; }
         public DbSet<Registration> Registrations { get; set; }
         public DbSet<Holiday> Holidays { get; set; }

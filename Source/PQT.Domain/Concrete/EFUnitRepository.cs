@@ -5,7 +5,6 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Globalization;
 using System.Linq;
-using System.Web.Mvc;
 using System.Windows.Forms.VisualStyles;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
@@ -144,9 +143,9 @@ namespace PQT.Domain.Concrete
         }
 
 
-        public IEnumerable<SelectListItem> GetSelectListItemOfEmailTemplate(string type, string nameTemplate, EmailType emailType)
+        public IEnumerable<object> GetSelectListItemOfEmailTemplate(string type, string nameTemplate, EmailType emailType)
         {
-            var usersResult = new List<SelectListItem>();
+            var usersResult = new List<object>();
             if (string.IsNullOrEmpty(nameTemplate) || string.IsNullOrEmpty(type))
             {
                 return usersResult;
@@ -173,12 +172,12 @@ namespace PQT.Domain.Concrete
                     var usersByRole = GetAll<Role>(m => roles.Contains(StringHelper.RemoveSpecialCharacters(m.Name)));
                     if (usersByRole.Any())
                     {
-                        usersResult.AddRange(usersByRole.Select(m => new SelectListItem { Value = StringHelper.RemoveSpecialCharacters(m.Name), Text = m.Name }));
+                        usersResult.AddRange(usersByRole.Select(m => new { Value = StringHelper.RemoveSpecialCharacters(m.Name), Text = m.Name }));
                     }
                     var users = GetAll<User>(m => m.Status == EntityStatus.Normal && userIds.Contains(m.ID));
                     if (users.Any())
                     {
-                        usersResult.AddRange(users.Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.DisplayName }));
+                        usersResult.AddRange(users.Select(m => new { Value = m.ID.ToString(), Text = m.DisplayName }));
                     }
                 }
                 else if (emailType == EmailType.Cc)
@@ -200,12 +199,12 @@ namespace PQT.Domain.Concrete
                     var usersByRole = GetAll<Role>(m => roles.Contains(StringHelper.RemoveSpecialCharacters(m.Name)));
                     if (usersByRole.Any())
                     {
-                        usersResult.AddRange(usersByRole.Select(m => new SelectListItem { Value = StringHelper.RemoveSpecialCharacters(m.Name), Text = m.Name }));
+                        usersResult.AddRange(usersByRole.Select(m => new { Value = StringHelper.RemoveSpecialCharacters(m.Name), Text = m.Name }));
                     }
                     var users = GetAll<User>(m => m.Status == EntityStatus.Normal && userIds.Contains(m.ID));
                     if (users.Any())
                     {
-                        usersResult.AddRange(users.Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.DisplayName }));
+                        usersResult.AddRange(users.Select(m => new { Value = m.ID.ToString(), Text = m.DisplayName }));
                     }
                 }
                 else if (emailType == EmailType.Bcc)
@@ -227,16 +226,16 @@ namespace PQT.Domain.Concrete
                     var usersByRole = GetAll<Role>(m => roles.Contains(StringHelper.RemoveSpecialCharacters(m.Name)));
                     if (usersByRole.Any())
                     {
-                        usersResult.AddRange(usersByRole.Select(m => new SelectListItem { Value = StringHelper.RemoveSpecialCharacters(m.Name), Text = m.Name }));
+                        usersResult.AddRange(usersByRole.Select(m => new { Value = StringHelper.RemoveSpecialCharacters(m.Name), Text = m.Name }));
                     }
                     var users = GetAll<User>(m => m.Status == EntityStatus.Normal && userIds.Contains(m.ID));
                     if (users.Any())
                     {
-                        usersResult.AddRange(users.Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.DisplayName }));
+                        usersResult.AddRange(users.Select(m => new { Value = m.ID.ToString(), Text = m.DisplayName }));
                     }
                 }
             }
-            return usersResult.DistinctBy(m => m.Value);
+            return usersResult;
         }
 
         #endregion
