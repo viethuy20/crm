@@ -2441,6 +2441,7 @@
     <Content Include="Views\Lead\Detail.cshtml" />
     <Content Include="Views\Lead\RejectAction.cshtml" />
     <Content Include="Views\Lead\Edit.cshtml" />
+    <Content Include="Views\Lead\NoCallList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

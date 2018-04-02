@@ -101,7 +101,18 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
-        public string StatusUpdateTime
+        public DateTime StatusUpdateTime
+        {
+            get
+            {
+                if (LeadStatusRecord != null)
+                {
+                    return LeadStatusRecord.UpdatedTime;
+                }
+                return default(DateTime);
+            }
+        }
+        public string StatusUpdateTimeStr
         {
             get
             {
@@ -138,11 +149,7 @@ namespace PQT.Domain.Entities
         {
             get
             {
-                if (LeadStatusRecord != null)
-                {
-                    return LeadStatusRecord.UpdatedTime.ToString("dd/MM/yy");
-                }
-                return "";
+                return CreatedTime.ToString("dd/MM/yy");
             }
         }
 
@@ -186,7 +193,7 @@ namespace PQT.Domain.Entities
                 EventColor,
                 StatusCode,
                 Salesman,
-                DateCreatedDisplay,
+                DateCreatedDisplay = StatusUpdateTimeStr,
                 CountryCode,
                 StatusDisplay,
                 CompanyName,

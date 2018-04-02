@@ -41,6 +41,7 @@ namespace PQT.Domain.Entities
 
         public enum ModuleType
         {
+            System,
             Lead,
         }
 
@@ -62,6 +63,11 @@ namespace PQT.Domain.Entities
                 MaxBlockeds,
                 MaxLOIs,
                 NumberDaysExpired
+            }
+
+            public enum System
+            {
+                NotificationNumber
             }
         }
 

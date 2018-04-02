@@ -106,6 +106,18 @@ namespace PQT.Domain.Concrete
                 return loginRecord.User;
             return base.GetUser(id);
         }
+        public override bool UpdateUser(User userInfo)
+        {
+            var loginRecords =
+                LoginRecords.Where(
+                    r => r.User.ID == userInfo.ID);
+            foreach (var inMemLoginRecord in loginRecords)
+            {
+                inMemLoginRecord.User = userInfo;
+                return base.UpdateUser(userInfo);
+            }
+            return false;
+        }
     }
 
     public class InMemLoginRecord

@@ -81,8 +81,10 @@ namespace PQT.Web.Infrastructure.Notification
                 {
                     UserID = user.ID,
                     EntryId = lead.ID,
+                    EventId = lead.EventID,
                     NotifyType = NotifyType.Lead,
                     Title = lead.StatusDisplay,
+                    EventCode = lead.Event.EventCode,
                     Description = lead.CompanyName,
                     HighlightColor = lead.EventColor
                 };

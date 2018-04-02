@@ -74,7 +74,7 @@ namespace PQT.Web.Infrastructure.Utility
         {
             if (Identity == null) return false;
 
-            return Identity.Roles.Any(m => m.RoleLevel == roleLevel);
+            return Identity.Roles.Any(Role.HasLevel(roleLevel));
         }
 
         public static bool HasPermission(string controller, string action)

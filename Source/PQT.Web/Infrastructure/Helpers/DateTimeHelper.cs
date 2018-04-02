@@ -45,6 +45,7 @@ namespace PQT.Web.Infrastructure.Helpers
             }
             return dt.AddDays(-1 * diff).Date;
         }
+
         //public static DateTime ToUserLocalDateTime(this DateTime self)
         //{
         //    var dealerActive = CurrentUser.DealerActive();

@@ -22,7 +22,7 @@
     }
 
     #tableLead td, table th {
-        text-align: center;
+        text-align: left;
         color: #000;
     }
 
@@ -93,94 +93,18 @@
     }
 
 
-    @@-webkit-keyframes glowing {
-        0% {
-            background-color: #ffffff;
-        }
-
-        50% {
-            background-color: #ffffa3;
-        }
-
-        100% {
-            background-color: #ffffff;
-        }
-    }
-
-    @@-moz-keyframes glowing {
-        0% {
-            background-color: #ffffff;
-        }
-
-        50% {
-            background-color: #ffffa3;
-        }
-
-        100% {
-            background-color: #ffffff;
-        }
-    }
-
-    @@-o-keyframes glowing {
-        0% {
-            background-color: #ffffff;
-        }
-
-        50% {
-            background-color: #ffffa3;
-        }
-
-        100% {
-            background-color: #ffffff;
-        }
-    }
-
-    @@keyframes glowing {
-        0% {
-            background-color: #ffffff;
-        }
-
-        50% {
-            background-color: #ffffa3;
-        }
-
-        100% {
-            background-color: #ffffff;
-        }
-    }
-
-    .ncl_new {
-        -webkit-animation: glowing 1000ms infinite;
-        -moz-animation: glowing 1000ms infinite;
-        -o-animation: glowing 1000ms infinite;
-        animation: glowing 1000ms infinite;
-        color: #0aa89e
-    }
-        .ncl_new:hover {
-            color: #0aa89e
-        }
 </style>
 <a class="btn ink-reaction btn-floating-action btn-primary expand_new_ncl" title="Open No Call List"
    href="#offcanvas-ncl"  data-toggle="offcanvas" 
-   style="position: fixed;top: 85px;right: 0;display: block;z-index: 1006;"><i class="md md-list"></i></a>
+   style="position: fixed;top: 93px;right: 0;display: block;z-index: 1006;"><i class="md md-list"></i></a>
 <section>
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="text-primary" style="color: @Model.Event.BackgroundColor">@ViewBag.Title</h1>
-        </div><!--end .col -->
-        <div class="col-lg-8">
-            <article class="margin-bottom-xxl">
-                <p class="lead" style="margin-bottom: 5px;">@Model.Event.EventName</p>
-                <p><b>Event Code: </b>@Model.Event.EventCode <b>Start Date:</b> @Model.Event.StartDate.ToString("dd/MM/yyyy") <b>End Date:</b> @Model.Event.EndDate.ToString("dd/MM/yyyy")</p>
-            </article>
-        </div>
-    </div>
+    <input type="hidden" value="@Model.Event.ID" id="eventIdNCList" />
     <div class="row">
         <div class="col-md-12">
             <div class="card  card-underline">
                 <div class="card-head">
                     <div class="tools">
-                        <div class="btn-group">
+                        <div class="btn-group" style="margin-right: 15px;">
                             @if (CurrentUser.HasPermission("Lead", "CallSheet"))
                             {
                                 <a href="@Url.Action("CallSheet", new {eventId = Model.Event.ID, leadId = Model.Event.ID})" class="btn ink-reaction btn-floating-action btn-success simple-ajax-popup-align-top-custom" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Start New Call"><i class="fa fa-phone fa-2x"></i></a>
@@ -188,13 +112,13 @@
                             @*<a class="btn btn-icon-toggle btn-Expand"><i class="fa fa-expand"></i></a>*@
                         </div>
                     </div>
-                    <header><i class="fa fa-fw fa-phone"></i> My Call List</header>
+                    <header><i class="fa fa-fw fa-phone"></i> My Call List - <span style="font-size: 18px;"><b>@Model.Event.EventName</b> - <b>@Model.Event.EventCode</b> - Date: <b>@Model.Event.StartDate.ToString("dd/MM/yyyy")</b> - <b>@Model.Event.EndDate.ToString("dd/MM/yyyy")</b></span></header>
                 </div><!--end .card-head -->
                 <div class="card-body">
-                    <div class="table-responsive">
                         <table class="table" id="tableLead">
                             <thead>
                             <tr>
+                                <th></th>
                                 <th>Date Created</th>
                                 <th>Country</th>
                                 <th>Company</th>
@@ -206,7 +130,7 @@
                                 <th>Business Phone</th>
                                 <th>Mobile Phone</th>
                                 <th>Work Email Address</th>
-                                @*<th>Work Email Address1</th>*@
+                                <th>Work Email Address1</th>
                                 <th>Personal Email Address</th>
                                 <th>Call Back</th>
                                 <th>Status</th>
@@ -214,7 +138,6 @@
                             </tr>
                             </thead>
                         </table>
-                    </div>
                 </div><!--end .card-body -->
             </div><!--end .card -->
         </div>
@@ -232,7 +155,6 @@
             </div>
         </div>
         <div class="offcanvas-body">
-                <input type="hidden" value="@Model.Event.ID" id="eventIdNCList" />
                 <table class="table" id="tableNCList">
                     <thead>
                     <tr>
@@ -252,11 +174,10 @@
 @Html.Script(
     @<script>
          $(document).unbind('ajaxStart');
-
          var windowW = $(window).width();
          var windowH = $(window).height();
          var fixedColumn = false;
-         var sizeLenght = 10;
+         var sizeLenght = 50;
 
 
          var oTable = $("#tableLead");
@@ -274,6 +195,7 @@
                  }
              },
              "columns": [
+                 { "data": "ID", "name": "ID", "orderable": false },
                  { "data": "CreatedTime", "name": "CreatedTime", "orderable": true },
                  { "data": "Country", "name": "Country", "orderable": true },
                  { "data": "Company", "name": "Company", "orderable": true },
@@ -285,16 +207,20 @@
                  { "data": "BusinessPhone", "name": "BusinessPhone", "orderable": true },
                  { "data": "MobilePhone", "name": "MobilePhone", "orderable": true },
                  { "data": "WorkEmailAddress", "name": "WorkEmailAddress", "orderable": true },
-                 //{ "data": "WorkEmailAddress1", "name": "WorkEmailAddress1", "orderable": true },
+                 { "data": "WorkEmailAddress1", "name": "WorkEmailAddress1", "orderable": true },
                  { "data": "PersonalEmailAddress", "name": "PersonalEmailAddress", "orderable": true },
                  { "data": "CallBackDate", "name": "CallBackDate", "orderable": true },
                  { "data": "StatusDisplay", "name": "StatusDisplay", "orderable": true },
                  { "data": "ID", "name": "ID", "orderable": false },
              ],
              "iDisplayLength": sizeLenght,
-             "aaSorting": [[0, "desc"]],
-             "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
+             "aaSorting": [[1, "desc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+
+                 $(nRow).find('td:eq(0)').html('<a class="simple-ajax-popup-align-top-custom ink-reaction btn-floating-action btn-primary" href="@Url.Action("CallingForm")?leadId=' +
+                     aData["ID"] +
+                     '"><i class="fa fa-fw fa-phone"></i></a>');
+                 $(nRow).find('td:eq(1)').html('<a href="@Url.Action("Detail")/' +
                      aData["ID"] +
                      '">' +
                      aData["CreatedTime"] +
@@ -312,10 +238,10 @@
                      '<li><a href="@Url.Action("Detail")?id=' +
                      aData["ID"] +
                      '&eventId=@Model.Event.ID"><span class=" text-default"><i class="fa fa-fw fa-eye"></i> Detail</span></a></li>';
-                 dropdowns +=
+                 @*dropdowns +=
                      '<li><a class="simple-ajax-popup-align-top-custom" href="@Url.Action("CallingForm")?leadId=' +
                      aData["ID"] +
-                     '"><span class=" text-primary"><i class="fa fa-fw fa-phone"></i> Start Call</span></a></li>';
+                     '"><span class=" text-primary"><i class="fa fa-fw fa-phone"></i> Start Call</span></a></li>';*@
                  if (aData["StatusCode"] == '@LeadStatus.Initial' || aData["StatusCode"] == '@LeadStatus.Reject') {
                      dropdowns += '<li><a href="#" data-action="RequestNCL" data-id="' +
                          aData["ID"] +
@@ -371,7 +297,7 @@
                          aData["ID"] +
                          '"><span class=" text-danger"><i class="md fa-fw md-delete"></i> Delete</span></a></li>';
                  };
-                 $(nRow).find('td:eq(14)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
+                 $(nRow).find('td:eq(16)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
                      dropdowns +
                      '</ul></div>');
 
@@ -388,12 +314,12 @@
                      }, 600);
                  });
              },
-             //scrollY: false,
-             //scrollX: true,
-             //"bScrollCollapse": false,
-             //"drawCallback": function (settings, json) {
-             //    //FixedTable();
-             //},
+             scrollY: false,
+             scrollX: true,
+             "bScrollCollapse": false,
+             "drawCallback": function (settings, json) {
+                 FixedTable();
+             },
          });
         function FixedTable() {
             if (!fixedColumn) {
@@ -457,6 +383,7 @@
                          success: function (data) {
                              if (data == "") {
                                  toastr.success("Request successful");
+                                 fixedColumn = false;
                                  oTable.fnFilter('');
                              } else {
                                  toastr.error(data);
@@ -481,6 +408,7 @@
                          success: function (data) {
                              if (data == "") {
                                  toastr.success("Cancel successful");
+                                 fixedColumn = false;
                                  oTable.fnFilter('');
                              } else {
                                  toastr.error(data);
@@ -511,6 +439,7 @@
                                  $sefl.attr('data-action', 'Unblock');
                                  $sefl.html('<span class=" text-danger"><i class="md fa-fw md-block"></i> Unblock</span>');*@
                                  toastr.success("Blocked successful");
+                                 fixedColumn = false;
                                  oTable.fnFilter('');
                              } else {
                                  toastr.error(data);
@@ -541,6 +470,7 @@
                                  $sefl.attr('data-action', 'Block');
                                  $sefl.html('<span class=" text-danger"><i class="md fa-fw md-block"></i> Block</span>');*@
                                  toastr.success("Unblock successful");
+                                 fixedColumn = false;
                                  oTable.fnFilter('');
                              } else {
                                  toastr.error(data);
@@ -565,6 +495,7 @@
                          success: function (data) {
                              if (data == "") {
                                  toastr.success("Approved successful");
+                                 fixedColumn = false;
                                  oTable.fnFilter('');
                              } else {
                                  toastr.error(data);
@@ -607,9 +538,7 @@
              "iDisplayLength": 25,
              "aaSorting": [[0, "desc"]],
              "fnDrawCallback": function () {
-                 setTimeout(function () {
-                     $('.ncl_new').removeClass("ncl_new");
-                 }, 60000);
+                 
              },
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  @*$(nRow).find('td:eq(1)').attr("style", "text-align:center");
@@ -740,6 +669,7 @@
                  if (data.Code == 1) {
                      toastr.success('@Resource.UpdateSuccessful');
                      $.magnificPopup.close();
+                     fixedColumn = false;
                      oTable.fnFilter('');
                  }
                  if (data) {
@@ -798,20 +728,24 @@
                                      success: function (data) {
                                          if (data == "") {
                                              toastr.success("Request successful");
+                                             fixedColumn = false;
                                              oTable.fnFilter('');
                                          } else {
                                              toastr.error(data);
+                                             fixedColumn = false;
                                              oTable.fnFilter('');
                                          }
                                      },
                                      error: function () {
                                          toastr.error("Request failed");
+                                         fixedColumn = false;
                                          oTable.fnFilter('');
                                      }
                                  });
                              }
                          });
                      } else {
+                         fixedColumn = false;
                          oTable.fnFilter('');
                      }
                  }
@@ -892,6 +826,7 @@
              if (data == "") {
                  toastr.success("Reject successful");
                  $.magnificPopup.close();
+                 fixedColumn = false;
                  oTable.fnFilter('');
              } else {
                  toastr.error(data);
@@ -916,6 +851,7 @@
                  if (data.Code == 1) {
                      toastr.success('@Resource.UpdateSuccessful');
                      $.magnificPopup.close();
+                     fixedColumn = false;
                      oTable.fnFilter('');
                  }
              }

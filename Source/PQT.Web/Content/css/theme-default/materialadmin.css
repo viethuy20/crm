@@ -2404,8 +2404,8 @@ body:not(.menubar-first) .menubar-fixed-panel {
         left: 0;
         opacity: 1;
     }
-    
-    .menubar-visible .menubar-fixed-panel .expanded, 
+
+    .menubar-visible .menubar-fixed-panel .expanded,
     .menubar-pin .menubar-fixed-panel .expanded {
         left: 0;
         opacity: 1;
@@ -3340,22 +3340,22 @@ textarea.autosize {
         opacity: 0.5;
     }
 
-        .form-group .form-control:focus {
-            border-color: rgba(12, 12, 12, 0.12);
+    .form-group .form-control:focus {
+        border-color: rgba(12, 12, 12, 0.12);
+    }
+
+
+        .form-group .form-control:focus ~ label {
+            color: #0aa89e;
+            opacity: 1;
         }
 
-
-            .form-group .form-control:focus ~ label {
-                color: #0aa89e;
-                opacity: 1;
+            .form-group .form-control:focus ~ label:after,
+            .form-group .form-control:focus ~ .form-control-line:after {
+                visibility: visible;
+                width: 100%;
+                left: 0;
             }
-
-                .form-group .form-control:focus ~ label:after,
-                .form-group .form-control:focus ~ .form-control-line:after {
-                    visibility: visible;
-                    width: 100%;
-                    left: 0;
-                }
 
 .floating-label .form-control ~ label {
     top: 19px;
@@ -9499,7 +9499,7 @@ li.L8 {
 
 .field-validation-error {
     font-size: 12px;
-    color: #f44336;    
+    color: #f44336;
     position: absolute;
     right: 0;
     bottom: -20px;
@@ -9525,12 +9525,12 @@ li.L8 {
     -moz-backface-visibility: hidden;
     -ms-backface-visibility: hidden;
     backface-visibility: hidden;
-  
 }
-.call-animation i {
-    font-size: 43px;
-    color: #0aa89e;
-}
+
+    .call-animation i {
+        font-size: 43px;
+        color: #0aa89e;
+    }
 /*img {
     width: 70px;
     height: 70px;
@@ -9544,43 +9544,80 @@ li.L8 {
     0% {
         transform: scale(1);
     }
+
     15% {
         box-shadow: 0 0 0 5px rgba(10, 168, 158, 0.4);
     }
+
     25% {
         box-shadow: 0 0 0 10px rgba(10, 168, 158, 0.4), 0 0 0 20px rgba(10, 168, 158, 0.2);
     }
+
     25% {
         box-shadow: 0 0 0 15px rgba(10, 168, 158, 0.4), 0 0 0 30px rgba(10, 168, 158, 0.2);
     }
+}
 
-}
 .shake {
-    display:inline-block
+    display: inline-block
 }
+
 .shake {
-    display:block;
-    position:relative;
+    display: block;
+    position: relative;
 }
 
 @-webkit-keyframes spaceboots {
-    0% { -webkit-transform: translate(2px, 1px) rotate(0deg); }
-    10% { -webkit-transform: translate(-1px, -2px) rotate(-1deg); }
-    20% { -webkit-transform: translate(-3px, 0px) rotate(1deg); }
-    30% { -webkit-transform: translate(0px, 2px) rotate(0deg); }
-    40% { -webkit-transform: translate(1px, -1px) rotate(1deg); }
-    50% { -webkit-transform: translate(-1px, 2px) rotate(-1deg); }
-    60% { -webkit-transform: translate(-3px, 1px) rotate(0deg); }
-    70% { -webkit-transform: translate(2px, 1px) rotate(-1deg); }
-    80% { -webkit-transform: translate(-1px, -1px) rotate(1deg); }
-    90% { -webkit-transform: translate(2px, 2px) rotate(0deg); }
-    100% { -webkit-transform: translate(1px, -2px) rotate(-1deg); }
+    0% {
+        -webkit-transform: translate(2px, 1px) rotate(0deg);
+    }
+
+    10% {
+        -webkit-transform: translate(-1px, -2px) rotate(-1deg);
+    }
+
+    20% {
+        -webkit-transform: translate(-3px, 0px) rotate(1deg);
+    }
+
+    30% {
+        -webkit-transform: translate(0px, 2px) rotate(0deg);
+    }
+
+    40% {
+        -webkit-transform: translate(1px, -1px) rotate(1deg);
+    }
+
+    50% {
+        -webkit-transform: translate(-1px, 2px) rotate(-1deg);
+    }
+
+    60% {
+        -webkit-transform: translate(-3px, 1px) rotate(0deg);
+    }
+
+    70% {
+        -webkit-transform: translate(2px, 1px) rotate(-1deg);
+    }
+
+    80% {
+        -webkit-transform: translate(-1px, -1px) rotate(1deg);
+    }
+
+    90% {
+        -webkit-transform: translate(2px, 2px) rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: translate(1px, -2px) rotate(-1deg);
+    }
 }
+
 .shake:hover,
 .shake:focus {
     -webkit-animation-name: spaceboots;
     -webkit-animation-duration: 3s;
-    -webkit-transform-origin:50% 50%;
+    -webkit-transform-origin: 50% 50%;
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-timing-function: linear;
 }
@@ -9605,3 +9642,77 @@ li.L8 {
     left: 0;
     z-index: 999999999999;
 }
+
+.input-daterange input {
+    text-align: left
+}
+
+@-webkit-keyframes glowing {
+    0% {
+        background-color: #ffffff;
+    }
+
+    50% {
+        background-color: #ffffa3;
+    }
+
+    100% {
+        background-color: #ffffff;
+    }
+}
+
+@-moz-keyframes glowing {
+    0% {
+        background-color: #ffffff;
+    }
+
+    50% {
+        background-color: #ffffa3;
+    }
+
+    100% {
+        background-color: #ffffff;
+    }
+}
+
+@-o-keyframes glowing {
+    0% {
+        background-color: #ffffff;
+    }
+
+    50% {
+        background-color: #ffffa3;
+    }
+
+    100% {
+        background-color: #ffffff;
+    }
+}
+
+@keyframes glowing {
+    0% {
+        background-color: #ffffff;
+    }
+
+    50% {
+        background-color: #ffffa3;
+    }
+
+    100% {
+        background-color: #ffffff;
+    }
+}
+
+.dashboard_ncl_new,
+.ncl_new {
+    -webkit-animation: glowing 1000ms infinite;
+    -moz-animation: glowing 1000ms infinite;
+    -o-animation: glowing 1000ms infinite;
+    animation: glowing 1000ms infinite;
+    color: #0aa89e
+}
+
+    .dashboard_ncl_new:hover,
+    .ncl_new:hover {
+        color: #0aa89e
+    }

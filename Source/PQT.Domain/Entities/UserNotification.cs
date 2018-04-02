@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using PQT.Domain.Enum;
+using PQT.Domain.Helpers;
 
 namespace PQT.Domain.Entities
 {
@@ -15,8 +16,10 @@ namespace PQT.Domain.Entities
         }
         public int UserID { get; set; }
         public int EntryId { get; set; }
+        public int EventId { get; set; }
         public bool Seen { get; set; }
         public NotifyType NotifyType { get; set; }
+        public string EventCode { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string HighlightColor { get; set; }
@@ -26,6 +29,22 @@ namespace PQT.Domain.Entities
         public string NotifyTypeDisplay
         {
             get { return NotifyType.DisplayName; }
+        }
+
+        public string TimeAgo
+        {
+            get
+            {
+                return CreatedTime.TimeAgo();
+            }
+        }
+        public string Timestamp
+        {
+            get
+            {
+                return String.Format("{0} at {1}", CreatedTime.ToString("dd MMM yyyy"),
+                    CreatedTime.ToString("HH:mm"));
+            }
         }
     }
 }

@@ -21,6 +21,7 @@
                     <tr>
                         <th>@Resource.Code</th>
                         <th>@Resource.Name</th>
+                        <th>Dialing Code</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -31,6 +32,7 @@
                         <tr data-id="@item.ID">
                             <td>@item.Code</td>
                             <td>@item.Name</td>
+                            <td>@item.DialingCode</td>
                             <td>
                                 <a href="@Url.Action("CreateOrEdit", new {id = item.ID})" data-action="edit" class="simple-ajax-popup-align-top">
                                     <i class="md md-edit text-info"></i>
@@ -54,7 +56,9 @@
 @Html.Script(
     @<script>
 
-        var $Table = $('#table').dataTable();
+        var $Table = $('#table').dataTable({
+            "iDisplayLength": 50,
+        });
         $Table.on('click', '[data-action="delete"]', function (e) {
             e.preventDefault();
             var selftr = $(this);

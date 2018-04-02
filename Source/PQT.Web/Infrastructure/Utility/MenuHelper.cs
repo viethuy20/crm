@@ -21,7 +21,7 @@ namespace PQT.Web.Infrastructure.Utility
             if (!CurrentUser.IsAuthenticated)
                 return new Menu[] { };
 
-            return MenuRepository.GetAllChildrenByUser(CurrentUser.Identity.ID, parentId);
+            return MenuRepository.GetAllChildrenByUser(CurrentUser.Identity!=null?CurrentUser.Identity.ID:0, parentId);
         }
     }
 }

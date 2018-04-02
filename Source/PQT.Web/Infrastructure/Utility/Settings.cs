@@ -57,6 +57,14 @@ namespace PQT.Web.Infrastructure.Utility
                 return Convert.ToInt32(GetSetting(Setting.ModuleType.Lead, Setting.ModuleKey.Lead.MaxLOIs, typeof(int)));
             }
         }
+
+        public class System
+        {
+            public static int NotificationNumber()
+            {
+                return Convert.ToInt32(GetSetting(Setting.ModuleType.System, Setting.ModuleKey.System.NotificationNumber, typeof(int)));
+            }
+        }
         #endregion
 
     }

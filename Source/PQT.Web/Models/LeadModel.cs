@@ -162,12 +162,12 @@ namespace PQT.Web.Models
                 return "Approval failed";
 
             var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
-            if (leads.Any(m => m.UserID != CurrentUser.Identity.ID &&
+            if (leads.Any(m => m.UserID != lead.UserID &&
                                m.CompanyID == lead.CompanyID &&
                                m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
                                (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
                                 DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))))
-                return "Cannot block this company... Company is requesting to NCL or exists in NCL";
+                return "Cannot approve this company... Company is requesting to NCL or exists in NCL";
 
 
             var titleNotify = lead.LeadStatusRecord.Status.DisplayName + " approved";

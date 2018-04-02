@@ -47,6 +47,12 @@ namespace PQT.Web.Controllers
         {
             var model = new HomeModel();
             model.Events = _eventService.GetAllEvents();
+            foreach (var modelEvent in model.Events)
+            {
+                modelEvent.Notifications =
+                    _memRepository.GetAllUserNotificationsByEvent(CurrentUser.Identity.ID,modelEvent.ID,
+                        Settings.System.NotificationNumber());
+            }
             return View(model);
         }
 
@@ -57,7 +63,7 @@ namespace PQT.Web.Controllers
             var notify = new List<UserNotification>();
             if (CurrentUser.Identity != null)
             {
-                notify = _memRepository.GetAllUserNotifications(CurrentUser.Identity.ID).ToList();
+                notify = _memRepository.GetAllUserNotifications(CurrentUser.Identity.ID, Settings.System.NotificationNumber()).ToList();
             }
             return PartialView(notify);
         }

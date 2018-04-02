@@ -127,7 +127,7 @@ namespace PQT.Seed
         {
             for (int i = 1; i <= 5; i++)
             {
-                var rand = new Random((int) DateTime.Now.Ticks).Next(0x1000000);
+                var rand = new Random((int)DateTime.Now.Ticks).Next(0x1000000);
                 db.Events.Add(new Event
                 {
                     EventCode = string.Format("{0:X6}", rand),
@@ -136,69 +136,104 @@ namespace PQT.Seed
                     Description = "We provide business intelligences, education and consulting services to the world. Together with international experts, customers, governments and communities, we help companies thrive by applying our insights and over 20 years of experience. We have over 06 operating offices, over 200 employees, and agents in 15 countries who are committed to train the corporate world in a responsible way, reducing process waste, improving business environment and the communities, and economy where we live and work. We are also a dynamic and rapidly-growing business with a commitment to excellence, offering promising opportunities for career development.",
                     StartDate = DateTime.Today,
                     EndDate = DateTime.Today.AddDays(30),
-                    UserID = 1,
+                    UserID = 2,
                     BackgroundColor = string.Format("#{0:X6}", rand)
-            });
+                });
+            }
+            db.SaveChanges();
         }
-        db.SaveChanges();
+
+
+        private void Insert_settings(PQTDb db)
+        {
+            //db.Settings.Add(new Setting { Module = Enum.GetName(typeof(Setting.ModuleType), Setting.ModuleType.SystemConfig), Name = Enum.GetName(typeof(Setting.ModuleKey.SystemConfig), Setting.ModuleKey.SystemConfig.LoginByEmail), Value = true.ToString(), Type = "Checkbox", Summary = "Use email to login", Note = "", Description = "Check to login using Email instead of DisplayName" });
+            db.Settings.Add(new Setting { Module = Enum.GetName(typeof(Setting.ModuleType), Setting.ModuleType.Lead), Name = Enum.GetName(typeof(Setting.ModuleKey.Lead), Setting.ModuleKey.Lead.NumberDaysExpired), Value = "10", Type = "Textbox", Summary = "Number Days Expired", Note = "", Description = "{0} working days rule excluding public holiday in office location" });
+            db.Settings.Add(new Setting { Module = Enum.GetName(typeof(Setting.ModuleType), Setting.ModuleType.Lead), Name = Enum.GetName(typeof(Setting.ModuleKey.Lead), Setting.ModuleKey.Lead.MaxBlockeds), Value = "5", Type = "Textbox", Summary = "Maximum Blocks", Note = "", Description = "Maximum number blocks for each salesman" });
+            db.Settings.Add(new Setting { Module = Enum.GetName(typeof(Setting.ModuleType), Setting.ModuleType.Lead), Name = Enum.GetName(typeof(Setting.ModuleKey.Lead), Setting.ModuleKey.Lead.MaxLOIs), Value = "5", Type = "Textbox", Summary = "Maximum LOIs", Note = "", Description = "Maximum number Letter of intention(LOI) for each salesman" });
+
+            db.SaveChanges();
         }
 
+        private void Insert_roles_and_users(PQTDb db)
+        {
 
-    private void Insert_settings(PQTDb db)
-    {
-        //db.Settings.Add(new Setting { Module = Enum.GetName(typeof(Setting.ModuleType), Setting.ModuleType.SystemConfig), Name = Enum.GetName(typeof(Setting.ModuleKey.SystemConfig), Setting.ModuleKey.SystemConfig.LoginByEmail), Value = true.ToString(), Type = "Checkbox", Summary = "Use email to login", Note = "", Description = "Check to login using Email instead of DisplayName" });
-        db.Settings.Add(new Setting { Module = Enum.GetName(typeof(Setting.ModuleType), Setting.ModuleType.Lead), Name = Enum.GetName(typeof(Setting.ModuleKey.Lead), Setting.ModuleKey.Lead.NumberDaysExpired), Value = "10", Type = "Textbox", Summary = "Number Days Expired", Note = "", Description = "{0} working days rule excluding public holiday in office location" });
-        db.Settings.Add(new Setting { Module = Enum.GetName(typeof(Setting.ModuleType), Setting.ModuleType.Lead), Name = Enum.GetName(typeof(Setting.ModuleKey.Lead), Setting.ModuleKey.Lead.MaxBlockeds), Value = "5", Type = "Textbox", Summary = "Maximum Blocks", Note = "", Description = "Maximum number blocks for each salesman" });
-        db.Settings.Add(new Setting { Module = Enum.GetName(typeof(Setting.ModuleType), Setting.ModuleType.Lead), Name = Enum.GetName(typeof(Setting.ModuleKey.Lead), Setting.ModuleKey.Lead.MaxLOIs), Value = "5", Type = "Textbox", Summary = "Maximum LOIs", Note = "", Description = "Maximum number Letter of intention(LOI) for each salesman" });
+            var rAdmin = new Role { Name = "Admin", RoleLevel = RoleLevel.AdminLevel };
+            var sManager = new Role { Name = "Manager", RoleLevel = RoleLevel.ManagerLevel };
+            var sQA = new Role { Name = "QA", RoleLevel = RoleLevel.ManagerLevel };
+            var salesman = new Role { Name = "Salesman", RoleLevel = RoleLevel.SalesLevel };
+            var finance = new Role { Name = "Finance", RoleLevel = RoleLevel.ManagerLevel };
+            var hR = new Role { Name = "HR", RoleLevel = RoleLevel.ManagerLevel };
 
-        db.SaveChanges();
+            db.Users.Add(new User { DisplayName = "ADMIN", Password = EncryptHelper.EncryptPassword("123456"), Email = "ADMIN@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { rAdmin, salesman } });
+            db.Users.Add(new User { DisplayName = "Manager", Password = EncryptHelper.EncryptPassword("123456"), Email = "MANAGER@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { sManager } });
+            db.Users.Add(new User { DisplayName = "QA", Password = EncryptHelper.EncryptPassword("123456"), Email = "QA@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { sQA } });
+            db.Users.Add(new User { DisplayName = "Finance", Password = EncryptHelper.EncryptPassword("123456"), Email = "FINANCE@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { finance } });
+            db.Users.Add(new User { DisplayName = "HR", Password = EncryptHelper.EncryptPassword("123456"), Email = "HR@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { hR } });
+            var sale1 = new User
+            {
+                DisplayName = "Salesman1",
+                Password = EncryptHelper.EncryptPassword("123456"),
+                Email = "SALES1@LOCALHOST",
+                BusinessPhone = "+84 0168 7040 132",
+                Roles = {salesman}
+            };
+            var sale2 = new User
+            {
+                DisplayName = "Salesman2",
+                Password = EncryptHelper.EncryptPassword("123456"),
+                Email = "SALES2@LOCALHOST",
+                BusinessPhone = "+84 0168 7040 132",
+                Roles = {salesman}
+            };
+            var sale3 = new User
+            {
+                DisplayName = "Salesman3",
+                Password = EncryptHelper.EncryptPassword("123456"),
+                Email = "SALES3@LOCALHOST",
+                BusinessPhone = "+84 0168 7040 132",
+                Roles = {salesman}
+            };
+            db.Users.Add(sale1);
+            db.Users.Add(sale2);
+            db.Users.Add(sale3);
+            db.SaveChanges();
+
+            var g1 = new SalesGroup {GroupName = "G1"};
+            g1.Users.Add(sale1);
+            g1.Users.Add(sale2);
+            g1.Users.Add(sale3);
+            var g2 = new SalesGroup {GroupName = "G2"};
+            g2.Users.Add(sale1);
+            g2.Users.Add(sale3);
+            db.SalesGroups.Add(g1);
+            db.SalesGroups.Add(g2);
+            db.SaveChanges();
+        }
+        private void Insert_menu(PQTDb db)
+        {
+            Func<string, Role> getRoleByName =
+                roleName => db.Roles.FirstOrDefault(r => r.Name == roleName);
+            Menu m10 = db.MenuItems.Add(new Menu { Title = "Events", Url = "/Event/Index", Icon = "md md-event" });
+            Menu m11 = db.MenuItems.Add(new Menu { Title = "Users", Icon = "fa fa-users" });
+            Menu m13 = db.MenuItems.Add(new Menu { Title = "System Settings", Icon = "fa fa-cogs" });
+            Menu m12 = db.MenuItems.Add(new Menu { Title = "Master Files", Icon = "fa fa-cubes" });
+
+            db.SaveChanges();
+
+
+            db.MenuItems.Add(new Menu { Title = "Users", Url = "/Users/Index", ParentID = m11.ID, Icon = "i-multi-agents" });
+            db.MenuItems.Add(new Menu { Title = "Deleted Users", Url = "/Users/ListDeletedUsers", ParentID = m11.ID, Icon = "i-multi-agents" });
+            db.MenuItems.Add(new Menu { Title = "Roles", Url = "/Roles/Index", ParentID = m11.ID, Icon = "i-role" });
+            db.MenuItems.Add(new Menu { Title = "Sales Group", Url = "/SalesGroup/Index", ParentID = m11.ID, Icon = "i-role" });
+
+            db.MenuItems.Add(new Menu { Title = "Countries", Url = "/Country/Index", ParentID = m12.ID, Icon = "i-holiday" });
+            db.MenuItems.Add(new Menu { Title = "Companies", Url = "/Company/Index", ParentID = m12.ID, Icon = "i-holiday" });
+
+            db.MenuItems.Add(new Menu { Title = "Menus", Url = "/Menus/Index", ParentID = m13.ID, Icon = "i-menu" });
+            db.MenuItems.Add(new Menu { Title = "Settings", Url = "/Settings/Index", ParentID = m13.ID, Icon = "i-configuration" });
+            db.MenuItems.Add(new Menu { Title = "Email Settings", Url = "/EmailSetting/Index", ParentID = m13.ID, Icon = "i-configuration" });
+            db.MenuItems.Add(new Menu { Title = "Logs", Url = "/Audit/Index", ParentID = m13.ID, Icon = "i-log" });
+            db.SaveChanges();
+        }
     }
-
-    private void Insert_roles_and_users(PQTDb db)
-    {
-
-        var rAdmin = new Role { Name = "Admin", RoleLevel = RoleLevel.AdminLevel };
-        var sManager = new Role { Name = "Manager", RoleLevel = RoleLevel.ManagerLevel };
-        var sQA = new Role { Name = "QA", RoleLevel = RoleLevel.ManagerLevel };
-        var salesman = new Role { Name = "Salesman", RoleLevel = RoleLevel.SalesLevel };
-        var finance = new Role { Name = "Finance", RoleLevel = RoleLevel.ManagerLevel };
-        var hR = new Role { Name = "HR", RoleLevel = RoleLevel.ManagerLevel };
-
-        db.Users.Add(new User { DisplayName = "ADMIN", Password = EncryptHelper.EncryptPassword("123456"), Email = "ADMIN@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { rAdmin, salesman } });
-        db.Users.Add(new User { DisplayName = "Manager", Password = EncryptHelper.EncryptPassword("123456"), Email = "QA@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { sQA } });
-        db.Users.Add(new User { DisplayName = "Salesman1", Password = EncryptHelper.EncryptPassword("123456"), Email = "SALES1@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { salesman } });
-        db.Users.Add(new User { DisplayName = "Salesman2", Password = EncryptHelper.EncryptPassword("123456"), Email = "SALES2@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { salesman } });
-        db.Users.Add(new User { DisplayName = "Salesman3", Password = EncryptHelper.EncryptPassword("123456"), Email = "SALES3@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { salesman } });
-        db.Users.Add(new User { DisplayName = "Manager", Password = EncryptHelper.EncryptPassword("123456"), Email = "MANAGER@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { sManager } });
-        db.Users.Add(new User { DisplayName = "Finance", Password = EncryptHelper.EncryptPassword("123456"), Email = "FINANCE@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { finance } });
-        db.Users.Add(new User { DisplayName = "HR", Password = EncryptHelper.EncryptPassword("123456"), Email = "HR@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { hR } });
-        db.SaveChanges();
-    }
-    private void Insert_menu(PQTDb db)
-    {
-        Func<string, Role> getRoleByName =
-            roleName => db.Roles.FirstOrDefault(r => r.Name == roleName);
-        Menu m10 = db.MenuItems.Add(new Menu { Title = "Events", Url = "/Event/Index", Icon = "md md-event" });
-        Menu m11 = db.MenuItems.Add(new Menu { Title = "Users", Icon = "fa fa-users" });
-        Menu m13 = db.MenuItems.Add(new Menu { Title = "System Settings", Icon = "fa fa-cogs" });
-        Menu m12 = db.MenuItems.Add(new Menu { Title = "Master Files", Icon = "fa fa-cubes" });
-
-        db.SaveChanges();
-
-
-        db.MenuItems.Add(new Menu { Title = "Users", Url = "/Users/Index", ParentID = m11.ID, Icon = "i-multi-agents" });
-        db.MenuItems.Add(new Menu { Title = "Deleted Users", Url = "/Users/ListDeletedUsers", ParentID = m11.ID, Icon = "i-multi-agents" });
-        db.MenuItems.Add(new Menu { Title = "Roles", Url = "/Roles/Index", ParentID = m11.ID, Icon = "i-role" });
-        db.MenuItems.Add(new Menu { Title = "Sales Group", Url = "/SalesGroup/Index", ParentID = m11.ID, Icon = "i-role" });
-
-        db.MenuItems.Add(new Menu { Title = "Countries", Url = "/Country/Index", ParentID = m12.ID, Icon = "i-holiday" });
-        db.MenuItems.Add(new Menu { Title = "Companies", Url = "/Company/Index", ParentID = m12.ID, Icon = "i-holiday" });
-
-        db.MenuItems.Add(new Menu { Title = "Menus", Url = "/Menus/Index", ParentID = m13.ID, Icon = "i-menu" });
-        db.MenuItems.Add(new Menu { Title = "Settings", Url = "/Settings/Index", ParentID = m13.ID, Icon = "i-configuration" });
-        db.MenuItems.Add(new Menu { Title = "Email Settings", Url = "/EmailSetting/Index", ParentID = m13.ID, Icon = "i-configuration" });
-        db.MenuItems.Add(new Menu { Title = "Logs", Url = "/Audit/Index", ParentID = m13.ID, Icon = "i-log" });
-        db.SaveChanges();
-    }
-}
 }

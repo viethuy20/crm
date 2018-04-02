@@ -243,6 +243,51 @@ namespace PQT.Domain.Helpers
             var currentDate = DateTime.Now.ToString("yyyyMMdd"); // YYYYMMDD Eg: 20160122
             return EncryptHelper.EncryptPassword(onOffSession + apiPw + currentDate + apiUsername);
         }
+
+
+        public static string TimeAgo(this DateTime dateTime)
+        {
+            string result = string.Empty;
+            var timeSpan = DateTime.Now.Subtract(dateTime);
+
+            if (timeSpan <= TimeSpan.FromSeconds(10))
+            {
+                result = "just now";
+            }else if (timeSpan <= TimeSpan.FromSeconds(60))
+            {
+                result = string.Format("{0} seconds ago", timeSpan.Seconds);
+            }
+            else if (timeSpan <= TimeSpan.FromMinutes(60))
+            {
+                result = timeSpan.Minutes > 1 ?
+                    String.Format("{0} minutes ago", timeSpan.Minutes) :
+                    "a minute ago";
+            }
+            else if (timeSpan <= TimeSpan.FromHours(24))
+            {
+                result = timeSpan.Hours > 1 ?
+                    String.Format("{0} hours ago", timeSpan.Hours) :
+                    "an hour ago";
+            }
+            else if (timeSpan <= TimeSpan.FromDays(365))
+            {
+                result = timeSpan.Days > 1 ?
+                    String.Format("{0} at {1}", timeSpan.ToString("dd MMM"), timeSpan.ToString("HH:mm")) :
+                    "yesterday";
+            }
+            //else if (timeSpan <= TimeSpan.FromDays(365))
+            //{
+            //    result = timeSpan.Days > 30 ?
+            //        String.Format("about {0} months ago", timeSpan.Days / 30) :
+            //        "a month ago";
+            //}
+            else
+            {
+                result = String.Format("{0} at {1}", timeSpan.ToString("dd MMM yyyy"), timeSpan.ToString("HH:mm"));
+            }
+
+            return result;
+        }
     }
 
 }

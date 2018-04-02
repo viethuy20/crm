@@ -1,0 +1,358 @@
+﻿@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.LeadModelView
+
+@{
+    ViewBag.MenuBarColl = true;
+    ViewBag.Title = "No Call List";
+}
+
+
+<style>
+    .DTFC_Cloned {
+        background: #fff;
+    }
+
+        .DTFC_Cloned td {
+            background-color: #fff;
+        }
+
+        .DTFC_Cloned th {
+            background-color: #f5f5f5 !important;
+        }
+
+    #tableLead td, table th {
+        text-align: left;
+        color: #000;
+    }
+
+
+
+    #tableLead tbody tr.Reject td {
+        color: #8a6d3b;
+        background-color: #ffefd5;
+    }
+
+    .DTFC_Cloned tbody tr.Reject td {
+        color: #8a6d3b;
+        background-color: #fee8c7;
+    }
+
+    #tableLead tbody tr.Blocked td {
+        color: #a94442;
+        background-color: #ffdad7;
+    }
+
+    .DTFC_Cloned tbody tr.Blocked td {
+        color: #a94442;
+        background-color: #feccc7;
+    }
+
+    .DTFC_Cloned tbody tr.Initial td {
+        color: #000;
+        background-color: #f5f5f5;
+    }
+
+    #tableLead tbody tr.Live td,
+    #tableLead tbody tr.LOI td {
+        color: #31708f;
+        background-color: #d8edff !important;
+    }
+
+    .DTFC_Cloned tbody tr.Live td,
+    .DTFC_Cloned tbody tr.LOI td,
+    #tableNCList tbody tr.lead_owner td {
+        color: #31708f;
+        background-color: #c8e4fa !important;
+    }
+
+
+    #tableLead tbody tr.Booked td {
+        color: #3c763d;
+        background-color: #deffe0;
+    }
+
+    .DTFC_Cloned tbody tr.Booked td,
+    #tableNCList tbody tr.booked td {
+        color: #3c763d;
+        background-color: #c7fcca;
+    }
+
+    #tableLead tbody tr.RequestNCL td,
+    #tableLead tbody tr.RequestLOI td,
+    #tableLead tbody tr.RequestBook td {
+        color: #a5a100;
+        background-color: #fffed5;
+    }
+
+    .DTFC_Cloned tbody tr.RequestNCL td,
+    .DTFC_Cloned tbody tr.RequestLOI td,
+    .DTFC_Cloned tbody tr.RequestBook td {
+        color: #a5a100;
+        background-color: #fffdb7;
+    }
+
+
+    @@-webkit-keyframes glowing {
+        0% {
+            background-color: #ffffff;
+        }
+
+        50% {
+            background-color: #ffffa3;
+        }
+
+        100% {
+            background-color: #ffffff;
+        }
+    }
+
+    @@-moz-keyframes glowing {
+        0% {
+            background-color: #ffffff;
+        }
+
+        50% {
+            background-color: #ffffa3;
+        }
+
+        100% {
+            background-color: #ffffff;
+        }
+    }
+
+    @@-o-keyframes glowing {
+        0% {
+            background-color: #ffffff;
+        }
+
+        50% {
+            background-color: #ffffa3;
+        }
+
+        100% {
+            background-color: #ffffff;
+        }
+    }
+
+    @@keyframes glowing {
+        0% {
+            background-color: #ffffff;
+        }
+
+        50% {
+            background-color: #ffffa3;
+        }
+
+        100% {
+            background-color: #ffffff;
+        }
+    }
+
+    .ncl_new {
+        -webkit-animation: glowing 1000ms infinite;
+        -moz-animation: glowing 1000ms infinite;
+        -o-animation: glowing 1000ms infinite;
+        animation: glowing 1000ms infinite;
+        color: #0aa89e
+    }
+
+        .ncl_new:hover {
+            color: #0aa89e
+        }
+</style>
+<section>
+    <div class="row">
+        <input type="hidden" value="@Model.Event.ID" id="eventIdNCList" />
+        <div class="col-md-12">
+            <div class="card  card-underline">
+                <div class="card-head">
+                    <header><i class="fa fa-fw fa-phone"></i> No Call List - <span style="font-size: 18px;"><b>@Model.Event.EventName</b> - <b>@Model.Event.EventCode</b> - Date: <b>@Model.Event.StartDate.ToString("dd/MM/yyyy")</b> - <b>@Model.Event.EndDate.ToString("dd/MM/yyyy")</b></span></header>
+                </div><!--end .card-head -->
+                <div class="card-body">
+                        <table class="table" id="tableLead">
+                            <thead>
+                            <tr>
+                                <th>Date Created</th>
+                                <th>Country</th>
+                                <th>Company</th>
+                                <th>Client Name/Job Title</th>
+                                <th>Direct Line/Mobile number</th>
+                                <th>Salutation</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Business Phone</th>
+                                <th>Mobile Phone</th>
+                                <th>Work Email Address</th>
+                                <th>Work Email Address1</th>
+                                <th>Personal Email Address</th>
+                                <th>Call Back</th>
+                                <th>Status</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                        </table>
+                </div><!--end .card-body -->
+            </div><!--end .card -->
+        </div>
+    </div>
+</section>
+
+@Html.Script(
+    @<script>
+         $(document).unbind('ajaxStart');
+
+         var windowW = $(window).width();
+         var windowH = $(window).height();
+         var fixedColumn = false;
+         var sizeLenght = 100;
+
+
+         var oTable = $("#tableLead");
+         oTable.dataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "url": "@Url.Action("AjaxGetNoCallListForManager")?eventId=@Model.Event.ID",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function(d) {
+                 }
+             },
+             "columns": [
+                 { "data": "CreatedTime", "name": "CreatedTime", "orderable": true },
+                 { "data": "Country", "name": "Country", "orderable": true },
+                 { "data": "Company", "name": "Company", "orderable": true },
+                 { "data": "ClientName", "name": "ClientName", "orderable": true },
+                 { "data": "DirectLine", "name": "DirectLine", "orderable": true },
+                 { "data": "Salutation", "name": "Salutation", "orderable": true },
+                 { "data": "FirstName", "name": "FirstName", "orderable": true },
+                 { "data": "LastName", "name": "LastName", "orderable": true },
+                 { "data": "BusinessPhone", "name": "BusinessPhone", "orderable": true },
+                 { "data": "MobilePhone", "name": "MobilePhone", "orderable": true },
+                 { "data": "WorkEmailAddress", "name": "WorkEmailAddress", "orderable": true },
+                 { "data": "WorkEmailAddress1", "name": "WorkEmailAddress1", "orderable": true },
+                 { "data": "PersonalEmailAddress", "name": "PersonalEmailAddress", "orderable": true },
+                 { "data": "CallBackDate", "name": "CallBackDate", "orderable": true },
+                 { "data": "StatusDisplay", "name": "StatusDisplay", "orderable": true },
+                 { "data": "ID", "name": "ID", "orderable": false },
+                 { "data": "ID", "name": "ID", "orderable": false },
+             ],
+             "iDisplayLength": sizeLenght,
+             "aaSorting": [[15, "asc"]],
+             "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
+                     aData["ID"] +
+                     '">' +
+                     aData["CreatedTime"] +
+                     '</a>');
+                 var dropdowns = "";
+
+                 $(nRow).find('td:eq(14)').css("white-space","nowrap");
+
+                 $(nRow).find('td:eq(15)').html('<a href="@Url.Action("Detail")?id=' +
+                     aData["ID"] +
+                     '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;"><i class="fa fa-fw fa-eye"></i> Detail</span></a>');
+
+                 $(nRow).find('td:eq(16)').html('<a href="#" data-action="Approval" data-id="' +
+                     aData["ID"] +
+                     '"><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/><a class="simple-ajax-popup-align-top" href="@Url.Action("RejectAction")?id=' +
+                     aData["ID"] + '"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
+
+                 $(nRow).find('td:eq(16)').css("white-space", "nowrap");
+                 $(nRow).addClass(aData["ClassStatus"]);
+             },
+             initComplete: function () {
+                 var _table = this;
+                 _table.parent().find('input[type="search"]').unbind();
+                 var timeOutTyping;
+                 _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function () {
+                         _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                     }, 600);
+                 });
+             },
+             scrollY: false,
+             scrollX: true,
+             "bScrollCollapse": false,
+             "drawCallback": function (settings, json) {
+                 FixedTable();
+             },
+         });
+        function FixedTable() {
+            if (!fixedColumn) {
+                fixedColumn = true;
+                var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
+                    leftColumns: 5,
+                    sHeightMatch: "auto",
+                    rightColumns: 3
+                });
+                var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                if ($leftWrappers.length > 1) {
+                    $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                }
+                var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                if ($rightWrappers.length > 1) {
+                    $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                }
+            }
+        }
+         $(document).on("click", ".paginate_button", function () {
+             fixedColumn = false;
+         });
+         $(document).on("change", "select[name=table_length]", function () {
+             fixedColumn = false;
+         });
+
+
+         oTable.on('click', '[data-action="Approval"]', function (e) {
+             e.preventDefault();
+             var $sefl = $(this);
+             bootbox.confirm("@Resource.ConfirmApprove", function (isOK) {
+                 if (isOK) {
+                     $("#dvLoading").show();
+                     $.ajax({
+                         url: '@Url.Action("ApprovalAction")?id=' + $sefl.data('id'),
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 toastr.success("Approved successful");
+                                 fixedColumn = false;
+                                 oTable.fnFilter('');
+                             } else {
+                                 toastr.error(data);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Approve failed");
+                         }
+                     });
+                 }
+             });
+         });
+
+    </script>
+                         )
+
+@Html.Script(
+    @<script>
+         function onFailRejectAction() {
+             toastr.error('@Resource.SaveError');
+         }
+         function onSuccessRejectAction(data) {
+             if (data == "") {
+                 toastr.success("Reject successful");
+                 $.magnificPopup.close();
+                 fixedColumn = false;
+                 oTable.fnFilter('');
+             } else {
+                 toastr.error(data);
+             }
+         }
+    </script>)
+

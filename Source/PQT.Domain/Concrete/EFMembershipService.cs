@@ -47,7 +47,7 @@ namespace PQT.Domain.Concrete
         }
 
 
-        public bool UpdateUser(User userInfo)
+        public virtual bool UpdateUser(User userInfo)
         {
             return Update(userInfo);
         }
@@ -256,10 +256,17 @@ namespace PQT.Domain.Concrete
             return GetAll<User>().AsEnumerable().Where(u => u.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel));
         }
 
-        public IEnumerable<UserNotification> GetAllUserNotifications(int userId,int page = 1, int pageSize = 10)
+        public IEnumerable<UserNotification> GetAllUserNotifications(int userId,int pageSize = 10, int page = 1)
         {
             return _db.Set<UserNotification>()
                 .Where(m => m.UserID == userId).OrderByDescending(m => m.CreatedTime)
+                .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
+            //return GetAll<UserNotification>(m => m.UserID == userId).ToList().Skip((page - 1) * pageSize).Take(pageSize);
+        }
+        public IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int eventId, int pageSize = 10, int page = 1)
+        {
+            return _db.Set<UserNotification>()
+                .Where(m => m.UserID == userId && m.EventId == eventId).OrderByDescending(m => m.CreatedTime)
                 .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
             //return GetAll<UserNotification>(m => m.UserID == userId).ToList().Skip((page - 1) * pageSize).Take(pageSize);
         }

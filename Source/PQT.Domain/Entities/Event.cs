@@ -37,5 +37,7 @@ namespace PQT.Domain.Entities
         public virtual ICollection<User> Users { get; set; }
         public virtual ICollection<Company> Companies { get; set; }
         //public virtual ICollection<Trainer> Trainers { get; set; }
+        [NotMapped]
+        public IEnumerable<UserNotification> Notifications { get; set; }
     }
 }

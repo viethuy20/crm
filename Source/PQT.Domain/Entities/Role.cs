@@ -30,6 +30,13 @@ namespace PQT.Domain.Entities
 
             return r => r.Name.Trim().ToLower() == name.Trim().ToLower();
         }
+        public static Func<Role, bool> HasLevel(RoleLevel level)
+        {
+            if (string.IsNullOrWhiteSpace(level))
+                return r => false;
+
+            return r => r.RoleLevel == level;
+        }
         public static Func<Role, bool> ContainName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))

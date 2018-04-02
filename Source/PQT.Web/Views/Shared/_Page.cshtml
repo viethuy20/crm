@@ -1,5 +1,6 @@
 ﻿@using System.Security.Policy
 @using System.Threading
+@using PQT.Domain.Entities
 @using Resources
 @{
     var currentUser = CurrentUser.Identity;
@@ -10,11 +11,12 @@
     {
         count = currentUser.NotifyNumber;
     }
+    var menus = MenuHelper.GetAll();
 }
 <link href='http://fonts.googleapis.com/css?family=Roboto:300italic,400italic,300,400,500,700,900' rel='stylesheet' type='text/css' />
 
 <!-- BEGIN HEADER-->
-<header id="header">
+<header id="header"  style="@(menus.Any()?"": "left: 0px;")">
     <div class="headerbar">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="headerbar-left">
@@ -73,7 +75,7 @@
 </header>
 <!-- END HEADER-->
 <!-- BEGIN BASE-->
-<div id="base">
+<div id="base" style="@(menus.Any()?"": "padding-left: 0px;")">
 
     <!-- BEGIN OFFCANVAS LEFT -->
     <div class="offcanvas">
@@ -99,37 +101,34 @@
     </div><!--end #content-->
     <!-- END CONTENT -->
     <!-- BEGIN MENUBAR-->
-    <div id="menubar" class="menubar-inverse ">
-        <div class="menubar-fixed-panel">
-            <div>
-                <a class="btn btn-icon-toggle btn-default menubar-toggle" id="left-menubar-toggle" data-toggle="menubar" href="javascript:void(0);">
-                    <i class="fa fa-bars"></i>
-                </a>
-            </div>
-            <div class="expanded">
-                <a href="/">
-                    <span class="text-lg text-bold text-primary ">Prime QT</span>
-                </a>
-            </div>
-        </div>
-        <div class="menubar-scroll-panel">
 
-            <!-- BEGIN MAIN MENU -->
-            <ul id="main-menu" class="gui-controls">
-
-                <!-- BEGIN DASHBOARD -->
-                <li>
-                    <a href="/" class="@(ViewContext.RouteData.Values["controller"].ToString()=="Home"?"active":"")">
-                        <div class="gui-icon"><i class="md md-home"></i></div>
-                        <span class="title">Dashboard</span>
+        <div id="menubar" class="menubar-inverse @(menus.Any()?"":"hide") ">
+            <div class="menubar-fixed-panel">
+                <div>
+                    <a class="btn btn-icon-toggle btn-default menubar-toggle" id="left-menubar-toggle" data-toggle="menubar" href="javascript:void(0);">
+                        <i class="fa fa-bars"></i>
                     </a>
-                </li><!--end /menu-li -->
-                <!-- END DASHBOARD -->
+                </div>
+                <div class="expanded">
+                    <a href="/">
+                        <span class="text-lg text-bold text-primary ">Prime QT</span>
+                    </a>
+                </div>
+            </div>
+            <div class="menubar-scroll-panel">
+                <!-- BEGIN MAIN MENU -->
+                <ul id="main-menu" class="gui-controls">
 
+                    <!-- BEGIN DASHBOARD -->
+                    <li>
+                        <a href="/" class="@(ViewContext.RouteData.Values["controller"].ToString()=="Home"?"active":"")">
+                            <div class="gui-icon"><i class="md md-home"></i></div>
+                            <span class="title">Dashboard</span>
+                        </a>
+                    </li><!--end /menu-li -->
+                    <!-- END DASHBOARD -->
 
-                @{
-                    var menus = MenuHelper.GetAll();
-                    foreach (var item in menus)
+                    @foreach (var item in menus)
                     {
 
                         var children = MenuHelper.GetAll(item.ID).ToList();
@@ -187,21 +186,22 @@
                                         }
                         </li>
                                         }
-                }
 
 
-            </ul><!--end .main-menu -->
-            <!-- END MAIN MENU -->
-            
-            <div class="menubar-foot-panel">
-                <small class="no-linebreak hidden-folded">
-                    <span class="opacity-75">Copyright &copy; @DateTime.Today.Year</span> <strong>CodeCovers</strong>
-                </small>
-            </div>
-        </div><!--end .menubar-scroll-panel-->
-    </div><!--end #menubar-->
+                </ul><!--end .main-menu -->
+                <!-- END MAIN MENU -->
+
+                <div class="menubar-foot-panel">
+                    <small class="no-linebreak hidden-folded">
+                        <span class="opacity-75">Copyright &copy; @DateTime.Today.Year</span> <strong>CodeCovers</strong>
+                    </small>
+                </div>
+            </div><!--end .menubar-scroll-panel-->
+
+        </div><!--end #menubar-->
     <!-- END MENUBAR -->
     
+
 
     @Html.Action("PanelNotification", "Home")
 </div><!--end #base-->
@@ -424,6 +424,7 @@
         }
     };
 
+        var timeOut = null;
 
     var UserNotification = (function () {
 
@@ -433,8 +434,12 @@
 
         UserNotification.prototype.notify = function () {
             this.notifyRequest();
-            toastr.info(this.notifyData.Description, this.notifyData.Title);
-
+            //toastr.info(this.notifyData.Description, this.notifyData.Title);
+            var $eventIdNCList = $("#eventIdNCList");
+            if ($eventIdNCList && $eventIdNCList.val() == this.notifyData.EventId) {
+                fixedColumn = false;
+                oTable.fnDraw();
+            }
             var notifyCount = parseInt($notifyCounter.text()) +1;
             $notifyCounter.html(notifyCount);
             $notifyCounter.removeClass('hide');
@@ -443,21 +448,37 @@
         };
 
         UserNotification.prototype.notifyRequest = function () {
-
-            var row =
-                '<li class="tile" style="border-bottom: 1px solid rgba(150, 156, 156, 0.3);\
-                    border-left: 4px solid '+ this.notifyData.HighlightColor + ';">\
-                <a class="tile-content ink-reaction" href="javascript:void(0);" data-toggle="offcanvas" data-backdrop="false">\
-                <div class="tile-icon">\
-                <img src="/Content/img/profile.png?1404026791" alt="" />\
-                </div>\
-                <div class="tile-text">'+ this.notifyData.Title + '<small>'+ this.notifyData.Description + '</small>\
-                </div>\
-                </a>\
-                </li>';
-            $(row).insertAfter($notifyFlyerContent);
-            $notifyFlyerContent.addClass('hide');
+            if ($notifyFlyerContent) {
+                var row =
+                    '<li class="tile" style="border-bottom: 1px solid rgba(150, 156, 156, 0.3);\
+                        border-left: 4px solid '+ this.notifyData.HighlightColor + ';">\
+                    <a class="tile-content ink-reaction" href="@Url.Action("Detail", "Lead")?id='+ this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId +'">\
+                    <div class="tile-text">\
+                        <b>' + this.notifyData.Description + ' - ' + this.notifyData.EventCode + '</b>\
+                        <br/>' + this.notifyData.Title + '\
+                        <small class="timestamp" title="' + this.notifyData.Timestamp + '">' + this.notifyData.TimeAgo +'</small>\
+                    </div>\
+                    </a>\
+                    </li>';
+                $(row).insertAfter($notifyFlyerContent);
+                $notifyFlyerContent.addClass('hide');
 //            $notifyFlyerContent.append(row);
+            }
+
+            var $dashboardNotify = $("#dashboard_notify_" + this.notifyData.EventId);
+            if ($dashboardNotify) {
+                var row = '<div class="notify_item dashboard_ncl_new" name="notify-' + this.notifyData.ID+'">\
+                    <a class="tile-content ink-reaction" href="@Url.Action("Detail","Lead")?id='+ this.notifyData.EntryId + '& eventId=' + this.notifyData.EventId +'" >\
+                    <b>' + this.notifyData.Description + '</b> - ' + this.notifyData.Title + '\
+                    <br/><span class="timestamp" title="' + this.notifyData.Timestamp + '">' + this.notifyData.TimeAgo +'</span>\
+                    </a>\
+                    </div>';
+                $(row).insertAfter($dashboardNotify);
+                clearTimeout(timeOut);
+                timeOut = setTimeout(function () {
+                    $('.dashboard_ncl_new').removeClass("dashboard_ncl_new");
+                }, 30000);
+            }
 
         };
 
@@ -478,7 +499,7 @@
                 //$(document).unbind('ajaxStart');
                 var $eventIdNCList = $("#eventIdNCList");
                 if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
-                    $nclTable.fnFilter('');
+                    $nclTable.fnDraw();
                 }
                 //var rowIndex = $nclTable.fnAddData([
                 //    {
