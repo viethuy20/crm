@@ -179,6 +179,7 @@
                         <thead>
                         <tr>
                             <th>Date Created</th>
+                            <th>Salesman</th>
                             <th>Country</th>
                             <th>Company</th>
                             <th>Client Name/Job Title</th>
@@ -210,7 +211,7 @@
 
          var windowW = $(window).width();
          var windowH = $(window).height();
-         var fixedColumn = false;
+         var fixedColumn = 0;
          var sizeLenght = 100;
 
 
@@ -230,6 +231,7 @@
              },
              "columns": [
                  { "data": "CreatedTime", "name": "CreatedTime", "orderable": true },
+                 { "data": "Salesman", "name": "Salesman", "orderable": true },
                  { "data": "Country", "name": "Country", "orderable": true },
                  { "data": "Company", "name": "Company", "orderable": true },
                  { "data": "ClientName", "name": "ClientName", "orderable": true },
@@ -248,7 +250,7 @@
                  { "data": "ID", "name": "ID", "orderable": false },
              ],
              "iDisplayLength": sizeLenght,
-             "aaSorting": [[15, "asc"]],
+             "aaSorting": [[16, "asc"]],
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
                      aData["ID"] +
@@ -257,23 +259,23 @@
                      '</a>');
                  var dropdowns = "";
 
-                 $(nRow).find('td:eq(14)').css("white-space","nowrap");
+                 $(nRow).find('td:eq(15)').css("white-space","nowrap");
 
-                 $(nRow).find('td:eq(15)').html('<a href="@Url.Action("Detail")?id=' +
+                 $(nRow).find('td:eq(16)').html('<a href="@Url.Action("Detail")?id=' +
                      aData["ID"] +
                      '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;"><i class="fa fa-fw fa-eye"></i> Detail</span></a>');
                  if (aData["StatusCode"] == '@LeadStatus.RequestNCL' ||
                      aData["StatusCode"] == '@LeadStatus.RequestBook' ||
                      aData["StatusCode"] == '@LeadStatus.RequestLOI') {
-                     $(nRow).find('td:eq(16)').html('<a href="#" data-action="Approval" data-id="' +
+                     $(nRow).find('td:eq(17)').html('<a href="#" data-action="Approval" data-id="' +
                          aData["ID"] +
                          '"><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/><a class="simple-ajax-popup-align-top" href="@Url.Action("RejectAction")?id=' +
                          aData["ID"] +
                          '"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
                  } else {
-                     $(nRow).find('td:eq(16)').html('');
+                     $(nRow).find('td:eq(17)').html('');
                  }
-                 $(nRow).find('td:eq(16)').css("white-space", "nowrap");
+                 $(nRow).find('td:eq(17)').css("white-space", "nowrap");
                  $(nRow).addClass(aData["ClassStatus"]);
              },
              initComplete: function () {
@@ -295,8 +297,8 @@
              },
          });
          function FixedTable() {
-             if (!fixedColumn) {
-                 fixedColumn = true;
+             if (fixedColumn<2) {
+                 fixedColumn ++;
                  var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
                      leftColumns: 5,
                      sHeightMatch: "auto",
@@ -313,10 +315,10 @@
              }
          }
          $(document).on("click", ".paginate_button", function () {
-             fixedColumn = false;
+             fixedColumn = 0;
          });
          $(document).on("change", "select[name=table_length]", function () {
-             fixedColumn = false;
+             fixedColumn = 0;
          });
 
 
@@ -364,7 +366,7 @@
              if (data == "") {
                  toastr.success("Reject successful");
                  $.magnificPopup.close();
-                 fixedColumn = false;
+                 fixedColumn = 0;
                  oTable.fnFilter('');
              } else {
                  toastr.error(data);

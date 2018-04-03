@@ -645,6 +645,9 @@ namespace PQT.Web.Controllers
                     case "Company":
                         leads = leads.OrderBy(s => s.Company.CompanyName).ThenBy(s => s.ID);
                         break;
+                    case "Salesman":
+                        leads = leads.OrderBy(s => s.User.DisplayName).ThenBy(s => s.ID);
+                        break;
                     case "Country":
                         leads = leads.OrderBy(s => s.Company.CountryCode).ThenBy(s => s.ID);
                         break;
@@ -698,6 +701,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "Company":
                         leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenBy(s => s.ID);
+                        break;
+                    case "Salesman":
+                        leads = leads.OrderByDescending(s => s.User.DisplayName).ThenBy(s => s.ID);
                         break;
                     case "Country":
                         leads = leads.OrderByDescending(s => s.Company.CountryCode).ThenBy(s => s.ID);
@@ -765,6 +771,7 @@ namespace PQT.Web.Controllers
                     CreatedTime = m.StatusUpdateTime.ToString("dd/MM/yyyy HH:mm:ss"),
                     Company = m.Company.CompanyName,
                     Country = m.Company.CountryCode,
+                    Salesman = m.User.DisplayName,
                     m.GeneralLine,
                     m.ClientName,
                     m.DirectLine,

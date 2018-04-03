@@ -537,32 +537,26 @@
                 this.lead = data;
             }
 
-            Lead.prototype.notify = function() {
-                if ($nclTable) {
-                    //$(document).unbind('ajaxStart');
-                    var $eventIdNCList = $("#eventIdNCList");
-                    if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
-                        $nclTable.fnDraw();
+            Lead.prototype.notify = function () {
+                var $eventIdNCList = $("#eventIdNCList");
+                $(document).unbind('ajaxStart');
+                try {
+                    if ($nclTable) {
+                        if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
+                            $nclTable.fnDraw();
+                        }
                     }
-                    //var rowIndex = $nclTable.fnAddData([
-                    //    {
-                    //        DateCreatedDisplay: this.lead.DateCreatedDisplay,
-                    //        Salesman: this.lead.Salesman,
-                    //        CountryCode: this.lead.CountryCode,
-                    //        CompanyName: this.lead.CompanyName,
-                    //        ClientName: this.lead.ClientName,
-                    //        StatusDisplay: this.lead.StatusDisplay,
-                    //    }
-                    //]);
-                    //var row = $nclTable.fnGetNodes(rowIndex);
-                    //$(row).attr('data-id', data.ID);
+                } catch (e) {
                 }
-                if (oTable) {
-                    if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
-                        fixedColumn = false;
-                        oTable.fnDraw();
+                try {
+                    if (oTable) {
+                        if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
+                            fixedColumn = 0;
+                            oTable.fnDraw();
+                        }
                     }
-                }
+                } catch (e) {
+                } 
             };
 
             return Lead;
