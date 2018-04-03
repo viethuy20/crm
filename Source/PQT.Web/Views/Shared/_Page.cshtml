@@ -505,6 +505,12 @@
                 if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
                     $nclTable.fnDraw();
                 }
+
+                if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
+                    fixedColumn = false;
+                    oTable.fnDraw();
+                }
+
                 //var rowIndex = $nclTable.fnAddData([
                 //    {
                 //        DateCreatedDisplay: this.lead.DateCreatedDisplay,
