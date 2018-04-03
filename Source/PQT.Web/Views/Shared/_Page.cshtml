@@ -233,9 +233,10 @@
                 autoclose: true,
                 todayHighlight: true,
                 format: 'dd/mm/yyyy'
-            }).on('changeDate', function (ev) {
-                $(this).datepicker('hide');
-            });
+            }).on('changeDate',
+                function(ev) {
+                    $(this).datepicker('hide');
+                });
         }
 
         initDatepicker();
@@ -246,9 +247,10 @@
             format: "mm/yyyy",
             viewMode: "months",
             minViewMode: "months"
-        }).on('changeDate', function (ev) {
-            $(this).datepicker('hide');
-        });
+        }).on('changeDate',
+            function(ev) {
+                $(this).datepicker('hide');
+            });
 
         function initSelect2() {
             $('select:not(.select-ajax)').select2({
@@ -289,12 +291,12 @@
                     url: url,
                     dataType: 'json',
                     delay: 250,
-                    data: function (params) {
+                    data: function(params) {
                         return {
                             q: params.term // search term
                         };
                     },
-                    processResults: function (data, page) { // parse the results into the format expected by Select2.
+                    processResults: function(data, page) { // parse the results into the format expected by Select2.
                         // since we are using custom formatting functions we do not need to alter the remote JSON data
                         return { results: data };
                     },
@@ -306,44 +308,49 @@
                 templateResult: repoFormatResult, // omitted for brevity, see the source of this page
                 templateSelection: repoFormatSelection, // omitted for brevity, see the source of this page
                 dropdownCssClass: "bigdrop", // apply css that makes the dropdown taller
-                escapeMarkup: function (m) { return m; }, // we do not want to escape markup since we are displaying html in results
+                escapeMarkup:
+                    function(m) {
+                        return m;
+                    }, // we do not want to escape markup since we are displaying html in results
                 width: '100%'
             });
         }
 
         /////////////////////////
-        $(".toggle-search").on('click', function (e) {
-            if ($('.search-icon').hasClass('fa-angle-down'))
-                $('.search-icon').removeClass('fa-angle-down').addClass('fa-angle-up');
-            else
-                $('.search-icon').removeClass('fa-angle-up').addClass('fa-angle-down');
-            e.preventDefault();
-            $("#table-Search").slideToggle();
-        });
+        $(".toggle-search").on('click',
+            function(e) {
+                if ($('.search-icon').hasClass('fa-angle-down'))
+                    $('.search-icon').removeClass('fa-angle-down').addClass('fa-angle-up');
+                else
+                    $('.search-icon').removeClass('fa-angle-up').addClass('fa-angle-down');
+                e.preventDefault();
+                $("#table-Search").slideToggle();
+            });
         /////////////////////////////////
-        $(".cd-side-nav li.has-children").on('click', function (e) {
-            //if ($(e.target).attr('href') !== '#')
-            //    return;
-            if ($($(this).find("a")).attr('href') !== '#') {
-                location.href = $($(this).find("a")).attr('href');
-            } else if ($(this).hasClass('active')) {
+        $(".cd-side-nav li.has-children").on('click',
+            function(e) {
+                //if ($(e.target).attr('href') !== '#')
+                //    return;
+                if ($($(this).find("a")).attr('href') !== '#') {
+                    location.href = $($(this).find("a")).attr('href');
+                } else if ($(this).hasClass('active')) {
 
-            } else {
-                $('.has-children').removeClass('active');
-                $(this).addClass('active');
-            }
-        });
+                } else {
+                    $('.has-children').removeClass('active');
+                    $(this).addClass('active');
+                }
+            });
 
-        $(document).ajaxStart(function () {
+        $(document).ajaxStart(function() {
             $("#dvLoading").show();
         });
 
-        $(document).ajaxStop(function () {
+        $(document).ajaxStop(function() {
             $("#dvLoading").hide();
         });
 
-        $(document).ready(function () {
-            $(document).ajaxError(function (e, xhr, settings) {
+        $(document).ready(function() {
+            $(document).ajaxError(function(e, xhr, settings) {
                 $("#dvLoading").hide();
                 if (xhr.status == 403) {
                     window.location.href = e.currentTarget.URL;
@@ -351,16 +358,18 @@
             });
         });
 
-        $(document).on('click', 'input[type=submit],a', function (e) {
-            $("#temp_data_message_top").html("");
-        });
+        $(document).on('click',
+            'input[type=submit],a',
+            function(e) {
+                $("#temp_data_message_top").html("");
+            });
 
         $('#accordion-menu').collapse({
             toggle: true
         });
 
         $("#left-menubar-toggle").on("click",
-            function () {
+            function() {
                 var $body = $("body");
                 if ($body.hasClass("menubar-pin")) {
                     createCookie("menubar-pin", "false", 3650);
@@ -370,7 +379,7 @@
 
             });
 
-        var createCookie = function (name, value, days) {
+        var createCookie = function(name, value, days) {
             var expires;
             if (days) {
                 var date = new Date();
@@ -406,151 +415,182 @@
 
     <script>
 
-///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 // notification
 ///////////////////////////////////////////////////////////////////////////
 
-    var notificator = $.connection.notificationHub,
-        $triggerNotify = $('#notify-trigger'),
-        $notifyCounter = $triggerNotify.find('.count'),
-        $notifyFlyerContent = $('.notify-trigger-no-content'),
-        documentTitle = document.title;
+        var notificator = $.connection.notificationHub,
+            $triggerNotify = $('#notify-trigger'),
+            $notifyCounter = $triggerNotify.find('.count'),
+            $notifyFlyerContent = $('.notify-trigger-no-content'),
+            documentTitle = document.title;
 
-    notificator.client.notify = function (dataJson, dataType) {
-        try {
-            var data = eval('(' + dataJson + ')');
-            new window[dataType](data).notify();
-        } catch (e) {
-        }
-    };
+        notificator.client.notify = function(dataJson, dataType) {
+            try {
+                var data = eval('(' + dataJson + ')');
+                new window[dataType](data).notify();
+            } catch (e) {
+            }
+        };
 
         var timeOut = null;
 
-    var UserNotification = (function () {
+        var UserNotification = (function() {
 
-        function UserNotification(data) {
-            this.notifyData = data;
-        }
-
-        UserNotification.prototype.notify = function () {
-            this.notifyRequest();
-            //toastr.info(this.notifyData.Description, this.notifyData.Title);
-            var $eventIdNCList = $("#eventIdNCList");
-            if ($eventIdNCList && $eventIdNCList.val() == this.notifyData.EventId) {
-                fixedColumn = false;
-                oTable.fnDraw();
-            }
-            var notifyCount = parseInt($notifyCounter.text()) +1;
-            $notifyCounter.html(notifyCount);
-            $notifyCounter.removeClass('hide');
-            documentTitle = documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
-            document.title = '(' + notifyCount + ') ' + documentTitle;
-
-        };
-
-        UserNotification.prototype.notifyRequest = function () {
-            if ($notifyFlyerContent) {
-                var row =
-                    '<li class="tile" style="border-bottom: 1px solid rgba(150, 156, 156, 0.3);\
-                        border-left: 4px solid '+ this.notifyData.HighlightColor + ';">\
-                    <a class="tile-content ink-reaction" href="@Url.Action("Detail", "Lead")?id='+ this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId +'">\
-                    <div class="tile-text">\
-                        <b>' + this.notifyData.Description + ' - ' + this.notifyData.EventCode + '</b>\
-                        <br/>' + this.notifyData.Title + '\
-                        <small class="timestamp" title="' + this.notifyData.Timestamp + '">' + this.notifyData.TimeAgo +'</small>\
-                    </div>\
-                    </a>\
-                    </li>';
-                $(row).insertAfter($notifyFlyerContent);
-                $notifyFlyerContent.addClass('hide');
-//            $notifyFlyerContent.append(row);
+            function UserNotification(data) {
+                this.notifyData = data;
             }
 
-            var $dashboardNotify = $("#dashboard_notify_" + this.notifyData.EventId);
-            if ($dashboardNotify) {
-                var row = '<div class="notify_item dashboard_ncl_new" name="notify-' + this.notifyData.ID+'">\
-                    <a class="tile-content ink-reaction" href="@Url.Action("Detail","Lead")?id='+ this.notifyData.EntryId + '& eventId=' + this.notifyData.EventId +'" >\
-                    <b>' + this.notifyData.Description + '</b> - ' + this.notifyData.Title + '\
-                    <br/><span class="timestamp" title="' + this.notifyData.Timestamp + '">' + this.notifyData.TimeAgo +'</span>\
-                    </a>\
-                    </div>';
-                $(row).insertAfter($dashboardNotify);
-                clearTimeout(timeOut);
-                timeOut = setTimeout(function () {
-                    $('.dashboard_ncl_new').removeClass("dashboard_ncl_new");
-                }, 30000);
-            }
-
-            if (location.href.toLowerCase().indexOf('lead/detail') > 1) {
-                location.reload();
-            }
-        };
-
-        return UserNotification;
-
-    })();
-
-
-
-    var Lead = (function () {
-
-        function Lead(data) {
-            this.lead = data;
-        }
-
-        Lead.prototype.notify = function () {
-            if ($nclTable) {
-                //$(document).unbind('ajaxStart');
+            UserNotification.prototype.notify = function() {
+                this.notifyRequest();
+                //toastr.info(this.notifyData.Description, this.notifyData.Title);
                 var $eventIdNCList = $("#eventIdNCList");
-                if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
-                    $nclTable.fnDraw();
-                }
-
-                if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
+                if (oTable && $eventIdNCList && $eventIdNCList.val() == this.notifyData.EventId) {
                     fixedColumn = false;
                     oTable.fnDraw();
                 }
+                var notifyCount = parseInt($notifyCounter.text()) + 1;
+                $notifyCounter.html(notifyCount);
+                $notifyCounter.removeClass('hide');
+                documentTitle = documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
+                document.title = '(' + notifyCount + ') ' + documentTitle;
 
-                //var rowIndex = $nclTable.fnAddData([
-                //    {
-                //        DateCreatedDisplay: this.lead.DateCreatedDisplay,
-                //        Salesman: this.lead.Salesman,
-                //        CountryCode: this.lead.CountryCode,
-                //        CompanyName: this.lead.CompanyName,
-                //        ClientName: this.lead.ClientName,
-                //        StatusDisplay: this.lead.StatusDisplay,
-                //    }
-                //]);
-                //var row = $nclTable.fnGetNodes(rowIndex);
-                //$(row).attr('data-id', data.ID);
+            };
+
+            UserNotification.prototype.notifyRequest = function() {
+                if ($notifyFlyerContent) {
+                    var row =
+                        '<li class="tile" style="border-bottom: 1px solid rgba(150, 156, 156, 0.3);\
+                        border-left: 4px solid ' +
+                            this.notifyData.HighlightColor +
+                            ';">\
+                    <a class="tile-content ink-reaction" href="@Url.Action("Detail", "Lead")?id=' +
+                            this.notifyData.EntryId +
+                            '&eventId=' +
+                            this.notifyData.EventId +
+                            '">\
+                    <div class="tile-text">\
+                        <b>' +
+                            this.notifyData.Description +
+                            ' - ' +
+                            this.notifyData.EventCode +
+                            '</b>\
+                        <br/>' +
+                            this.notifyData.Title +
+                            '\
+                        <small class="timestamp" title="' +
+                            this.notifyData.Timestamp +
+                            '">' +
+                            this.notifyData.TimeAgo +
+                            '</small>\
+                    </div>\
+                    </a>\
+                    </li>';
+                    $(row).insertAfter($notifyFlyerContent);
+                    $notifyFlyerContent.addClass('hide');
+//            $notifyFlyerContent.append(row);
+                }
+
+                var $dashboardNotify = $("#dashboard_notify_" + this.notifyData.EventId);
+                if ($dashboardNotify) {
+                    var row = '<div class="notify_item dashboard_ncl_new" name="notify-' +
+                        this.notifyData.ID +
+                        '">\
+                    <a class="tile-content ink-reaction" href="@Url.Action("Detail", "Lead")?id=' +
+                        this.notifyData.EntryId +
+                        '& eventId=' +
+                        this.notifyData.EventId +
+                        '" >\
+                    <b>' +
+                        this.notifyData.Description +
+                        '</b> - ' +
+                        this.notifyData.Title +
+                        '\
+                    <br/><span class="timestamp" title="' +
+                        this.notifyData.Timestamp +
+                        '">' +
+                        this.notifyData.TimeAgo +
+                        '</span>\
+                    </a>\
+                    </div>';
+                    $(row).insertAfter($dashboardNotify);
+                    clearTimeout(timeOut);
+                    timeOut = setTimeout(function() {
+                            $('.dashboard_ncl_new').removeClass("dashboard_ncl_new");
+                        },
+                        30000);
+                }
+
+                if (location.href.toLowerCase().indexOf('lead/detail') > 1) {
+                    location.reload();
+                }
+            };
+
+            return UserNotification;
+
+        })();
+
+
+        var Lead = (function() {
+
+            function Lead(data) {
+                this.lead = data;
             }
-        };
 
-        return Lead;
+            Lead.prototype.notify = function() {
+                if ($nclTable) {
+                    //$(document).unbind('ajaxStart');
+                    var $eventIdNCList = $("#eventIdNCList");
+                    if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
+                        $nclTable.fnDraw();
+                    }
+                    //var rowIndex = $nclTable.fnAddData([
+                    //    {
+                    //        DateCreatedDisplay: this.lead.DateCreatedDisplay,
+                    //        Salesman: this.lead.Salesman,
+                    //        CountryCode: this.lead.CountryCode,
+                    //        CompanyName: this.lead.CompanyName,
+                    //        ClientName: this.lead.ClientName,
+                    //        StatusDisplay: this.lead.StatusDisplay,
+                    //    }
+                    //]);
+                    //var row = $nclTable.fnGetNodes(rowIndex);
+                    //$(row).attr('data-id', data.ID);
+                }
+                if (oTable) {
+                    if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
+                        fixedColumn = false;
+                        oTable.fnDraw();
+                    }
+                }
+            };
 
-    })();
+            return Lead;
 
-    $triggerNotify.on('click', function (e) {
-        e.preventDefault();
-        $notifyCounter.addClass('hide');
-        $notifyCounter.html('0');
-        document.title = documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
-        $(document).unbind('ajaxStart');
-        $.ajax({
-            url: '@Url.Action("RemoveNotifyCounter","Home")',
-            type: 'POST',
-            success: function (data) {
-                $(document).ajaxStart(function () {
-                    $("#dvLoading").show();
+        })();
+
+        $triggerNotify.on('click',
+            function(e) {
+                e.preventDefault();
+                $notifyCounter.addClass('hide');
+                $notifyCounter.html('0');
+                document.title = documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
+                $(document).unbind('ajaxStart');
+                $.ajax({
+                    url: '@Url.Action("RemoveNotifyCounter", "Home")',
+                    type: 'POST',
+                    success: function(data) {
+                        $(document).ajaxStart(function() {
+                            $("#dvLoading").show();
+                        });
+                    },
+                    error: function() {
+                        $(document).ajaxStart(function() {
+                            $("#dvLoading").show();
+                        });
+                    }
                 });
-            },
-            error: function () {
-                $(document).ajaxStart(function () {
-                    $("#dvLoading").show();
-                });
-            }
-        });
-    });
+            });
 
     </script>
     @RenderSection("js", required: false)
