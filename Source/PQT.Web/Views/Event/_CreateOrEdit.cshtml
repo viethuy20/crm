@@ -226,7 +226,7 @@
             }
         }
         
-        var rows_selected = @Html.Serialize(Model.CompaniesSelected);
+        var companies_selected = @Html.Serialize(Model.CompaniesSelected);
 
         $(document).ready(function () {
             // Array holding selected row IDs
@@ -266,7 +266,7 @@
             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                 var rowId = aData["ID"];
                 // If row ID is in the list of selected row IDs
-                if ($.inArray(rowId, rows_selected) !== -1) {
+                if ($.inArray(rowId, companies_selected) !== -1) {
                     $(nRow).find('input[type="checkbox"]').prop('checked', true);
                     $(nRow).addClass('selected');
                 }
@@ -295,15 +295,15 @@
                 var rowId = data.ID;
 
                 // Determine whether row ID is in the list of selected row IDs
-                var index = $.inArray(rowId, rows_selected);
+                var index = $.inArray(rowId, companies_selected);
 
                 // If checkbox is checked and row ID is not in list of selected row IDs
                 if (this.checked && index === -1) {
-                    rows_selected.push(rowId);
+                    companies_selected.push(rowId);
 
                     // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
                 } else if (!this.checked && index !== -1) {
-                    rows_selected.splice(index, 1);
+                    companies_selected.splice(index, 1);
                 }
 
                 if (this.checked) {
@@ -346,7 +346,7 @@
             //$('.form').on('submit', function (e) {
             //    var form = this;
             //    // Iterate over all selected checkboxes
-            //    $.each(rows_selected, function (index, rowId) {
+            //    $.each(companies_selected, function (index, rowId) {
             //        // Create a hidden element
             //        $(form).append(
             //            $('<input>')
