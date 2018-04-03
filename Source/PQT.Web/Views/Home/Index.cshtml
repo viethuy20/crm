@@ -38,6 +38,7 @@
                             <div class="alert no-margin" style="position: relative;background: @item.BackgroundColor ; color: #fff;padding: 10px;">
                                 @*<strong class="pull-right text-success text-lg">0,38% <i class="md md-trending-up"></i></strong>*@
                                 <strong class="text-xl">@item.EventName</strong><br />
+                                Date: @item.StartDate.ToString("dd MMM yyyy") - @item.EndDate.ToString("dd MMM yyyy")
                                 @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
                                 {
                                     <a href="@Url.Action("NoCallList", "Lead", new {id = item.ID})" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
@@ -49,7 +50,7 @@
                                     </a>
                                 }
                             </div>
-                            <div style="height: calc(100vh - 180px);overflow-y: auto;">
+                            <div style="height: calc(100vh - 210px);overflow-y: auto;">
                                 <div  id="dashboard_notify_@item.ID" style="display: none"></div>
                                 @foreach (var notify in item.Notifications)
                                 {
