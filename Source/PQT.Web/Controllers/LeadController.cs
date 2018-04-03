@@ -42,6 +42,18 @@ namespace PQT.Web.Controllers
             }
             return View(model);
         }
+        [DisplayName(@"No Call List For Salesman")]
+        public ActionResult NCL(int id = 0)
+        {
+            var model = new LeadModelView();
+            model.Prepare(id);
+            if (model.Event == null)
+            {
+                TempData["error"] = "Event not found";
+                return RedirectToAction("Index", "Home");
+            }
+            return View(model);
+        }
         [DisplayName(@"No Call List management")]
         public ActionResult NoCallList(int id = 0)
         {

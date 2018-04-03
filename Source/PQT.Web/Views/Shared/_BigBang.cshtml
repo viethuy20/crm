@@ -27,7 +27,7 @@
         var HRGLOBAL = {};
     </script>
 </head>
-<body class="menubar-hoverable header-fixed menubar-first @(Request.Cookies["menubar-pin"]==null || Convert.ToBoolean(Request.Cookies["menubar-pin"].Value)? (ViewBag.MenuBarColl!=null?"":"menubar-pin"):"")">
+<body class="header-fixed menubar-first @(Request.Cookies["menubar-pin"]==null || Convert.ToBoolean(Request.Cookies["menubar-pin"].Value)? (ViewBag.MenuBarColl!=null?"":"menubar-pin"):"")">
 
     @RenderBody()
 

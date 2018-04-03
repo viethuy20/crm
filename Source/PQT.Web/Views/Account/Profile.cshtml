@@ -46,11 +46,11 @@
                     <div id="profilePicture">
                         @if (CurrentUser.Identity.Picture != null)
                         {
-                            <img style="max-width: 120px; max-height: 120px;border-radius: 120px" src="@CurrentUser.Identity.AvatarUrl" class="img-polaroid user-picture-preview" />
+                            <img style="width: 120px; height: 120px;border-radius: 120px" src="@CurrentUser.Identity.AvatarUrl" class="img-polaroid user-picture-preview" />
                         }
                         else
                         {
-                            <img style="max-width: 120px; max-height: 120px;border-radius: 120px" src="~/Content/img/profile.png" class="img-polaroid user-picture-preview" />
+                            <img style="width: 120px; height: 120px;border-radius: 120px" src="~/Content/img/profile.png" class="img-polaroid user-picture-preview" />
                         }
                     </div>
                 </div>
@@ -119,12 +119,12 @@
                         toastr.error('@Resource.ErrorYourFileIsTooLarge', '');
                         upload.replaceWith(upload = upload.clone(true));
                     } else {
-                        $uploadCrop.croppie('bind', {
-                            url: e.target.result
-                        }).then(function () {
-                            $('#simpleModal').modal('show');
-                        });
-                        //$('#profilePicture').html("<img style='width: 120px; height:120px;border-radius: 60px' src='" + e.target.result + "' class='img-polaroid user-picture-preview'/>");
+                        //$uploadCrop.croppie('bind', {
+                        //    url: e.target.result
+                        //}).then(function () {
+                        //    $('#simpleModal').modal('show');
+                        //});
+                        $('#profilePicture').html("<img style='width: 120px; height:120px;border-radius: 60px' src='" + e.target.result + "' class='img-polaroid user-picture-preview'/>");
                     }
                 };
                 reader.readAsDataURL(upload[0].files[0]);

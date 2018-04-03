@@ -467,6 +467,29 @@
     <Content Include="Content\css\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\css\fonts\LICENSE.txt" />
     <Content Include="Content\css\fonts\Material-Design-Iconic-Font.svg" />
+    <Content Include="Content\css\img\ajax-loading.svg" />
+    <Content Include="Content\css\img\attachment.png" />
+    <Content Include="Content\css\img\back_disabled.png" />
+    <Content Include="Content\css\img\back_enabled.png" />
+    <Content Include="Content\css\img\back_enabled_hover.png" />
+    <Content Include="Content\css\img\forward_disabled.png" />
+    <Content Include="Content\css\img\forward_enabled.png" />
+    <Content Include="Content\css\img\forward_enabled_hover.png" />
+    <Content Include="Content\css\img\icon_step_1.gif" />
+    <Content Include="Content\css\img\icon_step_1_grey.gif" />
+    <Content Include="Content\css\img\icon_step_2.gif" />
+    <Content Include="Content\css\img\icon_step_2_grey.gif" />
+    <Content Include="Content\css\img\img16.jpg" />
+    <Content Include="Content\css\img\logo.png" />
+    <Content Include="Content\css\img\logo_bg.jpg" />
+    <Content Include="Content\css\img\none.gif" />
+    <Content Include="Content\css\img\pdf_icon.png" />
+    <Content Include="Content\css\img\profile.png" />
+    <Content Include="Content\css\img\sort_asc.png" />
+    <Content Include="Content\css\img\sort_asc_disabled.png" />
+    <Content Include="Content\css\img\sort_both.png" />
+    <Content Include="Content\css\img\sort_desc.png" />
+    <Content Include="Content\css\img\sort_desc_disabled.png" />
     <Content Include="Content\css\theme-default\bootstrap.css" />
     <Content Include="Content\css\theme-default\font-awesome.css" />
     <Content Include="Content\css\theme-default\font-awesome.min.css" />
@@ -529,6 +552,8 @@
     <Content Include="Content\css\theme-default\materialadmin_demo.css" />
     <Content Include="Content\css\theme-default\materialadmin_print.css" />
     <Content Include="Content\EmailTemplates\Web.config" />
+    <Content Include="Content\fonts\LICENSE.txt" />
+    <Content Include="Content\fonts\Material-Design-Iconic-Font.svg" />
     <Content Include="Content\img\ajax-loading.svg" />
     <Content Include="Content\img\attachment.png" />
     <Content Include="Content\img\flags\flags.css" />
@@ -2371,6 +2396,9 @@
     <Content Include="Content\js\libs\DataTables-1.10.0\media\images\Sorting icons.psd" />
     <Content Include="Content\js\libs\DataTables-1.10.0\package.json" />
     <Content Include="Content\js\libs\DataTables-1.10.0\Readme.md" />
+    <Content Include="Content\fonts\Material-Design-Iconic-Font.eot" />
+    <Content Include="Content\fonts\Material-Design-Iconic-Font.ttf" />
+    <Content Include="Content\fonts\Material-Design-Iconic-Font.woff" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -2443,6 +2471,7 @@
     <Content Include="Views\Lead\NoCallList.cshtml" />
     <Content Include="Views\Event\Detail.cshtml" />
     <Content Include="Views\Lead\Action.cshtml" />
+    <Content Include="Views\Lead\NCL.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

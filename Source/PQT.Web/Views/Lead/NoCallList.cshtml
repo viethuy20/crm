@@ -9,17 +9,20 @@
 
 
 <style>
-    .DTFC_Cloned {
-        background: #fff;
+    .table th{
+       white-space: nowrap;
+    }
+     .DTFC_Cloned {
+         background: #fff;
+     }
+
+    .DTFC_Cloned td {
+        background-color: #fff;
     }
 
-        .DTFC_Cloned td {
-            background-color: #fff;
-        }
-
-        .DTFC_Cloned th {
-            background-color: #f5f5f5 !important;
-        }
+    .DTFC_Cloned th {
+        background-color: #f5f5f5 !important;
+    }
 
     #tableLead td, table th {
         text-align: left;
@@ -157,9 +160,9 @@
         color: #0aa89e
     }
 
-        .ncl_new:hover {
-            color: #0aa89e
-        }
+    .ncl_new:hover {
+        color: #0aa89e
+    }
 </style>
 <section>
     <div class="row">
@@ -181,7 +184,7 @@
                             <th>Date Created</th>
                             <th>Salesman</th>
                             <th>Country</th>
-                            <th>Company</th>
+                            <th style="width: 150px">Company</th>
                             <th>Client Name/Job Title</th>
                             <th>Direct Line/Mobile number</th>
                             <th>Salutation</th>
@@ -189,9 +192,9 @@
                             <th>Last Name</th>
                             <th>Business Phone</th>
                             <th>Mobile Phone</th>
-                            <th>Work Email Address</th>
-                            <th>Work Email Address1</th>
-                            <th>Personal Email Address</th>
+                            <th>Work Email</th>
+                            <th>Work Email 1</th>
+                            <th>Personal Email</th>
                             <th>Call Back</th>
                             <th>Status</th>
                             <th></th>
@@ -302,7 +305,7 @@
                  var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
                      leftColumns: 5,
                      sHeightMatch: "auto",
-                     rightColumns: 2
+                     rightColumns: 4
                  });
                  var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
                  if ($leftWrappers.length > 1) {

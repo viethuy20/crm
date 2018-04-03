@@ -9,17 +9,20 @@
 
 
 <style>
-    .DTFC_Cloned {
-        background: #fff;
+    .table th{
+        white-space: nowrap;
+    }
+     .DTFC_Cloned {
+         background: #fff;
+     }
+
+    .DTFC_Cloned td {
+        background-color: #fff;
     }
 
-        .DTFC_Cloned td {
-            background-color: #fff;
-        }
-
-        .DTFC_Cloned th {
-            background-color: #f5f5f5 !important;
-        }
+    .DTFC_Cloned th {
+        background-color: #f5f5f5 !important;
+    }
 
     #tableLead td, table th {
         text-align: left;
@@ -124,7 +127,7 @@
                                 <th></th>
                                 <th>Date Created</th>
                                 <th>Country</th>
-                                <th>Company</th>
+                                <th style="width: 150px">Company</th>
                                 <th>Client Name/Job Title</th>
                                 <th>Direct Line/Mobile number</th>
                                 <th>Salutation</th>
@@ -132,12 +135,12 @@
                                 <th>Last Name</th>
                                 <th>Business Phone</th>
                                 <th>Mobile Phone</th>
-                                <th>Work Email Address</th>
-                                <th>Work Email Address1</th>
-                                <th>Personal Email Address</th>
+                                <th>Work Email</th>
+                                <th>Work Email 1</th>
+                                <th>Personal Email</th>
                                 <th>Call Back</th>
                                 <th>Status</th>
-                                <th></th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                     </table>
@@ -150,8 +153,8 @@
 <div class="offcanvas">
     <div id="offcanvas-ncl" class="offcanvas-pane width-12">
         <div class="offcanvas-head">
-            <header>No Call List</header>
-            <div class="offcanvas-tools">
+            <header><a href="@Url.Action("NCL",new {id=Model.Event.ID})" target="_blank">No Call List</a></header>
+            <div class="offcanvas-tools" style="left:initial">
                 <a class="btn btn-icon-toggle btn-default-light pull-right" data-dismiss="offcanvas">
                     <i class="md md-close"></i>
                 </a>
@@ -313,21 +316,21 @@
              },
          });
         function FixedTable() {
-            if (fixedColumn < 3) {
+            if (fixedColumn < 1) {
                 fixedColumn ++;
                 var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
                     leftColumns: 5,
                     sHeightMatch: "auto",
-                    rightColumns: 2
+                    rightColumns: 3
                 });
-                //var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
-                //if ($leftWrappers.length > 1) {
-                //    $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
-                //}
-                //var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
-                //if ($rightWrappers.length > 1) {
-                //    $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
-                //}
+                var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                if ($leftWrappers.length > 1) {
+                    $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                }
+                var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                if ($rightWrappers.length > 1) {
+                    $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                }
             }
         }
          $(document).on("click", ".paginate_button", function () {
@@ -475,7 +478,7 @@
              "filter": true, // this is for disable filter (search box)
              "orderMulti": false, // for disable multiple column at once
              "stateSave": false,
-             "fixedHeader": true,
+             //"fixedHeader": true,
              "ajax": {
                  "url": "@Url.Action("AjaxGetNCList")?eventId=@Model.Event.ID",
                  "type": "POST",
