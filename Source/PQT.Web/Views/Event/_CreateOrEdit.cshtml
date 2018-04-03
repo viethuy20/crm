@@ -37,7 +37,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6">
+            @*<div class="col-sm-6">
                 <div class="form-group">
                     <select multiple class="form-control  select2-list" name="@Html.NameFor(m=>m.CompaniesSelected)">
                         @foreach (var country in Model.Companies.Select(m => m.Country).Distinct().OrderBy(m => m.Name))
@@ -52,7 +52,7 @@
                     </select>
                     <label>Companies</label>
                 </div>
-            </div>
+            </div>*@
             <div class="col-sm-6">
                 <div class="form-group">
                     <select multiple class="form-control  select2-list" name="@Html.NameFor(m=>m.GroupsSelected)">
@@ -111,9 +111,19 @@
         <div class="row">
             <div class="form-group">
                 <div class="col-sm-12">
-                    @Html.CollectionEditorFor(m => m.Event.EventSessions)
+                    <table id="grid_companies" class="table">
+                        <thead>
+                            <tr>
+                                <th><input name="select_all" value="1" type="checkbox"></th>
+                                <th>Country</th>
+                                <th>Company</th>
+                                <th>Product/Service</th>
+                                <th>Sector</th>
+                                <th>Industry</th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
-                @Html.JqueryTemplateFor(m => m.Event.EventSessions, "sub-tmpl")
             </div>
         </div>
     </div><!--end .card-body -->
@@ -186,4 +196,167 @@
                 });
             }
         };
+
+        function updateDataTableSelectAllCtrl(table) {
+            var $table = table.table().node();
+            var $chkbox_all = $('tbody input[type="checkbox"]', $table);
+            var $chkbox_checked = $('tbody input[type="checkbox"]:checked', $table);
+            var chkbox_select_all = $('thead input[name="select_all"]', $table).get(0);
+
+            // If none of the checkboxes are checked
+            if ($chkbox_checked.length === 0) {
+                chkbox_select_all.checked = false;
+                if ('indeterminate' in chkbox_select_all) {
+                    chkbox_select_all.indeterminate = false;
+                }
+
+                // If all of the checkboxes are checked
+            } else if ($chkbox_checked.length === $chkbox_all.length) {
+                chkbox_select_all.checked = true;
+                if ('indeterminate' in chkbox_select_all) {
+                    chkbox_select_all.indeterminate = false;
+                }
+
+                // If some of the checkboxes are checked
+            } else {
+                chkbox_select_all.checked = true;
+                if ('indeterminate' in chkbox_select_all) {
+                    chkbox_select_all.indeterminate = true;
+                }
+            }
+        }
+        
+        var rows_selected = @Html.Serialize(Model.CompaniesSelected);
+
+        $(document).ready(function () {
+            // Array holding selected row IDs
+            var table = $("#grid_companies").DataTable({
+            "processing": true, // for show progress bar
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "stateSave": false,
+            "ajax": {
+                "url": "@Url.Action("AjaxGetCompanies")",
+                "type": "POST",
+                "datatype": "json",
+                "data": function (d) {
+                }
+            },
+            "columns": [
+                { "data": "ID", "name": "ID", "orderable": true },
+                    { "data": "Country", "name": "Country", "orderable": true },
+                    { "data": "CompanyName", "name": "CompanyName", "orderable": true },
+                    { "data": "ProductOrService", "name": "ProductOrService", "orderable": true },
+                    { "data": "Sector", "name": "Sector", "orderable": true },
+                    { "data": "Industry", "name": "Industry", "orderable": true },
+            ],
+            'columnDefs': [{
+                'targets': 0,
+                'searchable': false,
+                'orderable': false,
+                'width': '1%',
+                'className': 'dt-body-center',
+                'render': function (data, type, full, meta) {
+                    return '<input type="checkbox">';
+                }
+            }],
+            "iDisplayLength": 50,
+            "aaSorting": [[1, "desc"]],
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                var rowId = aData["ID"];
+                // If row ID is in the list of selected row IDs
+                if ($.inArray(rowId, rows_selected) !== -1) {
+                    $(nRow).find('input[type="checkbox"]').prop('checked', true);
+                    $(nRow).addClass('selected');
+                }
+            },
+            initComplete: function () {
+                var _table = this;
+                _table.parent().find('input[type="search"]').unbind();
+                var timeOutTyping;
+                _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                    clearTimeout(timeOutTyping);
+                    timeOutTyping = setTimeout(function () {
+                        _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                    }, 600);
+                });
+            },
+        });
+
+            // Handle click on checkbox
+            $('#grid_companies tbody').on('click', 'input[type="checkbox"]', function (e) {
+                var $row = $(this).closest('tr');
+
+                // Get row data
+                var data = table.row($row).data();
+
+                // Get row ID
+                var rowId = data.ID;
+
+                // Determine whether row ID is in the list of selected row IDs
+                var index = $.inArray(rowId, rows_selected);
+
+                // If checkbox is checked and row ID is not in list of selected row IDs
+                if (this.checked && index === -1) {
+                    rows_selected.push(rowId);
+
+                    // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+                } else if (!this.checked && index !== -1) {
+                    rows_selected.splice(index, 1);
+                }
+
+                if (this.checked) {
+                    $row.addClass('selected');
+                } else {
+                    $row.removeClass('selected');
+                }
+
+                // Update state of "Select all" control
+                updateDataTableSelectAllCtrl(table);
+
+                // Prevent click event from propagating to parent
+                e.stopPropagation();
+            });
+
+            // Handle click on table cells with checkboxes
+            $('#grid_companies').on('click', 'tbody td, thead th:first-child', function (e) {
+                $(this).parent().find('input[type="checkbox"]').trigger('click');
+            });
+
+            // Handle click on "Select all" control
+            $('thead input[name="select_all"]', table.table().container()).on('click', function (e) {
+                if (this.checked) {
+                    $('#grid_companies tbody input[type="checkbox"]:not(:checked)').trigger('click');
+                } else {
+                    $('#grid_companies tbody input[type="checkbox"]:checked').trigger('click');
+                }
+
+                // Prevent click event from propagating to parent
+                e.stopPropagation();
+            });
+
+            // Handle table draw event
+            table.on('draw', function () {
+                // Update state of "Select all" control
+                updateDataTableSelectAllCtrl(table);
+            });
+
+            // Handle form submission event
+            //$('.form').on('submit', function (e) {
+            //    var form = this;
+            //    // Iterate over all selected checkboxes
+            //    $.each(rows_selected, function (index, rowId) {
+            //        // Create a hidden element
+            //        $(form).append(
+            //            $('<input>')
+            //                .attr('type', 'hidden')
+            //                .attr('id', 'CompaniesSelected_' + rowId)
+            //                .attr('name', 'CompaniesSelected')
+            //                .val(rowId)
+            //        );
+            //    });
+            //});
+
+        });
     </script>)

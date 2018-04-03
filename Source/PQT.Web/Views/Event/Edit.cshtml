@@ -29,7 +29,19 @@
             e.preventDefault();
             bootbox.confirm('@Resource.ConfirmSave', function (isOK) {
                 if (isOK) {
-                    $('#submitbutton').parents("form").submit();
+                    var form = $('#submitbutton').parents("form");
+                    // Iterate over all selected checkboxes
+                    $.each(rows_selected, function (index, rowId) {
+                        // Create a hidden element
+                        $(form).append(
+                            $('<input>')
+                            .attr('type', 'hidden')
+                            .attr('id', 'CompaniesSelected_' + rowId)
+                            .attr('name', 'CompaniesSelected')
+                            .val(rowId)
+                        );
+                    });
+                    form.submit();
                 }
             });
         });
