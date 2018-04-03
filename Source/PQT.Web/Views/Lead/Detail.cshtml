@@ -162,6 +162,17 @@
                         @Html.Bootstrap().LabelFor(m => m.Lead.StatusUpdateTime).LabelText("UPDATE TIME")
                     </div>
                 </div>
+                @if (!string.IsNullOrEmpty(Model.Lead.LeadStatusRecord.Attachment))
+                {
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <div class="form-control" readonly name="@Html.NameFor(m=>m.Lead.LeadStatusRecord.Attachment)">
+                                <a href="@Model.Lead.LeadStatusRecord.AttachmentUrl" target="_blank">@Model.Lead.LeadStatusRecord.Attachment</a>
+                            </div>
+                            @Html.Bootstrap().LabelFor(m => m.Lead.LeadStatusRecord.Attachment).LabelText("ATTACHMENT")
+                        </div>
+                    </div>
+                }
                 @if (Model.Lead.LeadStatusRecord == LeadStatus.Reject)
                 {
                     <div class="col-sm-6">

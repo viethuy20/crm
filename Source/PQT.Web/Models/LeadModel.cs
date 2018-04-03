@@ -125,7 +125,7 @@ namespace PQT.Web.Models
                     fileName = uploadPicture;
                 }
             }
-            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, Enumeration.FromValue<LeadStatus>(requestType), CurrentUser.Identity.ID, fileName);
+            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, Enumeration.FromValue<LeadStatus>(requestType), CurrentUser.Identity.ID, fileName, "");
             if (!leadRepo.UpdateLead(lead)) return "Submit failed";
             LeadNotificator.NotifyUser(new List<User> { lead.Event.User }, lead); // notify for manager
             LeadNotificator.NotifyUpdateNCL(lead);

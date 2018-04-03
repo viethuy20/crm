@@ -443,6 +443,7 @@
             var notifyCount = parseInt($notifyCounter.text()) +1;
             $notifyCounter.html(notifyCount);
             $notifyCounter.removeClass('hide');
+            documentTitle = documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
             document.title = '(' + notifyCount + ') ' + documentTitle;
 
         };
@@ -480,6 +481,9 @@
                 }, 30000);
             }
 
+            if (location.href.toLowerCase().indexOf('lead/detail') > 1) {
+                location.reload();
+            }
         };
 
         return UserNotification;

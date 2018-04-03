@@ -103,5 +103,10 @@ namespace PQT.Domain.Entities
         {
             return Status.DisplayName;
         }
+
+        public string AttachmentUrl
+        {
+            get { return "/data/lead/" + Attachment; }
+        }
     }
 }
