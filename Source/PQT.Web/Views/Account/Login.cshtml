@@ -33,7 +33,7 @@
                         <img src="~/Content/img/logo_bg.jpg" style="width: 210px" />
                     </div>
                     <div class="col-sm-7">
-                        @using (Html.BeginForm("Login", "Account", new { ViewBag.ReturnUrl }, FormMethod.Post, new { id = "login_form", @class = "form floating-label" }))
+                        @using (Html.BeginForm("Login", "Account", new { ViewBag.ReturnUrl }, FormMethod.Post, new { id = "login_form", @class = "form" }))
                         {
                             <div class="form-group">
                                 <input type="text" class="form-control" id="email" name="email">

@@ -132,6 +132,13 @@
                     }
                 }
             }
+            @if (Model.Lead.LeadStatusRecord == LeadStatus.Initial || Model.Lead.LeadStatusRecord == LeadStatus.Reject)
+            {
+                if (CurrentUser.HasPermission("Lead", "Delete"))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Delete ", "Delete").Id("lead_delete").Class("btn-danger").PrependIcon("md md-delete")
+                }
+            }
         </div>
     </div>
     <div class="card">
@@ -313,7 +320,27 @@
                  });
              }
          });
-
+         $(document).on('click', '#lead_delete', function (e) {
+             e.preventDefault();
+             bootbox.confirm("Do you want to delete this call?", function (isOK) {
+                 if (isOK) {
+                     $.ajax({
+                         url: '@Url.Action("Delete")?id=@Model.Lead.ID',
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 location.href = '@Url.Action("Index",new {id = Model.Lead.EventID })';
+                             } else {
+                                 toastr.error(data);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Delete failed");
+                         }
+                     });
+                 }
+             });
+         });
          $(document).on('click', '#lead_block', function (e) {
              e.preventDefault();
              bootbox.confirm("@Resource.ConfirmBlock", function (isOK) {

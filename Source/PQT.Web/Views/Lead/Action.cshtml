@@ -1,0 +1,146 @@
+﻿@using PQT.Domain.Enum
+@model PQT.Domain.Entities.Lead
+
+
+<div class="card card-underline" style="background: white; margin: auto; max-width: 950px; position: relative;">
+    <div class="card-head">
+        <header><b>Controls</b></header>
+    </div><!--end .card-head -->
+    <div class="form form-validate">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.CompanyName).LabelText("COMPANY NAME")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.GeneralLine).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.GeneralLine).LabelText("GENERAL LINE")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.ClientName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.ClientName).LabelText("CLIENT NAME/ JOB TITLE")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.DirectLine).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER")
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Salutation).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Salutation).LabelText("Salutation")
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.FirstName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.FirstName).LabelText("First Name")
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.LastName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.LastName).LabelText("Last Name")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.BusinessPhone).LabelText("Business Phone")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.MobilePhone).LabelText("Mobile Phone")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.WorkEmailAddress).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.WorkEmailAddress).LabelText("Work Email Address")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.WorkEmailAddress1).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.WorkEmailAddress1).LabelText("Work Email Address1")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.PersonalEmailAddress).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.PersonalEmailAddress).LabelText("Personal Email Address")
+                    </div>
+                </div>
+            </div>
+        </div><!--end .card-body -->
+        <div class="card-actionbar">
+            <div class="card-actionbar-row">
+                <a href="@Url.Action("Detail")?id=@Model.ID&eventId=@Model.EventID" class="btn btn-default"><i class="fa fa-eye"></i> Detail</a>
+                @if (Model.LeadStatusRecord != LeadStatus.Booked)
+                {
+                    if (CurrentUser.HasPermission("Lead", "Edit"))
+                    {
+                        @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { leadId = Model.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
+                    }
+                }
+                @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord == LeadStatus.Initial ||
+                                                    Model.LeadStatusRecord == LeadStatus.Reject))
+                {
+                    <a href="#" data-id="@Model.ID" class="btn btn-info btnRequestNCL"><i class="md md-phone-locked"></i> Request To NCL</a>
+                }
+                @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord == LeadStatus.Initial ||
+                                                    Model.LeadStatusRecord == LeadStatus.Reject ||
+                                                    Model.LeadStatusRecord == LeadStatus.RequestNCL ||
+                                                    Model.LeadStatusRecord == LeadStatus.Live))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.ID, requestType = LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
+                }
+                @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord != LeadStatus.RequestBook &&
+                                                    Model.LeadStatusRecord != LeadStatus.Booked))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Request To Book", "RequestAction").RouteValues(new { id = Model.ID, requestType = LeadStatus.RequestBook }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")
+                }
+                @if (CurrentUser.HasPermission("Lead", "CancelRequest") && (Model.LeadStatusRecord == LeadStatus.RequestNCL ||
+                                                Model.LeadStatusRecord == LeadStatus.RequestLOI ||
+                                                Model.LeadStatusRecord == LeadStatus.RequestBook))
+                {
+                    <a href="#" class="btn btn-warning btnCancelRequest" data-id="@Model.ID"><i class="md md-cancel"></i> Cancel @Model.StatusDisplay</a>
+                }
+                @if ((Model.LeadStatusRecord != LeadStatus.Booked))
+            {
+                if (Model.LeadStatusRecord != LeadStatus.Blocked)
+                {
+                    if (CurrentUser.HasPermission("Lead", "BlockLead"))
+                    {
+                            <a href="#" class="btn btn-warning btnBlock" data-id="@Model.ID"><i class="md md-lock-outline"></i> Block</a>
+                        }
+                    }
+                    else
+                    {
+                        if (CurrentUser.HasPermission("Lead", "UnblockLead"))
+                        {
+                            <a href="#" class="btn btn-warning btnUnblock" data-id="@Model.ID"><i class="md md-lock-open"></i> Unblock</a>
+                        }
+                    }
+                }
+                @if (Model.LeadStatusRecord == LeadStatus.Initial || Model.LeadStatusRecord == LeadStatus.Reject)
+            {
+                if (CurrentUser.HasPermission("Lead", "Delete"))
+                {
+                    <a href="#" class="btn btn-danger btnDelete" data-id="@Model.ID"><i class="md md-delete"></i> Delete</a>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div><!--end .card -->

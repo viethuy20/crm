@@ -228,7 +228,7 @@
                      '">' +
                      aData["CreatedTime"] +
                      '</a>');
-                 var dropdowns = "";
+                 @*var dropdowns = "";
 
                  if (aData["StatusCode"] != '@LeadStatus.Booked') {
 
@@ -241,27 +241,12 @@
                      '<li><a href="@Url.Action("Detail")?id=' +
                      aData["ID"] +
                      '&eventId=@Model.Event.ID"><span class=" text-default"><i class="fa fa-fw fa-eye"></i> Detail</span></a></li>';
-                 @*dropdowns +=
-                     '<li><a class="simple-ajax-popup-align-top-custom" href="@Url.Action("CallingForm")?leadId=' +
-                     aData["ID"] +
-                     '"><span class=" text-primary"><i class="fa fa-fw fa-phone"></i> Start Call</span></a></li>';*@
+
                  if (aData["StatusCode"] == '@LeadStatus.Initial' || aData["StatusCode"] == '@LeadStatus.Reject') {
-                     dropdowns += '<li><a href="#" data-action="RequestNCL" data-id="' +
+                     dropdowns += '<li><a href="#" class="btnRequestNCL" data-action="RequestNCL" data-id="' +
                          aData["ID"] +
                          '"><span class=" text-info"><i class="md fa-fw md-phone-locked"></i> Request To NCL</span></a></li>';
 
-                     @*dropdowns += '<li><a class="simple-ajax-popup-align-top" href="@Url.Action("RequestAction")?id=' +
-                         aData["ID"] +
-                         '&requestType=@LeadStatus.RequestNCL"><span class=" text-info"><i class="md fa-fw md-phone-locked"></i> Request To NCL</span></a></li>';*@
-                 }
-                 if (aData["StatusCode"] == '@LeadStatus.RequestNCL' || aData["StatusCode"] == '@LeadStatus.RequestBook'|| aData["StatusCode"] == '@LeadStatus.RequestLOI') {
-                     dropdowns += '<li><a href="#" data-action="Approval" data-id="' +
-                         aData["ID"] +
-                         '"><span class=" text-success"><i class="md fa-fw md-done"></i> Approve ' + aData["StatusDisplay"] +'</span></a></li>';
-                 }
-                 if (aData["StatusCode"] == '@LeadStatus.RequestNCL' || aData["StatusCode"] == '@LeadStatus.RequestBook'|| aData["StatusCode"] == '@LeadStatus.RequestLOI') {
-                     dropdowns += '<li><a class="simple-ajax-popup-align-top" href="@Url.Action("RejectAction")?id=' +
-                         aData["ID"] + '"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject ' + aData["StatusDisplay"] +'</span></a></li>';
                  }
                  if (aData["StatusCode"] == '@LeadStatus.Initial' ||
                      aData["StatusCode"] == '@LeadStatus.Reject' ||
@@ -284,7 +269,7 @@
                      dropdowns += '<li><a href="#" data-action="CancelRequest" data-id="' +
                          aData["ID"] +
                          '"><span class=" text-warning"><i class="md fa-fw md-cancel"></i> Cancel ' + aData["StatusDisplay"] +'</span></a></li>';
-                 };
+                 }
                  if (aData["StatusCode"] != '@LeadStatus.Booked') {
 
                      dropdowns += '<li><a href="#" data-action="' +
@@ -294,15 +279,18 @@
                          '"><span class=" text-warning"><i class="md fa-fw md-lock-outline"></i> ' +
                          aData["actionBlock"] +
                          '</span></a></li>';
-                 };
+                 }
                  if (aData["StatusCode"] == '@LeadStatus.Initial' || aData["StatusCode"] == '@LeadStatus.Reject') {
                      dropdowns += '<li><a href="#" data-action="Delete" data-id="' +
                          aData["ID"] +
                          '"><span class=" text-danger"><i class="md fa-fw md-delete"></i> Delete</span></a></li>';
-                 };
-                 $(nRow).find('td:eq(16)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
-                     dropdowns +
-                     '</ul></div>');
+                 }
+                 //$(nRow).find('td:eq(16)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
+                 //    dropdowns +
+                 //    '</ul></div>');*@
+
+                 $(nRow).find('td:eq(16)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
+                     aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');
 
                  $(nRow).addClass(aData["ClassStatus"]);
              },
@@ -350,7 +338,7 @@
          });
 
 
-         oTable.on('click', '[data-action="Delete"]', function (e) {
+         $(document).on('click', '.btnDelete', function (e) {
              e.preventDefault();
              var $sefl = $(this);
              bootbox.confirm("@Resource.ConfirmDelete", function (isOK) {
@@ -374,7 +362,7 @@
                  }
              });
          });
-         oTable.on('click', '[data-action="RequestNCL"]', function (e) {
+         $(document).on('click', '.btnRequestNCL', function (e) {
              e.preventDefault();
              var $sefl = $(this);
              bootbox.confirm("@Resource.ConfirmRequestNCL", function (isOK) {
@@ -388,6 +376,7 @@
                                  toastr.success("Request successful");
                                  fixedColumn = false;
                                  oTable.fnFilter('');
+                                 $.magnificPopup.close();
                              } else {
                                  toastr.error(data);
                              }
@@ -399,7 +388,7 @@
                  }
              });
          });
-         oTable.on('click', '[data-action="CancelRequest"]', function (e) {
+         $(document).on('click', '.btnCancelRequest', function (e) {
              e.preventDefault();
              var $sefl = $(this);
              bootbox.confirm("@Resource.ConfirmCancelRequest", function (isOK) {
@@ -413,6 +402,7 @@
                                  toastr.success("Cancel successful");
                                  fixedColumn = false;
                                  oTable.fnFilter('');
+                                 $.magnificPopup.close();
                              } else {
                                  toastr.error(data);
                              }
@@ -424,7 +414,7 @@
                  }
              });
          });
-         oTable.on('click', '[data-action="Block"]', function (e) {
+         $(document).on('click', '.btnBlock', function (e) {
              e.preventDefault();
              var $sefl = $(this);
              bootbox.confirm("@Resource.ConfirmBlock", function (isOK) {
@@ -435,15 +425,10 @@
                          type: 'POST',
                          success: function (data) {
                              if (data == "") {
-                                 @*var tr = $sefl.closest('tr')[0];
-                                 var td = $(tr).find("td");
-                                 $(tr).addClass("@LeadStatus.Blocked.DisplayName");
-                                 $(td[6]).text('@LeadStatus.Blocked.DisplayName');
-                                 $sefl.attr('data-action', 'Unblock');
-                                 $sefl.html('<span class=" text-danger"><i class="md fa-fw md-block"></i> Unblock</span>');*@
                                  toastr.success("Blocked successful");
                                  fixedColumn = false;
                                  oTable.fnFilter('');
+                                 $.magnificPopup.close();
                              } else {
                                  toastr.error(data);
                              }
@@ -455,7 +440,7 @@
                  }
              });
          });
-         oTable.on('click', '[data-action="Unblock"]', function (e) {
+         $(document).on('click', '.btnUnblock', function (e) {
              e.preventDefault();
              var $sefl = $(this);
              bootbox.confirm("@Resource.ConfirmUnblock", function (isOK) {
@@ -466,15 +451,10 @@
                          type: 'POST',
                          success: function (data) {
                              if (data == "") {
-                                 @*var tr = $sefl.closest('tr')[0];
-                                 var td = $(tr).find("td");
-                                 $(tr).removeClass("@LeadStatus.Blocked.DisplayName");
-                                 $(td[6]).text('@LeadStatus.Initial.DisplayName');
-                                 $sefl.attr('data-action', 'Block');
-                                 $sefl.html('<span class=" text-danger"><i class="md fa-fw md-block"></i> Block</span>');*@
                                  toastr.success("Unblock successful");
                                  fixedColumn = false;
                                  oTable.fnFilter('');
+                                 $.magnificPopup.close();
                              } else {
                                  toastr.error(data);
                              }
@@ -486,33 +466,6 @@
                  }
              });
          });
-         oTable.on('click', '[data-action="Approval"]', function (e) {
-             e.preventDefault();
-             var $sefl = $(this);
-             bootbox.confirm("@Resource.ConfirmApprove", function (isOK) {
-                 if (isOK) {
-                     $("#dvLoading").show();
-                     $.ajax({
-                         url: '@Url.Action("ApprovalAction")?id=' + $sefl.data('id'),
-                         type: 'POST',
-                         success: function (data) {
-                             if (data == "") {
-                                 toastr.success("Approved successful");
-                                 fixedColumn = false;
-                                 oTable.fnFilter('');
-                             } else {
-                                 toastr.error(data);
-                             }
-                         },
-                         error: function () {
-                             toastr.error("Approve failed");
-                         }
-                     });
-                 }
-             });
-         });
-
-
 
 
          var $nclTable = $("#tableNCList");
@@ -807,6 +760,7 @@
                  success: function (data) {
                      if (data == "") {
                          toastr.success("Submit successful");
+                         $.magnificPopup.close();
                          oTable.fnFilter('');
                      } else {
                          toastr.error(data);

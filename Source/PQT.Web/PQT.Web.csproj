@@ -2442,6 +2442,7 @@
     <Content Include="Views\Lead\Edit.cshtml" />
     <Content Include="Views\Lead\NoCallList.cshtml" />
     <Content Include="Views\Event\Detail.cshtml" />
+    <Content Include="Views\Lead\Action.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

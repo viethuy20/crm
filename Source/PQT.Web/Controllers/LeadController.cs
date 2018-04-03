@@ -219,6 +219,14 @@ namespace PQT.Web.Controllers
             }
             return PartialView(model);
         }
+
+
+        [AjaxOnly]
+        public ActionResult Action(int leadId)
+        {
+            return PartialView(_repo.GetLead(leadId));
+        }
+
         [DisplayName(@"Reject NCL")]
         [HttpPost]
         public ActionResult RejectAction(LeadModel model)
