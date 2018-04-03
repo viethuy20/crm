@@ -27,6 +27,13 @@ namespace PQT.Web.Controllers
             var models = _repo.GetAllEvents();
             return View(models);
         }
+        public ActionResult Detail(int id)
+        {
+            var model = new EventModel();
+            model.PrepareEdit(id);
+            return View(model);
+        }
+
         public ActionResult Create()
         {
             var model = new EventModel();

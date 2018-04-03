@@ -68,6 +68,7 @@ namespace PQT.Web.Controllers
             return PartialView(notify);
         }
 
+
         [AjaxOnly]
         public ActionResult RemoveNotifyCounter()
         {
@@ -79,6 +80,15 @@ namespace PQT.Web.Controllers
             return Json(true);
         }
 
+        [AjaxOnly]
+        public ActionResult UpdateSeenNotify(int leadId)
+        {
+            if (CurrentUser.Identity != null)
+            {
+                _memRepository.SeenUserNotification(CurrentUser.Identity.ID, leadId);
+            }
+            return Json(true);
+        }
         [AjaxOnly]
         public ActionResult SeenNotify(int notifyId)
         {

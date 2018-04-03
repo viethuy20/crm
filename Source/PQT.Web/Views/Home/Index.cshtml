@@ -26,16 +26,16 @@
             color: #a3a3a3;
         }
 </style>
-<section>
-    <div class="section-body">
+<section style="padding: 5px;">
+    <div class="section-body" style="margin-top: 12px;margin-right: 12px;">
         <div style="display: flex;overflow-x:auto">
             @foreach (var item in Model.Events)
             {
         <!-- BEGIN ALERT - REVENUE -->
-                <div style="min-height: 1px;padding-left: 12px;padding-right: 12px;">
-                    <div class="card" style="width: 280px;">
+                <div style="min-height: 1px;padding-left: 12px;">
+                    <div class="card" style="width: 280px;margin-bottom: 12px;">
                         <div class="card-body no-padding">
-                            <div class="alert no-margin" style="position: relative;background: @item.BackgroundColor ; color: #fff;padding: 15px;">
+                            <div class="alert no-margin" style="position: relative;background: @item.BackgroundColor ; color: #fff;padding: 10px;">
                                 @*<strong class="pull-right text-success text-lg">0,38% <i class="md md-trending-up"></i></strong>*@
                                 <strong class="text-xl">@item.EventName</strong><br />
                                 @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
@@ -49,13 +49,20 @@
                                     </a>
                                 }
                             </div>
-                            <div style="min-height: calc(100vh - 350px);">
+                            <div style="height: calc(100vh - 180px);overflow-y: auto;">
                                 <div  id="dashboard_notify_@item.ID" style="display: none"></div>
                                 @foreach (var notify in item.Notifications)
                                 {
                                     <div class="notify_item">
                                         <a class="tile-content ink-reaction" href="@Url.Action("Detail", "Lead", new {id = notify.EntryId, eventId = notify.EventId})">
-                                            <b>@notify.Description</b> - @notify.Title
+                                            @if (notify.Seen)
+                                            {
+                                                @notify.Description @:- @notify.Title
+                                            }
+                                            else
+                                            {
+                                                <b>@notify.Description - @notify.Title</b>
+                                            }
                                             <br/><span class="timestamp" title="@notify.Timestamp">@notify.TimeAgo</span>
                                         </a>
                                     </div>

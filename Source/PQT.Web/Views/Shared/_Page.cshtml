@@ -530,13 +530,17 @@
             url: '@Url.Action("RemoveNotifyCounter","Home")',
             type: 'POST',
             success: function (data) {
-                $(document).bind('ajaxStart');
+                $(document).ajaxStart(function () {
+                    $("#dvLoading").show();
+                });
             },
             error: function () {
-                $(document).bind('ajaxStart');
+                $(document).ajaxStart(function () {
+                    $("#dvLoading").show();
+                });
             }
         });
-        });
+    });
 
     </script>
     @RenderSection("js", required: false)

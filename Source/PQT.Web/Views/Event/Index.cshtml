@@ -25,7 +25,6 @@
                             <th>Start Date</th>
                             <th>End Date</th>
                             <th></th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,11 +38,12 @@
                                 <td>@item.StartDate.ToString("dd/MM/yyyy")</td>
                                 <td>@item.EndDate.ToString("dd/MM/yyyy")</td>
                                 <td>
+                                    <a href="@Url.Action("Detail", new {id = item.ID})" data-action="detail">
+                                        <i class="fa fa-eye"> Detail</i>
+                                    </a> | 
                                     <a href="@Url.Action("Edit", new {id = item.ID})" data-action="edit">
                                         <i class="md md-edit text-info"> Edit</i>
-                                    </a>
-                                </td>
-                                <td>
+                                    </a> | 
                                     <a href="#" data-action="delete" data-id="@item.ID">
                                         <i class="md md-delete text-danger"> Delete</i>
                                     </a>
@@ -61,7 +61,7 @@
 @Html.Script(
     @<script>
 
-        var $Table = $('#table').dataTable();
+        var $Table = $('#table').dataTable({ "aaSorting": [[1, "asc"]]});
         $Table.on('click', '[data-action="delete"]', function (e) {
             e.preventDefault();
             var selftr = $(this);

@@ -163,36 +163,41 @@
 </style>
 <section>
     <div class="row">
-        <input type="hidden" value="@Model.Event.ID" id="eventIdNCList" />
+        <div class="col-md-12" style="padding-bottom: 12px;">
+            @Html.Bootstrap().ActionLinkButton("Back to Dashboard", "Index", "Home").PrependIcon("md md-arrow-back")
+        </div>
+    </div>
+    <div class="row">
+        <input type="hidden" value="@Model.Event.ID" id="eventIdNCList"/>
         <div class="col-md-12">
             <div class="card  card-underline">
                 <div class="card-head">
                     <header><i class="fa fa-fw fa-phone"></i> No Call List - <span style="font-size: 18px;"><b>@Model.Event.EventName</b> - <b>@Model.Event.EventCode</b> - Date: <b>@Model.Event.StartDate.ToString("dd/MM/yyyy")</b> - <b>@Model.Event.EndDate.ToString("dd/MM/yyyy")</b></span></header>
                 </div><!--end .card-head -->
                 <div class="card-body">
-                        <table class="table" id="tableLead">
-                            <thead>
-                            <tr>
-                                <th>Date Created</th>
-                                <th>Country</th>
-                                <th>Company</th>
-                                <th>Client Name/Job Title</th>
-                                <th>Direct Line/Mobile number</th>
-                                <th>Salutation</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Business Phone</th>
-                                <th>Mobile Phone</th>
-                                <th>Work Email Address</th>
-                                <th>Work Email Address1</th>
-                                <th>Personal Email Address</th>
-                                <th>Call Back</th>
-                                <th>Status</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                        </table>
+                    <table class="table" id="tableLead">
+                        <thead>
+                        <tr>
+                            <th>Date Created</th>
+                            <th>Country</th>
+                            <th>Company</th>
+                            <th>Client Name/Job Title</th>
+                            <th>Direct Line/Mobile number</th>
+                            <th>Salutation</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Business Phone</th>
+                            <th>Mobile Phone</th>
+                            <th>Work Email Address</th>
+                            <th>Work Email Address1</th>
+                            <th>Personal Email Address</th>
+                            <th>Call Back</th>
+                            <th>Status</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                    </table>
                 </div><!--end .card-body -->
             </div><!--end .card -->
         </div>
@@ -257,12 +262,17 @@
                  $(nRow).find('td:eq(15)').html('<a href="@Url.Action("Detail")?id=' +
                      aData["ID"] +
                      '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;"><i class="fa fa-fw fa-eye"></i> Detail</span></a>');
-
-                 $(nRow).find('td:eq(16)').html('<a href="#" data-action="Approval" data-id="' +
-                     aData["ID"] +
-                     '"><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/><a class="simple-ajax-popup-align-top" href="@Url.Action("RejectAction")?id=' +
-                     aData["ID"] + '"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
-
+                 if (aData["StatusCode"] == '@LeadStatus.RequestNCL' ||
+                     aData["StatusCode"] == '@LeadStatus.RequestBook' ||
+                     aData["StatusCode"] == '@LeadStatus.RequestLOI') {
+                     $(nRow).find('td:eq(16)').html('<a href="#" data-action="Approval" data-id="' +
+                         aData["ID"] +
+                         '"><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/><a class="simple-ajax-popup-align-top" href="@Url.Action("RejectAction")?id=' +
+                         aData["ID"] +
+                         '"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
+                 } else {
+                     $(nRow).find('td:eq(16)').html('');
+                 }
                  $(nRow).find('td:eq(16)').css("white-space", "nowrap");
                  $(nRow).addClass(aData["ClassStatus"]);
              },
@@ -284,24 +294,24 @@
                  FixedTable();
              },
          });
-        function FixedTable() {
-            if (!fixedColumn) {
-                fixedColumn = true;
-                var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
-                    leftColumns: 5,
-                    sHeightMatch: "auto",
-                    rightColumns: 3
-                });
-                var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
-                if ($leftWrappers.length > 1) {
-                    $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
-                }
-                var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
-                if ($rightWrappers.length > 1) {
-                    $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
-                }
-            }
-        }
+         function FixedTable() {
+             if (!fixedColumn) {
+                 fixedColumn = true;
+                 var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
+                     leftColumns: 5,
+                     sHeightMatch: "auto",
+                     rightColumns: 3
+                 });
+                 var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                 if ($leftWrappers.length > 1) {
+                     $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                 }
+                 var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                 if ($rightWrappers.length > 1) {
+                     $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                 }
+             }
+         }
          $(document).on("click", ".paginate_button", function () {
              fixedColumn = false;
          });
@@ -336,11 +346,17 @@
              });
          });
 
-    </script>
+     </script>
                          )
 
 @Html.Script(
     @<script>
+
+         $(document).on('click', '#request_close', function (e) {
+             e.preventDefault();
+             $.magnificPopup.close();
+         });
+
          function onFailRejectAction() {
              toastr.error('@Resource.SaveError');
          }
@@ -354,5 +370,5 @@
                  toastr.error(data);
              }
          }
-    </script>)
+     </script>)
 

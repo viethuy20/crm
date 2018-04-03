@@ -284,5 +284,15 @@ namespace PQT.Domain.Concrete
             notify.Seen = true;
             return Update(notify);
         }
+        public int SeenUserNotification(int userId, int leadId)
+        {
+            var notifications = GetAll<UserNotification>(m=>m.UserID == userId && m.EntryId == leadId);
+            foreach (var userNotification in notifications)
+            {
+                userNotification.Seen = true;
+                Update(userNotification);
+            }
+            return notifications.Count();
+        }
     }
 }

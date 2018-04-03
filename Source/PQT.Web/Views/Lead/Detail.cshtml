@@ -57,21 +57,23 @@
     <div class="row section-header" style="height: auto">
         <h2 class="text-primary col-sm-3">@ViewBag.Title</h2>
 
-        <div class="pull-right" style="padding-right: 12px">
+    </div>
+    <div class="row">
+        <div class="col-sm-12" style="padding-right: 24px;padding-bottom: 12px">
             @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
             {
                 @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "NoCallList").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
             }
             else
             {
-                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").RouteValues(new {id = Model.Lead.EventID}).PrependIcon("md md-arrow-back")
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
             }
 
             @if ((Model.Lead.LeadStatusRecord != LeadStatus.Booked))
             {
                 if (CurrentUser.HasPermission("Lead", "Edit"))
                 {
-                    @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new {leadId = Model.Lead.ID}).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
+                    @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { leadId = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
                 }
             }
             @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
@@ -91,7 +93,7 @@
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
             {
-                @Html.Bootstrap().ActionLinkButton("Reject " + Model.Lead.StatusDisplay, "RejectAction").RouteValues(new {id = Model.Lead.ID}).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
+                @Html.Bootstrap().ActionLinkButton("Reject " + Model.Lead.StatusDisplay, "RejectAction").RouteValues(new { id = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
             }
 
 
@@ -100,12 +102,12 @@
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.Live))
             {
-                @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new {id = Model.Lead.ID, requestType = LeadStatus.RequestLOI}).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
+                @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
             }
             @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord != LeadStatus.RequestBook &&
                                                                         Model.Lead.LeadStatusRecord != LeadStatus.Booked))
             {
-                @Html.Bootstrap().ActionLinkButton("Request To Book", "RequestAction").RouteValues(new {id = Model.Lead.ID, requestType = LeadStatus.RequestBook}).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")
+                @Html.Bootstrap().ActionLinkButton("Request To Book", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestBook }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")
             }
             @if (CurrentUser.HasPermission("Lead", "CancelRequest") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI ||
@@ -157,7 +159,7 @@
                 {
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Lead.LeadStatusRecord.Message).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.LeadStatusRecord.Message).Class("form-control").HtmlAttributes(new { @style = "color:#f44336" }).Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Lead.LeadStatusRecord.Message).LabelText("REASON OF REJECT")
                         </div>
                     </div>
@@ -168,6 +170,15 @@
     <div class="card">
         <div class="card-body form form-validate">
             <div class="row">
+                @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
+            {
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.Event.CallFilterKeywords).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.Event.CallFilterKeywords).LabelText("EVENT CALL KEYWORDS")
+                        </div>
+                    </div>
+                }
                 <div class="col-sm-6">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Lead.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
@@ -231,7 +242,7 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.WorkEmailAddress1).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.WorkEmailAddress1).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Lead.WorkEmailAddress1).LabelText("Work Email Address1")
                     </div>
                 </div>
@@ -250,7 +261,7 @@
         <div class="card-head">
             <header>Call Sessions</header>
         </div>
-        <div class="card-body text-default-light">
+        <div class="card-body">
             <div class="row">
                 <table class="table no-margin">
                     <thead>
@@ -287,7 +298,21 @@
 </section>
 @Html.Script(
     @<script>
-
+         $(document).unbind('ajaxStart');
+         $.ajax({
+             url: '@Url.Action("UpdateSeenNotify","Home")?leadId=@Model.Lead.ID',
+             type: 'POST',
+             success: function (data) {
+                 $(document).ajaxStart(function () {
+                     $("#dvLoading").show();
+                 });
+             },
+             error: function () {
+                 $(document).ajaxStart(function () {
+                     $("#dvLoading").show();
+                 });
+             }
+         });
 
          $(document).on('click', '#lead_block', function (e) {
              e.preventDefault();

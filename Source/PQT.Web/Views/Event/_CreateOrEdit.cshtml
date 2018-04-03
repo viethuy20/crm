@@ -105,6 +105,21 @@
 </div>
 <div class="card card-underline">
     <div class="card-head">
+        <header>Companies Assign</header>
+    </div>
+    <div class="card-body text-default-light">
+        <div class="row">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    @Html.CollectionEditorFor(m => m.Event.EventSessions)
+                </div>
+                @Html.JqueryTemplateFor(m => m.Event.EventSessions, "sub-tmpl")
+            </div>
+        </div>
+    </div><!--end .card-body -->
+</div>
+<div class="card card-underline">
+    <div class="card-head">
         <header>Event Sessions</header>
     </div>
     <div class="card-body text-default-light">

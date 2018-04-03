@@ -32,5 +32,6 @@ namespace PQT.Domain.Abstract
         UserNotification CreateUserNotification(UserNotification notify);
         bool UpdateUserNotification(UserNotification notify);
         bool SeenUserNotification(int notifyId);
+        int SeenUserNotification(int userId,int leadId);
     }
 }

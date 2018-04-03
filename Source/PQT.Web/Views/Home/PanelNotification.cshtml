@@ -32,11 +32,18 @@
                         @*<div class="tile-icon">
                                 <img src="/Content/img/profile.png?1404026791" alt="" />
                             </div>*@
-                        <div class="tile-text">
-                            <b>@item.Description - @item.EventCode</b>
-                            <br/>@item.Title
-                            <small class="timestamp" title="@item.Timestamp">@item.TimeAgo</small>
-                        </div>
+                            <div class="tile-text">
+                            @if (item.Seen)
+                            {
+                                @item.Description @:- @item.EventCode
+                            }
+                            else
+                            {
+                                <b>@item.Description - @item.EventCode</b>
+                            }
+                                <br/>@item.Title
+                                <small class="timestamp" title="@item.Timestamp">@item.TimeAgo</small>
+                            </div>
                         </a>
                     </li>
                 }

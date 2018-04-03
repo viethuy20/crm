@@ -15,7 +15,7 @@ namespace PQT.Domain.Entities
             CreatedTime = DateTime.Now;
         }
         public int UserID { get; set; }
-        public int EntryId { get; set; }
+        public int EntryId { get; set; } // as leadId
         public int EventId { get; set; }
         public bool Seen { get; set; }
         public NotifyType NotifyType { get; set; }
