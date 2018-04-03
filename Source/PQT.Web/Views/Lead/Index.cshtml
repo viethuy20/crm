@@ -179,7 +179,7 @@
          $(document).unbind('ajaxStart');
          var windowW = $(window).width();
          var windowH = $(window).height();
-         var fixedColumn = false;
+         var fixedColumn = 0;
          var sizeLenght = 50;
 
 
@@ -313,12 +313,12 @@
              },
          });
         function FixedTable() {
-            if (!fixedColumn) {
-                fixedColumn = true;
+            if (fixedColumn < 3) {
+                fixedColumn ++;
                 var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
                     leftColumns: 5,
                     sHeightMatch: "auto",
-                    rightColumns: 3
+                    rightColumns: 2
                 });
                 //var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
                 //if ($leftWrappers.length > 1) {
@@ -331,10 +331,10 @@
             }
         }
          $(document).on("click", ".paginate_button", function () {
-             fixedColumn = false;
+             fixedColumn = 0;
          });
          $(document).on("change", "select[name=table_length]", function () {
-             fixedColumn = false;
+             fixedColumn = 0;
          });
 
 
@@ -374,7 +374,7 @@
                          success: function (data) {
                              if (data == "") {
                                  toastr.success("Request successful");
-                                 fixedColumn = false;
+                                 fixedColumn = 0;
                                  oTable.fnFilter('');
                                  $.magnificPopup.close();
                              } else {
@@ -400,7 +400,7 @@
                          success: function (data) {
                              if (data == "") {
                                  toastr.success("Cancel successful");
-                                 fixedColumn = false;
+                                 fixedColumn = 0;
                                  oTable.fnFilter('');
                                  $.magnificPopup.close();
                              } else {
@@ -426,7 +426,7 @@
                          success: function (data) {
                              if (data == "") {
                                  toastr.success("Blocked successful");
-                                 fixedColumn = false;
+                                 fixedColumn = 0;
                                  oTable.fnFilter('');
                                  $.magnificPopup.close();
                              } else {
@@ -452,7 +452,7 @@
                          success: function (data) {
                              if (data == "") {
                                  toastr.success("Unblock successful");
-                                 fixedColumn = false;
+                                 fixedColumn = 0;
                                  oTable.fnFilter('');
                                  $.magnificPopup.close();
                              } else {
@@ -537,14 +537,14 @@
          //            $(this).find('i').addClass("fa-compress");
          //            $(this).find('i').removeClass("fa-expand");
          //            oTable.css("width", "100%");
-         //            fixedColumn = false;
+         //            fixedColumn = 0;
          //            FixedTable();
          //        } else {
          //            $(this).parents(".card").parent().removeClass("col-md-12");
          //            $(this).parents(".card").parent().addClass("col-md-8");
          //            $(this).find('i').removeClass("fa-compress");
          //            $(this).find('i').addClass("fa-expand");
-         //            fixedColumn = false;
+         //            fixedColumn = 0;
          //            FixedTable();
          //        }
          //    });
@@ -625,7 +625,7 @@
                  if (data.Code == 1) {
                      toastr.success('@Resource.UpdateSuccessful');
                      $.magnificPopup.close();
-                     fixedColumn = false;
+                     fixedColumn = 0;
                      oTable.fnFilter('');
                  }
                  if (data) {
@@ -684,24 +684,24 @@
                                      success: function (data) {
                                          if (data == "") {
                                              toastr.success("Request successful");
-                                             fixedColumn = false;
+                                             fixedColumn = 0;
                                              oTable.fnFilter('');
                                          } else {
                                              toastr.error(data);
-                                             fixedColumn = false;
+                                             fixedColumn = 0;
                                              oTable.fnFilter('');
                                          }
                                      },
                                      error: function () {
                                          toastr.error("Request failed");
-                                         fixedColumn = false;
+                                         fixedColumn = 0;
                                          oTable.fnFilter('');
                                      }
                                  });
                              }
                          });
                      } else {
-                         fixedColumn = false;
+                         fixedColumn = 0;
                          oTable.fnFilter('');
                      }
                  }
@@ -783,7 +783,7 @@
              if (data == "") {
                  toastr.success("Reject successful");
                  $.magnificPopup.close();
-                 fixedColumn = false;
+                 fixedColumn = 0;
                  oTable.fnFilter('');
              } else {
                  toastr.error(data);
@@ -808,7 +808,7 @@
                  if (data.Code == 1) {
                      toastr.success('@Resource.UpdateSuccessful');
                      $.magnificPopup.close();
-                     fixedColumn = false;
+                     fixedColumn = 0;
                      oTable.fnFilter('');
                  }
              }

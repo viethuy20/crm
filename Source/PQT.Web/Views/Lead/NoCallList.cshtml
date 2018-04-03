@@ -297,12 +297,12 @@
              },
          });
          function FixedTable() {
-             if (fixedColumn<2) {
+             if (fixedColumn<3) {
                  fixedColumn ++;
                  var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
                      leftColumns: 5,
                      sHeightMatch: "auto",
-                     rightColumns: 3
+                     rightColumns: 2
                  });
                  var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
                  if ($leftWrappers.length > 1) {
