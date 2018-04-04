@@ -35,7 +35,6 @@ namespace PQT.Web.Models
             var unitRepo = DependencyHelper.GetService<IUnitRepository>();
 
             DataTable dtSheetName = ExcelUploadHelper.GetUploadedExcelSpreadsheetName(FilePath);
-            var importRows = new List<CompanyJson>();
             foreach (DataRow row in dtSheetName.Rows)
             {
                 string strSheetName = row["TABLE_NAME"].ToString();
@@ -76,7 +75,7 @@ namespace PQT.Web.Models
                         temp.BusinessUnits = dtRow[7].ToString();
                         temp.Email = dtRow[8].ToString();
                         temp.PersonalContact = dtRow[9].ToString();
-                        importRows.Add(temp);
+                        ImportRows.Add(temp);
                     }
                 }
             }

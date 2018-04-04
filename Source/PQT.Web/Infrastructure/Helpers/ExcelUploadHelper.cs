@@ -126,15 +126,6 @@ namespace PQT.Web.Infrastructure.Helpers
     }
     public enum FolderUpload
     {
-        Accessories,
-        // ReSharper disable once InconsistentNaming
-        IUs,
-        Indents,
-        ImportTemporaryPlate,
-        MatrixDiscount,
-        Shipment,
-        Delivery,
-        PoAttachment,
-        COE,
+        Companies,
     }
 }

@@ -272,7 +272,7 @@ namespace PQT.Domain.Helpers
             else if (timeSpan <= TimeSpan.FromDays(365))
             {
                 result = timeSpan.Days > 1 ?
-                    String.Format("{0} at {1}", timeSpan.ToString("dd MMM"), timeSpan.ToString("HH:mm")) :
+                    String.Format("{0} at {1}", dateTime.ToString("dd MMM"), dateTime.ToString("HH:mm")) :
                     "yesterday";
             }
             //else if (timeSpan <= TimeSpan.FromDays(365))
@@ -283,7 +283,7 @@ namespace PQT.Domain.Helpers
             //}
             else
             {
-                result = String.Format("{0} at {1}", timeSpan.ToString("dd MMM yyyy"), timeSpan.ToString("HH:mm"));
+                result = String.Format("{0} at {1}", dateTime.ToString("dd MMM yyyy"), dateTime.ToString("HH:mm"));
             }
 
             return result;

@@ -1,7 +1,7 @@
 ﻿@using Resources
 @model IEnumerable<PQT.Domain.Entities.Company>
 @{
-    ViewBag.Title = "Company";
+    ViewBag.Title = "Companies";
 }
 
 <section>
@@ -17,7 +17,7 @@
 
             @if (CurrentUser.HasPermission("Company", "ImportFromExcel"))
             {
-                @Html.Bootstrap().ActionLinkButton(Resource.ImportFromExcel, "ImportFromExcel").PrependIcon(Icons.plus, true).HtmlAttributes(new { @class = "btn btn-info " })
+                @Html.Bootstrap().ActionLinkButton(Resource.ImportFromExcel, "ImportFromExcel").PrependIcon("md md-cloud-upload").HtmlAttributes(new { @class = "btn btn-info " })
             }
         </div>
     </div>

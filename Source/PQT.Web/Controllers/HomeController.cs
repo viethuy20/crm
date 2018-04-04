@@ -46,11 +46,13 @@ namespace PQT.Web.Controllers
         public ActionResult Index()
         {
             var model = new HomeModel();
-            model.Events = _eventService.GetAllEvents();
+            model.Events = _eventService.GetAllEvents().Where(m =>
+                m.UserID == CurrentUser.Identity.ID || m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID))
+                    .Contains(CurrentUser.Identity.ID) || m.Users.Select(u => u.ID).Contains(CurrentUser.Identity.ID));
             foreach (var modelEvent in model.Events)
             {
                 modelEvent.Notifications =
-                    _memRepository.GetAllUserNotificationsByEvent(CurrentUser.Identity.ID,modelEvent.ID,
+                    _memRepository.GetAllUserNotificationsByEvent(CurrentUser.Identity.ID, modelEvent.ID,
                         Settings.System.NotificationNumber());
             }
             return View(model);

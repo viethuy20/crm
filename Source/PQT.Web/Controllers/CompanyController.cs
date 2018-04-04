@@ -99,19 +99,21 @@ namespace PQT.Web.Controllers
             return Json(false);
         }
 
+        [DisplayName(@"Import From Excel")]
         public ActionResult ImportFromExcel()
         {
             return View(new CompanyImportModel());
         }
 
         [HttpPost]
+        [DisplayName(@"Import From Excel")]
         public ActionResult ImportFromExcel(CompanyImportModel model)
         {
             if (model.FileImport == null)
                 return View(new CompanyImportModel());
             if (model.FileImport.FileName.Substring(model.FileImport.FileName.LastIndexOf('.')).ToLower().Contains("xls"))
             {
-                model.FilePath = ExcelUploadHelper.SaveFile(model.FileImport, FolderUpload.Indents);
+                model.FilePath = ExcelUploadHelper.SaveFile(model.FileImport, FolderUpload.Companies);
                 try
                 {
                     model.check_data();
@@ -133,6 +135,7 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
+        [AjaxOnly]
         public ActionResult ComfirmImport(string sessionName)
         {
             if (string.IsNullOrEmpty(sessionName) || Session[sessionName] == null)

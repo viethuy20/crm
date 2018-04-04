@@ -2,7 +2,9 @@
 @using PQT.Domain.Abstract
 @using Resources
 @model PQT.Web.Models.CompanyImportModel
-
+@{
+    ViewBag.Title = "Import Companies";
+}
 
 <style>
     label.myLabel input[type="file"] {
@@ -110,125 +112,126 @@
     }
 </style>
 
-<section class="panel panel-default">
-    <header class="panel-heading">
-        @Resource.IndentManagement
-    </header>
-    <div class="row wrapper dataTables_length table_basic">
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="form-group row">
         <div class="col-sm-6">
-            @Html.Bootstrap().Button().Id("btnUpload").HtmlAttributes(new { @class = "DTTT_button btn btn-info" }).Text("Import Excel File").PrependIcon(Icons.upload, true)
+            @Html.Bootstrap().Button().Id("btnUpload").HtmlAttributes(new { @class = "DTTT_button btn btn-info" }).Text("Import Excel File").PrependIcon("md md-cloud-upload")
             @if (Model.Companies != null && Model.Companies.Count > 0)
             {
-                @Html.Bootstrap().ActionLinkButton("Confirm Upload", "ComfirmImport").RouteValues(new { sessionName = Model.SessionName }).Style(ButtonStyle.Success).PrependIcon(Icons.check, true).Id("finish")
+                @Html.Bootstrap().ActionLinkButton("Confirm Upload", "ComfirmImport").RouteValues(new { sessionName = Model.SessionName }).Style(ButtonStyle.Success).PrependIcon("md md-done").Id("finish")
             }
         </div>
     </div>
-    <div class="panel-body">
-        <div class="table-responsive" style="min-height: calc(100vh - 335px);">
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
 
-
-            @if (Model.Companies != null && Model.Companies.Count > 0)
+                @if (Model.Companies != null && Model.Companies.Count > 0)
             {
                 var count = 0;
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>S/No.</th>
-                            <th>Country</th>
-                            <th>Company</th>
-                            <th>Product/ Service</th>
-                            <th>Sector</th>
-                            <th>Industry</th>
-                            <th>Designation</th>
-                            <th>Ownership</th>
-                            <th>Business  Units</th>
-                            <th>Email</th>
-                            <th>Personal Contact</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var com in Model.Companies)
-                        {
-                            count++;
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td>@count</td>
-                                <td>@com.CountryCode</td>
-                                <td>@com.CompanyName</td>
-                                <td>@com.ProductOrService</td>
-                                <td>@com.Sector</td>
-                                <td>@com.Industry</td>
-                                <td>@com.Designation</td>
-                                <td>@com.Ownership</td>
-                                <td>@com.BusinessUnits</td>
-                                <td>@com.Email</td>
-                                <td>@com.PersonalContact</td>
+                                <th>S/No.</th>
+                                <th>Country</th>
+                                <th>Company</th>
+                                <th>Product/ Service</th>
+                                <th>Sector</th>
+                                <th>Industry</th>
+                                <th>Designation</th>
+                                <th>Ownership</th>
+                                <th>Business  Units</th>
+                                <th>Email</th>
+                                <th>Personal Contact</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else if (Model.ImportRows.Any())
-            {
-                var count = 0;
-                <table class="table table-bordered consolidate css">
-                    <thead>
-                        <tr>
-                            <th>S/No.</th>
-                            <th>Country</th>
-                            <th>Company</th>
-                            <th>Product/ Service</th>
-                            <th>Sector</th>
-                            <th>Industry</th>
-                            <th>Designation</th>
-                            <th>Ownership</th>
-                            <th>Business  Units</th>
-                            <th>Email</th>
-                            <th>Personal Contact</th>
-                            <th>Error</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var com in Model.ImportRows)
-                        {
-                            count++;
-                            <tr class="@(!string.IsNullOrEmpty(com.Error)?"highline":"")">
-                                <td class="text-center">@count</td>
-                                <td>@com.CountryCode</td>
-                                <td>@com.CompanyName</td>
-                                <td>@com.ProductOrService</td>
-                                <td>@com.Sector</td>
-                                <td>@com.Industry</td>
-                                <td>@com.Designation</td>
-                                <td>@com.Ownership</td>
-                                <td>@com.BusinessUnits</td>
-                                <td>@com.Email</td>
-                                <td>@com.PersonalContact</td>
-                                <td style="color: red">@Html.Raw(com.Error)</td>
+                        </thead>
+                        <tbody>
+                            @foreach (var com in Model.Companies)
+                            {
+                                count++;
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@com.CountryCode</td>
+                                    <td>@com.CompanyName</td>
+                                    <td>@com.ProductOrService</td>
+                                    <td>@com.Sector</td>
+                                    <td>@com.Industry</td>
+                                    <td>@com.Designation</td>
+                                    <td>@com.Ownership</td>
+                                    <td>@com.BusinessUnits</td>
+                                    <td>@com.Email</td>
+                                    <td>@com.PersonalContact</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else if (Model.ImportRows.Any())
+                {
+                    var count = 0;
+                    <table class="table table-bordered consolidate css">
+                        <thead>
+                            <tr>
+                                <th>S/No.</th>
+                                <th>Country</th>
+                                <th>Company</th>
+                                <th>Product/ Service</th>
+                                <th>Sector</th>
+                                <th>Industry</th>
+                                <th>Designation</th>
+                                <th>Ownership</th>
+                                <th>Business  Units</th>
+                                <th>Email</th>
+                                <th>Personal Contact</th>
+                                <th>Error</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            }
+                        </thead>
+                        <tbody>
+                            @foreach (var com in Model.ImportRows)
+                            {
+                                count++;
+                                <tr class="@(!string.IsNullOrEmpty(com.Error)?"highline":"")">
+                                    <td class="text-center">@count</td>
+                                    <td>@com.CountryCode</td>
+                                    <td>@com.CompanyName</td>
+                                    <td>@com.ProductOrService</td>
+                                    <td>@com.Sector</td>
+                                    <td>@com.Industry</td>
+                                    <td>@com.Designation</td>
+                                    <td>@com.Ownership</td>
+                                    <td>@com.BusinessUnits</td>
+                                    <td>@com.Email</td>
+                                    <td>@com.PersonalContact</td>
+                                    <td style="color: red">@Html.Raw(com.Error)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
         </div>
     </div>
 </section>
 
 
 <div style="display: none">
-    <div id="dialog-upload" style="background: white; margin: auto; max-width: 600px; padding: 50px 50px 35px 50px; position: relative;">
-        <section>
-            <header class="title-dialog">
-                @Resource.UploadFile
-            </header>
-            <button title="Close (Esc)" type="button" class="mfp-close">×</button>
+    <div id="dialog-upload" style="background: white; margin: auto; max-width: 600px; position: relative;">
+        <div>
+            <div class="card-head">
+                <header><b>Upload File</b></header>
+            </div><!--end .card-head -->
             @using (Html.BeginForm("ImportFromExcel", "Company", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
-                <div class="form-horizontal">
+                <div class="card-body" style="padding-top: 0px;">
                     <div class="form-group">
                         <div class="col-sm-12">
                             <a href="~/Content/SampleFiles/companies_sample.xls">Download sample excel file</a>
                         </div>
                     </div>
+                    <br />
                     <div class="form-group">
                         <label class="col-sm-3 control-label">File Import <span class="required">*</span></label>
                         <div class="col-sm-9">
@@ -237,7 +240,7 @@
                     </div>
                 </div>
             }
-        </section>
+        </div>
     </div>
 </div>
 
