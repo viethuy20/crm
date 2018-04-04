@@ -54,7 +54,7 @@ namespace PQT.Web.Controllers
             }
             return View(model);
         }
-        [DisplayName(@"No Call List management")]
+        [DisplayName(@"No Call List For Manager")]
         public ActionResult NoCallList(int id = 0)
         {
             var model = new LeadModelView();
@@ -99,12 +99,23 @@ namespace PQT.Web.Controllers
             if (model.Lead == null)
             {
                 TempData["error"] = "Call not found";
-                return RedirectToAction("Index", new { id = eventId });
+                if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
+                {
+                    return RedirectToAction("NoCallList", new { id = eventId });
+                }
+                else
+                {
+                    return RedirectToAction("Index", new { id = eventId });
+                }
+
             }
             if (model.Lead.UserID != CurrentUser.Identity.ID && !CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
             {
                 TempData["error"] = "Don't have permission";
-                return RedirectToAction("Index", new { id = eventId });
+                if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
+                    return RedirectToAction("NoCallList", new { id = eventId });
+                else
+                    return RedirectToAction("Index", new { id = eventId });
             }
             return View(model);
         }
