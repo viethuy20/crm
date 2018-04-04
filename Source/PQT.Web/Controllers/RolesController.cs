@@ -48,7 +48,7 @@ namespace PQT.Web.Controllers
 
             Role role = _repo.GetRoleByName(model.Role.Name);
             if (role != null)
-                ModelState.AddModelError("Role.Name", Resource.TheNameAlreadyExists);
+                ModelState.AddModelError("Role.Name", Resource.NameExists);
 
             if (!ModelState.IsValid)
             {
@@ -95,7 +95,7 @@ namespace PQT.Web.Controllers
 
             Role role = _repo.GetRoleByName(model.Role.Name);
             if (role != null && role.ID != model.Role.ID)
-                ModelState.AddModelError("Role.Name", Resource.TheNameAlreadyExists);
+                ModelState.AddModelError("Role.Name", Resource.NameExists);
 
             if (!ModelState.IsValid)
                 return Edit(model.Role.ID);

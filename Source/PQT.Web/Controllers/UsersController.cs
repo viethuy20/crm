@@ -168,7 +168,7 @@ namespace PQT.Web.Controllers
             }
             catch (Exception)
             {
-                TempData["Message"] = Resource.CannotReactiveUser;
+                TempData["Message"] = Resource.UnableToReactiveUser;
                 return RedirectToAction("ListDeletedUsers");
             }
             TempData["Message"] = Resource.UserEmailActive;

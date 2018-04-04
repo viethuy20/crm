@@ -16,7 +16,7 @@ namespace PQT.Web.Validation
             RuleFor(m => m.EventName).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.StartDate).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.EndDate).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(m => m.EventCode).Must(BeCode).WithMessage(Resource.CodeHasExistedAlready);
+            RuleFor(m => m.EventCode).Must(BeCode).WithMessage(Resource.CodeExists);
         }
         private bool BeCode(Event occ, string code)
         {

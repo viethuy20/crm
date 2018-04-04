@@ -14,7 +14,7 @@ namespace PQT.Web.Validation
             _unitRepository = unitRepository;
             RuleFor(m => m.Code).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.Name).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(m => m.Code).Must(BeCode).WithMessage(Resource.CodeHasExistedAlready);
+            RuleFor(m => m.Code).Must(BeCode).WithMessage(Resource.CodeExists);
         }
         private bool BeCode(Country occ, string Code)
         {

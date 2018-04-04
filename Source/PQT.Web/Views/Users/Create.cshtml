@@ -87,7 +87,7 @@
                     var reader = new FileReader();
                     reader.onload = function (e) {
                         if (upload[0].files[0].size > 2000000) {
-                            $.sticky("@Resource.FileToLarge", { type: 'st-danger' });
+                            $.sticky("@Resource.ErrorYourFileIsTooLarge", { type: 'st-danger' });
                             upload.replaceWith(upload = upload.clone(true));
                         } else {
                             $('#profilePicture').html("<img style='width: 120px; height:120px;border-radius: 60px;' src='" + e.target.result + "' class='img-polaroid user-picture-preview'/>");
