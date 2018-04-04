@@ -8,14 +8,19 @@
     <div class="section-header">
         <h2 class="text-primary">@ViewBag.Title</h2>
     </div>
-    @if (CurrentUser.HasPermission("Roles", "Create"))
-    {
-        <div class="form-group row">
-            <div class="col-sm-6">
+    <div class="form-group row">
+        <div class="col-sm-6">
+            @if (CurrentUser.HasPermission("Company", "CreateOrEdit"))
+            {
                 @Html.Bootstrap().ActionLinkButton(Resource.AddNew, "CreateOrEdit").RouteValues(new { id = 0 }).PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary simple-ajax-popup-align-top" })
-            </div>
+            }
+
+            @if (CurrentUser.HasPermission("Company", "ImportFromExcel"))
+            {
+                @Html.Bootstrap().ActionLinkButton(Resource.ImportFromExcel, "ImportFromExcel").PrependIcon(Icons.plus, true).HtmlAttributes(new { @class = "btn btn-info " })
+            }
         </div>
-    }
+    </div>
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -42,7 +47,7 @@
                                 <td>
                                     <a href="@Url.Action("CreateOrEdit", new {id = item.ID})" data-action="edit" class="simple-ajax-popup-align-top">
                                         <i class="md md-edit text-info"></i>
-                                    </a> | 
+                                    </a> |
                                     <a href="#" data-action="delete" data-id="@item.ID">
                                         <i class="md md-delete text-danger"></i>
                                     </a>

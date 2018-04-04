@@ -7,6 +7,8 @@ using System.Web.Mvc;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Web.Infrastructure.Filters;
+using PQT.Web.Infrastructure.Helpers;
+using PQT.Web.Models;
 
 namespace PQT.Web.Controllers
 {
@@ -97,6 +99,55 @@ namespace PQT.Web.Controllers
             return Json(false);
         }
 
+        public ActionResult ImportFromExcel()
+        {
+            return View(new CompanyImportModel());
+        }
+
+        [HttpPost]
+        public ActionResult ImportFromExcel(CompanyImportModel model)
+        {
+            if (model.FileImport == null)
+                return View(new CompanyImportModel());
+            if (model.FileImport.FileName.Substring(model.FileImport.FileName.LastIndexOf('.')).ToLower().Contains("xls"))
+            {
+                model.FilePath = ExcelUploadHelper.SaveFile(model.FileImport, FolderUpload.Indents);
+                try
+                {
+                    model.check_data();
+                }
+                catch (Exception)
+                {
+                    TempData["error"] = "Import failed";
+                    return View(model);
+                }
+                if (model.ImportRows.Any(m => !string.IsNullOrEmpty(m.Error)))
+                {
+                    return View(model);
+                }
+                model.ParseValue();
+                model.SessionName = "SessionImport" + Guid.NewGuid();
+                Session[model.SessionName] = model;
+                return View(model);
+            }
+            return View(model);
+        }
+
+        public ActionResult ComfirmImport(string sessionName)
+        {
+            if (string.IsNullOrEmpty(sessionName) || Session[sessionName] == null)
+            {
+                TempData["error"] = "Session does not exist or expired";
+                return RedirectToAction("ImportFromExcel");
+            }
+            else
+            {
+                var model = (CompanyImportModel)Session[sessionName];
+                model.ConfirmImport();
+                TempData["message"] = "Import completed";
+                return RedirectToAction("Index");
+            }
+        }
 
     }
 }

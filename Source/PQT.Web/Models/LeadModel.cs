@@ -106,7 +106,7 @@ namespace PQT.Web.Models
                 return leadRepo.UpdateAttachment(lead.LeadStatusRecord) ? "" : "Update failed";
             }
 
-            if (lead.LeadStatusRecord != LeadStatus.Initial && lead.LeadStatusRecord != LeadStatus.Reject) return "Submit failed";
+            //if (lead.LeadStatusRecord != LeadStatus.Initial && lead.LeadStatusRecord != LeadStatus.Reject) return "Submit failed";
 
             var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
             if (leads.Any(m => m.UserID != CurrentUser.Identity.ID &&

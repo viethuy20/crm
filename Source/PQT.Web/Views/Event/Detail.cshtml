@@ -85,27 +85,27 @@
         </div>
         <div class="card-body">
             <div class="row">
-                <table class="table no-margin">
+                <table class="table no-margin" id="grid_companies">
                     <thead>
-                        <tr>
-                            <th>Country</th>
-                            <th>Company</th>
-                            <th>Product/Service</th>
-                            <th>Sector</th>
-                            <th>Industry</th>
-                        </tr>
+                    <tr>
+                        <th>Country</th>
+                        <th>Company</th>
+                        <th>Product/Service</th>
+                        <th>Sector</th>
+                        <th>Industry</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach (var phonecall in Model.Event.Companies)
-                        {
-                            <tr>
-                                <td>@phonecall.CountryName (@phonecall.CountryCode)</td>
-                                <td>@phonecall.CompanyName</td>
-                                <td>@phonecall.ProductOrService</td>
-                                <td>@phonecall.Sector</td>
-                                <td>@phonecall.Industry</td>
-                            </tr>
-                        }
+                    @foreach (var phonecall in Model.Event.Companies)
+                    {
+                        <tr>
+                            <td>@phonecall.CountryName (@phonecall.CountryCode)</td>
+                            <td>@phonecall.CompanyName</td>
+                            <td>@phonecall.ProductOrService</td>
+                            <td>@phonecall.Sector</td>
+                            <td>@phonecall.Industry</td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>
@@ -119,19 +119,19 @@
             <div class="row">
                 <table class="table no-margin">
                     <thead>
-                        <tr>
-                            <th>Group Name</th>
-                            <th>Salesman</th>
-                        </tr>
+                    <tr>
+                        <th>Group Name</th>
+                        <th>Salesman</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach (var phonecall in Model.Event.SalesGroups)
-                        {
-                            <tr>
-                                <td>@phonecall.GroupName</td>
-                                <td>@string.Join("; ", phonecall.Users.Select(m=>m.DisplayName))</td>
-                            </tr>
-                        }
+                    @foreach (var phonecall in Model.Event.SalesGroups)
+                    {
+                        <tr>
+                            <td>@phonecall.GroupName</td>
+                            <td>@string.Join("; ", phonecall.Users.Select(m=>m.DisplayName))</td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>
@@ -178,3 +178,10 @@
         </div><!--end .card-body -->
     </div>
 </section>
+
+@Html.Script(
+    @<script>
+         var $Table = $('#grid_companies').dataTable({
+             "iDisplayLength": 25
+         });
+     </script>)

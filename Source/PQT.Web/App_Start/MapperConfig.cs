@@ -7,6 +7,7 @@ using NS;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
 using PQT.Domain.Helpers;
+using PQT.Web.Models;
 
 // ReSharper disable once CheckNamespace
 
@@ -19,6 +20,8 @@ namespace PQT.Web
             Mapper.CreateMap<Enumeration, int>().ConvertUsing<EnumerationTypeConverter>();
             //Mapper.CreateMap<Enumeration, string>().ConvertUsing<EnumerationStringTypeConverter>();
             Mapper.AddProfile<ModelMappingProfile>();
+            Mapper.CreateMap<Company, CompanyJson>();
+            Mapper.CreateMap<CompanyJson, Company>();
         }
     }
 }

@@ -374,6 +374,7 @@
     <Compile Include="Infrastructure\Notification\LeadNotificator.cs" />
     <Compile Include="Infrastructure\Utility\FileUpload.cs" />
     <Compile Include="Models\AjaxResult.cs" />
+    <Compile Include="Models\CompanyImportModel.cs" />
     <Compile Include="Models\EmailSettingModel.cs" />
     <Compile Include="Models\EventModelView.cs" />
     <Compile Include="Models\HomeSearchModel.cs" />
@@ -2399,6 +2400,7 @@
     <Content Include="Content\fonts\Material-Design-Iconic-Font.eot" />
     <Content Include="Content\fonts\Material-Design-Iconic-Font.ttf" />
     <Content Include="Content\fonts\Material-Design-Iconic-Font.woff" />
+    <Content Include="Content\SampleFiles\companies_sample.xls" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -2472,6 +2474,7 @@
     <Content Include="Views\Event\Detail.cshtml" />
     <Content Include="Views\Lead\Action.cshtml" />
     <Content Include="Views\Lead\NCL.cshtml" />
+    <Content Include="Views\Company\ImportFromExcel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
