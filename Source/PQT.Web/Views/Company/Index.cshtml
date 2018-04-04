@@ -28,7 +28,6 @@
                             <th>Sector</th>
                             <th>Industry</th>
                             <th></th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -61,7 +60,9 @@
 @Html.Script(
     @<script>
 
-        var $Table = $('#table').dataTable();
+        var $Table = $('#table').dataTable({
+            "iDisplayLength": 50
+        });
         $Table.on('click', '[data-action="delete"]', function (e) {
             e.preventDefault();
             var selftr = $(this);

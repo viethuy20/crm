@@ -23,7 +23,6 @@
                         <th>@Resource.Name</th>
                         <th>Dialing Code</th>
                         <th></th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,7 +54,7 @@
     @<script>
 
         var $Table = $('#table').dataTable({
-            "iDisplayLength": 50,
+            "iDisplayLength": 50
         });
         $Table.on('click', '[data-action="delete"]', function (e) {
             e.preventDefault();
