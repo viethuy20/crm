@@ -32,7 +32,7 @@
                         {
                             <tr data-id="@item.ID">
                                 <td>
-                                    <a class="text-primary" href="@Url.Action("Index","Lead",new{id = item.ID})" style="text-decoration: underline;">@item.EventCode</a>
+                                    <a class="text-primary" href="@Url.Action("NoCallList","Lead",new{id = item.ID})" style="text-decoration: underline;">@item.EventCode</a>
                                 </td>
                                 <td>@item.EventName</td>
                                 <td>@item.StartDate.ToString("dd/MM/yyyy")</td>
