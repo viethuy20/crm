@@ -27,6 +27,7 @@ namespace PQT.Domain.Entities
         public string Remark { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public bool IsEventEnd { get; set; }
         public int UserID { get; set; }
         [ForeignKey("UserID")]
         public virtual User User { get; set; }

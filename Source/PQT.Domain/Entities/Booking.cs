@@ -33,6 +33,10 @@ namespace PQT.Domain.Entities
         public string SenderTel { get; set; }
         public string SenderMail { get; set; }
 
+        public int? BookingStatusID { get; set; }
+        [ForeignKey("BookingStatusID")]
+        public virtual BookingStatusRecord BookingStatusRecord { get; set; }
+
         public int CompanyID { get; set; }
         [ForeignKey("CompanyID")]
         public virtual Company Company { get; set; }
