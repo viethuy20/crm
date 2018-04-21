@@ -6,9 +6,9 @@ using System.Text;
 
 namespace PQT.Domain.Entities
 {
-    public class Registration : Entity
+    public class Booking : Entity
     {
-        public Registration()
+        public Booking()
         {
             Delegates = new HashSet<Delegate>();
             EventSessions = new HashSet<EventSession>();
@@ -16,9 +16,12 @@ namespace PQT.Domain.Entities
         public string Address { get; set; }
         public string Tel { get; set; }
         public string Fax { get; set; }
+
         public decimal FeePerDelegate { get; set; }
         public double DiscountPercent { get; set; }// load default from setting
         public string Remarks { get; set; }
+        public decimal RevenueAmount { get; set; }
+        public decimal TotalPaidRevenue { get; set; }
 
         public string AuthoriserName { get; set; }// able to same as sender or boss of sender (noted: add check box `same as sender`)
         public string AuthoriserDestination { get; set; }

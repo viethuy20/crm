@@ -29,7 +29,7 @@ namespace PQT.Domain
         public DbSet<Event> Events { get; set; }
         public DbSet<Lead> Leads { get; set; }
         public DbSet<UserNotification> UserNotifications { get; set; }
-        public DbSet<Registration> Registrations { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
         public DbSet<CompanyResource> CompanyResources { get; set; }
         protected override void OnModelCreating(DbModelBuilder mb)
@@ -42,7 +42,7 @@ namespace PQT.Domain
             mb.Entity<Event>().HasMany(m => m.Users).WithMany().Map(map => map.ToTable("Event_Users").MapLeftKey("Event_Id").MapRightKey("User_Id"));
             mb.Entity<Event>().HasMany(m => m.Companies).WithMany().Map(map => map.ToTable("Event_Companies").MapLeftKey("Event_Id").MapRightKey("Company_Id"));
             //mb.Entity<Event>().HasMany(m => m.Trainers).WithMany().Map(map => map.ToTable("Event_Trainers").MapLeftKey("Event_Id").MapRightKey("Trainer_Id"));
-            mb.Entity<Registration>().HasMany(m => m.EventSessions).WithMany().Map(map => map.ToTable("Registration_EventSessions").MapLeftKey("Registration_Id").MapRightKey("EventSession_Id"));
+            mb.Entity<Booking>().HasMany(m => m.EventSessions).WithMany().Map(map => map.ToTable("Registration_EventSessions").MapLeftKey("Registration_Id").MapRightKey("EventSession_Id"));
         }
     }
 }
