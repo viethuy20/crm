@@ -35,6 +35,10 @@ namespace PQT.Web.Models
             foreach (DataRow row in dtSheetName.Rows)
             {
                 string strSheetName = row["TABLE_NAME"].ToString();
+                if (strSheetName.Contains("FilterDatabase"))
+                {
+                    continue;
+                }
                 DataTable dt = ExcelUploadHelper.GetDataFromExcel(FilePath, strSheetName);
 
                 foreach (DataRow dtRow in dt.Rows)
@@ -109,10 +113,13 @@ namespace PQT.Web.Models
                         CountryID = com.CountryID,
                         CompanyName = com.Organisation,
                     };
-                    comRepo.CreateCompany(newCom);
+                    newCom = comRepo.CreateCompany(newCom);
+                    com.CompanyID = newCom.ID;
                 }
-                comRepo.CreateCompanyResource(com);
+                else
+                    com.CompanyID = comExist.ID;
             }
+            comRepo.CreateCompanyResources(CompanyResources);
         }
     }
 

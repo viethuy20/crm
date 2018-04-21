@@ -34,23 +34,6 @@
                             <th>Personal Email</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach (var item in Model.CompanyResources)
-                        {
-                            <tr data-id="@item.ID">
-                                <td>@item.Country</td>
-                                <td>@item.Salutation</td>
-                                <td>@item.FirstName</td>
-                                <td>@item.LastName</td>
-                                <td>@item.Organisation</td>
-                                <td>@item.Role</td>
-                                <td>@item.BusinessPhone</td>
-                                <td>@item.MobilePhone</td>
-                                <td>@item.WorkEmailAddress</td>
-                                <td>@item.PersonalEmailAddress</td>
-                            </tr>
-                        }
-                    </tbody>
                 </table>
             </div>
         </div>
@@ -61,8 +44,47 @@
 @Html.Script(
     @<script>
 
-        var $Table = $('#table').dataTable({
-            "iDisplayLength": 50
+        var $Table = $("#table");
+        $Table.dataTable({
+            "processing": true, // for show progress bar
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "stateSave": false,
+            "ajax": {
+                "url": "@Url.Action("AjaxGetAlls")",
+                "type": "POST",
+                "datatype": "json",
+                "data": function (d) {
+                }
+            },
+            "columns": [
+                { "data": "Country", "name": "Country", "orderable": true },
+                { "data": "Salutation", "name": "Salutation", "orderable": true },
+                { "data": "FirstName", "name": "FirstName", "orderable": true },
+                { "data": "LastName", "name": "LastName", "orderable": true },
+                { "data": "Organisation", "name": "Organisation", "orderable": true },
+                { "data": "Role", "name": "Role", "orderable": true },
+                { "data": "BusinessPhone", "name": "BusinessPhone", "orderable": true },
+                { "data": "MobilePhone", "name": "MobilePhone", "orderable": true },
+                { "data": "PersonalEmailAddress", "name": "PersonalEmailAddress", "orderable": true },
+                { "data": "WorkEmailAddress", "name": "WorkEmailAddress", "orderable": true },
+            ],
+            "iDisplayLength": 50,
+            "aaSorting": [[4, "asc"]],
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+            },
+            initComplete: function () {
+                var _table = this;
+                _table.parent().find('input[type="search"]').unbind();
+                var timeOutTyping;
+                _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                    clearTimeout(timeOutTyping);
+                    timeOutTyping = setTimeout(function () {
+                        _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                    }, 600);
+                });
+            },
         });
         @*$Table.on('click', '[data-action="delete"]', function (e) {
             e.preventDefault();
@@ -148,4 +170,4 @@
                 }
             });
         }*@
-    </script>)
+</script>)

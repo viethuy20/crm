@@ -14,6 +14,7 @@ namespace PQT.Domain.Abstract
         Company GetCompany(int companyID);
         Company GetCompany(string name);
         Company CreateCompany(Company company);
+        void CreateCompanies(List<Company> companies);
         bool UpdateCompany(Company company);
         bool DeleteCompany(int companyID);
         #endregion Company
@@ -23,6 +24,7 @@ namespace PQT.Domain.Abstract
         IEnumerable<CompanyResource> GetAllCompanyResources(Func<CompanyResource, bool> predicate);
         CompanyResource GetCompanyResource(int companyID);
         CompanyResource CreateCompanyResource(CompanyResource resource);
+        void CreateCompanyResources(List<CompanyResource> companies);
         bool UpdateCompanyResource(CompanyResource resource);
         bool DeleteCompanyResource(int resourceID);
         #endregion Company Resource

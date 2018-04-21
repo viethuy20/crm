@@ -26,7 +26,7 @@ namespace PQT.Seed
 
                 Insert_roles_and_users(db);
                 Insert_Countries(db);
-                Insert_Companies(db);
+                //Insert_Companies(db);
                 Insert_Trainers(db);
                 Insert_Events(db);
                 Insert_menu(db);
@@ -96,18 +96,18 @@ namespace PQT.Seed
             db.SaveChanges();
         }
 
-        private void Insert_Companies(PQTDb db)
-        {
-            for (int i = 1; i <= 10; i++)
-            {
-                db.Companies.Add(new Company
-                {
-                    CountryID = i,
-                    CompanyName = "Company TEST " + i
-                });
-            }
-            db.SaveChanges();
-        }
+        //private void Insert_Companies(PQTDb db)
+        //{
+        //    for (int i = 1; i <= 10; i++)
+        //    {
+        //        db.Companies.Add(new Company
+        //        {
+        //            CountryID = i,
+        //            CompanyName = "Company TEST " + i
+        //        });
+        //    }
+        //    db.SaveChanges();
+        //}
         private void Insert_Trainers(PQTDb db)
         {
             for (int i = 1; i <= 5; i++)
@@ -160,14 +160,14 @@ namespace PQT.Seed
 
             var rAdmin = new Role { Name = "Admin", RoleLevel = RoleLevel.AdminLevel };
             var sManager = new Role { Name = "Manager", RoleLevel = RoleLevel.ManagerLevel };
-            var sQA = new Role { Name = "QA", RoleLevel = RoleLevel.ManagerLevel };
+            var sQA = new Role { Name = "QC", RoleLevel = RoleLevel.ManagerLevel };
             var salesman = new Role { Name = "Salesman", RoleLevel = RoleLevel.SalesLevel };
             var finance = new Role { Name = "Finance", RoleLevel = RoleLevel.ManagerLevel };
             var hR = new Role { Name = "HR", RoleLevel = RoleLevel.ManagerLevel };
 
             db.Users.Add(new User { LevelSalesman= LevelSalesman.None, DisplayName = "ADMIN", Password = EncryptHelper.EncryptPassword("123456"), Email = "ADMIN@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { rAdmin, salesman } });
             db.Users.Add(new User { LevelSalesman = LevelSalesman.None, DisplayName = "Manager", Password = EncryptHelper.EncryptPassword("123456"), Email = "MANAGER@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { sManager } });
-            db.Users.Add(new User { LevelSalesman = LevelSalesman.None, DisplayName = "QA", Password = EncryptHelper.EncryptPassword("123456"), Email = "QA@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { sQA } });
+            db.Users.Add(new User { LevelSalesman = LevelSalesman.None, DisplayName = "QC", Password = EncryptHelper.EncryptPassword("123456"), Email = "QC@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { sQA } });
             db.Users.Add(new User { LevelSalesman = LevelSalesman.None, DisplayName = "Finance", Password = EncryptHelper.EncryptPassword("123456"), Email = "FINANCE@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { finance } });
             db.Users.Add(new User { LevelSalesman = LevelSalesman.None, DisplayName = "HR", Password = EncryptHelper.EncryptPassword("123456"), Email = "HR@LOCALHOST", BusinessPhone = "+84 0168 7040 132", Roles = { hR } });
             var sale1 = new User

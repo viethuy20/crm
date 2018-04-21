@@ -152,5 +152,117 @@ namespace PQT.Web.Controllers
             }
         }
 
+
+        [AjaxOnly]
+        public ActionResult AjaxGetAlls()
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+            var searchValue = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
+            }
+
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+
+            IEnumerable<Company> audits = new HashSet<Company>();
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                if (!string.IsNullOrEmpty(searchValue))
+                    audits = _comRepo.GetAllCompanies(m =>
+                        m.CountryName.ToLower().Contains(searchValue) ||
+                        m.CompanyName.ToLower().Contains(searchValue) ||
+                        m.ProductOrService.ToLower().Contains(searchValue) ||
+                        m.Sector.ToLower().Contains(searchValue) ||
+                        m.Industry.ToLower().Contains(searchValue)
+                       );
+            }
+            else
+            {
+                audits = _comRepo.GetAllCompanies();
+            }
+
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "CountryName":
+                        audits = audits.OrderBy(s => s.CountryName).ThenBy(s => s.CompanyName);
+                        break;
+                    case "ProductOrService":
+                        audits = audits.OrderBy(s => s.ProductOrService).ThenBy(s => s.CompanyName);
+                        break;
+                    case "Sector":
+                        audits = audits.OrderBy(s => s.Sector).ThenBy(s => s.CompanyName);
+                        break;
+                    case "Industry":
+                        audits = audits.OrderBy(s => s.Industry).ThenBy(s => s.CompanyName);
+                        break;
+                    default:
+                        audits = audits.OrderBy(s => s.CompanyName);
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "CountryName":
+                        audits = audits.OrderByDescending(s => s.CountryName).ThenBy(s => s.CompanyName);
+                        break;
+                    case "ProductOrService":
+                        audits = audits.OrderByDescending(s => s.ProductOrService).ThenBy(s => s.CompanyName);
+                        break;
+                    case "Sector":
+                        audits = audits.OrderByDescending(s => s.Sector).ThenBy(s => s.CompanyName);
+                        break;
+                    case "Industry":
+                        audits = audits.OrderByDescending(s => s.Industry).ThenBy(s => s.CompanyName);
+                        break;
+                    default:
+                        audits = audits.OrderByDescending(s => s.CompanyName);
+                        break;
+                }
+            }
+
+
+            recordsTotal = audits.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            var data = audits.Skip(skip).Take(pageSize).ToList();
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    m.ID,
+                    m.CountryName,
+                    m.CompanyName,
+                    m.ProductOrService,
+                    m.Sector,
+                    m.Industry,
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
     }
 }

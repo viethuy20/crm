@@ -39,6 +39,8 @@ namespace PQT.Domain.Entities
         public decimal? BasicSalary { get; set; }
         public ICollection<UserSalaryHistory> UserSalaryHistories { get; set; }
 
+        public string Ip { get; set; }
+        public string Extension { get; set; }//private number for employees
         #endregion
 
         #region Navigation properties

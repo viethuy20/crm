@@ -30,7 +30,7 @@ namespace PQT.Web.Controllers
         /// </summary>
         /// <param name="id">event id</param>
         /// <returns></returns>
-        [DisplayName(@"My Call List management")]
+        [DisplayName(@"My Call List For Salesman")]
         public ActionResult Index(int id = 0)
         {
             var model = new LeadModelView();

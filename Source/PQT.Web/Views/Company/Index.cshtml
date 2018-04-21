@@ -35,26 +35,6 @@
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr data-id="@item.ID">
-                                <td>@item.CountryName</td>
-                                <td>@item.CompanyName</td>
-                                <td>@item.ProductOrService</td>
-                                <td>@item.Sector</td>
-                                <td>@item.Industry</td>
-                                <td>
-                                    <a href="@Url.Action("CreateOrEdit", new {id = item.ID})" data-action="edit" class="simple-ajax-popup-align-top">
-                                        <i class="md md-edit text-info"></i>
-                                    </a> |
-                                    <a href="#" data-action="delete" data-id="@item.ID">
-                                        <i class="md md-delete text-danger"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
                 </table>
             </div>
         </div>
@@ -64,9 +44,46 @@
 
 @Html.Script(
     @<script>
-
-        var $Table = $('#table').dataTable({
-            "iDisplayLength": 50
+        var $Table = $("#table");
+     $Table.dataTable({
+            "processing": true, // for show progress bar
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "stateSave": false,
+            "ajax": {
+                "url": "@Url.Action("AjaxGetAlls")",
+                "type": "POST",
+                "datatype": "json",
+                "data": function (d) {
+                }
+            },
+            "columns": [
+                { "data": "CountryName", "name": "CountryName", "orderable": true },
+                { "data": "CompanyName", "name": "CompanyName", "orderable": true },
+                { "data": "ProductOrService", "name": "ProductOrService", "orderable": true },
+                { "data": "Sector", "name": "Sector", "orderable": true },
+                { "data": "Industry", "name": "Industry", "orderable": true },
+                { "data": "ID", "name": "ID", "orderable": false },
+            ],
+            "iDisplayLength": 50,
+            "aaSorting": [[2, "asc"]],
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                $(nRow).find('td:eq(5)').html('<a href="@Url.Action("CreateOrEdit")?id="' + aData["ID"] + ' data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a> ' + 
+                    ' <a href="#" data-action="delete" data-id="' + aData["ID"] +'"><i class="md md-delete text-danger"></i></a>');
+                $(nRow).attr("data-id", ["ID"]);
+            },
+            initComplete: function () {
+                var _table = this;
+                _table.parent().find('input[type="search"]').unbind();
+                var timeOutTyping;
+                _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                    clearTimeout(timeOutTyping);
+                    timeOutTyping = setTimeout(function () {
+                        _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                    }, 600);
+                });
+            },
         });
         $Table.on('click', '[data-action="delete"]', function (e) {
             e.preventDefault();
