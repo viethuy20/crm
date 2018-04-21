@@ -31,6 +31,7 @@ namespace PQT.Domain
         public DbSet<UserNotification> UserNotifications { get; set; }
         public DbSet<Registration> Registrations { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
+        public DbSet<CompanyResource> CompanyResources { get; set; }
         protected override void OnModelCreating(DbModelBuilder mb)
         {
             mb.Entity<User>().HasMany(u => u.Roles).WithMany().Map(map => map.ToTable("Users_Roles").MapLeftKey("User_Id").MapRightKey("Role_Id"));

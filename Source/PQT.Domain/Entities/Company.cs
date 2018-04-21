@@ -8,9 +8,7 @@ namespace PQT.Domain.Entities
 {
     public class Company : Entity
     {
-
-        [Range(1, int.MaxValue, ErrorMessage = "Please choose company")]
-        public int CountryID { get; set; }
+        public int? CountryID { get; set; }
         [ForeignKey("CountryID")]
         public virtual Country Country { get; set; }
         public string CompanyName { get; set; }

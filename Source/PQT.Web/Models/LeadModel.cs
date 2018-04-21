@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 using NS;
@@ -264,11 +265,17 @@ namespace PQT.Web.Models
     public class CallingModel
     {
         public int LeadID { get; set; }
-        public Lead Lead { get; set; }
-
+        [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string GeneralLine { get; set; }
+        [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string ClientName { get; set; }
+        [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string DirectLine { get; set; }
+        public string CompanyName { get; set; }
+
+        public int EventID { get; set; }
+        public int CompanyID { get; set; }
+        public IEnumerable<Company> Companies { get; set; }
 
         public string Salutation { get; set; }
         public string FirstName { get; set; }
@@ -288,29 +295,87 @@ namespace PQT.Web.Models
 
         public string TypeSubmit { get; set; }
         public PhoneCall PhoneCall { get; set; }
+        public Lead Lead { get; set; }
         public CallingModel()
         {
             PhoneCall = new PhoneCall();
         }
         public CallingModel(int leadId)
         {
-            var leadRepo = DependencyHelper.GetService<ILeadService>();
-            Lead = leadRepo.GetLead(leadId);
-            PhoneCall = new PhoneCall { LeadID = leadId };
-            if (Lead != null)
+            LeadID = leadId;
+            if (leadId > 0)
             {
-                LeadID = leadId;
-                GeneralLine = Lead.GeneralLine;
-                ClientName = Lead.ClientName;
-                DirectLine = Lead.DirectLine;
-                Salutation = Lead.Salutation;
-                FirstName = Lead.FirstName;
-                LastName = Lead.LastName;
-                BusinessPhone = Lead.BusinessPhone;
-                MobilePhone = Lead.MobilePhone;
-                WorkEmailAddress = Lead.WorkEmailAddress;
-                WorkEmailAddress1 = Lead.WorkEmailAddress1;
-                PersonalEmailAddress = Lead.PersonalEmailAddress;
+                var leadRepo = DependencyHelper.GetService<ILeadService>();
+                var lead = leadRepo.GetLead(leadId);
+                PhoneCall = new PhoneCall { LeadID = leadId };
+                if (lead != null)
+                {
+                    LeadID = leadId;
+                    GeneralLine = lead.GeneralLine;
+                    ClientName = lead.ClientName;
+                    DirectLine = lead.DirectLine;
+                    Salutation = lead.Salutation;
+                    FirstName = lead.FirstName;
+                    LastName = lead.LastName;
+                    BusinessPhone = lead.BusinessPhone;
+                    MobilePhone = lead.MobilePhone;
+                    WorkEmailAddress = lead.WorkEmailAddress;
+                    WorkEmailAddress1 = lead.WorkEmailAddress1;
+                    PersonalEmailAddress = lead.PersonalEmailAddress;
+                    CompanyName = lead.CompanyName;
+                    Lead = lead;
+                }
+            }
+        }
+        public CallingModel(int eventId,int leadId)
+        {
+            EventID = eventId;
+            LeadID = leadId;
+            var eventRepo = DependencyHelper.GetService<IEventService>();
+            var eventLead = eventRepo.GetEvent(eventId);
+            if (eventLead != null)
+            {
+                var leadRepo = DependencyHelper.GetService<ILeadService>();
+                var companyIds = leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
+                    m.UserID != CurrentUser.Identity.ID &&
+                    m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
+                    (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked ||
+                     m.LeadStatusRecord.UpdatedTime.Date >=
+                     DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))).Select(m => m.CompanyID).Distinct();// get list company blocked
+                Companies = eventLead.Companies.Where(m => !companyIds.Contains(m.ID));
+            }
+            else
+            {
+                Companies = new List<Company>();
+            }
+
+            if (leadId > 0)
+            {
+                var leadRepo = DependencyHelper.GetService<ILeadService>();
+                var lead = leadRepo.GetLead(leadId);
+                PhoneCall = new PhoneCall { LeadID = leadId };
+                if (lead != null)
+                {
+                    LeadID = leadId;
+                    GeneralLine = lead.GeneralLine;
+                    ClientName = lead.ClientName;
+                    DirectLine = lead.DirectLine;
+                    Salutation = lead.Salutation;
+                    FirstName = lead.FirstName;
+                    LastName = lead.LastName;
+                    BusinessPhone = lead.BusinessPhone;
+                    MobilePhone = lead.MobilePhone;
+                    WorkEmailAddress = lead.WorkEmailAddress;
+                    WorkEmailAddress1 = lead.WorkEmailAddress1;
+                    PersonalEmailAddress = lead.PersonalEmailAddress;
+                    CompanyName = lead.CompanyName;
+                    CompanyID = lead.CompanyID;
+                    Lead = lead;
+                }
+            }
+            else
+            {
+                PhoneCall = new PhoneCall();
             }
         }
 
@@ -319,23 +384,69 @@ namespace PQT.Web.Models
             return TransactionWrapper.Do(() =>
             {
                 var leadRepo = DependencyHelper.GetService<ILeadService>();
-                var lead = leadRepo.GetLead(LeadID);
-                if (lead != null)
+                Lead = leadRepo.GetLead(LeadID);
+                if (Lead != null)
                 {
-                    lead.GeneralLine = GeneralLine;
-                    lead.ClientName = ClientName;
-                    lead.DirectLine = DirectLine;
-                    lead.Salutation = Salutation;
-                    lead.FirstName = FirstName;
-                    lead.LastName = LastName;
-                    lead.BusinessPhone = BusinessPhone;
-                    lead.MobilePhone = MobilePhone;
-                    lead.WorkEmailAddress = WorkEmailAddress;
-                    lead.WorkEmailAddress1 = WorkEmailAddress1;
-                    lead.PersonalEmailAddress = PersonalEmailAddress;
-                    leadRepo.UpdateLead(lead);
+                    Lead.CompanyID = CompanyID;
+                    Lead.GeneralLine = GeneralLine;
+                    Lead.ClientName = ClientName;
+                    Lead.DirectLine = DirectLine;
+                    Lead.Salutation = Salutation;
+                    Lead.FirstName = FirstName;
+                    Lead.LastName = LastName;
+                    Lead.BusinessPhone = BusinessPhone;
+                    Lead.MobilePhone = MobilePhone;
+                    Lead.WorkEmailAddress = WorkEmailAddress;
+                    Lead.WorkEmailAddress1 = WorkEmailAddress1;
+                    Lead.PersonalEmailAddress = PersonalEmailAddress;
+                    leadRepo.UpdateLead(Lead);
                     return true;
                 }
+                return false;
+            });
+        }
+        public bool Create()
+        {
+            return TransactionWrapper.Do(() =>
+            {
+                var leadRepo = DependencyHelper.GetService<ILeadService>();
+                var eventRepo = DependencyHelper.GetService<IEventService>();
+                var comRepo = DependencyHelper.GetService<ICompanyRepository>();
+                Lead = new Lead
+                {
+                    EventID = EventID,
+                    CompanyID = CompanyID,
+                    GeneralLine = GeneralLine,
+                    ClientName = ClientName,
+                    DirectLine = DirectLine,
+                    Salutation = Salutation,
+                    FirstName = FirstName,
+                    LastName = LastName,
+                    BusinessPhone = BusinessPhone,
+                    MobilePhone = MobilePhone,
+                    WorkEmailAddress = WorkEmailAddress,
+                    WorkEmailAddress1 = WorkEmailAddress1,
+                    PersonalEmailAddress = PersonalEmailAddress,
+                    UserID = CurrentUser.Identity.ID
+                };
+                Lead = leadRepo.CreateLead(Lead);
+                if (Lead != null)
+                {
+                    Lead.LeadStatusRecord = new LeadStatusRecord(Lead.ID, LeadStatus.Initial, CurrentUser.Identity.ID);
+                    leadRepo.UpdateLead(Lead);
+                    Lead.Company = comRepo.GetCompany(Lead.CompanyID);
+                    Lead.Event = eventRepo.GetEvent(Lead.EventID);
+                    //LeadNotificator.NotifyUser(result.Event.Users, result);
+                    //LeadNotificator.NotifyUser(result.Event.SalesGroups.SelectMany(m => m.Users), result);
+                    PhoneCall.EndTime = DateTime.Now;
+                    PhoneCall.LeadID = Lead.ID;
+                    var result = leadRepo.CreatePhoneCall(PhoneCall);
+                    if (result != null)
+                    {
+                        return true;
+                    }
+                }
+                
                 return false;
             });
         }
@@ -348,16 +459,19 @@ namespace PQT.Web.Models
                 var result = leadRepo.CreatePhoneCall(PhoneCall);
                 if (result != null)
                 {
-                    var lead = leadRepo.GetLead(PhoneCall.LeadID);
-                    lead.Salutation = Salutation;
-                    lead.FirstName = FirstName;
-                    lead.LastName = LastName;
-                    lead.BusinessPhone = BusinessPhone;
-                    lead.MobilePhone = MobilePhone;
-                    lead.WorkEmailAddress = WorkEmailAddress;
-                    lead.WorkEmailAddress1 = WorkEmailAddress1;
-                    lead.PersonalEmailAddress = PersonalEmailAddress;
-                    leadRepo.UpdateLead(lead);
+                    Lead = leadRepo.GetLead(PhoneCall.LeadID);
+                    Lead.GeneralLine = GeneralLine;
+                    Lead.ClientName = ClientName;
+                    Lead.DirectLine = DirectLine;
+                    Lead.Salutation = Salutation;
+                    Lead.FirstName = FirstName;
+                    Lead.LastName = LastName;
+                    Lead.BusinessPhone = BusinessPhone;
+                    Lead.MobilePhone = MobilePhone;
+                    Lead.WorkEmailAddress = WorkEmailAddress;
+                    Lead.WorkEmailAddress1 = WorkEmailAddress1;
+                    Lead.PersonalEmailAddress = PersonalEmailAddress;
+                    leadRepo.UpdateLead(Lead);
                     return true;
                 }
                 return false;

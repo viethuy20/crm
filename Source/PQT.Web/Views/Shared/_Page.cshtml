@@ -443,17 +443,18 @@
 
             UserNotification.prototype.notify = function() {
                 this.notifyRequest();
-                //toastr.info(this.notifyData.Description, this.notifyData.Title);
-                var $eventIdNCList = $("#eventIdNCList");
-                if (oTable && $eventIdNCList && $eventIdNCList.val() == this.notifyData.EventId) {
-                    fixedColumn = false;
-                    oTable.fnDraw();
-                }
                 var notifyCount = parseInt($notifyCounter.text()) + 1;
                 $notifyCounter.html(notifyCount);
                 $notifyCounter.removeClass('hide');
                 documentTitle = documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
                 document.title = '(' + notifyCount + ') ' + documentTitle;
+                //toastr.info(this.notifyData.Description, this.notifyData.Title);
+                var $eventIdNCList = $("#eventIdNCList");
+                if (oTable && $eventIdNCList && $eventIdNCList.val() == this.notifyData.EventId) {
+                    fixedColumn = false;
+                    oTable.fnDraw();
+                    LoadTotalNCLSummary();
+                }
 
             };
 
@@ -553,6 +554,7 @@
                         if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
                             fixedColumn = 0;
                             oTable.fnDraw();
+                            LoadTotalNCLSummary();
                         }
                     }
                 } catch (e) {

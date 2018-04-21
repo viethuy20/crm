@@ -112,7 +112,6 @@ namespace PQT.Web.Controllers
                 }
 
                 CurrentUser.Identity.DisplayName = model.Username;
-                CurrentUser.Identity.Email = model.Email;
                 CurrentUser.Identity.BusinessPhone = model.BusinessPhone;
                 CurrentUser.Identity.MobilePhone = model.MobilePhone;
                 if (!string.IsNullOrEmpty(model.Password))

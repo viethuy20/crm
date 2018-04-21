@@ -174,9 +174,9 @@ namespace PQT.Web.Controllers
         }
 
         [DisplayName(@"Calling Form")]
-        public ActionResult CallingForm(int leadId)
+        public ActionResult CallingForm(int eventId, int leadId = 0)
         {
-            var model = new CallingModel(leadId);
+            var model = new CallingModel(eventId, leadId);
             return PartialView(model);
         }
 
@@ -184,7 +184,57 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Calling Form")]
         public ActionResult CallingForm(CallingModel model)
         {
-            if (model.Save())
+            if (model.CompanyID == 0)
+            {
+                return Json(new { Code = 0, Message = "Please select company" });
+            }
+
+            var leadExists = _repo.GetAllLeads(m =>
+                m.EventID == model.EventID && m.UserID != CurrentUser.Identity.ID &&
+                m.CompanyID == model.CompanyID &&
+                (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
+                 DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired())) &&
+                (m.LeadStatusRecord == LeadStatus.Blocked ||
+                 m.LeadStatusRecord == LeadStatus.Live ||
+                 m.LeadStatusRecord == LeadStatus.LOI ||
+                 m.LeadStatusRecord == LeadStatus.Booked));
+            if (leadExists.Any())
+            {
+                return Json(new { Code = 0, Message = "Cannot process... This company is existing in NCL" });
+            }
+            if (model.TypeSubmit == "SaveCall")
+            {
+                if (model.LeadID > 0)
+                {
+                    if (model.Save())
+                    {
+                        var callingModel = new CallingModel
+                        {
+                            Lead = model.Lead,
+                            PhoneCall = { LeadID = model.Lead.ID }
+                        };
+                        return PartialView("CallingForm", callingModel);
+                    }
+                }
+                else if (model.Create())
+                {
+                    var callingModel = new CallingModel
+                    {
+                        Lead = model.Lead,
+                        PhoneCall = { LeadID = model.Lead.ID }
+                    };
+                    return PartialView("CallingForm", callingModel);
+                }
+                return Json(new { Code = 0, Message = "Save failed" });
+            }
+            if (model.LeadID > 0)
+            {
+                if (model.Save())
+                {
+                    return Json(new { Code = 1, TypeSubmit = model.TypeSubmit, LeadID = model.PhoneCall.LeadID });
+                }
+            }
+            else if (model.Create())
             {
                 return Json(new { Code = 1, TypeSubmit = model.TypeSubmit, LeadID = model.PhoneCall.LeadID });
             }
@@ -818,5 +868,25 @@ namespace PQT.Web.Controllers
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
+        [AjaxOnly]
+        public ActionResult AjaxGetTotalNCL(int eventId)
+        {
+            var saleId = PermissionHelper.SalesmanId();
+            var leads = _repo.GetAllLeads(m => m.EventID == eventId &&
+                                               (saleId == 0 || m.UserID == saleId ||
+                                                (m.User != null && m.User.TransferUserID == saleId)) &&
+                                           (m.LeadStatusRecord == LeadStatus.LOI ||
+                                            m.LeadStatusRecord == LeadStatus.Booked ||
+                                            m.LeadStatusRecord == LeadStatus.Blocked) &&
+                                           (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
+                                            DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired())));
+
+            return Json(new
+            {
+                TotalLOI = leads.Count(m => m.LeadStatusRecord == LeadStatus.LOI),
+                TotalBlocked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Blocked),
+                TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked)
+            }, JsonRequestBehavior.AllowGet);
+        }
     }
 }

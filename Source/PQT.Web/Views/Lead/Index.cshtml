@@ -9,20 +9,21 @@
 
 
 <style>
-    .table th{
+    .table th {
         white-space: nowrap;
     }
-     .DTFC_Cloned {
-         background: #fff;
-     }
 
-    .DTFC_Cloned td {
-        background-color: #fff;
+    .DTFC_Cloned {
+        background: #fff;
     }
 
-    .DTFC_Cloned th {
-        background-color: #f5f5f5 !important;
-    }
+        .DTFC_Cloned td {
+            background-color: #fff;
+        }
+
+        .DTFC_Cloned th {
+            background-color: #f5f5f5 !important;
+        }
 
     #tableLead td, table th {
         text-align: left;
@@ -95,9 +96,45 @@
         background-color: #fffdb7;
     }
 </style>
-<a class="btn ink-reaction btn-floating-action btn-primary expand_new_ncl" title="Open No Call List"
-   href="#offcanvas-ncl" data-toggle="offcanvas"
-   style="position: fixed;top: 93px;right: 0;display: block;z-index: 1006;"><i class="md md-list"></i></a>
+<div class="row text-center" style="margin-bottom: -30px;">
+    <div style="margin: 0 auto;float: none;display: inline-flex">
+        <div style="width: 150px;margin: 15px;">
+            <div class="card">
+                <div class="card-body no-padding">
+                    <div class="alert alert-callout alert-info no-margin">
+                        <strong class="text-xl" id="total_loi">0</strong><br />
+                        <span class="opacity-50">TOTAL LOI</span>
+                    </div>
+                </div><!--end .card-body -->
+            </div><!--end .card -->
+        </div>
+        <div style="width: 150px;margin: 15px;">
+            <div class="card">
+                <div class="card-body no-padding">
+                    <div class="alert alert-callout alert-danger no-margin">
+                        <strong class="text-xl" id="total_blocked">0</strong><br />
+                        <span class="opacity-50">TOTAL BLOCK</span>
+                    </div>
+                </div><!--end .card-body -->
+            </div><!--end .card -->
+        </div>
+        <div style="width: 150px;margin: 15px;">
+            <div class="card">
+                <div class="card-body no-padding">
+                    <div class="alert alert-callout alert-success no-margin">
+                        <strong class="text-xl" id="total_booked">0</strong><br />
+                        <span class="opacity-50">TOTAL BOOKED</span>
+                    </div>
+                </div><!--end .card-body -->
+            </div><!--end .card -->
+        </div>
+    </div><!--end .col -->
+</div>
+<div class="row">
+    <a class="btn ink-reaction btn-floating-action btn-primary expand_new_ncl" title="Open No Call List"
+       href="#offcanvas-ncl" data-toggle="offcanvas"
+       style="position: fixed;top: 93px;right: 0;display: block;z-index: 1006;"><i class="md md-list"></i></a>
+</div>
 <section>
     <input type="hidden" value="@Model.Event.ID" id="eventIdNCList" />
     <div class="row">
@@ -111,9 +148,9 @@
                 <div class="card-head">
                     <div class="tools">
                         <div class="btn-group" style="margin-right: 15px;">
-                            @if (CurrentUser.HasPermission("Lead", "CallSheet"))
+                            @if (CurrentUser.HasPermission("Lead", "CallingForm"))
                             {
-                                <a href="@Url.Action("CallSheet", new {eventId = Model.Event.ID, leadId = Model.Event.ID})" class="btn ink-reaction btn-floating-action btn-success simple-ajax-popup-align-top-custom" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Start New Call"><i class="fa fa-phone fa-2x"></i></a>
+                                <a href="@Url.Action("CallingForm", new {eventId = Model.Event.ID, leadId = 0})" class="btn ink-reaction btn-floating-action btn-success simple-ajax-popup-align-top-custom" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Start New Call"><i class="fa fa-phone fa-2x"></i></a>
                             }
                             @*<a class="btn btn-icon-toggle btn-Expand"><i class="fa fa-expand"></i></a>*@
                         </div>
@@ -223,7 +260,7 @@
              "aaSorting": [[1, "desc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
-                 $(nRow).find('td:eq(0)').html('<a class="simple-ajax-popup-align-top-custom ink-reaction btn-floating-action btn-primary" href="@Url.Action("CallingForm")?leadId=' +
+                 $(nRow).find('td:eq(0)').html('<a class="simple-ajax-popup-align-top-custom ink-reaction btn-floating-action btn-primary" href="@Url.Action("CallingForm")?eventId=@(Model.Event.ID)&leadId=' +
                      aData["ID"] +
                      '"><i class="fa fa-fw fa-phone"></i></a>');
                  $(nRow).find('td:eq(1)').html('<a href="@Url.Action("Detail")/' +
@@ -231,67 +268,6 @@
                      '">' +
                      aData["CreatedTime"] +
                      '</a>');
-                 @*var dropdowns = "";
-
-                 if (aData["StatusCode"] != '@LeadStatus.Booked') {
-
-                     dropdowns += '<li><a class="simple-ajax-popup-align-top" href="@Url.Action("Edit")?leadId=' +
-                         aData["ID"] +
-                         '"><span class=" text-primary"><i class="md fa-fw md-edit"></i> Edit</span></a></li>';
-                 }
-
-                 dropdowns +=
-                     '<li><a href="@Url.Action("Detail")?id=' +
-                     aData["ID"] +
-                     '&eventId=@Model.Event.ID"><span class=" text-default"><i class="fa fa-fw fa-eye"></i> Detail</span></a></li>';
-
-                 if (aData["StatusCode"] == '@LeadStatus.Initial' || aData["StatusCode"] == '@LeadStatus.Reject') {
-                     dropdowns += '<li><a href="#" class="btnRequestNCL" data-action="RequestNCL" data-id="' +
-                         aData["ID"] +
-                         '"><span class=" text-info"><i class="md fa-fw md-phone-locked"></i> Request To NCL</span></a></li>';
-
-                 }
-                 if (aData["StatusCode"] == '@LeadStatus.Initial' ||
-                     aData["StatusCode"] == '@LeadStatus.Reject' ||
-                     aData["StatusCode"] == '@LeadStatus.RequestNCL' ||
-                     aData["StatusCode"] == '@LeadStatus.Live') {
-                     dropdowns += '<li><a class="simple-ajax-popup-align-top" href="@Url.Action("RequestAction")?id=' +
-                         aData["ID"] +
-                         '&requestType=@LeadStatus.RequestLOI"><span class=" text-info"><i class="md fa-fw md-mail"></i> Request To LOI</span></a></li>';
-                 }
-                 if (aData["StatusCode"] != '@LeadStatus.RequestBook' && aData["StatusCode"] != '@LeadStatus.Booked') {
-                     dropdowns += '<li><a class="simple-ajax-popup-align-top" href="@Url.Action("RequestAction")?id=' +
-                         aData["ID"] +
-                         '&requestType=@LeadStatus.RequestBook"><span class=" text-success"><i class="md fa-fw md-my-library-books"></i> Request To Book</span></a></li>';
-                 }
-                 if (aData["StatusCode"] == '@LeadStatus.RequestBook' || aData["StatusCode"] == '@LeadStatus.RequestLOI') {
-                     dropdowns += '<li><a class="simple-ajax-popup-align-top" href="@Url.Action("RequestAction")?id=' +
-                         aData["ID"] + '"><span class=" text-success"><i class="md fa-fw md-my-library-books"></i> Update Attachment</span></a></li>';
-                 }
-                 if (aData["StatusCode"] == '@LeadStatus.RequestNCL'||aData["StatusCode"] == '@LeadStatus.RequestBook'||aData["StatusCode"] == '@LeadStatus.RequestLOI') {
-                     dropdowns += '<li><a href="#" data-action="CancelRequest" data-id="' +
-                         aData["ID"] +
-                         '"><span class=" text-warning"><i class="md fa-fw md-cancel"></i> Cancel ' + aData["StatusDisplay"] +'</span></a></li>';
-                 }
-                 if (aData["StatusCode"] != '@LeadStatus.Booked') {
-
-                     dropdowns += '<li><a href="#" data-action="' +
-                         aData["actionBlock"] +
-                         '" data-id="' +
-                         aData["ID"] +
-                         '"><span class=" text-warning"><i class="md fa-fw md-lock-outline"></i> ' +
-                         aData["actionBlock"] +
-                         '</span></a></li>';
-                 }
-                 if (aData["StatusCode"] == '@LeadStatus.Initial' || aData["StatusCode"] == '@LeadStatus.Reject') {
-                     dropdowns += '<li><a href="#" data-action="Delete" data-id="' +
-                         aData["ID"] +
-                         '"><span class=" text-danger"><i class="md fa-fw md-delete"></i> Delete</span></a></li>';
-                 }
-                 //$(nRow).find('td:eq(16)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
-                 //    dropdowns +
-                 //    '</ul></div>');*@
-
                  $(nRow).find('td:eq(16)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
                      aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');
 
@@ -315,24 +291,24 @@
                  FixedTable();
              },
          });
-        function FixedTable() {
-            if (fixedColumn < 3) {
-                fixedColumn ++;
-                var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
-                    leftColumns: 5,
-                    sHeightMatch: "auto",
-                    rightColumns: 3
-                });
-                var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
-                if ($leftWrappers.length > 1) {
-                    $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
-                }
-                var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
-                if ($rightWrappers.length > 1) {
-                    $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
-                }
-            }
-        }
+         function FixedTable() {
+             if (fixedColumn < 3) {
+                 fixedColumn ++;
+                 var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
+                     leftColumns: 5,
+                     sHeightMatch: "auto",
+                     rightColumns: 3
+                 });
+                 var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                 if ($leftWrappers.length > 1) {
+                     $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                 }
+                 var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                 if ($rightWrappers.length > 1) {
+                     $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                 }
+             }
+         }
          $(document).on("click", ".paginate_button", function () {
              fixedColumn = 0;
          });
@@ -432,6 +408,7 @@
                                  fixedColumn = 0;
                                  oTable.fnFilter('');
                                  $.magnificPopup.close();
+                                 LoadTotalNCLSummary();
                              } else {
                                  toastr.error(data);
                              }
@@ -458,6 +435,7 @@
                                  fixedColumn = 0;
                                  oTable.fnFilter('');
                                  $.magnificPopup.close();
+                                 LoadTotalNCLSummary();
                              } else {
                                  toastr.error(data);
                              }
@@ -505,7 +483,7 @@
                  $(nRow).addClass(aData["ClassHighlight"]);
                  $(nRow).addClass(aData["ClassNewHighlight"]);
                  if (aData["ClassNewHighlight"]) {
-                    $('.expand_new_ncl').addClass('ncl_new');
+                     $('.expand_new_ncl').addClass('ncl_new');
                  }
              },
              initComplete: function () {
@@ -816,4 +794,73 @@
                  }
              }
          }
+    </script>)
+
+@Html.Script(
+    @<script>
+         function precisionRound(number, precision) {
+             var factor = Math.pow(10, precision);
+             return Math.round(number * factor) / factor;
+         }
+
+         var tickStarted = false;
+         var startTime = new Date();
+         function tickTime() {
+             var seconds = precisionRound((new Date() - startTime) / 1000, 0);
+             var m = Math.floor(seconds / 60);
+             var s = seconds - m * 60;
+             m = checkTime(m);
+             s = checkTime(s);
+             $('#call-tick').html(m + ":" + s);
+             if ($('.callingCompany').val() != undefined) {
+                 var t = setTimeout(tickTime, 500);
+             } else {
+                 tickStarted = false;
+             }
+         }
+         function checkTime(i) {
+             if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
+             return i;
+         }
+
+         $(document).on('change', '.callingCompany',
+             function () {
+                 if ($(this).val() != "" && !tickStarted) {
+                     StartTick();
+                 }
+                 var dialingCode = $(this)[0].options[$(this)[0].selectedIndex].getAttribute("dialingCode");
+                 $('.input-phone').val(dialingCode);
+             });
+         function StartTick() {
+             startTime = new Date();
+             $('.phoneCallStartTime').val(moment(startTime).format("DD/MM/YYYY HH:mm:ss"));
+             tickTime();
+             tickStarted = true;
+         }
+    </script>
+    )
+@Html.Script(
+    @<script>
+         function LoadTotalNCLSummary() {
+             $(document).unbind('ajaxStart');
+             $.ajax({
+                 url: '@Url.Action("AjaxGetTotalNCL")?eventId=@Model.Event.ID',
+                 type: 'POST',
+                 success: function (data) {
+                     $("#total_loi").text(data.TotalLOI);
+                     $("#total_blocked").text(data.TotalBlocked);
+                     $("#total_booked").text(data.TotalBooked);
+                     $(document).ajaxStart(function() {
+                         $("#dvLoading").show();
+                     });
+                 },
+                 error: function () {
+                     $(document).ajaxStart(function() {
+                         $("#dvLoading").show();
+                     });
+                 }
+             });
+         }
+
+         LoadTotalNCLSummary();
     </script>)

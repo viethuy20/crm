@@ -1,0 +1,323 @@
+﻿@using NS.Mvc
+@using PQT.Domain.Abstract
+@using Resources
+@model PQT.Web.Models.CompanyResourceImportModel
+@{
+    ViewBag.Title = "Import Companiy Resources";
+}
+
+<style>
+    label.myLabel input[type="file"] {
+        position: fixed;
+        top: -1000px;
+    }
+
+    /***** Example custom styling *****/
+    .myLabel {
+        border-radius: 8px;
+        padding: 10px 35px;
+        margin-left: 10px;
+        background: #C2C2C2;
+        display: inline-block;
+    }
+
+        .myLabel:hover {
+            background: #CCC;
+        }
+
+        .myLabel:active {
+            background: #CCF;
+        }
+
+        .myLabel :invalid + span {
+            color: #A44;
+        }
+
+        .myLabel :valid + span {
+            color: #4A4;
+        }
+
+        .myLabel span {
+            font-size: 18px;
+        }
+
+    #fileResult {
+        background-color: #F5F5F5;
+        padding: 10px 35px;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+        #fileResult span {
+            color: #4A4;
+            font-size: 16px;
+        }
+
+        #fileResult:empty {
+            display: none;
+        }
+
+    .importindents {
+        width: 450px;
+        background-color: #fff;
+        padding: 10px 0;
+        float: left;
+    }
+
+    /*.indentRecord {
+        width: 100%;
+    }*/
+    .indentRecord tr td:first-child {
+        width: 30%;
+        vertical-align: middle;
+    }
+
+    .indentRecord tr td:last-child {
+        width: 70%;
+    }
+
+    .indentinfo tr td {
+        line-height: 30px;
+    }
+
+    .result-table tr th {
+        background-color: #D7E6EF;
+        text-align: center;
+        border-right: 1px solid #c2c2c2;
+        border-bottom: 1px solid #c2c2c2;
+    }
+
+    .graybackground {
+        background-color: #EBEBEB;
+    }
+
+    .result-table tr td {
+        padding: 5px 15px;
+        border-right: 1px solid #c2c2c2;
+        border-bottom: 1px solid #c2c2c2;
+    }
+
+    .result-table {
+        border-left: 1px solid #c2c2c2;
+        border-top: 1px solid #c2c2c2;
+    }
+
+    .highline {
+        background-color: #FFCAC4;
+    }
+
+    .samplefile {
+        margin-left: 10px;
+        margin-bottom: 10px;
+    }
+</style>
+
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            @Html.Bootstrap().Button().Id("btnUpload").HtmlAttributes(new { @class = "DTTT_button btn btn-info" }).Text("Import Excel File").PrependIcon("md md-cloud-upload")
+            @if (Model.CompanyResources != null && Model.CompanyResources.Count > 0)
+            {
+                @Html.Bootstrap().ActionLinkButton("Confirm Upload", "ComfirmImport").RouteValues(new { sessionName = Model.SessionName }).Style(ButtonStyle.Success).PrependIcon("md md-done").Id("finish")
+            }
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+
+                @if (Model.CompanyResources != null && Model.CompanyResources.Count > 0)
+            {
+                var count = 0;
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>S/No.</th>
+                                <th>Country</th>
+                                <th>Salutation</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Organisation</th>
+                                <th>Role</th>
+                                <th>Business Phone</th>
+                                <th>MobilePhone</th>
+                                <th>Work Email</th>
+                                <th>Personal Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.CompanyResources)
+                            {
+                                count++;
+                                <tr>
+                                    <td>@count</td>
+                                    <td>@item.Country</td>
+                                    <td>@item.Salutation</td>
+                                    <td>@item.FirstName</td>
+                                    <td>@item.LastName</td>
+                                    <td>@item.Organisation</td>
+                                    <td>@item.Role</td>
+                                    <td>@item.BusinessPhone</td>
+                                    <td>@item.MobilePhone</td>
+                                    <td>@item.WorkEmailAddress</td>
+                                    <td>@item.PersonalEmailAddress</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else if (Model.ImportRows.Any())
+                {
+                    var count = 0;
+                    <table class="table table-bordered consolidate css">
+                        <thead>
+                            <tr>
+                                <th>S/No.</th>
+                                <th>Country</th>
+                                <th>Salutation</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Organisation</th>
+                                <th>Role</th>
+                                <th>Business Phone</th>
+                                <th>MobilePhone</th>
+                                <th>Work Email</th>
+                                <th>Personal Email</th>
+                                <th>Error</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ImportRows)
+                            {
+                                count++;
+                                <tr class="@(!string.IsNullOrEmpty(item.Error)?"highline":"")">
+                                    <td class="text-center">@count</td>
+                                    <td>@item.Country</td>
+                                    <td>@item.Salutation</td>
+                                    <td>@item.FirstName</td>
+                                    <td>@item.LastName</td>
+                                    <td>@item.Organisation</td>
+                                    <td>@item.Role</td>
+                                    <td>@item.BusinessPhone</td>
+                                    <td>@item.MobilePhone</td>
+                                    <td>@item.WorkEmailAddress</td>
+                                    <td>@item.PersonalEmailAddress</td>
+                                    <td style="color: red">@Html.Raw(item.Error)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<div style="display: none">
+    <div id="dialog-upload" style="background: white; margin: auto; max-width: 600px; position: relative;">
+        <div>
+            <div class="card-head">
+                <header><b>Upload File</b></header>
+            </div><!--end .card-head -->
+            @using (Html.BeginForm("ImportFromExcel", "CompanyResource", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="card-body" style="padding-top: 0px;">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <a href="~/Content/SampleFiles/company_resources_sample.xls">Download sample excel file</a>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">File Import <span class="required">*</span></label>
+                        <div class="col-sm-9">
+                            @Html.Bootstrap().File("FileImport").Id("inputfile").HtmlAttributes(new { }).Tooltip("Format file: *.xls").Class("form-control")
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@Html.Script(
+    @<script>
+        $("#inputfile").on('change', function () {
+            if ($(this).val() != '') {
+                $("#fileResult").html("<span>" + $(this).val() + "</span>");
+            } else {
+                $("#fileResult").html('');
+            }
+            var filepath = $(this).val();
+            if (filepath != 0) {
+                var value = filepath.substring(filepath.lastIndexOf('.'));
+                if (value == ".xls" || value == ".xlsx") {
+                    $(this).closest('form').submit();
+                }
+                else {
+                    bootbox.alert("No Excel file!");
+                }
+            }
+            else {
+                bootbox.alert("File import empty!");
+            }
+        });
+        if ($("#inputfile").val() != '') {
+            $("#fileResult").html("<span>" + $("#inputfile").val() + "</span>");
+        } else {
+            $("#fileResult").html('');
+        }
+
+
+
+        $("#btnUpload").off('click').click(function (e) {
+            e.preventDefault();
+            $('#inputfile').val('');
+            $.magnificPopup.open({
+                items: [
+                    {
+                        src: '#dialog-upload',
+                        type: 'inline'
+                    }
+                ],
+            });
+        });
+        @if (Model.CompanyResources == null || !Model.ImportRows.Any())
+        {
+            <text>
+        $('#inputfile').val('');
+        $.magnificPopup.open({
+            items: [
+                {
+                    src: '#dialog-upload',
+                    type: 'inline'
+                }
+            ],
+        });
+        </text>
+                                                                }
+
+
+        $("#btnStart").click(function () {
+            var filepath = $("#fileUpload").val();
+            if (filepath != 0) {
+                var value = filepath.substring(filepath.lastIndexOf('.'));
+                if (value == ".xls" || value == ".xlsx") {
+                    return true;
+                }
+                else {
+                    bootbox.alert("Not Excel file!");
+                    return false;
+                }
+            }
+            else {
+                bootbox.alert("File import empty!");
+                return false;
+            }
+        });
+    </script>
+                                             )

@@ -1,4 +1,5 @@
-﻿@using PQT.Web.Infrastructure.Utility
+﻿@using PQT.Domain.Enum
+@using PQT.Web.Infrastructure.Utility
 @using PQT.Web.Models
 @using Resources
 @model PQT.Web.Models.AccountModel
@@ -12,53 +13,108 @@
     </div>
     <div class="card">
         <div class="card-body">
-            @using (Html.BeginForm("Profile", "Account", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form form-validate  floating-label", @novalidate = "novalidate" }))
+            @using (Html.BeginForm("Profile", "Account", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form form-validate ", @novalidate = "novalidate" }))
             {
-                <div class="form-group">
-                    @Html.Bootstrap().PasswordFor(m => m.OldPassword).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.OldPassword).LabelText("Current password").ShowRequiredStar(true)
-                </div>
-                <div class="form-group">
-                    @Html.Bootstrap().PasswordFor(m => m.Password).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Password).LabelText("New password")
-                </div>
-                <div class="form-group">
-                    @Html.Bootstrap().PasswordFor(m => m.ConfirmPassword).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.ConfirmPassword).LabelText("Retypr new password")
-                </div>
-                <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Username).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Username).LabelText("Name").ShowRequiredStar(true)
-                </div>
-                <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Email).Readonly().Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email").ShowRequiredStar(true)
-                </div>
-                <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.BusinessPhone).LabelText("Business Phone")
-                </div>
-                <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.MobilePhone).LabelText("Mobile Phone")
-                </div>
-                <div class="form-group">
-                    <div id="profilePicture">
-                        @if (CurrentUser.Identity.Picture != null)
-                        {
-                            <img style="width: 120px; height: 120px;border-radius: 120px" src="@CurrentUser.Identity.AvatarUrl" class="img-polaroid user-picture-preview" />
-                        }
-                        else
-                        {
-                            <img style="width: 120px; height: 120px;border-radius: 120px" src="~/Content/img/profile.png" class="img-polaroid user-picture-preview" />
-                        }
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.Bootstrap().PasswordFor(m => m.OldPassword).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.OldPassword).LabelText("Current password").ShowRequiredStar(true)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().PasswordFor(m => m.Password).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Password).LabelText("New password")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().PasswordFor(m => m.ConfirmPassword).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.ConfirmPassword).LabelText("Retype new password")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Username).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Username).LabelText("Name").ShowRequiredStar(true)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Email).Readonly().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email").ShowRequiredStar(true)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.BusinessPhone).LabelText("Business Phone")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.MobilePhone).LabelText("Mobile Phone")
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    @Html.Bootstrap().FileFor(m => m.Picture).ShowValidationMessage(false)
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <div id="profilePicture">
+                                @if (CurrentUser.Identity.Picture != null)
+                                {
+                                    <img style="width: 120px; height: 120px;border-radius: 120px" src="@CurrentUser.Identity.AvatarUrl" class="img-polaroid user-picture-preview" />
+                                }
+                                else
+                                {
+                                    <img style="width: 120px; height: 120px;border-radius: 120px" src="~/Content/img/profile.png" class="img-polaroid user-picture-preview" />
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().FileFor(m => m.Picture).ShowValidationMessage(false)
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Roles).Disabled().Class("form-control")
+                            @Html.Bootstrap().LabelFor(m => m.Roles).LabelText("Roles")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.LevelSalesman).Disabled().Class("form-control")
+                            @Html.Bootstrap().LabelFor(m => m.LevelSalesman).LabelText("Level Salary")
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.BasicSalary).Disabled().Class("form-control")
+                            @Html.Bootstrap().LabelFor(m => m.BasicSalary).LabelText("Basic Salary")
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.DateOfStarting).Disabled().Class("form-control")
+                            @Html.Bootstrap().LabelFor(m => m.DateOfStarting).LabelText("Date Of Starting")
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.DateOfContract).Disabled().Class("form-control")
+                            @Html.Bootstrap().LabelFor(m => m.DateOfContract).LabelText("Date Of Contract")
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group  col-md-offset-2">
-                    @Html.Bootstrap().SubmitButton().Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+                if (Model.UserSalaryHistories.Any())
+                {
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextAreaFor(m => m.UserSalaryHistories).Value(string.Join("\r\n", Model.UserSalaryHistories.Select(m => "Level Salary: " + m.LevelSalesman.DisplayName + " - Basic Salary: " + m.BasicSalary.ToString("N")))).Readonly().Rows(5).Class("form-control")
+                                @Html.Bootstrap().LabelFor(m => m.UserSalaryHistories).LabelText("Salary Histories")
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="row">
+                    <div class="form-group  col-md-offset-2">
+                        @Html.Bootstrap().SubmitButton().Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+                    </div>
                 </div>
             }
         </div>

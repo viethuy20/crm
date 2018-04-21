@@ -352,6 +352,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\MapperConfig.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
+    <Compile Include="Controllers\CompanyResourceController.cs" />
     <Compile Include="Controllers\CounterController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
@@ -375,6 +376,8 @@
     <Compile Include="Infrastructure\Utility\FileUpload.cs" />
     <Compile Include="Models\AjaxResult.cs" />
     <Compile Include="Models\CompanyImportModel.cs" />
+    <Compile Include="Models\CompanyResourceImportModel.cs" />
+    <Compile Include="Models\CompanyResourceModel.cs" />
     <Compile Include="Models\EmailSettingModel.cs" />
     <Compile Include="Models\EventModelView.cs" />
     <Compile Include="Models\HomeSearchModel.cs" />
@@ -2475,6 +2478,8 @@
     <Content Include="Views\Lead\Action.cshtml" />
     <Content Include="Views\Lead\NCL.cshtml" />
     <Content Include="Views\Company\ImportFromExcel.cshtml" />
+    <Content Include="Views\CompanyResource\Index.cshtml" />
+    <Content Include="Views\CompanyResource\ImportFromExcel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

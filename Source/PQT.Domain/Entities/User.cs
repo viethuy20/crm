@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using PQT.Domain.Helpers;
 using NS.Entity;
+using PQT.Domain.Enum;
 
 namespace PQT.Domain.Entities
 {
@@ -12,6 +13,7 @@ namespace PQT.Domain.Entities
         {
             Roles = new HashSet<Role>();
             Status = EntityStatus.Normal;
+            UserSalaryHistories= new HashSet<UserSalaryHistory>();
         }
 
         #region Primitive
@@ -31,6 +33,12 @@ namespace PQT.Domain.Entities
         public virtual User TransferUser { get; set; }
 
         public int NotifyNumber { get; set; }
+        public LevelSalesman LevelSalesman { get; set; }
+        public DateTime? DateOfContract { get; set; }
+        public DateTime? DateOfStarting { get; set; }
+        public decimal? BasicSalary { get; set; }
+        public ICollection<UserSalaryHistory> UserSalaryHistories { get; set; }
+
         #endregion
 
         #region Navigation properties

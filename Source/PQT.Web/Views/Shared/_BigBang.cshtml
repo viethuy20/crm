@@ -28,7 +28,7 @@
     </script>
 </head>
 @*@(Request.Cookies["menubar-pin"] == null || Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")*@
-<body class="header-fixed menubar-first ">
+<body class="header-fixed menubar-first @(Request.Cookies["menubar-pin"] != null && Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")">
 
     @RenderBody()
 

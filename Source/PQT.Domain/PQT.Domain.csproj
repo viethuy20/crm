@@ -176,6 +176,7 @@
     <Compile Include="Entities\Audit.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\CompanyResource.cs" />
     <Compile Include="Entities\Country.cs" />
     <Compile Include="Entities\Company.cs" />
     <Compile Include="Entities\Counter.cs">
@@ -214,12 +215,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Entities\UserNotification.cs" />
+    <Compile Include="Entities\UserSalaryHistory.cs" />
     <Compile Include="Entity.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="EntityBase.cs" />
     <Compile Include="Enum\EmailType.cs" />
     <Compile Include="Enum\LeadStatus.cs" />
+    <Compile Include="Enum\LevelSalesman.cs" />
     <Compile Include="Enum\NameTitle.cs" />
     <Compile Include="Enum\NotifyType.cs" />
     <Compile Include="Enum\ReservationStatus.cs" />

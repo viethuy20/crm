@@ -127,5 +127,6 @@ namespace PQT.Web.Infrastructure.Helpers
     public enum FolderUpload
     {
         Companies,
+        CompanyResources,
     }
 }

@@ -22,6 +22,8 @@ namespace PQT.Web
             Mapper.AddProfile<ModelMappingProfile>();
             Mapper.CreateMap<Company, CompanyJson>();
             Mapper.CreateMap<CompanyJson, Company>();
+            Mapper.CreateMap<CompanyResource, CompanyResourceJson>();
+            Mapper.CreateMap<CompanyResourceJson, CompanyResource>();
         }
     }
 }

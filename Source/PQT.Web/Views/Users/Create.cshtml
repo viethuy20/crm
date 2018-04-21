@@ -13,57 +13,105 @@
     </div>
     <div class="card">
         <div class="card-body">
-            @using (Html.BeginForm("Create", "Users", FormMethod.Post, new { @class = "form form-validate floating-label", enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("Create", "Users", FormMethod.Post, new { @class = "form form-validate", enctype = "multipart/form-data" }))
             {
-                <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Email).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email").ShowRequiredStar(true)
-                </div>
-                <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.DisplayName).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.DisplayName).LabelText("Display Name").ShowRequiredStar(true)
-                </div>
-                <div class="form-group">
-                    @Html.Bootstrap().PasswordFor(m => m.Password).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Password).LabelText("Password").ShowRequiredStar(true)
-                </div>
-                <div class="form-group">
-                    @Html.Bootstrap().PasswordFor(m => m.ConfirmPassword).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.ConfirmPassword).LabelText("Retype password").ShowRequiredStar(true)
-                </div>
-                <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.BusinessPhone).LabelText("Business Phone")
-                </div>
-                <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.MobilePhone).LabelText("Mobile Phone")
-                </div>
-                <div class="form-group">
-                    <div id="profilePicture">
-                        <img style="max-width: 120px; max-height: 120px;border-radius: 60px" src="~/Content/img/profile.png" class="img-polaroid user-picture-preview" />
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.DisplayName).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.DisplayName).LabelText("Display Name").ShowRequiredStar(true)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Email).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email").ShowRequiredStar(true)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().PasswordFor(m => m.Password).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Password).LabelText("Password").ShowRequiredStar(true)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().PasswordFor(m => m.ConfirmPassword).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.ConfirmPassword).LabelText("Retype password").ShowRequiredStar(true)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.BusinessPhone).LabelText("Business Phone")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.MobilePhone).LabelText("Mobile Phone")
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    @Html.Bootstrap().FileFor(m => m.Picture).ShowValidationMessage(false)
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-3 control-label">Roles</label>
-                    <div class="col-sm-9">
-                        @foreach (var role in Model.Roles)
-                        {
-                            <div class="checkbox checkbox-styled">
-                                <label>
-                                    <input type="checkbox" name="SelectedRoles" value="@role.ID" @(Model.UserRoles.Contains(role.ID) ? "checked" : "")>
-                                    <span>@role.Name</span>
-                                </label>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <div id="profilePicture">
+                                <img style="max-width: 120px; max-height: 120px;border-radius: 60px" src="~/Content/img/profile.png" class="img-polaroid user-picture-preview" />
                             </div>
-                        }
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().FileFor(m => m.Picture).ShowValidationMessage(false)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().DropDownListFor(m => m.LevelSalesman, EnumerationHelper.ToSelectList<LevelSalesman>()).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.LevelSalesman).LabelText("Level Salary")
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.BasicSalary).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.BasicSalary).LabelText("Basic Salary")
+                        </div>
+                        <div class="form-group">
+                            @Html.DatePickerFor(m => m.DateOfStarting, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.DateOfStarting)
+                            @Html.Bootstrap().LabelFor(m => m.DateOfStarting).LabelText("Date Of Starting")
+                        </div>
+                        <div class="form-group">
+                            @Html.DatePickerFor(m => m.DateOfContract, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.DateOfContract)
+                            @Html.Bootstrap().LabelFor(m => m.DateOfContract).LabelText("Date Of Contract")
+                        </div>
                     </div>
                 </div>
-                <div class="form-group  col-md-offset-2">
-                    @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
-                    @Html.Bootstrap().SubmitButton().Id("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Roles</label>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    @foreach (var role in Model.Roles)
+                                    {
+                                        <div class="col-sm-3">
+                                            <div class="checkbox checkbox-styled">
+                                                <label>
+                                                    <input type="checkbox" name="SelectedRoles" value="@role.ID" @(Model.UserRoles.Contains(role.ID) ? "checked" : "")>
+                                                    <span>@role.Name</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group  col-md-offset-3">
+                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                        @Html.Bootstrap().SubmitButton().Id("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+                    </div>
                 </div>
             }
         </div>

@@ -62,7 +62,7 @@ namespace PQT.Web.Controllers
                                                      .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                                                      .Select(id => Convert.ToInt32(id));
 
-            
+
             if (!ModelState.IsValid)
             {
                 model.UserRoles = userRoles.ToList();
@@ -77,6 +77,10 @@ namespace PQT.Web.Controllers
                 BusinessPhone = model.BusinessPhone,
                 MobilePhone = model.MobilePhone,
                 Address = model.Address,
+                LevelSalesman = model.LevelSalesman,
+                DateOfContract = model.DateOfContract,
+                DateOfStarting = model.DateOfStarting,
+                BasicSalary = model.BasicSalary,
             };
 
             user = _membershipService.CreateUser(user);
@@ -112,7 +116,7 @@ namespace PQT.Web.Controllers
                                                      .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                                                      .Select(id => Convert.ToInt32(id));
 
-            
+
             if (!ModelState.IsValid)
             {
 
@@ -123,10 +127,26 @@ namespace PQT.Web.Controllers
             }
 
             user = _membershipService.GetUser(model.ID);
+            //save salary history
+            if (user.BasicSalary > 0 && user.BasicSalary != model.BasicSalary)
+            {
+                user.UserSalaryHistories.Add(new UserSalaryHistory
+                {
+                    LevelSalesman = user.LevelSalesman,
+                    DateOfStarting = user.DateOfStarting,
+                    DateOfContract = user.DateOfContract,
+                    BasicSalary = Convert.ToDecimal(user.BasicSalary)
+                });
+            }
+
             user.DisplayName = model.DisplayName;
             user.Email = model.Email;
             user.BusinessPhone = model.BusinessPhone;
             user.MobilePhone = model.MobilePhone;
+            user.LevelSalesman = model.LevelSalesman;
+            user.DateOfStarting = model.DateOfStarting;
+            user.DateOfContract = model.DateOfContract;
+            user.BasicSalary = model.BasicSalary;
             if (!string.IsNullOrEmpty(model.Password))
             {
                 user.Password = EncryptHelper.EncryptPassword(model.Password);

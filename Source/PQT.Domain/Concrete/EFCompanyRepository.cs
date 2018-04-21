@@ -15,11 +15,11 @@ namespace PQT.Domain.Concrete
         {
         }
 
-        #region Companys
+        #region Company
 
         public IEnumerable<Company> GetAllCompanies()
         {
-            return GetAll<Company>(m=>m.Country).AsEnumerable();
+            return GetAll<Company>(m => m.Country).AsEnumerable();
         }
 
         public IEnumerable<Company> GetAllCompanies(Func<Company, bool> predicate)
@@ -30,6 +30,15 @@ namespace PQT.Domain.Concrete
         public Company GetCompany(int companyID)
         {
             return Get<Company>(companyID);
+        }
+
+        public Company GetCompany(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
+            return Get<Company>(m => m.CompanyName.Trim().ToLower() == name.Trim().ToLower());
         }
 
         public Company CreateCompany(Company company)
@@ -52,7 +61,40 @@ namespace PQT.Domain.Concrete
             return Delete<Company>(companyID);
         }
 
-        #endregion
+        #endregion Company
+
+
+        #region Company Resource
+        public IEnumerable<CompanyResource> GetAllCompanyResources()
+        {
+            return GetAll<CompanyResource>().AsEnumerable();
+        }
+
+        public IEnumerable<CompanyResource> GetAllCompanyResources(Func<CompanyResource, bool> predicate)
+        {
+            return GetAll(predicate).AsEnumerable();
+        }
+
+        public CompanyResource GetCompanyResource(int companyID)
+        {
+            return Get<CompanyResource>(companyID);
+        }
+
+        public CompanyResource CreateCompanyResource(CompanyResource resource)
+        {
+            return Create(resource);
+        }
+
+        public bool UpdateCompanyResource(CompanyResource resource)
+        {
+            return Update(resource);
+        }
+
+        public bool DeleteCompanyResource(int resourceID)
+        {
+            return Delete<CompanyResource>(resourceID);
+        }
+        #endregion Company Resource
 
     }
 }
