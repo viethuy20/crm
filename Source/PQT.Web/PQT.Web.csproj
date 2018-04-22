@@ -2465,7 +2465,6 @@
     <Content Include="Views\Event\Edit.cshtml" />
     <Content Include="Views\Event\EditorTemplates\EventSession.cshtml" />
     <Content Include="Views\Lead\Index.cshtml" />
-    <Content Include="Views\Lead\CallSheet.cshtml" />
     <Content Include="Views\Lead\CallingForm.cshtml" />
     <Content Include="Views\Home\PanelNotification.cshtml" />
     <Content Include="Views\Shared\_Notification.cshtml" />
@@ -2473,7 +2472,7 @@
     <Content Include="Views\Lead\Detail.cshtml" />
     <Content Include="Views\Lead\RejectAction.cshtml" />
     <Content Include="Views\Lead\Edit.cshtml" />
-    <Content Include="Views\Lead\NoCallList.cshtml" />
+    <Content Include="Views\Lead\NCLForManager.cshtml" />
     <Content Include="Views\Event\Detail.cshtml" />
     <Content Include="Views\Lead\Action.cshtml" />
     <Content Include="Views\Lead\NCL.cshtml" />

@@ -41,7 +41,7 @@
                                 Date: @item.StartDate.ToString("dd MMM yyyy") - @item.EndDate.ToString("dd MMM yyyy")
                                 @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
                                 {
-                                    <a href="@Url.Action("NoCallList", "Lead", new {id = item.ID})" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
+                                    <a href="@Url.Action("NCLForManager", "Lead", new {id = item.ID})" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
                                     </a>
                                 }
                                 else
