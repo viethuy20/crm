@@ -38,8 +38,10 @@ namespace PQT.Web.Infrastructure.Notification
         private void SendEmailNotify(Lead lead, string[] users)
         {
             if (lead == null) return;
-            SendEmail_RequestNCL(lead, users);
-
+            if (lead.LeadStatusRecord == LeadStatus.RequestNCL)
+            {
+                SendEmail_RequestNCL(lead, users);
+            }
         }
 
         private void SendEmail_RequestNCL(Lead lead, string[] users)

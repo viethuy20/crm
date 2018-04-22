@@ -125,53 +125,53 @@ namespace PQT.Web.Controllers
         {
             return Json(model.DeleteLead());
         }
-        [DisplayName(@"Call Sheet")]
-        public ActionResult CallSheet(int eventId)
-        {
-            var model = new CallSheetModel(eventId);
-            return PartialView(model);
-        }
-        [HttpPost]
-        [DisplayName(@"Call Sheet")]
-        public ActionResult CallSheet(CallSheetModel model)
-        {
-            if (model.Lead.CompanyID == 0)
-            {
-                return Json(new { Code = 0, Message = "Please select company" });
-            }
+        //[DisplayName(@"Call Sheet")]
+        //public ActionResult CallSheet(int eventId)
+        //{
+        //    var model = new CallSheetModel(eventId);
+        //    return PartialView(model);
+        //}
+        //[HttpPost]
+        //[DisplayName(@"Call Sheet")]
+        //public ActionResult CallSheet(CallSheetModel model)
+        //{
+        //    if (model.Lead.CompanyID == 0)
+        //    {
+        //        return Json(new { Code = 0, Message = "Please select company" });
+        //    }
 
-            var leadExists = _repo.GetAllLeads(m =>
-                m.EventID == model.Lead.EventID && m.UserID != CurrentUser.Identity.ID &&
-                m.CompanyID == model.Lead.CompanyID &&
-                (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
-                 DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired())) &&
-                (m.LeadStatusRecord == LeadStatus.Blocked ||
-                 m.LeadStatusRecord == LeadStatus.Live ||
-                 m.LeadStatusRecord == LeadStatus.LOI ||
-                 m.LeadStatusRecord == LeadStatus.Booked));
-            if (leadExists.Any())
-            {
-                return Json(new { Code = 0, Message = "Cannot process... This company is existing in NCL" });
-            }
-            if (model.TypeSubmit == "SaveCall")
-            {
-                if (model.Save())
-                {
-                    var callingModel = new CallingModel
-                    {
-                        Lead = model.Lead,
-                        PhoneCall = { LeadID = model.Lead.ID }
-                    };
-                    return PartialView("CallingForm", callingModel);
-                }
-                return Json(new { Code = 0, Message = "Save failed" });
-            }
-            if (model.Save())
-            {
-                return Json(new { Code = 1, Model = model.Lead });
-            }
-            return Json(new { Code = 0, Message = "Save failed" });
-        }
+        //    var leadExists = _repo.GetAllLeads(m =>
+        //        m.EventID == model.Lead.EventID && m.UserID != CurrentUser.Identity.ID &&
+        //        m.CompanyID == model.Lead.CompanyID &&
+        //        (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
+        //         DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired())) &&
+        //        (m.LeadStatusRecord == LeadStatus.Blocked ||
+        //         m.LeadStatusRecord == LeadStatus.Live ||
+        //         m.LeadStatusRecord == LeadStatus.LOI ||
+        //         m.LeadStatusRecord == LeadStatus.Booked));
+        //    if (leadExists.Any())
+        //    {
+        //        return Json(new { Code = 0, Message = "Cannot process... This company is existing in NCL" });
+        //    }
+        //    if (model.TypeSubmit == "SaveCall")
+        //    {
+        //        if (model.Save())
+        //        {
+        //            var callingModel = new CallingModel
+        //            {
+        //                Lead = model.Lead,
+        //                PhoneCall = { LeadID = model.Lead.ID }
+        //            };
+        //            return PartialView("CallingForm", callingModel);
+        //        }
+        //        return Json(new { Code = 0, Message = "Save failed" });
+        //    }
+        //    if (model.Save())
+        //    {
+        //        return Json(new { Code = 1, Model = model.Lead });
+        //    }
+        //    return Json(new { Code = 0, Message = "Save failed" });
+        //}
 
         [DisplayName(@"Calling Form")]
         public ActionResult CallingForm(int eventId, int leadId = 0)
