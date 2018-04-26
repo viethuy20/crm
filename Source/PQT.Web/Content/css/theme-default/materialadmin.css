@@ -9716,3 +9716,10 @@ li.L8 {
     .ncl_new:hover {
         color: #0aa89e
     }
+
+
+.delegateItem {
+    padding: 20px;
+    border: 1px solid #e1e1e1;
+    margin-bottom: 10px;
+}
