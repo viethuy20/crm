@@ -52,7 +52,7 @@
                 <div class="col-sm-4  text-center">
                     <div class="form-group">
                         <div class="row">
-                            <div class="call-animation">
+                            <div class="call-animation startCall">
                                 <i class="md md-phone-in-talk"></i>
                             </div>
                         </div>
@@ -409,7 +409,7 @@
                     $(".btnLoadResource").attr('href', '/Lead/CompanyResourceList?companyID=' + $(this).val());
                     $(".btnLoadResource").click();
                 }
-                
+
             });
         function StartTick() {
             startTime = new Date();
@@ -418,28 +418,35 @@
             tickStarted = true;
         }
     </script>
-                    )
+                        )
 
 @Html.Script(
 
     @<script>
-    $(document).on('click', '#crtable tbody tr', function() {
-        $("@Html.JquerySelectorFor(m => m.ClientName)").val($(this).data("role"));
-        $("@Html.JquerySelectorFor(m => m.DirectLine)").val($(this).data("mobilephone"));
-        $("@Html.JquerySelectorFor(m => m.GeneralLine)").val($(this).data("businessphone"));
-        $("@Html.JquerySelectorFor(m => m.Salutation)").select2('val',$(this).data("salutation"));
-        $("@Html.JquerySelectorFor(m => m.FirstName)").val($(this).data("firstname"));
-        $("@Html.JquerySelectorFor(m => m.LastName)").val($(this).data("lastname"));
-        $("@Html.JquerySelectorFor(m => m.BusinessPhone)").val($(this).data("businessphone"));
-        $("@Html.JquerySelectorFor(m => m.MobilePhone)").val($(this).data("mobilephone"));
-        $("@Html.JquerySelectorFor(m => m.WorkEmailAddress)").val($(this).data("workemail"));
-        $("@Html.JquerySelectorFor(m => m.PersonalEmailAddress)").val($(this).data("personalemail"));
+        $(document).on('click', '#crtable tbody tr', function() {
+            $("@Html.JquerySelectorFor(m => m.ClientName)").val($(this).data("role"));
+            $("@Html.JquerySelectorFor(m => m.DirectLine)").val($(this).data("mobilephone"));
+            $("@Html.JquerySelectorFor(m => m.GeneralLine)").val($(this).data("businessphone"));
+            $("@Html.JquerySelectorFor(m => m.Salutation)").select2('val',$(this).data("salutation"));
+            $("@Html.JquerySelectorFor(m => m.FirstName)").val($(this).data("firstname"));
+            $("@Html.JquerySelectorFor(m => m.LastName)").val($(this).data("lastname"));
+            $("@Html.JquerySelectorFor(m => m.BusinessPhone)").val($(this).data("businessphone"));
+            $("@Html.JquerySelectorFor(m => m.MobilePhone)").val($(this).data("mobilephone"));
+            $("@Html.JquerySelectorFor(m => m.WorkEmailAddress)").val($(this).data("workemail"));
+            $("@Html.JquerySelectorFor(m => m.PersonalEmailAddress)").val($(this).data("personalemail"));
 
-        if ($("select.callingCompany").val() != "" && !tickStarted) {
-            StartTick();
-        }
-        var dialingCode = $("select.callingCompany")[0].options[$("select.callingCompany")[0].selectedIndex].getAttribute("dialingCode")
-        $('.input-phone').val(dialingCode);
-    });
+            //if ($("select.callingCompany").val() != "" && !tickStarted) {
+            //    StartTick();
+            //}
+            var dialingCode = $("select.callingCompany")[0].options[$("select.callingCompany")[0].selectedIndex].getAttribute("dialingCode");
+            $('.input-phone').val(dialingCode);
+
+        });
+
+        $(document).on('click', ".startCall", function() {
+            if ($("select.callingCompany").val() != "" && !tickStarted) {
+                StartTick();
+            }
+        });
     </script>
-    )
+        )

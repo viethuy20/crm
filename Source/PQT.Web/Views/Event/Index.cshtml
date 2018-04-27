@@ -40,12 +40,15 @@
                                 <td>
                                     <a href="@Url.Action("Detail", new {id = item.ID})" data-action="detail">
                                         <i class="fa fa-eye"> Detail</i>
-                                    </a> | 
+                                    </a> |
                                     <a href="@Url.Action("Edit", new {id = item.ID})" data-action="edit">
                                         <i class="md md-edit text-info"> Edit</i>
-                                    </a> | 
+                                    </a> |
                                     <a href="#" data-action="delete" data-id="@item.ID">
                                         <i class="md md-delete text-danger"> Delete</i>
+                                    </a> |
+                                    <a href="#" data-action="endevent" data-id="@item.ID">
+                                        <i class="md md-alarm text-info"> End event</i>
                                     </a>
                                 </td>
                             </tr>
@@ -61,7 +64,7 @@
 @Html.Script(
     @<script>
 
-        var $Table = $('#table').dataTable({ "aaSorting": [[1, "asc"]]});
+        var $Table = $('#table').dataTable({ "aaSorting": [[1, "asc"]] });
         $Table.on('click', '[data-action="delete"]', function (e) {
             e.preventDefault();
             var selftr = $(this);
@@ -79,6 +82,29 @@
                         },
                         error: function () {
                             bootbox.alert("@Resource.DeleteFailed");
+                        }
+                    });
+                }
+            });
+        });
+
+        $Table.on('click', '[data-action="endevent"]', function (e) {
+            e.preventDefault();
+            var selftr = $(this);
+            bootbox.confirm("Are you sure you want to end this event?", function (isOK) {
+                if (isOK) {
+                    $.ajax({
+                        url: '@Url.Action("EndEvent")/' + selftr.data('id'),
+                        type: 'POST',
+                        success: function (data) {
+                            if (data == true) {
+                                bootbox.alert("@Resource.Successful");
+                            } else {
+                                bootbox.alert("Failed");
+                            }
+                        },
+                        error: function () {
+                            bootbox.alert("Failed");
                         }
                     });
                 }
