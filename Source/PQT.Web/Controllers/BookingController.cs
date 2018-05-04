@@ -40,6 +40,7 @@ namespace PQT.Web.Controllers
             return View();
         }
 
+        [DisplayName(@"Create Or Edit")]
         public ActionResult CreateOrEdit(int id, int leadId)
         {
             var model = new BookingModel();
@@ -57,6 +58,7 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
+        [DisplayName(@"Create Or Edit")]
         [HttpPost]
         public ActionResult CreateOrEdit(BookingModel model)
         {
@@ -77,11 +79,27 @@ namespace PQT.Web.Controllers
             model.Companies = _companyRepo.GetAllCompanies();
             return View(model);
         }
-        
+
         [DisplayName(@"Approve booking")]
         public ActionResult ApproveBooking(int id)
         {
             var booking = _bookingService.GetBooking(id);
+            if (booking == null)
+            {
+                TempData["error"] = "Booking not found";
+                return RedirectToAction("Index");
+            }
+            if (booking.BookingStatusRecord == BookingStatus.Approved)
+            {
+                TempData["error"] = "This booking has been approved";
+                return RedirectToAction("Index");
+            }
+            if (booking.BookingStatusRecord == BookingStatus.Rejected)
+            {
+                TempData["error"] = "This booking has been rejected";
+                return RedirectToAction("Index");
+            }
+
             if (_bookingService.UpdateBooking(booking, BookingStatus.Approved, CurrentUser.Identity.ID))
             {
                 TempData["message"] = Resource.SaveSuccessful;
@@ -102,6 +120,21 @@ namespace PQT.Web.Controllers
         public ActionResult RejectBooking(BookingModel model)
         {
             var booking = _bookingService.GetBooking(model.BookingID);
+            if (booking == null)
+            {
+                TempData["error"] = "Booking not found";
+                return RedirectToAction("Index");
+            }
+            if (booking.BookingStatusRecord == BookingStatus.Approved)
+            {
+                TempData["error"] = "This booking has been approved";
+                return RedirectToAction("Index");
+            }
+            if (booking.BookingStatusRecord == BookingStatus.Rejected)
+            {
+                TempData["error"] = "This booking has been rejected";
+                return RedirectToAction("Index");
+            }
             if (_bookingService.UpdateBooking(booking, BookingStatus.Rejected, CurrentUser.Identity.ID, model.Message))
             {
                 TempData["message"] = "The booking was declined.";
@@ -180,7 +213,7 @@ namespace PQT.Web.Controllers
                         bookings = bookings.OrderBy(s => s.CreatedTime).ThenBy(s => s.ID);
                         break;
                     case "Company":
-                        bookings = bookings.OrderBy(s => s.Company!= null ? s.Company.CompanyName : "").ThenBy(s => s.ID);
+                        bookings = bookings.OrderBy(s => s.Company != null ? s.Company.CompanyName : "").ThenBy(s => s.ID);
                         break;
                     case "Address":
                         bookings = bookings.OrderBy(s => s.Address).ThenBy(s => s.ID);

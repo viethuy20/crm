@@ -56,10 +56,8 @@ namespace PQT.Domain.Concrete
         {
             return TransactionWrapper.Do(() =>
             {
-                var existBooking = Get<Booking>(info.ID);
-                if (existBooking == null)
+                if (info == null)
                     return false;
-
                 info.BookingStatusRecord = new BookingStatusRecord(info.ID, status, userId, message);
                 return Update(info);
             });
@@ -73,20 +71,16 @@ namespace PQT.Domain.Concrete
                 if (existBooking == null)
                     return false;
 
+                Update(info);
+
                 existBooking.EventSessions.Clear();
                 existBooking.EventSessions = GetAll<EventSession>(r => sessionIds.Contains(r.ID)).ToList();
 
-                if (info.EventSessions != null && info.EventSessions.Any())
+                if (existBooking.BookingStatusRecord != BookingStatus.Approved)
                 {
-                    foreach (var item in existBooking.EventSessions.Where(m => !info.EventSessions.Select(n => n.ID).Contains(m.ID)).ToList())
-                    {
-                        existBooking.EventSessions.Remove(item);
-                        Delete(item);
-                    }
-                    UpdateCollection(info, m => m.ID == info.ID, m => m.EventSessions, m => m.ID);
+                    existBooking.BookingStatusRecord = new BookingStatusRecord(info.ID, BookingStatus.Initial, userId, message);
                 }
-                info.BookingStatusRecord = new BookingStatusRecord(info.ID, BookingStatus.Initial, userId, message);
-                return Update(info);
+                return Update(existBooking);
             });
         }
 

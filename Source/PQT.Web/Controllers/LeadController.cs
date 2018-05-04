@@ -327,12 +327,14 @@ namespace PQT.Web.Controllers
             });
         }
 
+        [DisplayName(@"Import VoIp")]
         public ActionResult ImportVoIp()
         {
             var model = new LeadMarkKPIModel();
             return View(model);
         }
         [HttpPost]
+        [DisplayName(@"Import VoIp")]
         public ActionResult ImportVoIp(LeadMarkKPIModel model)
         {
             model.ImportVoIp();
@@ -341,6 +343,7 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
+        [AjaxOnly]
         public ActionResult ConfirmKPI(string session)
         {
             var model = (LeadMarkKPIModel)Session["SessionVoIpImport" + session];
