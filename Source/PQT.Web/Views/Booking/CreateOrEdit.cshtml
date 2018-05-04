@@ -25,7 +25,7 @@
                                                     <div class="checkbox checkbox-styled">
                                                         <label>
                                                             <input type="checkbox" value="@session.ID" @(Model.SessionIds.Contains(session.ID) ? "checked" : "") name="@Html.NameFor(m => m.SessionIds)">
-                                                            <span>@session.SessionTitle</span>
+                                                            <span>@session.SessionTitle (@session.StartDate.ToString("dd MMM") - @session.EndDate.ToString("dd MMM"))</span>
                                                         </label>
                                                     </div>
                                                 </div>
@@ -49,6 +49,7 @@
 
                     <div class="form-group">
                         @Html.HiddenFor(m=>m.Booking.ID)
+                        @Html.HiddenFor(m=>m.Booking.BookingStatusID)
                         @Html.HiddenFor(m=>m.Booking.Attachment)
                         @Html.Bootstrap().DropDownListFor(m => m.Booking.CompanyID, Model.Companies.ToSelectList(m => m.ID, m => m.CompanyName)).OptionLabel("")
                         <label>Company</label>
