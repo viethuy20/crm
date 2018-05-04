@@ -20,10 +20,12 @@ namespace PQT.Web.Controllers
         //
         // GET: /Lead/
         private readonly ILeadService _repo;
+        private readonly ICompanyRepository _companyRepo;
 
-        public LeadController(ILeadService repo)
+        public LeadController(ILeadService repo, ICompanyRepository companyRepo)
         {
             _repo = repo;
+            _companyRepo = companyRepo;
         }
         /// <summary>
         /// 
@@ -183,7 +185,7 @@ namespace PQT.Web.Controllers
         public ActionResult CallingForm(int eventId, int leadId = 0)
         {
             var model = new CallingModel(eventId, leadId);
-            return PartialView(model);
+            return View(model);
         }
 
         [HttpPost]
@@ -1138,5 +1140,12 @@ namespace PQT.Web.Controllers
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
+        [DisplayName(@"Get List Of Company Resource")]
+        public ActionResult CompanyResourceList(int companyID)
+        {
+            var model =
+                _companyRepo.GetAllCompanyResources(m => m.CompanyID == companyID);
+            return PartialView(model);
+        }
     }
 }

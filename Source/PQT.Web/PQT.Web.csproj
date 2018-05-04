@@ -352,6 +352,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\MapperConfig.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
+    <Compile Include="Controllers\BookingController.cs" />
     <Compile Include="Controllers\CompanyResourceController.cs" />
     <Compile Include="Controllers\CounterController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
@@ -375,6 +376,7 @@
     <Compile Include="Infrastructure\Notification\LeadNotificator.cs" />
     <Compile Include="Infrastructure\Utility\FileUpload.cs" />
     <Compile Include="Models\AjaxResult.cs" />
+    <Compile Include="Models\BookingModel.cs" />
     <Compile Include="Models\CompanyImportModel.cs" />
     <Compile Include="Models\CompanyResourceImportModel.cs" />
     <Compile Include="Models\CompanyResourceModel.cs" />
@@ -2482,6 +2484,12 @@
     <Content Include="Views\CompanyResource\ImportFromExcel.cshtml" />
     <Content Include="Views\Lead\CallKPI.cshtml" />
     <Content Include="Views\Lead\ImportVoIp.cshtml" />
+    <Content Include="Views\Lead\CompanyResourceList.cshtml" />
+    <Content Include="Views\Booking\Index.cshtml" />
+    <Content Include="Views\Booking\Action.cshtml" />
+    <Content Include="Views\Booking\CreateOrEdit.cshtml" />
+    <Content Include="Views\Booking\EditorTemplates\Delegate.cshtml" />
+    <Content Include="Views\Booking\RejectBooking.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

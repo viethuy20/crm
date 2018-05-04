@@ -18,11 +18,13 @@ namespace PQT.Web.Controllers
         // GET: /SalesGroup/
         private readonly IEventService _repo;
         private readonly ICompanyRepository _comRepo;
+        private readonly ILeadService _leadService;
 
-        public EventController(IEventService repo, ICompanyRepository comRepo)
+        public EventController(IEventService repo, ICompanyRepository comRepo, ILeadService leadService)
         {
             _repo = repo;
             _comRepo = comRepo;
+            _leadService = leadService;
         }
 
         [DisplayName(@"Event management")]
@@ -209,6 +211,63 @@ namespace PQT.Web.Controllers
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult EndEvent(int id)
+        {
+            var ev = _repo.GetEvent(id);
+            var leads = _leadService.GetAllLeads(m => m.EventID == id);
+            var companyResources = _comRepo.GetAllCompanyResources(m=> m.CompanyID != null && ev.Companies.Select(n=>n.ID).Contains(Convert.ToInt32(m.CompanyID))).ToList();
+            var newResources = new List<CompanyResource>();
+            foreach (var lead in leads)
+            {
+                var existResources =
+                    companyResources.Where(
+                        m => m.BusinessPhone == lead.BusinessPhone && m.MobilePhone == lead.MobilePhone);
+                if (existResources.Any())
+                {
+                    foreach (var item in existResources)
+                    {
+                        item.CompanyID = lead.CompanyID;
+                        item.CountryID = lead.Company.CountryID;
+                        item.Country = lead.Company.CountryName;
+                        item.FirstName = lead.FirstName;
+                        item.LastName = lead.LastName;
+                        item.Organisation = lead.CompanyName;
+                        item.PersonalEmailAddress = lead.PersonalEmailAddress;
+                        item.Role = lead.ClientName;
+                        item.Salutation = lead.Salutation;
+                        item.WorkEmailAddress = lead.WorkEmailAddress;
+                        _comRepo.UpdateCompanyResource(item);
+                    }
+                }
+                else
+                {
+                    var item = new CompanyResource()
+                    {
+                        BusinessPhone = lead.BusinessPhone,
+                        CompanyID = lead.CompanyID,
+                        CountryID = lead.Company.CountryID,
+                        Country = lead.Company.CountryName,
+                        FirstName = lead.FirstName,
+                        LastName = lead.LastName,
+                        MobilePhone = lead.MobilePhone,
+                        Organisation = lead.CompanyName,
+                        PersonalEmailAddress = lead.PersonalEmailAddress,
+                        Role = lead.ClientName,
+                        Salutation = lead.Salutation,
+                        WorkEmailAddress = lead.WorkEmailAddress
+                    };
+                    newResources.Add(item);
+
+                }
+            }
+            if (newResources.Any())
+            {
+                _comRepo.CreateCompanyResources(newResources);
+            }
+
+            return Json(true);
         }
     }
 }

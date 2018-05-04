@@ -17,13 +17,13 @@
         background: #fff;
     }
 
-        .DTFC_Cloned td {
-            background-color: #fff;
-        }
+    .DTFC_Cloned td {
+        background-color: #fff;
+    }
 
-        .DTFC_Cloned th {
-            background-color: #f5f5f5 !important;
-        }
+    .DTFC_Cloned th {
+        background-color: #f5f5f5 !important;
+    }
 
     #tableLead td, table th {
         text-align: left;
@@ -96,6 +96,12 @@
         background-color: #fffdb7;
     }
 </style>
+<style>
+    .delegateItem {
+        padding: 20px;
+        border: 1px solid #e2e2e2;
+    }
+</style>
 <div class="row text-center" style="margin-bottom: -30px;">
     <div style="margin: 0 auto;float: none;display: inline-flex">
         <div style="width: 150px;margin: 15px;">
@@ -150,7 +156,8 @@
                         <div class="btn-group" style="margin-right: 15px;">
                             @if (CurrentUser.HasPermission("Lead", "CallingForm"))
                             {
-                                <a href="@Url.Action("CallingForm", new {eventId = Model.Event.ID, leadId = 0})" class="btn ink-reaction btn-floating-action btn-success simple-ajax-popup-align-top-custom" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Start New Call"><i class="fa fa-phone fa-2x"></i></a>
+                                @*<a href="@Url.Action("CallingForm", new {eventId = Model.Event.ID, leadId = 0})" class="btn ink-reaction btn-floating-action btn-success simple-ajax-popup-align-top-custom" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Start New Call"><i class="fa fa-phone fa-2x"></i></a>*@
+    <a href="@Url.Action("CallingForm", new {eventId = Model.Event.ID, leadId = 0})" class="btn ink-reaction btn-floating-action btn-success" title="Start New Call" ><i class="fa fa-phone fa-2x"></i></a>
                             }
                             @*<a class="btn btn-icon-toggle btn-Expand"><i class="fa fa-expand"></i></a>*@
                         </div>

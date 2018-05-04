@@ -108,7 +108,8 @@
                 @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord != LeadStatus.RequestBook &&
                                                     Model.LeadStatusRecord != LeadStatus.Booked))
                 {
-                    @Html.Bootstrap().ActionLinkButton("Request To Book", "RequestAction").RouteValues(new { id = Model.ID, requestType = LeadStatus.RequestBook }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")
+                    @*@Html.Bootstrap().ActionLinkButton("Request To Book", "CreateBooking").RouteValues(new { id = Model.ID }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")*@
+                    @Html.Bootstrap().ActionLinkButton("Request To Book", "CreateOrEdit", "Booking").RouteValues(new { id= 0, leadId = Model.ID }).Class("btn-success").PrependIcon("md md-my-library-books")
                 }
                 @if (CurrentUser.HasPermission("Lead", "CancelRequest") && (Model.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                 Model.LeadStatusRecord == LeadStatus.RequestLOI ||
