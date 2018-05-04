@@ -381,6 +381,7 @@
     <Compile Include="Models\EmailSettingModel.cs" />
     <Compile Include="Models\EventModelView.cs" />
     <Compile Include="Models\HomeSearchModel.cs" />
+    <Compile Include="Models\LeadMarkKPIModel.cs" />
     <Compile Include="Models\LeadModel.cs" />
     <Compile Include="Models\LeadModelView.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
@@ -2479,6 +2480,8 @@
     <Content Include="Views\Company\ImportFromExcel.cshtml" />
     <Content Include="Views\CompanyResource\Index.cshtml" />
     <Content Include="Views\CompanyResource\ImportFromExcel.cshtml" />
+    <Content Include="Views\Lead\CallKPI.cshtml" />
+    <Content Include="Views\Lead\ImportVoIp.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

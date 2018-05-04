@@ -33,7 +33,7 @@
                                 <option value=""></option>
                                 @foreach (var user in Model.Companies)
                                 {
-                                    <option value="@user.ID" selected="@(Model.CompanyID == user.ID)" dialingCode="@user.Country.DialingCode">@user.CompanyName</option>
+                                    <option value="@user.ID" selected="@(Model.CompanyID == user.ID)" dialingCode="@(user.Country!=null ? user.Country.DialingCode:"")">@user.CompanyName</option>
                                 }
                             </select>
                             <label>COMPANY NAME</label>

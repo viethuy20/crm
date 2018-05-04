@@ -56,7 +56,7 @@ namespace PQT.Web.Controllers
                     return View(model);
                 }
                 model.ParseValue();
-                model.SessionName = "SessionImport" + Guid.NewGuid();
+                model.SessionName = "SessionComResourceImport" + Guid.NewGuid();
                 Session[model.SessionName] = model;
                 return View(model);
             }

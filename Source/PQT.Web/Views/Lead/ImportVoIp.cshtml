@@ -1,0 +1,50 @@
+﻿@model PQT.Web.Models.LeadMarkKPIModel
+@{
+    ViewBag.Title = "Import VoIP";
+}
+
+<section>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card  card-underline">
+                <div class="card-head">
+                    <header><i class="fa fa-fw fa-phone"></i> @ViewBag.Title</header>
+                </div><!--end .card-head -->
+                <div class="card-body">
+                    @using (Html.BeginForm("ImportVoIp", "Lead", FormMethod.Post, new { enctype = "multipart/form-data" ,@class= "form form-validation" }))
+                    {
+                        <div class="form-wizard-nav">
+                            <div class="progress"><div class="progress-bar progress-bar-primary"></div></div>
+                            <ul class="nav nav-justified">
+                                <li class="active"><a href="#step1" data-toggle="tab"><span class="step">1</span> <span class="title">IMPORT VOIP</span></a></li>
+                                <li><a href="#step2" data-toggle="tab"><span class="step">2</span> <span class="title">CONFIRM KPI</span></a></li>
+                            </ul>
+                        </div>
+                        <div class="tab-content clearfix">
+                            <div class="tab-pane active" id="step1">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <a href="~/Content/SampleFiles/company_resources_sample.xls">Download sample excel file</a>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">File Import <span class="required">*</span></label>
+                                    <div class="col-sm-9">
+                                        @Html.Bootstrap().FileFor(m=>m.FileImport).Id("inputfile").HtmlAttributes(new { }).Tooltip("Format file: *.xls").Class("form-control")
+                                    </div>
+                                </div>
+                            </div><!--end #step1 -->
+                        </div><!--end .tab-content -->
+                        <ul class="pager wizard">
+                            <li class="previous first"><a class="btn-raised" href="javascript:void(0);">First</a></li>
+                            <li class="previous"><a class="btn-raised" href="javascript:void(0);">Previous</a></li>
+                            <li class="next last"><a class="btn-raised" href="javascript:void(0);">Last</a></li>
+                            <li class="next"><a class="btn-raised" href="javascript:void(0);">Next</a></li>
+                        </ul>
+                    }
+                </div><!--end .card-body -->
+            </div><!--end .card -->
+        </div>
+    </div>
+</section>

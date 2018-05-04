@@ -67,6 +67,12 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
+        [DisplayName(@"Call KPI")]
+        public ActionResult CallKPI()
+        {
+            var model = new LeadMarkKPIModel();
+            return View(model);
+        }
         public ActionResult Edit(int leadId)
         {
             var model = new CallingModel(leadId);
@@ -262,7 +268,6 @@ namespace PQT.Web.Controllers
             return Json(model.CancelRequest());
         }
 
-
         [DisplayName(@"Block")]
         public ActionResult BlockLead(LeadModel model)
         {
@@ -293,7 +298,6 @@ namespace PQT.Web.Controllers
             return PartialView(model);
         }
 
-
         [AjaxOnly]
         public ActionResult Action(int leadId)
         {
@@ -309,6 +313,40 @@ namespace PQT.Web.Controllers
                 return Json("`Reason` must not be empty");
             }
             return Json(model.RejectRequest());
+        }
+
+        [DisplayName(@"Mark Call KPI")]
+        public ActionResult MarkCallKPI(LeadMarkKPIModel model)
+        {
+
+            return Json(new
+            {
+                success = false
+            });
+        }
+
+        public ActionResult ImportVoIp()
+        {
+            var model = new LeadMarkKPIModel();
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult ImportVoIp(LeadMarkKPIModel model)
+        {
+            model.ImportVoIp();
+            model.SessionName = Guid.NewGuid().ToString("N");
+            Session["SessionVoIpImport" + model.SessionName] = model;
+            return View(model);
+        }
+
+        public ActionResult ConfirmKPI(string session)
+        {
+            var model = (LeadMarkKPIModel)Session["SessionVoIpImport" + session];
+            if (model == null)
+            {
+    
+            }
+            return View(model);
         }
         [AjaxOnly]
         public ActionResult AjaxGetLeads(int eventId)
@@ -655,7 +693,6 @@ namespace PQT.Web.Controllers
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
-
         [AjaxOnly]
         public ActionResult AjaxGetNoCallListForManager(int eventId)
         {
@@ -888,5 +925,218 @@ namespace PQT.Web.Controllers
                 TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked)
             }, JsonRequestBehavior.AllowGet);
         }
+
+        [AjaxOnly]
+        public ActionResult AjaxGetCallKPI()
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+            var searchValue = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
+            }
+
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+            IEnumerable<Lead> leads = new HashSet<Lead>();
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                leads = _repo.GetAllLeads(m => (m.LeadStatusRecord == LeadStatus.Live || m.LeadStatusRecord == LeadStatus.LOI || m.LeadStatusRecord == LeadStatus.Booked) && (
+                                                   m.StatusUpdateTimeStr.Contains(searchValue) ||
+                                                   m.StatusDisplay.Contains(searchValue) ||
+                                                   m.CompanyName.Contains(searchValue) ||
+                                                   m.CountryCode.Contains(searchValue) ||
+                                                   m.ClientName.Contains(searchValue) ||
+                                                   m.DirectLine.Contains(searchValue) ||
+                                                   m.CallBackDateDisplay.Contains(searchValue) ||
+                                                   m.Salutation.Contains(searchValue) ||
+                                                   m.FirstName.Contains(searchValue) ||
+                                                   m.LastName.Contains(searchValue) ||
+                                                   m.BusinessPhone.Contains(searchValue) ||
+                                                   m.MobilePhone.Contains(searchValue) ||
+                                                   m.WorkEmailAddress.Contains(searchValue) ||
+                                                   m.WorkEmailAddress1.Contains(searchValue) ||
+                                                   m.PersonalEmailAddress.Contains(searchValue)));
+            }
+            else
+            {
+                leads = _repo.GetAllLeads(m => (m.LeadStatusRecord == LeadStatus.Live || m.LeadStatusRecord == LeadStatus.LOI || m.LeadStatusRecord == LeadStatus.Booked));
+            }
+            // ReSharper disable once AssignNullToNotNullAttribute
+
+            #region sort
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "CreatedTime":
+                        leads = leads.OrderBy(s => s.StatusUpdateTime).ThenBy(s => s.StatusCode);
+                        break;
+                    case "Company":
+                        leads = leads.OrderBy(s => s.Company.CompanyName).ThenBy(s => s.ID);
+                        break;
+                    case "Salesman":
+                        leads = leads.OrderBy(s => s.User.DisplayName).ThenBy(s => s.ID);
+                        break;
+                    case "Country":
+                        leads = leads.OrderBy(s => s.Company.CountryCode).ThenBy(s => s.ID);
+                        break;
+                    case "ClientName":
+                        leads = leads.OrderBy(s => s.ClientName).ThenBy(s => s.ID);
+                        break;
+                    case "DirectLine":
+                        leads = leads.OrderBy(s => s.DirectLine).ThenBy(s => s.ID);
+                        break;
+                    case "CallBackDate":
+                        leads = leads.OrderBy(s => s.CallBackDate).ThenBy(s => s.ID);
+                        break;
+                    case "Salutation":
+                        leads = leads.OrderBy(s => s.Salutation).ThenBy(s => s.ID);
+                        break;
+                    case "FirstName":
+                        leads = leads.OrderBy(s => s.FirstName).ThenBy(s => s.ID);
+                        break;
+                    case "LastName":
+                        leads = leads.OrderBy(s => s.LastName).ThenBy(s => s.ID);
+                        break;
+                    case "BusinessPhone":
+                        leads = leads.OrderBy(s => s.BusinessPhone).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone":
+                        leads = leads.OrderBy(s => s.MobilePhone).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmailAddress":
+                        leads = leads.OrderBy(s => s.WorkEmailAddress).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmailAddress1":
+                        leads = leads.OrderBy(s => s.WorkEmailAddress1).ThenBy(s => s.ID);
+                        break;
+                    case "PersonalEmailAddress":
+                        leads = leads.OrderBy(s => s.PersonalEmailAddress).ThenBy(s => s.ID);
+                        break;
+                    case "StatusDisplay":
+                        leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        leads = leads.OrderBy(s => s.StatusCode).ThenBy(s => s.StatusUpdateTime);
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "CreatedTime":
+                        leads = leads.OrderByDescending(s => s.CreatedTime).ThenBy(s => s.ID);
+                        break;
+                    case "Company":
+                        leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenBy(s => s.ID);
+                        break;
+                    case "Salesman":
+                        leads = leads.OrderByDescending(s => s.User.DisplayName).ThenBy(s => s.ID);
+                        break;
+                    case "Country":
+                        leads = leads.OrderByDescending(s => s.Company.CountryCode).ThenBy(s => s.ID);
+                        break;
+                    case "ClientName":
+                        leads = leads.OrderByDescending(s => s.ClientName).ThenBy(s => s.ID);
+                        break;
+                    case "DirectLine":
+                        leads = leads.OrderByDescending(s => s.DirectLine).ThenBy(s => s.ID);
+                        break;
+                    case "CallBackDate":
+                        leads = leads.OrderByDescending(s => s.CallBackDate).ThenBy(s => s.ID);
+                        break;
+                    case "Salutation":
+                        leads = leads.OrderByDescending(s => s.Salutation).ThenBy(s => s.ID);
+                        break;
+                    case "FirstName":
+                        leads = leads.OrderByDescending(s => s.FirstName).ThenBy(s => s.ID);
+                        break;
+                    case "LastName":
+                        leads = leads.OrderByDescending(s => s.LastName).ThenBy(s => s.ID);
+                        break;
+                    case "BusinessPhone":
+                        leads = leads.OrderByDescending(s => s.BusinessPhone).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone":
+                        leads = leads.OrderByDescending(s => s.MobilePhone).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmailAddress":
+                        leads = leads.OrderByDescending(s => s.WorkEmailAddress).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmailAddress1":
+                        leads = leads.OrderByDescending(s => s.WorkEmailAddress1).ThenBy(s => s.ID);
+                        break;
+                    case "PersonalEmailAddress":
+                        leads = leads.OrderByDescending(s => s.PersonalEmailAddress).ThenBy(s => s.ID);
+                        break;
+                    case "StatusDisplay":
+                        leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        leads = leads.OrderByDescending(s => s.StatusCode).ThenBy(s => s.StatusUpdateTime);
+                        break;
+                }
+            }
+
+            #endregion sort
+
+            recordsTotal = leads.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            var data = leads.Skip(skip).Take(pageSize).ToList();
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    m.ID,
+                    m.EventID,
+                    CreatedTime = m.StatusUpdateTime.ToString("dd/MM/yyyy HH:mm:ss"),
+                    Company = m.Company.CompanyName,
+                    Country = m.Company.CountryCode,
+                    Salesman = m.User.DisplayName,
+                    m.GeneralLine,
+                    m.ClientName,
+                    m.DirectLine,
+                    CallBackDate = m.CallBackDate == default(DateTime) ? "" : m.CallBackDate.ToString("dd/MM/yyyy"),
+                    m.Event.EventName,
+                    m.Event.EventCode,
+                    m.StatusDisplay,
+                    m.Salutation,
+                    m.FirstName,
+                    m.LastName,
+                    m.BusinessPhone,
+                    m.MobilePhone,
+                    m.WorkEmailAddress,
+                    m.WorkEmailAddress1,
+                    m.PersonalEmailAddress,
+                    m.StatusCode,
+                    m.ClassStatus,
+                    actionBlock = m.LeadStatusRecord == LeadStatus.Blocked ? "Unblock" : "Block"
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

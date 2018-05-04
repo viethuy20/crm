@@ -34,6 +34,7 @@ namespace PQT.Web
                 , "~/Content/css/theme-default/libs/rickshaw/rickshaw.css"
                 , "~/Content/css/theme-default/libs/morris/morris.core.css"
                 , "~/Content/css/theme-default/libs/toastr/toastr.min.css"
+                , "~/Content/css/theme-default/libs/wizard/wizard.css"
                 , "~/Content/css/theme-default/materialadmin.css"
                 ));
             bundles.Add(new JsBundle("~/content/js/min").Include(

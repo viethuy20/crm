@@ -15,7 +15,6 @@ namespace PQT.Domain.Entities
         {
             PhoneCalls = new HashSet<PhoneCall>();
         }
-        public bool MarkKPI { get; set; }
         public string GeneralLine { get; set; }
         public string DirectLine { get; set; } //Direct Line/Mobile number
         public string ClientName { get; set; } //Client Name/Job Title
@@ -42,6 +41,9 @@ namespace PQT.Domain.Entities
         [ForeignKey("UserID")]
         public virtual User User { get; set; }
         public virtual ICollection<PhoneCall> PhoneCalls { get; set; }
+
+        public bool MarkKPI { get; set; }
+        public string KPIRemarks { get; set; }
 
         public string CompanyName
         {

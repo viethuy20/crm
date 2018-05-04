@@ -67,7 +67,8 @@ namespace PQT.Domain.Entities
 
             public enum System
             {
-                NotificationNumber
+                NotificationNumber,
+                VoIpBuffer
             }
         }
 

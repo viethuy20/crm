@@ -30,16 +30,38 @@ namespace PQT.Web.Infrastructure.Utility
             string key = Enum.GetName(typeof(T), keyGetValue);
 
             Setting t = SettingRepository.GetSetting(module, key);
-            dynamic tempData = null;
-            if (typeofData == typeof(int)) tempData = Convert.ToInt32(t.Value);
-            else if (typeofData == typeof(double)) tempData = Convert.ToDouble(t.Value);
-            else if (typeofData == typeof(decimal)) tempData = Convert.ToDecimal(t.Value);
-            else if (typeofData == typeof(bool)) tempData = Convert.ToBoolean(t.Value);
-            else tempData = t.Value;
+            if (t != null)
+            {
+                dynamic tempData = null;
+                if (typeofData == typeof(int)) tempData = Convert.ToInt32(t.Value);
+                else if (typeofData == typeof(double)) tempData = Convert.ToDouble(t.Value);
+                else if (typeofData == typeof(decimal)) tempData = Convert.ToDecimal(t.Value);
+                else if (typeofData == typeof(bool)) tempData = Convert.ToBoolean(t.Value);
+                else tempData = t.Value;
+                return tempData;
+            }
+            else
+            {
+                var defaulValue = GetDefault(typeofData);
+                var newSetting = new Setting
+                {
+                    Module = module,
+                    Name = key,
+                    Value = defaulValue,
 
-            return tempData;
+                };
+                SettingRepository.CreateSetting(newSetting);
+                return defaulValue;
+            }
         }
-
+        public static dynamic GetDefault(Type type)
+        {
+            if (type.IsValueType)
+            {
+                return Activator.CreateInstance(type);
+            }
+            return null;
+        }
         #region Nested type: SystemConfig
 
         public class Lead
@@ -63,6 +85,10 @@ namespace PQT.Web.Infrastructure.Utility
             public static int NotificationNumber()
             {
                 return Convert.ToInt32(GetSetting(Setting.ModuleType.System, Setting.ModuleKey.System.NotificationNumber, typeof(int)));
+            }
+            public static int VoIpBuffer()
+            {
+                return Convert.ToInt32(GetSetting(Setting.ModuleType.System, Setting.ModuleKey.System.VoIpBuffer, typeof(int)));
             }
         }
         #endregion
