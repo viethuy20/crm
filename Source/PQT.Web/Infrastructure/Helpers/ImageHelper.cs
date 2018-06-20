@@ -6,17 +6,21 @@ namespace PQT.Web.Infrastructure.Helpers
 {
     public class ImageHelper
     {
-        public const int MaxWidthStockUpload = 1024;
-        public const int MaxHeightStockUpload = 1024;
+        //public const int MaxWidthStockUpload = 1024;
+        //public const int MaxHeightStockUpload = 1024;
         public const int MaxWidthThumbnailUpload = 400;
         public const int MaxHeightThumbnailUpload = 300;
-        public const int MaxWidthUserAvatar = 400;
-        public const int MaxHeightUserAvatar = 400;
-        public static void CreateImageHighQuality(string sOriginalPath, string sPhysicalPath, string sOrgFileName, string sTargetFileName, int maxHeight, int maxWidth)
+        public const int MaxWidthUserAvatar = 200;
+        public const int MaxHeightUserAvatar = 200;
+        public static bool CreateImageHighQuality(string sOriginalPath, string sPhysicalPath, string sOrgFileName, string sTargetFileName, int maxHeight, int maxWidth)
         {
             try
             {
                 var oImg = Image.FromFile(sOriginalPath + @"\" + sOrgFileName);
+                if (oImg.Width < maxWidth && oImg.Height < maxHeight)
+                {
+                    return false;
+                }
                 int imgWidth = GetScaleFactorWidth(oImg, maxHeight, maxWidth);
                 int imgHeight = GetScaleFactorHeight(oImg, maxHeight, maxWidth);
 
@@ -30,16 +34,22 @@ namespace PQT.Web.Infrastructure.Helpers
                 var targetPath = sPhysicalPath + @"\" + sTargetFileName;
                 oThumbNail.Save(targetPath);
                 oImg.Dispose();
+                return true;
             }
             catch (Exception ex)
             {
             }
+            return false;
         }
-        public static void CreateImage60PercentQuality(string imageType, string sOriginalPath, string sPhysicalPath, string sOrgFileName, string sTargetFileName, int maxHeight, int maxWidth)
+        public static bool CreateImage60PercentQuality(string imageType, string sOriginalPath, string sPhysicalPath, string sOrgFileName, string sTargetFileName, int maxHeight, int maxWidth)
         {
             try
             {
                 var oImg = Image.FromFile(sOriginalPath + @"\" + sOrgFileName);
+                if (oImg.Width <= maxWidth && oImg.Height <= maxHeight)
+                {
+                    return false;
+                }
                 int imgWidth = GetScaleFactorWidth(oImg, maxHeight, maxWidth);
                 int imgHeight = GetScaleFactorHeight(oImg, maxHeight, maxWidth);
 
@@ -55,10 +65,12 @@ namespace PQT.Web.Infrastructure.Helpers
                 SaveJpeg(targetPath, oThumbNail, 60, imageType);
                 //oThumbNail.Save(sPhysicalPath + @"\" + sTargetFileName);
                 oImg.Dispose();
+                return true;
             }
             catch (Exception ex)
             {
             }
+            return false;
         }
         public static void SaveJpeg(string path, Image img, int quality, string mimeType)
         {

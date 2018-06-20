@@ -41,11 +41,13 @@ namespace PQT.Web.Infrastructure.Utility
                 if (!string.IsNullOrEmpty(base64String))
                 {
                     byte[] contents = Convert.FromBase64String(base64String.Replace("data:image/png;base64,", ""));
-                    string fileName = "user" + userId + ".png";
+                    var guid = Guid.NewGuid().ToString("N");
+                    string fileName = guid + ".png";
                     string filePath = GetImagePath(userId, fileName);
                     string directory = Path.GetDirectoryName(filePath);
                     if (directory != null) Directory.CreateDirectory(directory);
-                    System.IO.File.WriteAllBytes(filePath, contents);
+                    File.WriteAllBytes(filePath, contents);
+                    
                     return fileName;
                 }
             }

@@ -13,7 +13,6 @@ using Resources;
 
 namespace PQT.Web.Controllers
 {
-    [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
     public class AccountController : Controller
     {
         private readonly ILoginTracker _loginTracker;
@@ -25,6 +24,7 @@ namespace PQT.Web.Controllers
             _loginTracker = loginTracker;
         }
 
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         private RedirectResult RedirectToLocal(string returnUrl)
         {
             return Redirect(Url.IsLocalUrl(returnUrl)
@@ -32,6 +32,7 @@ namespace PQT.Web.Controllers
                 : Url.Action("Index", "Home"));
         }
 
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         public ActionResult Login(string returnUrl)
         {
             //Session["DbName"] = null;
@@ -46,6 +47,7 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         [HttpPost]
         public ActionResult Login(LoginViewModel model, string returnUrl)
         {
@@ -71,6 +73,7 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         public ActionResult Logout(string returnUrl = "/")
         {
             CurrentUser.Logout();
@@ -135,6 +138,7 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         public ActionResult BypassLogin(string token)
         {
             return Redirect(BypassAuth.Decrypt(token));
