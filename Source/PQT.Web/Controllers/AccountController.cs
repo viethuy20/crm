@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Web.Mvc;
 using System.Web.Security;
 using PQT.Domain.Abstract;
@@ -104,10 +105,10 @@ namespace PQT.Web.Controllers
             if (ModelState.IsValid)
             {
                 // Update user profile picture
-                if (model.Picture != null && model.Picture.ContentLength > 0)
+                if (!string.IsNullOrEmpty(model.PictureBase64))
                 {
                     UserPicture.Delete(CurrentUser.Identity.ID, CurrentUser.Identity.Picture);
-                    string pictureFileName = UserPicture.Upload(CurrentUser.Identity.ID, model.Picture);
+                    string pictureFileName = UserPicture.Upload(CurrentUser.Identity.ID, model.PictureBase64);
                     CurrentUser.Identity.Picture = pictureFileName;
                 }
 

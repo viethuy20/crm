@@ -34,6 +34,28 @@ namespace PQT.Web.Infrastructure.Utility
 
             return null;
         }
+        public static string Upload(int userId, string base64String)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(base64String))
+                {
+                    byte[] contents = Convert.FromBase64String(base64String.Replace("data:image/png;base64,", ""));
+                    string fileName = "user" + userId + ".png";
+                    string filePath = GetImagePath(userId, fileName);
+                    string directory = Path.GetDirectoryName(filePath);
+                    if (directory != null) Directory.CreateDirectory(directory);
+                    System.IO.File.WriteAllBytes(filePath, contents);
+                    return fileName;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return null;
+        }
 
         public static bool Delete(int userId, string fileName)
         {
@@ -57,7 +79,7 @@ namespace PQT.Web.Infrastructure.Utility
 
         public static string GetfolderPath(int folder)
         {
-            return HttpContext.Current.Server.MapPath("~/data/user_img/" + folder+"/");
+            return HttpContext.Current.Server.MapPath("~/data/user_img/" + folder + "/");
         }
     }
 }

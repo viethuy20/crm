@@ -85,10 +85,6 @@ namespace PQT.Web.Controllers
 
             user = _membershipService.CreateUser(user);
 
-            string userPicture = UserPicture.Upload(user.ID, model.Picture);
-            if (!string.IsNullOrEmpty(userPicture))
-                _membershipService.UpdateUserPicture(user.ID, userPicture);
-
             _roleService.AssignRoles(user, userRoles);
             TempData["message"] = Resource.AddSuccessful;
             return RedirectToAction("Index");
@@ -153,9 +149,6 @@ namespace PQT.Web.Controllers
             }
             //user.LastAccess = model.LastAccess;
             var success = _membershipService.UpdateUser(user);
-            string userPicture = UserPicture.Upload(model.ID, model.Picture);
-            if (!string.IsNullOrEmpty(userPicture))
-                _membershipService.UpdateUserPicture(user.ID, userPicture);
 
             _roleService.AssignRoles(user, userRoles);
 

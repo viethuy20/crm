@@ -45,7 +45,6 @@ namespace PQT.Web.Models
         [DataType(DataType.PhoneNumber)]
         [RegularExpression(@"^[0-9\+]{1,}[0-9\-\ ]{3,15}$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldIsInvalid")]
         public string BusinessPhone { get; set; }
-        public HttpPostedFileBase Picture { get; set; }
 
         public string Address { get; set; }
         public LevelSalesman LevelSalesman { get; set; }
@@ -112,7 +111,6 @@ namespace PQT.Web.Models
         [RegularExpression(@"^[0-9\+]{1,}[0-9\-\ ]{3,15}$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldIsInvalid")]
         public string BusinessPhone { get; set; }
 
-        public HttpPostedFileBase Picture { get; set; }
 
         public string UserPicture { get; set; }
         public DateTime? LastAccess { get; set; }
@@ -176,7 +174,8 @@ namespace PQT.Web.Models
         [RegularExpression(@"^[0-9\+]{1,}[0-9\-\ ]{3,15}$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldIsInvalid")]
         public string BusinessPhone { get; set; }
 
-        public HttpPostedFileBase Picture { get; set; }
+        //public HttpPostedFileBase Picture { get; set; }
+        public string PictureBase64 { get; set; }
         public string LevelSalesman { get; set; }
         public string DateOfContract { get; set; }
         public string DateOfStarting { get; set; }
