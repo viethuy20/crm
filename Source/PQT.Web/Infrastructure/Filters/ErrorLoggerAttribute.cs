@@ -76,8 +76,7 @@ namespace PQT.Web.Infrastructure.Filters
                     filterContext.Exception.StackTrace;
             }
             AuditTracker.CreateRecord(record);
-            var host = HttpContext.Current.Request.Url.Host;
-            EmailHelper.LogsSendEmail(record, host);
+            EmailHelper.LogsSendEmail(record);
         }
 //        private void LogsSendEmail(Audit audit)
 //        {

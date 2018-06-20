@@ -9,5 +9,6 @@ namespace PQT.Domain.Enum
     public class NotifyType : Enumeration
     {
         public static readonly NotifyType Lead = New<NotifyType>(1, "Lead");
+        public static readonly NotifyType Booking = New<NotifyType>(2, "Booking");
     }
 }

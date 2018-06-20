@@ -1,0 +1,13 @@
+﻿@model PQT.Web.Models.LeadMarkKPIModel
+
+@if (Model != null)
+{
+    <center>
+        <h2 style="color: green">@Model.Message</h2>
+        <a href="@Url.Action("Index", "Kpi")" class="text-primary">Go to Enquire KPIs</a>
+    </center>
+}
+else
+{
+    <center><h2 style="color: red">Session Expired</h2></center>
+}

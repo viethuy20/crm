@@ -22,6 +22,7 @@ namespace PQT.Web.Models
         public string requestType { get; set; }
         public HttpPostedFileBase AttachmentFile { get; set; }
         public string Reason { get; set; }
+        public Lead Lead { get; set; }
 
         public LeadModel()
         {
@@ -67,7 +68,6 @@ namespace PQT.Web.Models
             lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Blocked, CurrentUser.Identity.ID);
             if (!leadRepo.UpdateLead(lead)) return "Block failed";
             var users = new List<User>();
-            users.AddRange(lead.Event.Users);
             users.AddRange(lead.Event.SalesGroups.SelectMany(m => m.Users));
             //users.Add(lead.Event.User);//notify for manager
             //LeadNotificator.NotifyUser(users, lead);
@@ -136,6 +136,7 @@ namespace PQT.Web.Models
         public string CancelRequest()
         {
             var leadRepo = DependencyHelper.GetService<ILeadService>();
+            var bookingRepo = DependencyHelper.GetService<IBookingService>();
             var lead = leadRepo.GetLead(id);
             if (lead == null) return "Cancel failed";
             if (lead.LeadStatusRecord == LeadStatus.Booked)
@@ -144,9 +145,22 @@ namespace PQT.Web.Models
                 lead.LeadStatusRecord != LeadStatus.RequestNCL &&
                 lead.LeadStatusRecord != LeadStatus.RequestBook)
                 return "Cancel failed";
+            if (lead.LeadStatusRecord == LeadStatus.RequestBook)
+            {
+                var booking = bookingRepo.GetBooking(id);
+                if (booking != null)
+                {
+                    if (booking.BookingStatusRecord == BookingStatus.Approved)
+                    {
+                        return "Cannot process ... Booking has been approved";
+                    }
+                    bookingRepo.DeleteBooking(booking.ID);
+                }
+            }
             var titleNotify = lead.LeadStatusRecord.Status.DisplayName + " cancelled";
             lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Initial, CurrentUser.Identity.ID);
-            if (!leadRepo.UpdateLead(lead)) return "Cancel failed";
+            if (!leadRepo.UpdateLead(lead))
+                return "Cancel failed";
             LeadNotificator.NotifyUser(new List<User> { lead.Event.User }, lead, titleNotify); // notify for manager
             return "";
         }
@@ -266,25 +280,26 @@ namespace PQT.Web.Models
     {
         public int LeadID { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
+        [RegularExpression(@"^[0-9\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string GeneralLine { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string ClientName { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
+        [RegularExpression(@"^[0-9\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string DirectLine { get; set; }
         public string CompanyName { get; set; }
 
         public int EventID { get; set; }
-        public int CompanyID { get; set; }
+        [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
+        public int? CompanyID { get; set; }
         public IEnumerable<Company> Companies { get; set; }
 
         public string Salutation { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^[0-9\+]{1,}[0-9\-\ ]{3,15}$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string BusinessPhone { get; set; }
-        [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^[0-9\+]{1,}[0-9\-\ ]{3,15}$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string MobilePhone { get; set; }
         [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessage = "Email is invalid")]
         public string WorkEmailAddress { get; set; }
@@ -327,27 +342,11 @@ namespace PQT.Web.Models
                 }
             }
         }
-        public CallingModel(int eventId,int leadId)
+        public CallingModel(int eventId, int leadId)
         {
             EventID = eventId;
             LeadID = leadId;
-            var eventRepo = DependencyHelper.GetService<IEventService>();
-            var eventLead = eventRepo.GetEvent(eventId);
-            if (eventLead != null)
-            {
-                var leadRepo = DependencyHelper.GetService<ILeadService>();
-                var companyIds = leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
-                    m.UserID != CurrentUser.Identity.ID &&
-                    m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
-                    (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked ||
-                     m.LeadStatusRecord.UpdatedTime.Date >=
-                     DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))).Select(m => m.CompanyID).Distinct();// get list company blocked
-                Companies = eventLead.Companies.Where(m => !companyIds.Contains(m.ID));
-            }
-            else
-            {
-                Companies = new List<Company>();
-            }
+            LoadCompanies(eventId);
 
             if (leadId > 0)
             {
@@ -379,6 +378,26 @@ namespace PQT.Web.Models
             }
         }
 
+        public void LoadCompanies(int eventId)
+        {
+            var eventRepo = DependencyHelper.GetService<IEventService>();
+            var eventLead = eventRepo.GetEvent(eventId);
+            if (eventLead != null)
+            {
+                var leadRepo = DependencyHelper.GetService<ILeadService>();
+                var companiesInNcl = leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
+                    m.UserID != CurrentUser.Identity.ID &&
+                    m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
+                    (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked ||
+                     m.LeadStatusRecord.UpdatedTime.Date >=
+                     DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))).Select(m => m.CompanyID).Distinct();// get list company blocked
+                Companies = eventLead.Companies.Where(m => !companiesInNcl.Contains(m.ID));
+            }
+            else
+            {
+                Companies = new List<Company>();
+            }
+        }
         public bool SaveEdit()
         {
             return TransactionWrapper.Do(() =>
@@ -387,7 +406,7 @@ namespace PQT.Web.Models
                 Lead = leadRepo.GetLead(LeadID);
                 if (Lead != null)
                 {
-                    Lead.CompanyID = CompanyID;
+                    Lead.CompanyID = (int)CompanyID;
                     Lead.GeneralLine = GeneralLine;
                     Lead.ClientName = ClientName;
                     Lead.DirectLine = DirectLine;
@@ -415,7 +434,7 @@ namespace PQT.Web.Models
                 Lead = new Lead
                 {
                     EventID = EventID,
-                    CompanyID = CompanyID,
+                    CompanyID = (int)CompanyID,
                     GeneralLine = GeneralLine,
                     ClientName = ClientName,
                     DirectLine = DirectLine,
@@ -446,7 +465,7 @@ namespace PQT.Web.Models
                         return true;
                     }
                 }
-                
+
                 return false;
             });
         }

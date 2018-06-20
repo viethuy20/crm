@@ -1,64 +1,42 @@
 ﻿@model IEnumerable<PQT.Domain.Entities.CompanyResource>
 
-<style>
-    #crtable tbody tr {
-        cursor: pointer;
-    }
-    #crtable tbody tr:hover {
-        background-color: #f8eaea;
-    }
-</style>
-
-<div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
-    <div class="card-head">
-        <header>Company Resource</header>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table" id="crtable">
-                <thead>
-                    <tr>
-                        <th>Country</th>
-                        <th>Salutation</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Organisation</th>
-                        <th>Role</th>
-                        <th>Business Phone</th>
-                        <th>MobilePhone</th>
-                        <th>Work Email</th>
-                        <th>Personal Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr data-id="@item.ID" data-country="@item.Country" 
-                            data-salutation="@item.Salutation" data-firstname="@item.FirstName"  
-                            data-lastname="@item.LastName" data-organisation="@item.Organisation"
-                            data-role="@item.Role" data-businessphone="@item.BusinessPhone"
-                            data-mobilephone="@item.MobilePhone" data-workemail="@item.WorkEmailAddress"
-                            data-personalemail="@item.PersonalEmailAddress">
-                            <td>@item.Country</td>
-                            <td>@item.Salutation</td>
-                            <td>@item.FirstName</td>
-                            <td>@item.LastName</td>
-                            <td>@item.Organisation</td>
-                            <td>@item.Role</td>
-                            <td>@item.BusinessPhone</td>
-                            <td>@item.MobilePhone</td>
-                            <td>@item.WorkEmailAddress</td>
-                            <td>@item.PersonalEmailAddress</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+<div class="table-responsive">
+    <table class="table" id="crtable">
+        <thead>
+            <tr>
+                <th>Country</th>
+                <th>Salutation</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Organisation</th>
+                <th>Role</th>
+                <th>Business Phone</th>
+                <th>MobilePhone</th>
+                <th>Work Email</th>
+                <th>Personal Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr data-id="@item.ID" data-country="@item.Country"
+                    data-salutation="@item.Salutation" data-firstname="@item.FirstName"
+                    data-lastname="@item.LastName" data-organisation="@item.Organisation"
+                    data-role="@item.Role" data-businessphone="@item.BusinessPhone"
+                    data-mobilephone="@item.MobilePhone" data-workemail="@item.WorkEmailAddress"
+                    data-personalemail="@item.PersonalEmailAddress">
+                    <td>@item.Country</td>
+                    <td>@item.Salutation</td>
+                    <td>@item.FirstName</td>
+                    <td>@item.LastName</td>
+                    <td>@item.Organisation</td>
+                    <td>@item.Role</td>
+                    <td>@item.BusinessPhone</td>
+                    <td>@item.MobilePhone</td>
+                    <td>@item.WorkEmailAddress</td>
+                    <td>@item.PersonalEmailAddress</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
-
-@Html.Script(
-    @<script>
-        var $Table = $("#crtable");
-     </script>
-)

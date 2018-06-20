@@ -128,9 +128,9 @@ namespace PQT.Web.Controllers
                 _loginTracker.ReloadUser(CurrentUser.Identity.Email, CurrentUser.Identity);
 
                 TempData["message"] = Resource.YourProfileHasBeenUpdated;
-                return EditProfile();
+                return RedirectToAction("Profile");
             }
-
+            model.UserSalaryHistories = CurrentUser.Identity.UserSalaryHistories;
             return View(model);
         }
 

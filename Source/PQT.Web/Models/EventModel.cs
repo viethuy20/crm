@@ -13,7 +13,6 @@ namespace PQT.Web.Models
     public class EventModel
     {
         public Event Event { get; set; }
-        public List<int> UsersSelected { get; set; }
         public List<int> GroupsSelected { get; set; }
         public List<int> CompaniesSelected { get; set; }
         public IEnumerable<Company> Companies { get; set; }
@@ -22,7 +21,6 @@ namespace PQT.Web.Models
 
         public EventModel()
         {
-            UsersSelected = new List<int>();
             GroupsSelected = new List<int>();
             CompaniesSelected = new List<int>();
             Event = new Event
@@ -44,7 +42,6 @@ namespace PQT.Web.Models
             Event = repo.GetEvent(id);
             if (Event != null)
             {
-                UsersSelected = Event.Users.Select(m => m.ID).ToList();
                 GroupsSelected = Event.SalesGroups.Select(m => m.ID).ToList();
                 CompaniesSelected = Event.Companies.Select(m => m.ID).ToList();
 
@@ -58,7 +55,7 @@ namespace PQT.Web.Models
         public bool Create()
         {
             var repo = DependencyHelper.GetService<IEventService>();
-            if (repo.CreateEvent(Event, CompaniesSelected, GroupsSelected, UsersSelected) != null)
+            if (repo.CreateEvent(Event, CompaniesSelected, GroupsSelected) != null)
             {
                 return true;
             }
@@ -67,7 +64,7 @@ namespace PQT.Web.Models
         public bool Update()
         {
             var repo = DependencyHelper.GetService<IEventService>();
-            if (repo.UpdateEventIncludeUpdateCollection(Event, CompaniesSelected, GroupsSelected, UsersSelected))
+            if (repo.UpdateEventIncludeUpdateCollection(Event, CompaniesSelected, GroupsSelected))
             {
                 return true;
             }

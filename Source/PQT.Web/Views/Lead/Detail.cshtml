@@ -4,6 +4,7 @@
 
 @{
     ViewBag.Title = "Call Detail";
+    var eventClosed = Model.Event != null && (Model.Event.IsEventEnd || Model.Event.EndDate.Date < DateTime.Today) ? true : false;
 }
 <style>
     .card .Reject {
@@ -42,13 +43,13 @@
 
     .card.RequestNCL,
     .card.RequestLOI,
-    .card.RequestBook {
+    .card.RequestBooking {
         background-color: #faf9d4 !important;
     }
 
         .card.RequestNCL input,
         .card.RequestLOI input,
-        .card.RequestBook input {
+        .card.RequestBooking input {
             color: #a5a100;
         }
 </style>
@@ -62,34 +63,34 @@
         <div class="col-sm-12" style="padding-right: 24px;padding-bottom: 12px">
             @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
             {
-                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "NoCallList").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "NCLForManager").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
             }
             else
             {
                 @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
             }
 
-            @if ((Model.Lead.LeadStatusRecord != LeadStatus.Booked))
+            @if (!eventClosed && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
             {
                 if (CurrentUser.HasPermission("Lead", "Edit"))
                 {
                     @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { leadId = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
                 }
             }
-            @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
+            @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.Reject))
             {
                 @Html.Bootstrap().ActionLinkButton("Request To NCL", "RequestAction").Id("request_ncl").Class("btn-info").PrependIcon("md md-phone-locked")
             }
 
-            @if (CurrentUser.HasPermission("Lead", "ApprovalAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
+            @if (!eventClosed && CurrentUser.HasPermission("Lead", "ApprovalAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                          Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
                                                                          Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
             {
                 @Html.Bootstrap().ActionLinkButton("Approve " + Model.Lead.StatusDisplay, "ApprovalAction").Id("approve_action").Class("btn-success").PrependIcon("md md-done")
             }
 
-            @if (CurrentUser.HasPermission("Lead", "RejectAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
+            @if (!eventClosed && CurrentUser.HasPermission("Lead", "RejectAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
             {
@@ -97,25 +98,25 @@
             }
 
 
-            @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
+            @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.Reject ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.Live))
             {
                 @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
             }
-            @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord != LeadStatus.RequestBook &&
+            @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord != LeadStatus.RequestBook &&
                                                                         Model.Lead.LeadStatusRecord != LeadStatus.Booked))
             {
-                @Html.Bootstrap().ActionLinkButton("Request To Book", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestBook }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")
+                @Html.Bootstrap().ActionLinkButton("Request To Book", "Create", "Booking").RouteValues(new { id = Model.Lead.ID }).Class("btn-success").PrependIcon("md md-my-library-books")
             }
-            @if (CurrentUser.HasPermission("Lead", "CancelRequest") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
+            @if (!eventClosed && CurrentUser.HasPermission("Lead", "CancelRequest") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI ||
                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestBook))
             {
                 @Html.Bootstrap().ActionLinkButton("Cancel " + Model.Lead.StatusDisplay, "CancelRequest").Id("cancel_request").Class("btn-warning").PrependIcon("md md-cancel")
             }
-            @if ((Model.Lead.LeadStatusRecord != LeadStatus.Booked))
+            @if (!eventClosed && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
             {
                 if (Model.Lead.LeadStatusRecord != LeadStatus.Blocked)
                 {
@@ -132,7 +133,7 @@
                     }
                 }
             }
-            @if (Model.Lead.LeadStatusRecord == LeadStatus.Initial || Model.Lead.LeadStatusRecord == LeadStatus.Reject)
+            @if (!eventClosed && (Model.Lead.LeadStatusRecord == LeadStatus.Initial || Model.Lead.LeadStatusRecord == LeadStatus.Reject))
             {
                 if (CurrentUser.HasPermission("Lead", "Delete"))
                 {
@@ -158,8 +159,8 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.StatusUpdateTime).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.StatusUpdateTime).LabelText("UPDATE TIME")
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.StatusUpdateTimeStr).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.StatusUpdateTimeStr).LabelText("UPDATE TIME")
                     </div>
                 </div>
                 @if (!string.IsNullOrEmpty(Model.Lead.LeadStatusRecord.Attachment))
@@ -306,9 +307,9 @@
         </div><!--end .card-body -->
         <div class="card-actionbar">
             <div class="card-actionbar-row">
-                @if (CurrentUser.HasPermission("Lead", "CallingForm"))
+                @if (CurrentUser.HasPermission("Lead", "CallingForm") && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
                 {
-                    <a class="btn btn-success pull-left simple-ajax-popup-align-top-custom" href="@Url.Action("CallingForm")?leadId=@Model.Lead.ID"><i class="md md-phone"></i> Start Call</a>
+                    <a class="btn btn-success pull-left simple-ajax-popup-align-top-custom" href="@Url.Action("CallingForm")?eventId=@(Model.Lead.EventID)&leadId=@Model.Lead.ID"><i class="md md-phone"></i> Start Call</a>
                 }
             </div>
         </div>
@@ -318,7 +319,7 @@
     @<script>
          $(document).unbind('ajaxStart');
          $.ajax({
-             url: '@Url.Action("UpdateSeenNotify","Home")?leadId=@Model.Lead.ID',
+             url: '@Url.Action("UpdateSeenNotify","Home")?entryId=@Model.Lead.ID',
              type: 'POST',
              success: function (data) {
                  $(document).ajaxStart(function () {
@@ -562,6 +563,37 @@
          });
     </script>)
 
+@Html.Script(
+    @<script>
+         function precisionRound(number, precision) {
+             var factor = Math.pow(10, precision);
+             return Math.round(number * factor) / factor;
+         }
+
+         var tickStarted = false;
+         var startTime = new Date();
+         function tickTime() {
+             var seconds = precisionRound((new Date() - startTime) / 1000, 0);
+             var m = Math.floor(seconds / 60);
+             var s = seconds - m * 60;
+             m = checkTime(m);
+             s = checkTime(s);
+             $('#call-tick').html(m + ":" + s);
+             setTimeout(tickTime, 500);
+         }
+         function checkTime(i) {
+             if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
+             return i;
+         }
+
+         function StartTick() {
+             startTime = new Date();
+             $('.phoneCallStartTime').val(moment(startTime).format("DD/MM/YYYY HH:mm:ss"));
+             tickTime();
+             tickStarted = true;
+         }
+     </script>
+    )
 @Html.Script(
     @<script>
 

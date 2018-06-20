@@ -3,7 +3,7 @@
 @using Resources
 @model PQT.Web.Models.EventModel
 
-
+@Html.ValidationSummary()
 @Html.HiddenFor(m => m.Event.UserID)
 <div class="card">
     <div class="card-body">
@@ -38,21 +38,21 @@
                 </div>
             </div>
             @*<div class="col-sm-6">
-                <div class="form-group">
-                    <select multiple class="form-control  select2-list" name="@Html.NameFor(m=>m.CompaniesSelected)">
-                        @foreach (var country in Model.Companies.Select(m => m.Country).Distinct().OrderBy(m => m.Name))
-                        {
-                            <optgroup label="@country.Name">
-                                @foreach (var com in Model.Companies.Where(m => m.CountryID == country.ID))
-                                {
-                                    <option value="@com.ID" selected="@(Model.CompaniesSelected.Contains(com.ID))">@com.CompanyName</option>
-                                }
-                            </optgroup>
-                        }
-                    </select>
-                    <label>Companies</label>
-                </div>
-            </div>*@
+                    <div class="form-group">
+                        <select multiple class="form-control  select2-list" name="@Html.NameFor(m=>m.CompaniesSelected)">
+                            @foreach (var country in Model.Companies.Select(m => m.Country).Distinct().OrderBy(m => m.Name))
+                            {
+                                <optgroup label="@country.Name">
+                                    @foreach (var com in Model.Companies.Where(m => m.CountryID == country.ID))
+                                    {
+                                        <option value="@com.ID" selected="@(Model.CompaniesSelected.Contains(com.ID))">@com.CompanyName</option>
+                                    }
+                                </optgroup>
+                            }
+                        </select>
+                        <label>Companies</label>
+                    </div>
+                </div>*@
             <div class="col-sm-6">
                 <div class="form-group">
                     <select multiple class="form-control  select2-list" name="@Html.NameFor(m=>m.GroupsSelected)">
@@ -64,17 +64,17 @@
                     <label>Sales Group</label>
                 </div>
             </div>
-            <div class="col-sm-6">
-                <div class="form-group">
-                    <select multiple class="form-control  select2-list" name="@Html.NameFor(m=>m.UsersSelected)">
-                        @foreach (var com in Model.Users.OrderBy(m => m.DisplayName))
-                        {
-                            <option value="@com.ID" selected="@(Model.UsersSelected.Contains(com.ID))">@com.DisplayName</option>
-                        }
-                    </select>
-                    <label>Salesman</label>
-                </div>
-            </div>
+            @*<div class="col-sm-6">
+                    <div class="form-group">
+                        <select multiple class="form-control  select2-list" name="@Html.NameFor(m=>m.UsersSelected)">
+                            @foreach (var com in Model.Users.OrderBy(m => m.DisplayName))
+                            {
+                                <option value="@com.ID" selected="@(Model.UsersSelected.Contains(com.ID))">@com.DisplayName</option>
+                            }
+                        </select>
+                        <label>Salesman</label>
+                    </div>
+                </div>*@
             <div class="col-sm-6">
                 <div class="form-group floating-label">
                     <input type="text" name="@Html.NameFor(m=>m.Event.CallFilterKeywords)" value="@Model.Event.CallFilterKeywords" data-role="tagsinput" />
@@ -225,64 +225,69 @@
                 }
             }
         }
-        
+
         var companies_selected = @Html.Serialize(Model.CompaniesSelected);
 
         $(document).ready(function () {
             // Array holding selected row IDs
             var table = $("#grid_companies").DataTable({
-            "processing": true, // for show progress bar
-            "serverSide": true, // for process server side
-            "filter": true, // this is for disable filter (search box)
-            "orderMulti": false, // for disable multiple column at once
-            "stateSave": false,
-            "ajax": {
-                "url": "@Url.Action("AjaxGetCompanies")",
-                "type": "POST",
-                "datatype": "json",
-                "data": function (d) {
-                }
-            },
-            "columns": [
-                { "data": "ID", "name": "ID", "orderable": true },
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "stateSave": false,
+                "ajax": {
+                    "url": "@Url.Action("AjaxGetCompanies")",
+                    "type": "POST",
+                    "datatype": "json",
+                    "data": function(d) {
+                    }
+                },
+                "columns": [
+                    { "data": "ID", "name": "ID", "orderable": true },
                     { "data": "Country", "name": "Country", "orderable": true },
                     { "data": "CompanyName", "name": "CompanyName", "orderable": true },
                     { "data": "ProductOrService", "name": "ProductOrService", "orderable": true },
                     { "data": "Sector", "name": "Sector", "orderable": true },
                     { "data": "Industry", "name": "Industry", "orderable": true },
-            ],
-            'columnDefs': [{
-                'targets': 0,
-                'searchable': false,
-                'orderable': false,
-                'width': '1%',
-                'className': 'dt-body-center',
-                'render': function (data, type, full, meta) {
-                    return '<input type="checkbox">';
-                }
-            }],
-            "iDisplayLength": 50,
-            "aaSorting": [[1, "desc"]],
-            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                var rowId = aData["ID"];
-                // If row ID is in the list of selected row IDs
-                if ($.inArray(rowId, companies_selected) !== -1) {
-                    $(nRow).find('input[type="checkbox"]').prop('checked', true);
-                    $(nRow).addClass('selected');
-                }
-            },
-            initComplete: function () {
-                var _table = this;
-                _table.parent().find('input[type="search"]').unbind();
-                var timeOutTyping;
-                _table.parent().find('input[type="search"]').bind('keyup', function (e) {
-                    clearTimeout(timeOutTyping);
-                    timeOutTyping = setTimeout(function () {
-                        _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
-                    }, 600);
-                });
-            },
-        });
+                ],
+                'columnDefs': [
+                    {
+                        'targets': 0,
+                        'searchable': false,
+                        'orderable': false,
+                        'width': '1%',
+                        'className': 'dt-body-center',
+                        'render': function(data, type, full, meta) {
+                            return '<input type="checkbox">';
+                        }
+                    }
+                ],
+                "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
+                "iDisplayLength": 50,
+                "aaSorting": [[1, "desc"]],
+                "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    var rowId = aData["ID"];
+                    // If row ID is in the list of selected row IDs
+                    if ($.inArray(rowId, companies_selected) !== -1) {
+                        $(nRow).find('input[type="checkbox"]').prop('checked', true);
+                        $(nRow).addClass('selected');
+                    }
+                },
+                initComplete: function() {
+                    var _table = this;
+                    _table.parent().find('input[type="search"]').unbind();
+                    var timeOutTyping;
+                    _table.parent().find('input[type="search"]').bind('keyup',
+                        function(e) {
+                            clearTimeout(timeOutTyping);
+                            timeOutTyping = setTimeout(function() {
+                                    _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                                },
+                                600);
+                        });
+                },
+            });
 
             // Handle click on checkbox
             $('#grid_companies tbody').on('click', 'input[type="checkbox"]', function (e) {

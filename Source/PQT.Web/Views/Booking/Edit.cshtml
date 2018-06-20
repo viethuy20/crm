@@ -1,0 +1,33 @@
+﻿@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.BookingModel
+@{
+    ViewBag.Title = "Edit Request Booking";
+}
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="card">
+        <div>
+            @using (Html.BeginForm("Edit", "Booking", FormMethod.Post, new { @class = "form form-validate", enctype = "multipart/form-data" }))
+            {
+
+                @Html.Partial("_CreateOrEdit", Model)
+                <div class="card-actionbar">
+                    <div class="card-actionbar-row">
+                        @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
+                        {
+                            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").RouteValues(new { id = Model.Event.ID }).PrependIcon("md md-arrow-back")
+                        }
+                        else
+                        {
+                            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").RouteValues(new { id = Model.Event.ID }).PrependIcon("md md-arrow-back")
+                        }
+                        @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("createbookingbtn").PrependIcon("md md-done").Style(ButtonStyle.Success)
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

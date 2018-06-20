@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using PQT.Domain.Helpers;
 
 namespace PQT.Domain.Entities
 {
@@ -23,6 +24,7 @@ namespace PQT.Domain.Entities
         public decimal RevenueAmount { get; set; }
         public decimal TotalPaidRevenue { get; set; }
 
+        public bool SameAsSender { get; set; }
         public string AuthoriserName { get; set; }// able to same as sender or boss of sender (noted: add check box `same as sender`)
         public string AuthoriserDestination { get; set; }
         public string AuthoriserTel { get; set; }
@@ -54,5 +56,84 @@ namespace PQT.Domain.Entities
 
         public virtual ICollection<Delegate> Delegates { get; set; }
         public virtual ICollection<EventSession> EventSessions { get; set; }
+
+
+        public string CompanyName
+        {
+            get
+            {
+                if (Company != null)
+                {
+                    return Company.CompanyName;
+                }
+
+                return "";
+            }
+        }
+        public string EventColor
+        {
+            get
+            {
+                if (Event != null)
+                {
+                    return Event.BackgroundColor;
+                }
+
+                return "#0aa89e";
+            }
+        }
+        public string StatusDisplay
+        {
+            get
+            {
+                if (BookingStatusRecord != null)
+                {
+                    return BookingStatusRecord.Status.DisplayName;
+                }
+                return "";
+            }
+        }
+
+        public string StatusUser
+        {
+            get
+            {
+                if (BookingStatusRecord != null && BookingStatusRecord.User != null)
+                {
+                    return BookingStatusRecord.User.DisplayName;
+                }
+                return "";
+            }
+        }
+        public DateTime StatusUpdateTime
+        {
+            get
+            {
+                if (BookingStatusRecord != null)
+                {
+                    return BookingStatusRecord.UpdatedTime;
+                }
+                return default(DateTime);
+            }
+        }
+        public string StatusUpdateTimeStr
+        {
+            get
+            {
+                if (BookingStatusRecord != null)
+                {
+                    return BookingStatusRecord.UpdatedTime.ToString("dd-MMM-yyyy HH:mm:ss");
+                }
+                return "";
+            }
+        }
+        public string ClassStatus
+        {
+            get
+            {
+                return StringHelper.RemoveSpecialCharacters(StatusDisplay);
+            }
+        }
+
     }
 }

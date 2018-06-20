@@ -16,7 +16,6 @@ namespace PQT.Domain.Entities
         public string Type { get; set; }
         // file name template
         public string TemplateName { get; set; }
-
         public string EmailTo { get; set; }
         public string EmailCc { get; set; }
         public string EmailBcc { get; set; }

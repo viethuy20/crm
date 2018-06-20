@@ -14,13 +14,16 @@
         padding: 10px;
         border-bottom: 1px solid #cecece;
     }
-    .notify_item a {
-        text-decoration: none;
-        color: #000;
-    }
-    .notify_item a:hover {
-        color: #0aa89e
-    }
+
+        .notify_item a {
+            text-decoration: none;
+            color: #000;
+        }
+
+            .notify_item a:hover {
+                color: #0aa89e
+            }
+
         .notify_item .timestamp {
             font-style: italic;
             color: #a3a3a3;
@@ -39,7 +42,12 @@
                                 @*<strong class="pull-right text-success text-lg">0,38% <i class="md md-trending-up"></i></strong>*@
                                 <strong class="text-xl">@item.EventName</strong><br />
                                 Date: @item.StartDate.ToString("dd MMM yyyy") - @item.EndDate.ToString("dd MMM yyyy")
-                                @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
+                                @if (CurrentUser.HasRole("Finance"))
+                                {
+                                    <a href="@Url.Action("Index", "Booking", new {id = item.ID})" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
+                                    </a>
+                                }
+                                else if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
                                 {
                                     <a href="@Url.Action("NCLForManager", "Lead", new {id = item.ID})" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
                                     </a>
@@ -51,11 +59,13 @@
                                 }
                             </div>
                             <div style="height: calc(100vh - 210px);overflow-y: auto;">
-                                <div  id="dashboard_notify_@item.ID" style="display: none"></div>
+                                <div id="dashboard_notify_@item.ID" style="display: none"></div>
                                 @foreach (var notify in item.Notifications)
                                 {
+                                    var url = notify.NotifyType == NotifyType.Booking ? Url.Action("Detail", "Booking", new {id = notify.EntryId, eventId = notify.EventId}) :
+                                        Url.Action("Detail", "Lead", new {id = notify.EntryId, eventId = notify.EventId});
                                     <div class="notify_item">
-                                        <a class="tile-content ink-reaction" href="@Url.Action("Detail", "Lead", new {id = notify.EntryId, eventId = notify.EventId})">
+                                        <a class="tile-content ink-reaction" href="@url">
                                             @if (notify.Seen)
                                             {
                                                 @notify.Description @:- @notify.Title
@@ -64,7 +74,7 @@
                                             {
                                                 <b>@notify.Description - @notify.Title</b>
                                             }
-                                            <br/><span class="timestamp" title="@notify.Timestamp">@notify.TimeAgo</span>
+                                            <br /><span class="timestamp" title="@notify.Timestamp">@notify.TimeAgo</span>
                                         </a>
                                     </div>
                                 }

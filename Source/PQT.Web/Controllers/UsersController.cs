@@ -166,7 +166,7 @@ namespace PQT.Web.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.Success = true;
-            ViewBag.Message = Resource.SaveFailed;
+            TempData["error"] = Resource.SaveFailed;
             return RedirectToAction("Edit", new { Id = model.ID });
         }
         [AjaxOnly]
@@ -193,6 +193,18 @@ namespace PQT.Web.Controllers
             }
             TempData["Message"] = Resource.UserEmailActive;
             return RedirectToAction("ListDeletedUsers");
+        }
+
+
+
+        [AjaxOnly]
+        public ActionResult GetPossibleSalesman(string q)
+        {
+            var bookings =
+                _membershipService.GetUsers(m => m.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel) &&
+                (m.DisplayName != null && m.DisplayName.ToLower().Contains(q.ToLower())) ||
+                                        (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
+            return Json(bookings.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
         }
     }
 

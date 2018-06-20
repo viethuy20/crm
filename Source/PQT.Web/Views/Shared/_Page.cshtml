@@ -16,7 +16,7 @@
 <link href='http://fonts.googleapis.com/css?family=Roboto:300italic,400italic,300,400,500,700,900' rel='stylesheet' type='text/css' />
 
 <!-- BEGIN HEADER-->
-<header id="header"  style="@(menus.Any()?"": "left: 0px;")">
+<header id="header" style="@(menus.Any()?"": "left: 0px;")">
     <div class="headerbar">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="headerbar-left">
@@ -102,105 +102,105 @@
     <!-- END CONTENT -->
     <!-- BEGIN MENUBAR-->
 
-        <div id="menubar" class="menubar-inverse @(menus.Any()?"":"hide") ">
-            <div class="menubar-fixed-panel">
-                <div>
-                    <a class="btn btn-icon-toggle btn-default menubar-toggle" id="left-menubar-toggle" data-toggle="menubar" href="javascript:void(0);">
-                        <i class="fa fa-bars"></i>
-                    </a>
-                </div>
-                <div class="expanded">
-                    <a href="/">
-                        <span class="text-lg text-bold text-primary ">Prime QT</span>
-                    </a>
-                </div>
+    <div id="menubar" class="menubar-inverse @(menus.Any()?"":"hide") ">
+        <div class="menubar-fixed-panel">
+            <div>
+                <a class="btn btn-icon-toggle btn-default menubar-toggle" id="left-menubar-toggle" data-toggle="menubar" href="javascript:void(0);">
+                    <i class="fa fa-bars"></i>
+                </a>
             </div>
-            <div class="menubar-scroll-panel">
-                <!-- BEGIN MAIN MENU -->
-                <ul id="main-menu" class="gui-controls">
+            <div class="expanded">
+                <a href="/">
+                    <span class="text-lg text-bold text-primary ">Prime QT</span>
+                </a>
+            </div>
+        </div>
+        <div class="menubar-scroll-panel">
+            <!-- BEGIN MAIN MENU -->
+            <ul id="main-menu" class="gui-controls">
 
-                    <!-- BEGIN DASHBOARD -->
-                    <li>
-                        <a href="/" class="@(ViewContext.RouteData.Values["controller"].ToString()=="Home"?"active":"")">
-                            <div class="gui-icon"><i class="md md-home"></i></div>
-                            <span class="title">Dashboard</span>
-                        </a>
-                    </li><!--end /menu-li -->
-                    <!-- END DASHBOARD -->
+                <!-- BEGIN DASHBOARD -->
+                <li>
+                    <a href="/" class="@(ViewContext.RouteData.Values["controller"].ToString()=="Home"?"active":"")">
+                        <div class="gui-icon"><i class="md md-home"></i></div>
+                        <span class="title">Dashboard</span>
+                    </a>
+                </li><!--end /menu-li -->
+                <!-- END DASHBOARD -->
 
-                    @foreach (var item in menus)
+                @foreach (var item in menus)
+                {
+
+                    var children = MenuHelper.GetAll(item.ID).ToList();
+                    var title = item.Title;
+                    if (item.Title.ToUpper() == "MASTER FILES")
                     {
-
-                        var children = MenuHelper.GetAll(item.ID).ToList();
-                        var title = item.Title;
-                        if (item.Title.ToUpper() == "MASTER FILES")
+                        children = children.OrderBy(m => m.Title).ToList();
+                    }
+                    <li class="@(children.Any()?"gui-folder":"")">
+                        @if (string.IsNullOrEmpty(item.Url))
                         {
-                            children = children.OrderBy(m => m.Title).ToList();
-                        }
-                        <li class="@(children.Any()?"gui-folder":"")">
-                            @if (string.IsNullOrEmpty(item.Url))
-                            {
-                                <a>
-                                    <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
-                                    <span class="title">@title</span>
-                                </a>
-                                <ul>
-                                    @{
-                                        foreach (var childItem in children)
+                            <a>
+                                <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
+                                <span class="title">@title</span>
+                            </a>
+                            <ul>
+                                @{
+                                    foreach (var childItem in children)
+                                    {
+                                        var childTitle = childItem.Title;
+                                        if (childItem.Url != null &&
+                                            (childItem.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString() ||
+                                             childItem.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString()
+                                             + "/" + ViewContext.RouteData.Values["action"].ToString()))
                                         {
-                                            var childTitle = childItem.Title;
-                                            if (childItem.Url != null &&
-                                                (childItem.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString() ||
-                                                 childItem.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString()
-                                                 + "/" + ViewContext.RouteData.Values["action"].ToString()))
-                                            {
 
-                                                <li><a class="active" href="@childItem.Url"><span class="title">@childTitle</span></a></li>
-                                            }
-                                            else
-                                            {
-                                                <li><a href="@childItem.Url"><span class="title">@childTitle</span></a></li>
-                                            }
-                                        }
-                                    }
-                                </ul>
+                                            <li><a class="active" href="@childItem.Url"><span class="title">@childTitle</span></a></li>
                                         }
                                         else
                                         {
-                                            if (item.Url != null && (item.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString() ||
-                                                                     item.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString()
-                                                                     + "/" + ViewContext.RouteData.Values["action"].ToString()))
-                                            {
-                                                <a href="@item.Url" class="active">
-                                                    <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
-                                                    <span class="title">@title</span>
-                                                </a>
-                                            }
-                                            else
-                                            {
-                                                <a href="@item.Url">
-                                                    <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
-                                                    <span class="title">@title</span>
-                                                </a>
-                                            }
+                                            <li><a href="@childItem.Url"><span class="title">@childTitle</span></a></li>
                                         }
-                        </li>
+                                    }
+                                }
+                            </ul>
+                                    }
+                                    else
+                                    {
+                                        if (item.Url != null && (item.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString() ||
+                                                                 item.Url.Remove(0, 1) == ViewContext.RouteData.Values["controller"].ToString()
+                                                                 + "/" + ViewContext.RouteData.Values["action"].ToString()))
+                                        {
+                                            <a href="@item.Url" class="active">
+                                                <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
+                                                <span class="title">@title</span>
+                                            </a>
                                         }
+                                        else
+                                        {
+                                            <a href="@item.Url">
+                                                <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
+                                                <span class="title">@title</span>
+                                            </a>
+                                        }
+                                    }
+                    </li>
+                                    }
 
 
-                </ul><!--end .main-menu -->
-                <!-- END MAIN MENU -->
+            </ul><!--end .main-menu -->
+            <!-- END MAIN MENU -->
 
-                <div class="menubar-foot-panel">
-                    <small class="no-linebreak hidden-folded">
-                        <span class="opacity-75">Copyright &copy; @DateTime.Today.Year</span> <strong>CodeCovers</strong>
-                    </small>
-                </div>
-            </div><!--end .menubar-scroll-panel-->
+            <div class="menubar-foot-panel">
+                <small class="no-linebreak hidden-folded">
+                    <span class="opacity-75">Copyright &copy; @DateTime.Today.Year</span> <strong>CodeCovers</strong>
+                </small>
+            </div>
+        </div><!--end .menubar-scroll-panel-->
 
-        </div><!--end #menubar-->
+    </div><!--end #menubar-->
     <!-- END MENUBAR -->
-    
+
 
 
     @Html.Action("PanelNotification", "Home")
@@ -217,6 +217,13 @@
 {
 
     @Scripts.Render("~/content/js/min")
+
+    <script src="~/signalr/hubs"></script>
+    <script>
+        $.connection.hub.start();
+    </script>
+
+
     <script>
 
         $('.prepend-icon').prepend("<i class='icon-list'></i>");
@@ -406,12 +413,31 @@
             return "";
         }
 
-    </script>
-    <script src="~/signalr/hubs"></script>
-    <script>
-        $.connection.hub.start();
+
     </script>
 
+    <script>
+        function StartConnectProgressHub() {
+            var progressNotifier = $.connection.progressHub;
+            progressNotifier.client.sendMessage = function (message) {
+                UpdateProgress(message);
+            };
+        }
+        function UpdateProgress(message) {
+            var data = JSON.parse(message);
+            if (data) {
+                if (data.totalCount > 1 && data.count < data.totalCount) {
+                    $("#dvLoading_progress").removeClass("hide");
+                    $("#progress_count").text(data.count);
+                    $("#progress_total_count").text(data.totalCount);
+                } else {
+                    $("#dvLoading_progress").addClass("hide");
+                    $("#progress_count").text("0");
+                    $("#progress_total_count").text("0");
+                }
+            }
+        }
+    </script>
 
     <script>
 
@@ -558,7 +584,7 @@
                         }
                     }
                 } catch (e) {
-                } 
+                }
             };
 
             return Lead;
@@ -589,5 +615,6 @@
             });
 
     </script>
+
     @RenderSection("js", required: false)
 }

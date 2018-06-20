@@ -116,7 +116,7 @@ namespace PQT.Domain.Concrete
                 inMemLoginRecord.User = userInfo;
                 return base.UpdateUser(userInfo);
             }
-            return false;
+            return true;
         }
     }
 

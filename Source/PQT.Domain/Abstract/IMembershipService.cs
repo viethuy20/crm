@@ -20,7 +20,7 @@ namespace PQT.Domain.Abstract
         bool DeleteUser(int id);
         IEnumerable<User> GetUsersInRole(params string[] roleName);
         IEnumerable<User> GetUsersContainsInRole(params string[] roleName);
-        IEnumerable<User> GetAllUserOfEmailTemplate(string type, string nameTemplate, EmailType emailType);
+        EmailSetting GetEmailTemplate(string type, string nameTemplate);
 
         bool ReActiveUser(int id);
 
@@ -32,6 +32,6 @@ namespace PQT.Domain.Abstract
         UserNotification CreateUserNotification(UserNotification notify);
         bool UpdateUserNotification(UserNotification notify);
         bool SeenUserNotification(int notifyId);
-        int SeenUserNotification(int userId,int leadId);
+        int SeenUserNotification(int userId,int entryId);
     }
 }

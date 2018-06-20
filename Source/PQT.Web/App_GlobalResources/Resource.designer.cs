@@ -133,7 +133,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to approve this data?.
+        ///   Looks up a localized string similar to Do you want to approve this data?.
         /// </summary>
         internal static string ConfirmApprove {
             get {
@@ -142,7 +142,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to block this data?.
+        ///   Looks up a localized string similar to Do you want to block this data?.
         /// </summary>
         internal static string ConfirmBlock {
             get {
@@ -151,7 +151,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to cancel requirement NCL this data?.
+        ///   Looks up a localized string similar to Do you want to cancel requirement NCL this data?.
         /// </summary>
         internal static string ConfirmCancelRequest {
             get {
@@ -160,7 +160,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to create this data?.
+        ///   Looks up a localized string similar to Do you want to create this data?.
         /// </summary>
         internal static string ConfirmCreate {
             get {
@@ -169,7 +169,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete this data?.
+        ///   Looks up a localized string similar to Do you want to delete this data?.
         /// </summary>
         internal static string ConfirmDelete {
             get {
@@ -187,7 +187,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to re-active this user?.
+        ///   Looks up a localized string similar to Do you want to re-active this user?.
         /// </summary>
         internal static string ConfirmReActive {
             get {
@@ -196,7 +196,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to request this data to NCL?.
+        ///   Looks up a localized string similar to Do you want to request this data to NCL?.
         /// </summary>
         internal static string ConfirmRequestNCL {
             get {
@@ -205,7 +205,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to save this data?.
+        ///   Looks up a localized string similar to Do you want to save this data?.
         /// </summary>
         internal static string ConfirmSave {
             get {
@@ -214,7 +214,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to submit this data?.
+        ///   Looks up a localized string similar to Do you want to submit this data?.
         /// </summary>
         internal static string ConfirmSubmit {
             get {
@@ -223,7 +223,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to unblock this data?.
+        ///   Looks up a localized string similar to Do you want to unblock this data?.
         /// </summary>
         internal static string ConfirmUnblock {
             get {

@@ -2,16 +2,29 @@
 
 <div class="card card-underline" style="background: white; margin: auto; max-width: 900px; position: relative;">
     <div class="card-head">
-        <header><b>Edit Form</b></header>
+        <header><b>Reject Booking</b> @*- <span style="font-size: 18px;">Company: @Model.Booking.Company.CompanyName - Sender: @Model.Booking.SenderName </span>*@</header>
     </div>
     @using (Html.BeginForm("RejectBooking", "Booking", FormMethod.Post, new { @class = "form form-validate", enctype = "multipart/form-data" }))
     {
         <div class="card-body">
             <div class="col-sm-12">
                 <div class="form-group">
-                    @Html.HiddenFor(m=>m.BookingID)
+                    @Html.Bootstrap().TextBoxFor(m => m.Booking.Company.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Booking.Company.CompanyName).LabelText("COMPANY NAME")
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderName).Class("form-control").Disabled().ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Booking.SenderName).LabelText("SENDER")
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(m => m.BookingID)
+                    @Html.HiddenFor(m => m.EventID)
                     @Html.Bootstrap().TextAreaFor(m => m.Message).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Message).LabelText("Message")
+                    @Html.Bootstrap().LabelFor(m => m.Message).LabelText("Rejection reason")
                 </div>
             </div>
         </div>

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Web.Compilation;
+using PQT.Domain.Enum;
 using PQT.Domain.Helpers;
 
 namespace PQT.Domain.Entities
@@ -43,8 +44,33 @@ namespace PQT.Domain.Entities
         public virtual ICollection<PhoneCall> PhoneCalls { get; set; }
 
         public bool MarkKPI { get; set; }
+        public string FileNameImportKPI { get; set; }
         public string KPIRemarks { get; set; }
 
+        public string SalesmanName
+        {
+            get
+            {
+                if (User != null)
+                {
+                    return User.DisplayName;
+                }
+
+                return "";
+            }
+        }
+        public string EventName
+        {
+            get
+            {
+                if (Event != null)
+                {
+                    return Event.EventName;
+                }
+
+                return "";
+            }
+        }
         public string CompanyName
         {
             get
@@ -187,7 +213,28 @@ namespace PQT.Domain.Entities
                 return StringHelper.RemoveSpecialCharacters(StatusDisplay);
             }
         }
-
+        public KPIStatus KPIStatus
+        {
+            get
+            {
+                if (MarkKPI)
+                {
+                    return KPIStatus.KPI;
+                }
+                if (!string.IsNullOrEmpty(KPIRemarks))
+                {
+                    return KPIStatus.NoKPI;
+                }
+                return KPIStatus.NoCheck;
+            }
+        }
+        public string ClassKPIStatus
+        {
+            get
+            {
+                return StringHelper.RemoveSpecialCharacters(KPIStatus.DisplayName);
+            }
+        }
         public object Serializing()
         {
             return new
@@ -203,5 +250,7 @@ namespace PQT.Domain.Entities
                 ID
             };
         }
+        [NotMapped]
+        public Booking Booking { get; set; }
     }
 }

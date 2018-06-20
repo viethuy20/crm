@@ -13,7 +13,7 @@ namespace PQT.Domain.Entities
             var rand = new Random((int)DateTime.Now.Ticks).Next(0x1000000);
             EventSessions = new HashSet<EventSession>();
             SalesGroups = new HashSet<SalesGroup>();
-            Users = new HashSet<User>();
+            //Users = new HashSet<User>();
             Companies = new HashSet<Company>();
             //Trainers = new HashSet<Trainer>();
             BackgroundColor = string.Format("#{0:X6}", rand);
@@ -35,7 +35,7 @@ namespace PQT.Domain.Entities
         //for assign sales group
         public virtual ICollection<SalesGroup> SalesGroups { get; set; }
         //for assign salesman
-        public virtual ICollection<User> Users { get; set; }
+        //public virtual ICollection<User> Users { get; set; }
         public virtual ICollection<Company> Companies { get; set; }
         //public virtual ICollection<Trainer> Trainers { get; set; }
         [NotMapped]

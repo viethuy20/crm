@@ -14,18 +14,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="~/favicon.ico" type="image/x-icon">
     <link rel="icon" href="~/favicon.ico" type="image/x-icon">
-    <title>@(count == 0 ? "" : "("+ count + ")")
-        @(ViewBag.Title != null ? ViewBag.Title + " | Prime Quality Training" : "Prime Quality Training")</title>
-    @RenderSection("css", required: false)
-    <!--[if lte IE 8]>
-        @Styles.Render("~/css/ie8")
-    <![endif]-->
-    <!--[if lt IE 9]>
-        @Scripts.Render("~/js/ie9")
-    <![endif]-->
-    <script>
-        var HRGLOBAL = {};
-    </script>
+    <title>
+        @(count == 0 ? "" : "(" + count + ")")
+    @(ViewBag.Title != null ? ViewBag.Title + " | Prime Quality Training" : "Prime Quality Training")
+</title>
+@RenderSection("css", required: false)
+<!--[if lte IE 8]>
+    @Styles.Render("~/css/ie8")
+<![endif]-->
+<!--[if lt IE 9]>
+    @Scripts.Render("~/js/ie9")
+<![endif]-->
+<script>
+    var HRGLOBAL = {};
+</script>
 </head>
 @*@(Request.Cookies["menubar-pin"] == null || Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")*@
 <body class="header-fixed menubar-first @(Request.Cookies["menubar-pin"] != null && Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")">
@@ -41,14 +43,14 @@
         // right MIME type for .json files.
         $.when(
 
-          $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/supplemental/likelySubtags.json"),
-          $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/main/en-GB/numbers.json"),
-          $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/supplemental/numberingSystems.json"),
-          $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/main/en-GB/ca-gregorian.json"),
-          $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/main/en-GB/timeZoneNames.json"),
+            $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/supplemental/likelySubtags.json"),
+            $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/main/en-GB/numbers.json"),
+            $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/supplemental/numberingSystems.json"),
+            $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/main/en-GB/ca-gregorian.json"),
+            $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/main/en-GB/timeZoneNames.json"),
 
-          $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/supplemental/timeData.json"),
-          $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/supplemental/weekData.json")
+            $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/supplemental/timeData.json"),
+            $.getJSON("/Content/js/cldrjs-0.4.4/dist/cldr/cldr-data/supplemental/weekData.json")
 
         ).then(function () {
 
@@ -130,5 +132,9 @@
     </script>
     @MiniProfiler.RenderIncludes()
 </body>
-<div id="dvLoading" style="display: none;"></div>
+<div id="dvLoading" style="display: none;">
+    <div id="dvLoading_progress" class="hide" style="color: #fff;font-size: 18px;position: absolute;top: 50%;left: 50%;margin-top: 60px;margin-left: -150px;width: 300px;display: table;">
+        <span style="display: table-cell;text-align: center;">processing... <span id="progress_count">0</span>/<span id="progress_total_count">0</span></span>
+    </div>
+</div>
 </html>

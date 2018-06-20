@@ -45,5 +45,9 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
+
+        public string Address { get; set; }
+        public string Tel { get; set; }
+        public string Fax { get; set; }
     }
 }

@@ -102,6 +102,7 @@ namespace PQT.Web
 
             // Notification services
             kernel.Bind<INotificationService<Lead>>().To<LeadNotificationService>();
+            kernel.Bind<INotificationService<Booking>>().To<BookingNotificationService>();
 
             kernel.Bind<IStringEncryptor>().To<SimplerAES>();
 
@@ -113,6 +114,8 @@ namespace PQT.Web
             kernel.Bind<IValidator<Trainer>>().To<TrainerValidator>();
             kernel.Bind<IValidator<Lead>>().To<LeadValidator>();
             kernel.Bind<IValidator<PhoneCall>>().To<PhoneCallValidator>();
+            kernel.Bind<IValidator<Booking>>().To<BookingValidator>();
+            kernel.Bind<IValidator<Domain.Entities.Delegate>>().To<DelegateValidator>();
             // cache configurations.
             kernel.Bind<ICacheStorageLocation>().To<RequestCacheSolution>().Named("InRequest");
             kernel.Bind<ICacheStorageLocation>().To<SessionCacheSolution>().Named("InSession");

@@ -1,0 +1,266 @@
+﻿@using Resources
+@model PQT.Web.Models.LeadMarkKPIModel
+@{
+    ViewBag.Title = "Import VoIP & Check KPI";
+}
+<style>
+
+    #MakeKPIReviewTable tbody tr.markKPIError td {
+        color: #a94442;
+        background-color: #ffdad7;
+    }
+     #MakeKPIReviewTable tbody tr.markKPI td {
+         color: #3c763d;
+         background-color: #deffe0;
+     }
+</style>
+<section>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card  card-underline">
+                <div class="card-head">
+                    <header><i class="fa fa-fw fa-phone"></i> @ViewBag.Title - <span style="font-size: 18px;"><b>@Model.Event.EventName</b> - <b>@Model.Event.EventCode</b> - Date: <b>@Model.Event.StartDate.ToString("dd MMM yyyy")</b> - <b>@Model.Event.EndDate.ToString("dd MMM yyyy")</b></span></header>
+                </div><!--end .card-head -->
+                <div class="card-body">
+                    <div id="rootwizard2" class="form-wizard form-wizard-horizontal">
+                        <form class="form form-validation">
+                            <div class="form-wizard-nav">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-primary"></div>
+                                </div>
+                                <ul class="nav nav-justified">
+                                    <li class="active"><a href="#step1" data-toggle="tab"><span class="step">1</span> <span class="title">IMPORT VOIP</span></a></li>
+                                    <li><a href="#step2" data-toggle="tab"><span class="step">2</span> <span class="title">CONFIRM IMPORT</span></a></li>
+                                    <li><a href="#step3" data-toggle="tab"><span class="step">3</span> <span class="title">Make KPI</span></a></li>
+                                    <li><a href="#step4" data-toggle="tab"><span class="step">4</span> <span class="title">CONFIRM</span></a></li>
+                                </ul>
+                            </div>
+                            <div class="tab-content clearfix">
+                                <div class="tab-pane active" id="step1" style="padding-top: 100px;padding-bottom: 100px">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">File Import <span class="required">*</span></label>
+                                        <div class="col-sm-9">
+                                            @Html.Bootstrap().FileFor(m => m.FileImport).Id("inputfile").HtmlAttributes(new { required = "required" }).Tooltip("Format file: *.xls").Class("form-control")
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <a href="~/Content/SampleFiles/VoIP_sample.xlsx" class="text-primary">Download sample excel file</a>
+                                        </div>
+                                    </div>
+                                </div><!--end #step1 -->
+                                <div class="tab-pane" id="step2">
+                                    <br /><br />
+                                    <div id="import_review"></div>
+                                </div><!--end #step2 -->
+                                <div class="tab-pane" id="step3">
+                                    <br /><br />
+                                    <div class="table-responsive">
+                                        <table class="table" id="MakeKPIReviewTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Created Time</th>
+                                                    <th>Company Name</th>
+                                                    <th>Salesman</th>
+                                                    <th>General Line</th>
+                                                    <th>Direct Line</th>
+                                                    <th>Client Name</th>
+                                                    <th>Salutation</th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Business Phone</th>
+                                                    <th>Mobile Phone</th>
+                                                    <th>Personal Email</th>
+                                                    <th>Work Email</th>
+                                                    <th>KPI Remarks</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div><!--end #step3 -->
+                                <div class="tab-pane" id="step4">
+                                    <br /><br />
+                                    <div id="confirm_kpi"></div>
+                                </div><!--end #step4 -->
+                            </div><!--end .tab-content -->
+                            <ul class="pager wizard">
+                                <li class="previous"><a class="btn-raised" href="javascript:void(0);">Previous</a></li>
+                                <li class="next"><a class="btn-raised" href="javascript:void(0);">Next</a></li>
+                            </ul>
+                        </form>
+                    </div><!--end .card-body -->
+                </div><!--end .card-body -->
+            </div><!--end .card -->
+        </div>
+    </div>
+</section>
+@Html.Script(
+    @<script>
+         var ImportSession = "";
+        var $MakeKPIReviewTable = $("#MakeKPIReviewTable").dataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "url": "@Url.Action("MakeKPIReview")",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function (d) {
+                     d.Session = ImportSession;
+                 }
+             },
+             "columns": [
+                 { "data": "CreatedTime", "name": "CreatedTime", "orderable": false },
+                 { "data": "CompanyName", "name": "CompanyName", "orderable": false },
+                 { "data": "UserName", "name": "UserName", "orderable": false },
+                 { "data": "GeneralLine", "name": "GeneralLine", "orderable": false },
+                 { "data": "DirectLine", "name": "DirectLine", "orderable": false },
+                 { "data": "ClientName", "name": "ClientName", "orderable": false },
+                 { "data": "Salutation", "name": "Salutation", "orderable": false },
+                 { "data": "FirstName", "name": "FirstName", "orderable": false },
+                 { "data": "LastName", "name": "LastName", "orderable": false },
+                 { "data": "BusinessPhone", "name": "BusinessPhone", "orderable": false },
+                 { "data": "MobilePhone", "name": "MobilePhone", "orderable": false },
+                 { "data": "PersonalEmailAddress", "name": "PersonalEmailAddress", "orderable": false },
+                 { "data": "WorkEmailAddress", "name": "WorkEmailAddress", "orderable": false },
+                 { "data": "KPIRemarks", "name": "WorkEmailAddress", "orderable": false },
+             ],
+             "iDisplayLength": 25,
+             "aaSorting": [[0, "desc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 if (aData["MarkKPI"]) {
+                     $(nRow).addClass("markKPI");
+                 } else {
+                     $(nRow).addClass("markKPIError");
+                 }
+             },
+             initComplete: function () {
+                 var _table = this;
+                 _table.parent().find('input[type="search"]').unbind();
+                 var timeOutTyping;
+                 _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function () {
+                         _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                     }, 600);
+                 });
+             },
+         });
+
+         $('#rootwizard2').bootstrapWizard({
+             onTabShow: function (tab, navigation, index) {
+                 handleTabShow(tab, navigation, index, $('#rootwizard2'));
+                 if (index == 1) {
+                     UploadFile();
+                 } else if (index == 2) {
+                     $MakeKPIReviewTable.fnFilter('');;
+                 }else if (index == 3) {
+                     bootbox.confirm("Do you want to confirm mark KPI for this list?", function (isOK) {
+                         if (isOK) {
+                             ConfirmKPI();
+                         }
+                     });
+                 }
+             },
+             onNext: function (tab, navigation, index) {
+                 var form = $('#rootwizard2').find('.form-validation');
+                 var valid = form.valid();
+                 if (!valid) {
+                     form.data('validator').focusInvalid();
+                     return false;
+                 }
+             }
+         });
+
+         function handleTabShow(tab, navigation, index, wizard) {
+             var total = navigation.find('li').length;
+             var current = index + 0;
+             var percent = (current / (total - 1)) * 100;
+             var percentWidth = 100 - (100 / total) + '%';
+
+             navigation.find('li').removeClass('done');
+             navigation.find('li.active').prevAll().addClass('done');
+
+             wizard.find('.progress-bar').css({ width: percent + '%' });
+             $('.form-wizard-horizontal').find('.progress').css({ 'width': percentWidth });
+         };
+
+         function ConfirmKPI() {
+             $.ajax({
+                 url: '@Url.Action("ConfirmKPI")?session=' + ImportSession,
+                 type: 'POST',
+                 success: function (data) {
+                     if (data) {
+                         $("#confirm_kpi").html(data);
+                     } else {
+                         $("#confirm_kpi").html('<span style="color:red;">Confirm KPI Failed</span>');
+                     }
+                 },
+                 error: function () {
+                     toastr.error("Confirm KPI failed");
+                 }
+             });
+         }
+         function LoadImportReview() {
+             $.ajax({
+                 url: '@Url.Action("ImportReview")?session=' + ImportSession,
+                 type: 'GET',
+                 success: function (data) {
+                     if (data) {
+                         $("#import_review").html(data);
+                     } else {
+                         $("#import_review").html('<span style="color:red;">Import Failed</span>');
+                     }
+                 },
+                 error: function () {
+                     toastr.error("Import failed");
+                 }
+             });
+         }
+
+         $('#inputfile').change(function() {
+             ImportSession = "";
+         });
+         function UploadFile() {
+             if (ImportSession != "") {
+                 return;
+             }
+             var formdata = new FormData();
+             formdata.append("EventID", '@Model.EventID');
+             formdata.append("SessionName", '@Model.SessionName');
+             var getfile = $('#inputfile')[0];
+             if (getfile) {
+                 for (var i = 0; i < getfile.files.length ; i++) {
+                     if (getfile.files[i].name) {
+                         formdata.append("FileImport", getfile.files[i]);
+                     }
+                 }
+             }
+             $.ajax({
+                 url: '@Url.Action("UploadVoIp")',
+                 data: formdata,
+                 contentType: false,
+                 processData: false,
+                 async: false,
+                 type: 'POST',
+                 success: function (data) {
+                     if (data.Message && data.Message !="") {
+                         toastr.error(data.Message);
+                     } else {
+                         ImportSession = data.SessionName;
+                         LoadImportReview();
+                         if (data.ImportError) {
+                             $(".next").addClass("disabled");
+                         }
+                     }
+                 },
+                 error: function () {
+                     toastr.error('@Resource.Error');
+                 }
+             });
+         }
+
+         StartConnectProgressHub();
+    </script>)

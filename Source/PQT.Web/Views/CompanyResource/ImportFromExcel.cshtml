@@ -121,96 +121,31 @@
             @Html.Bootstrap().Button().Id("btnUpload").HtmlAttributes(new { @class = "DTTT_button btn btn-info" }).Text("Import Excel File").PrependIcon("md md-cloud-upload")
             @if (Model.CompanyResources != null && Model.CompanyResources.Count > 0)
             {
-                @Html.Bootstrap().ActionLinkButton("Confirm Upload", "ComfirmImport").RouteValues(new { sessionName = Model.SessionName }).Style(ButtonStyle.Success).PrependIcon("md md-done").Id("finish")
+                @Html.Bootstrap().Button().Text("Confirm Upload").Style(ButtonStyle.Success).PrependIcon("md md-done").Id("finish")
             }
         </div>
     </div>
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-
-                @if (Model.CompanyResources != null && Model.CompanyResources.Count > 0)
-            {
-                var count = 0;
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>S/No.</th>
-                                <th>Country</th>
-                                <th>Salutation</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Organisation</th>
-                                <th>Role</th>
-                                <th>Business Phone</th>
-                                <th>MobilePhone</th>
-                                <th>Work Email</th>
-                                <th>Personal Email</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.CompanyResources)
-                            {
-                                count++;
-                                <tr>
-                                    <td>@count</td>
-                                    <td>@item.Country</td>
-                                    <td>@item.Salutation</td>
-                                    <td>@item.FirstName</td>
-                                    <td>@item.LastName</td>
-                                    <td>@item.Organisation</td>
-                                    <td>@item.Role</td>
-                                    <td>@item.BusinessPhone</td>
-                                    <td>@item.MobilePhone</td>
-                                    <td>@item.WorkEmailAddress</td>
-                                    <td>@item.PersonalEmailAddress</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else if (Model.ImportRows.Any())
-                {
-                    var count = 0;
-                    <table class="table table-bordered consolidate css">
-                        <thead>
-                            <tr>
-                                <th>S/No.</th>
-                                <th>Country</th>
-                                <th>Salutation</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Organisation</th>
-                                <th>Role</th>
-                                <th>Business Phone</th>
-                                <th>MobilePhone</th>
-                                <th>Work Email</th>
-                                <th>Personal Email</th>
-                                <th>Error</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.ImportRows)
-                            {
-                                count++;
-                                <tr class="@(!string.IsNullOrEmpty(item.Error)?"highline":"")">
-                                    <td class="text-center">@count</td>
-                                    <td>@item.Country</td>
-                                    <td>@item.Salutation</td>
-                                    <td>@item.FirstName</td>
-                                    <td>@item.LastName</td>
-                                    <td>@item.Organisation</td>
-                                    <td>@item.Role</td>
-                                    <td>@item.BusinessPhone</td>
-                                    <td>@item.MobilePhone</td>
-                                    <td>@item.WorkEmailAddress</td>
-                                    <td>@item.PersonalEmailAddress</td>
-                                    <td style="color: red">@Html.Raw(item.Error)</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
+                <table class="table" id="importContentTable">
+                    <thead>
+                        <tr>
+                            <th>S/No.</th>
+                            <th>Country</th>
+                            <th>Salutation</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Organisation</th>
+                            <th>Role</th>
+                            <th>Business Phone</th>
+                            <th>MobilePhone</th>
+                            <th>Work Email</th>
+                            <th>Personal Email</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
@@ -228,7 +163,7 @@
                 <div class="card-body" style="padding-top: 0px;">
                     <div class="form-group">
                         <div class="col-sm-12">
-                            <a href="~/Content/SampleFiles/company_resources_sample.xls">Download sample excel file</a>
+                            <a href="~/Content/SampleFiles/company_resources_sample.xlsx">Download sample excel file</a>
                         </div>
                     </div>
                     <br />
@@ -319,5 +254,66 @@
                 return false;
             }
         });
+
+        var ImportSession = "@Model.SessionName";
+
+        var $importTable = $("#importContentTable").dataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "url": "@Url.Action("ImportReview")",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function (d) {
+                     d.Session = ImportSession;
+                 }
+             },
+             "columns": [
+                 { "data": "Number", "name": "Number", "orderable": false },
+                 { "data": "Country", "name": "Country", "orderable": false },
+                 { "data": "Salutation", "name": "Salutation", "orderable": false },
+                 { "data": "FirstName", "name": "FirstName", "orderable": false },
+                 { "data": "LastName", "name": "LastName", "orderable": false },
+                 { "data": "Organisation", "name": "Organisation", "orderable": false },
+                 { "data": "Role", "name": "Role", "orderable": false },
+                 { "data": "BusinessPhone", "name": "BusinessPhone", "orderable": false },
+                 { "data": "MobilePhone", "name": "MobilePhone", "orderable": false },
+                 { "data": "PersonalEmailAddress", "name": "PersonalEmailAddress", "orderable": false },
+                 { "data": "WorkEmailAddress", "name": "WorkEmailAddress", "orderable": false },
+                 { "data": "Error", "name": "Error", "orderable": false },
+             ],
+             "iDisplayLength": 25,
+             "aaSorting": [[0, "desc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 $(nRow).find('td:eq(12)').css("color","red");
+             },
+        });
+
+        $("#finish").on("click",
+            function() {
+                bootbox.confirm("Do you want to import this list?", function (isOK) {
+                    if (isOK) {
+
+                        $.ajax({
+                            url: '@Url.Action("ComfirmImport")?sessionName=@Model.SessionName',
+                            type: 'POST',
+                            success: function (message) {
+                                if (message && message != "") {
+                                    toastr.error(message);
+                                } else {
+                                    location.href = '@Url.Action("Index")';
+                                }
+                            },
+                            error: function () {
+                                toastr.error("Import failed");
+                            }
+                        });
+                    }
+                });
+            });
+        StartConnectProgressHub();
     </script>
                                              )

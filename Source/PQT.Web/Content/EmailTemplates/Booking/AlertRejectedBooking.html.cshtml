@@ -1,0 +1,114 @@
+﻿@using System.Security.Policy
+@using System.Web.Mvc.Html
+@using ColorCode
+@using ColorCode.Compilation.Languages
+@using PQT.Domain.Abstract
+@using PQT.Domain.Entities
+@using PQT.Domain.Helpers
+@using PQT.Web.Infrastructure.Helpers
+@using PQT.Web.Infrastructure.Utility
+@using PQT.Web.Models
+@using iTextSharp.text.pdf.qrcode
+@using Newtonsoft.Json
+@model Booking
+@{
+    if (Model == null)
+    {
+        Model = new Booking
+        {
+            Lead = new Lead()
+        };
+    }
+}
+@if (Model != null)
+{
+    <font face="verdana" size="2">
+        Dear All,
+        <br><br>
+        This booking has been rejected:
+        <br><br>
+        <table class="table">
+            <tr>
+                <td width="200">Rejected by</td>
+                <td>:</td>
+                <td style="color: red">
+                    <b>
+                        @if (Model.BookingStatusRecord != null)
+                        {
+                            @Model.BookingStatusRecord.User.DisplayName
+                        }
+                    </b>
+                </td>
+            </tr>
+            <tr>
+                <td width="200">Reason of reject:</td>
+                <td>:</td>
+                <td style="color: red">
+                    <b>
+                        @if (Model.BookingStatusRecord != null)
+                        {
+                            @Model.BookingStatusRecord.Message
+                        }
+                    </b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3"><hr /></td>
+            </tr>
+            <tr>
+                <td width="200">COMPANY NAME</td>
+                <td>:</td>
+                <td><b>@Model.Lead.CompanyName</b></td>
+            </tr>
+            <tr>
+                <td width="200">GENERAL LINE</td>
+                <td>:</td>
+                <td><b>@Model.Lead.GeneralLine</b></td>
+            </tr>
+            <tr>
+                <td width="200">CLIENT NAME/ JOB TITLE</td>
+                <td>:</td>
+                <td><b>@Model.Lead.ClientName</b></td>
+            </tr>
+            <tr>
+                <td width="200">DIRECT LINE/ MOBILE NUMBER</td>
+                <td>:</td>
+                <td><b>@Model.Lead.DirectLine</b></td>
+            </tr>
+            <tr>
+                <td colspan="3"><hr /></td>
+            </tr>
+        </table>
+        <br />
+        @if (Model.ID > 0)
+        {
+            <a href="@BypassAuth.Encrypt(ViewBag,"/Booking/Detail/" + Model.ID)" target="_blank">Hyperlink here to show all information in detail</a>
+        }
+        else
+        {
+            <a href="#">Hyperlink here to show all information in detail</a>
+        }
+        <br />
+        <br />
+        @*<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        @if (Model.ID > 0)
+        {
+            <a style="font-family: 'Segoe UI', 'helvetica neue', helvetica, arial, sans-serif; color: green;" href="@BypassAuth.Encrypt("/Booking/ApprovalAction/" + Model.ID)">OK</a>
+        }
+        else
+        {
+            <a style="font-family: 'Segoe UI', 'helvetica neue', helvetica, arial, sans-serif; color: green;" href="#">OK</a>
+        }
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        @if (Model.ID > 0)
+        {
+            <a style="font-family: 'Segoe UI', 'helvetica neue', helvetica, arial, sans-serif; color: red;" href="@BypassAuth.Encrypt("/Lead/RejectAction/" + Model.ID)">Not OK</a>
+        }
+        else
+        {
+            <a style="font-family: 'Segoe UI', 'helvetica neue', helvetica, arial, sans-serif; color: red;" href="#">Not OK</a>
+        }
+        <br />*@
+    </font>
+}

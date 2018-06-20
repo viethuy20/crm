@@ -38,157 +38,181 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Booking.Company.CompanyName).Disabled().Class("form-control").ShowValidationMessage(true)
-                <label>Company</label>
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Booking.Address).Disabled().Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Booking.Address)
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Booking.Tel).Disabled().Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Booking.Tel)
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Booking.Fax).Disabled().Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Booking.Fax)
-            </div>
-        
-            <div class="card card-underline">
-                <div class="card-head">
-                    <header>Delegates</header>
-                </div>
-                <div class="card-body text-default-light" id="delegateContain">
-                    @{
-                        var current = 1;
-                    }
-                    @foreach (var item in Model.Booking.Delegates)
-                    {
-                        <div class="delegateItem">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        @Html.Bootstrap().TextBox("Delegate" + item.ID).Value(item.Name).Disabled().Class("form-control").ShowValidationMessage(true)
-                                        <label>Delegate @current</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        @Html.Bootstrap().TextBox("Destination" + item.ID).Value(item.Destination).Disabled().Class("form-control").ShowValidationMessage(true)
-                                        <label>Destination</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        @Html.Bootstrap().TextBox("Tel" + item.ID).Value(item.Tel).Disabled().Class("form-control").ShowValidationMessage(true)
-                                        <label>Tel</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        @Html.Bootstrap().TextBox("Mail" + item.ID).Value(item.Mail).Disabled().Class("form-control").ShowValidationMessage(true)
-                                        <label>Mail</label>
-                                    </div>
-                                </div>
-                            </div>
+            <div class=" col-sm-6">
+                <div class="card card-underline">
+                    <div class="card-head">
+                        <header>Company Info</header>
+                    </div>
+                    <div class="card-body text-default-light">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.Company.CompanyName).Disabled().Class("form-control").ShowValidationMessage(true)
+                            <label>Company</label>
                         </div>
-                        current++;
-                    }
-                </div>
-            </div>
-            <div class="card card-underline">
-                <div class="card-head">
-                    <header>Sender</header>
-                </div>
-                <div class="card-body text-default-light">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderName).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.SenderName).LabelText("Sender")
-                    </div>
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderDestination).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.SenderDestination).LabelText("Destination")
-                    </div>
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderTel).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.SenderTel).LabelText("Tel")
-                    </div>
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderMail).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.SenderMail).LabelText("Mail")
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.Address).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.Address)
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.Tel).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.Tel)
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.Fax).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.Fax)
+                        </div>
+
                     </div>
                 </div>
             </div>
-            <div class="card card-underline">
-                <div class="card-head">
-                    <header>Authorisation</header>
-                </div>
-                <div class="card-body text-default-light">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserName).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserName).LabelText("Authoriser")
+            <div class=" col-sm-6">
+                <div class="card card-underline">
+                    <div class="card-head">
+                        <header>Sender</header>
                     </div>
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserDestination).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserDestination).LabelText("Destination")
-                    </div>
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserTel).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserTel).LabelText("Tel")
-                    </div>
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserMail).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserMail).LabelText("Mail")
+                    <div class="card-body text-default-light">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderName).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.SenderName).LabelText("Sender")
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderDestination).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.SenderDestination).LabelText("Destination")
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderTel).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.SenderTel).LabelText("Tel")
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderMail).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.SenderMail).LabelText("Mail")
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="card card-underline">
-                <div class="card-head">
-                    <header>Price</header>
+            <div class=" col-sm-12">
+                <div class="card card-underline">
+                    <div class="card-head">
+                        <header>Delegates</header>
+                    </div>
+                    <div class="card-body text-default-light" id="delegateContain">
+                        @{
+                            var current = 1;
+                        }
+                        @foreach (var item in Model.Booking.Delegates)
+                        {
+                            <div class="delegateItem col-sm-6">
+                                <div style="border: 1px solid #e1e1e1;padding: 20px;margin-bottom: 10px;">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                @Html.Bootstrap().TextBox("Delegate" + item.ID).Value(item.Name).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                <label>Delegate @current</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                @Html.Bootstrap().TextBox("Destination" + item.ID).Value(item.Destination).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                <label>Destination</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                @Html.Bootstrap().TextBox("Tel" + item.ID).Value(item.Tel).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                <label>Tel</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                @Html.Bootstrap().TextBox("Mail" + item.ID).Value(item.Mail).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                <label>Mail</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            current++;
+                        }
+                    </div>
                 </div>
-                <div class="card-body text-default-light">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Booking.FeePerDelegate).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.FeePerDelegate)
+            </div>
+            <div class=" col-sm-6">
+                <div class="card card-underline">
+                    <div class="card-head">
+                        <header>Authorisation</header>
                     </div>
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Booking.DiscountPercent).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.DiscountPercent)
+                    <div class="card-body text-default-light">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserName).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserName).LabelText("Authoriser")
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserDestination).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserDestination).LabelText("Destination")
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserTel).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserTel).LabelText("Tel")
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserMail).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserMail).LabelText("Mail")
+                        </div>
                     </div>
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Booking.RevenueAmount).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.RevenueAmount)
+                </div>
+            </div>
+            <div class=" col-sm-6">
+                <div class="card card-underline">
+                    <div class="card-head">
+                        <header>Price</header>
                     </div>
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Booking.TotalPaidRevenue).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.TotalPaidRevenue)
-                    </div>
-                    <div class="form-group">
-                        @Html.Bootstrap().TextAreaFor(m => m.Booking.Remarks).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.Remarks)
-                    </div>
-                    <div class="form-group">
-                        @Html.Bootstrap().Link(Model.Booking.Attachment, FileUpload.GetfolderPath(FileUploadType.Booking) + Model.Booking.Attachment).Class("form-control").HtmlAttributes(new{target="_blank"})
-                        @Html.Bootstrap().LabelFor(m => m.Booking.Attachment)
+                    <div class="card-body text-default-light">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.FeePerDelegate).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.FeePerDelegate)
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.DiscountPercent).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.DiscountPercent)
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.RevenueAmount).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.RevenueAmount)
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.TotalPaidRevenue).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.TotalPaidRevenue)
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextAreaFor(m => m.Booking.Remarks).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.Remarks)
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <div class=" col-sm-12">
+                <div class="form-group">
+                    @if (!string.IsNullOrEmpty(Model.Booking.Attachment))
+                    {
+                        @Html.Bootstrap().Link(Model.Booking.Attachment, FileUpload.GetfolderPath(FileUploadType.Booking) + Model.Booking.Attachment).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                    }
+                    @Html.Bootstrap().LabelFor(m => m.Booking.Attachment)
+                </div>
+            </div>
         </div><!--end .card-body -->
         <div class="card-actionbar">
             <div class="card-actionbar-row">
                 @if (Model.Booking.BookingStatusRecord.Status != BookingStatus.Deleted)
                 {
-                    if (CurrentUser.HasPermission("Booking", "CreateOrEdit"))
+                    if (CurrentUser.HasPermission("Booking", "Edit"))
                     {
-                        @Html.Bootstrap().ActionLinkButton("Edit", "CreateOrEdit").RouteValues(new { id = Model.Booking.ID, leadId = Model.Booking.LeadID }).Class("btn-primary").PrependIcon("md md-edit")
+                        @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.Booking.ID, leadId = Model.Booking.LeadID }).Class("btn-primary").PrependIcon("md md-edit")
                     }
                 }
                 @if (Model.Booking.BookingStatusRecord.Status == BookingStatus.Initial)

@@ -62,7 +62,8 @@ namespace PQT.Domain.Entities
             {
                 MaxBlockeds,
                 MaxLOIs,
-                NumberDaysExpired
+                NumberDaysExpired,
+                DiscountPercent
             }
 
             public enum System

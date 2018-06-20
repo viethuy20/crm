@@ -93,14 +93,14 @@ namespace PQT.Domain.Concrete
             return Create(resource);
         }
 
-        public void CreateCompanyResources(List<CompanyResource> companies)
-        {
-            foreach (var company in companies)
-            {
-                _db.Set<CompanyResource>().Add(company);
-            }
-            _db.SaveChanges();
-        }
+        //public void CreateCompanyResources(List<CompanyResource> companies)
+        //{
+        //    foreach (var company in companies)
+        //    {
+        //        _db.Set<CompanyResource>().Add(company);
+        //    }
+        //    _db.SaveChanges();
+        //}
         public bool UpdateCompanyResource(CompanyResource resource)
         {
             return Update(resource);

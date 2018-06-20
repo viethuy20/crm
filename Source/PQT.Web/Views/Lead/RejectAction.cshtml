@@ -26,8 +26,20 @@
                 @Html.HiddenFor(m => m.id)
                 <div class="col-sm-12">
                     <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.Company.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.Company.CompanyName).LabelText("COMPANY NAME")
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.GeneralLine).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.GeneralLine).LabelText("GENERAL LINE")
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Reason).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Reason).LabelText("Reasons for reject").ShowRequiredStar(true)
+                        @Html.Bootstrap().LabelFor(m => m.Reason).LabelText("Rejection reason").ShowRequiredStar(true)
                     </div>
                 </div>
             </div><!--end .card-body -->

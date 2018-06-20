@@ -32,24 +32,48 @@
                         {
                             <tr data-id="@item.ID">
                                 <td>
-                                    <a class="text-primary" href="@Url.Action("NCLForManager","Lead",new{id = item.ID})" style="text-decoration: underline;">@item.EventCode</a>
+                                    <a class="text-primary" href="@Url.Action("Edit",new{id = item.ID})" style="text-decoration: underline;">@item.EventCode</a>
                                 </td>
                                 <td>@item.EventName</td>
                                 <td>@item.StartDate.ToString("dd/MM/yyyy")</td>
                                 <td>@item.EndDate.ToString("dd/MM/yyyy")</td>
                                 <td>
+
                                     <a href="@Url.Action("Detail", new {id = item.ID})" data-action="detail">
-                                        <i class="fa fa-eye"> Detail</i>
-                                    </a> |
-                                    <a href="@Url.Action("Edit", new {id = item.ID})" data-action="edit">
-                                        <i class="md md-edit text-info"> Edit</i>
-                                    </a> |
-                                    <a href="#" data-action="delete" data-id="@item.ID">
-                                        <i class="md md-delete text-danger"> Delete</i>
-                                    </a> |
-                                    <a href="#" data-action="endevent" data-id="@item.ID">
-                                        <i class="md md-alarm text-info"> End event</i>
+                                        <i class="fa fa-eye"> Detail </i>
                                     </a>
+                                    @if (CurrentUser.HasPermission("Lead", "NCLForManager"))
+                                    {
+                                        @:| <a href="@Url.Action("NCLForManager", "Lead", new {id = item.ID})" data - action="detail"><i class="fa fa-eye"> View NCL </i></a>
+                                    }
+                                    @if (CurrentUser.HasPermission("Booking", "Index"))
+                                    {@:|
+                                        <a href="@Url.Action("Index", "Booking", new {id = item.ID})" data-action="detail">
+                                            <i class="fa fa-eye"> View Bookings</i>
+                                        </a>}
+                                    @if (CurrentUser.HasPermission("Event", "Edit"))
+                                    {@:|
+                                        <a href="@Url.Action("Edit", new {id = item.ID})" data-action="edit">
+                                            <i class="md md-edit text-info"> Edit</i>
+                                        </a>
+                                    }
+                                    @if (CurrentUser.HasPermission("Event", "Delete"))
+                                    {@:|
+                                        <a href="#" data-action="delete" data-id="@item.ID">
+                                            <i class="md md-delete text-danger"> Delete</i>
+                                        </a> }
+                                    @if (CurrentUser.HasPermission("Event", "EndEvent"))
+                                    {@:|
+                                        <a href="#" data-action="endevent" data-id="@item.ID">
+                                            <i class="md md-alarm text-info"> End Event</i>
+                                        </a>}
+                                    @if (CurrentUser.HasPermission("Kpi", "ImportVoIp"))
+                                    {
+                                        @:|
+                                        <a href="@Url.Action("ImportVoIp", "Kpi", new {id = item.ID})" title="Import VoIP & Check KPI">
+                                            <i class="fa fa-upload text-primary"> Import VoIP & Check KPI</i>
+                                        </a>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -91,7 +115,7 @@
         $Table.on('click', '[data-action="endevent"]', function (e) {
             e.preventDefault();
             var selftr = $(this);
-            bootbox.confirm("Are you sure you want to end this event?", function (isOK) {
+            bootbox.confirm("Do you want to end this event<br/>and copy all data to company resources?", function (isOK) {
                 if (isOK) {
                     $.ajax({
                         url: '@Url.Action("EndEvent")/' + selftr.data('id'),
@@ -111,4 +135,5 @@
             });
         });
 
+        StartConnectProgressHub();
     </script>)

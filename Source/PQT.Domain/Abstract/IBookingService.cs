@@ -12,6 +12,7 @@ namespace PQT.Domain.Abstract
         IEnumerable<Booking> GetAllBookings();
         IEnumerable<Booking> GetAllBookings(Func<Booking, bool> predicate);
         Booking GetBooking(int id);
+        Booking GetBookingByLeadId(int leadId);
         Booking CreateBooking(Booking info);
         Booking CreateBooking(Booking info, IEnumerable<int> sessionIds, int? userId, string message = "");
         bool UpdateBooking(Booking info);

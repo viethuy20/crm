@@ -142,37 +142,37 @@
     <value>Code exists</value>
   </data>
   <data name="ConfirmApprove" xml:space="preserve">
-    <value>Are you sure you want to approve this data?</value>
+    <value>Do you want to approve this data?</value>
   </data>
   <data name="ConfirmBlock" xml:space="preserve">
-    <value>Are you sure you want to block this data?</value>
+    <value>Do you want to block this data?</value>
   </data>
   <data name="ConfirmCancelRequest" xml:space="preserve">
-    <value>Are you sure you want to cancel requirement NCL this data?</value>
+    <value>Do you want to cancel requirement NCL this data?</value>
   </data>
   <data name="ConfirmCreate" xml:space="preserve">
-    <value>Are you sure you want to create this data?</value>
+    <value>Do you want to create this data?</value>
   </data>
   <data name="ConfirmDelete" xml:space="preserve">
-    <value>Are you sure you want to delete this data?</value>
+    <value>Do you want to delete this data?</value>
   </data>
   <data name="ConfirmPasswordAndPasswordDoNotMatch" xml:space="preserve">
     <value>'Confirm Password' and 'Password' do not match</value>
   </data>
   <data name="ConfirmReActive" xml:space="preserve">
-    <value>Are you sure you want to re-active this user?</value>
+    <value>Do you want to re-active this user?</value>
   </data>
   <data name="ConfirmRequestNCL" xml:space="preserve">
-    <value>Are you sure you want to request this data to NCL?</value>
+    <value>Do you want to request this data to NCL?</value>
   </data>
   <data name="ConfirmSave" xml:space="preserve">
-    <value>Are you sure you want to save this data?</value>
+    <value>Do you want to save this data?</value>
   </data>
   <data name="ConfirmSubmit" xml:space="preserve">
-    <value>Are you sure you want to submit this data?</value>
+    <value>Do you want to submit this data?</value>
   </data>
   <data name="ConfirmUnblock" xml:space="preserve">
-    <value>Are you sure you want to unblock this data?</value>
+    <value>Do you want to unblock this data?</value>
   </data>
   <data name="Country" xml:space="preserve">
     <value>Country</value>

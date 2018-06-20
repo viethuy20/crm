@@ -1,33 +1,55 @@
-﻿
+﻿@model PQT.Domain.Entities.Event
+@{
+    ViewBag.Title = "Bookings";
+}
+<style>
+    #bookingTable tbody tr.Rejected td {
+        color: #8a6d3b;
+        background-color: #ffefd5;
+    }
+
+    #bookingTable tbody tr.Approved td {
+        color: #3c763d;
+        background-color: #c7fcca;
+    }
+</style>
 <section>
+    <input type="hidden" value="@Model.ID" id="eventIdNCList" />
+    <div class="row">
+        <div class="col-md-12" style="padding-bottom: 12px;">
+            @Html.Bootstrap().ActionLinkButton("Back to Dashboard", "Index", "Home").PrependIcon("md md-arrow-back")
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card  card-underline">
                 <div class="card-head">
-                    <header>Bookings</header>
+                    <header><i class="fa fa-file-text"></i> @ViewBag.Title - <span style="font-size: 18px;"><b>@Model.EventName</b> - <b>@Model.EventCode</b> - Date: <b>@Model.StartDate.ToString("dd MMM yyyy")</b> - <b>@Model.EndDate.ToString("dd MMM yyyy")</b></span></header>
                 </div>
                 <div class="card-body">
-                    <table class="table" id="bookingTable">
-                        <thead>
-                            <tr>
-                                <th>Date Created</th>
-                                <th>Company</th>
-                                <th>Address</th>
-                                <th>Tel</th>
-                                <th>Fax</th>
-                                <th>Authoriser</th>
-                                <th>Sender</th>
-                                <th>Event</th>
-                                <th>Salesman</th>
-                                <th>Fee per delegate</th>
-                                <th>Discount</th>
-                                <th>Revenue amount</th>
-                                <th>Total Paid Revenue</th>
-                                <th>Status</th>
-                                <th>&nbsp;</th>
-                            </tr>
-                        </thead>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table" id="bookingTable">
+                            <thead>
+                                <tr>
+                                    <th>Event</th>
+                                    <th>Date Created</th>
+                                    <th>Company</th>
+                                    <th>Address</th>
+                                    <th>Tel</th>
+                                    <th>Fax</th>
+                                    <th>Authoriser</th>
+                                    <th>Sender</th>
+                                    <th>Salesman</th>
+                                    <th>Fee per delegate</th>
+                                    <th>Discount</th>
+                                    <th>Revenue amount</th>
+                                    <th>Total Paid Revenue</th>
+                                    <th>Status</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div><!--end .card-body -->
             </div><!--end .card -->
         </div>
@@ -53,13 +75,14 @@
              "orderMulti": false, // for disable multiple column at once
              "stateSave": false,
              "ajax": {
-                 "url": "@Url.Action("AjaxGetBookings")?",
+                 "url": "@Url.Action("AjaxGetBookings")?eventId=@Model.ID",
                  "type": "POST",
                  "datatype": "json",
                  "data": function(d) {
                  }
              },
              "columns": [
+                 { "data": "Event", "name": "Event", "orderable": true },
                  { "data": "CreatedTime", "name": "CreatedTime", "orderable": true },
                  { "data": "Company", "name": "Company", "orderable": true },
                  { "data": "Address", "name": "Address", "orderable": true },
@@ -67,7 +90,6 @@
                  { "data": "Fax", "name": "Fax", "orderable": true },
                  { "data": "Authoriser", "name": "Authoriser", "orderable": true },
                  { "data": "Sender", "name": "Sender", "orderable": true },
-                 { "data": "Event", "name": "Event", "orderable": true },
                  { "data": "Salesman", "name": "Salesman", "orderable": true },
                  { "data": "FeePerDelegate", "name": "FeePerDelegate", "orderable": true },
                  { "data": "Discount", "name": "Discount", "orderable": true },
@@ -79,18 +101,26 @@
              "iDisplayLength": sizeLenght,
              "aaSorting": [[1, "desc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Details")/' +
+                 @*$(nRow).find('td:eq(0)').html('<a href="@Url.Action("Details")/' +
                      aData["ID"] +
                      '">' +
                      aData["CreatedTime"] +
-                     '</a>');
+                     '</a>');*@
                  $(nRow).find('td:eq(14)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")/' +
                      aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');
-
+                 $(nRow).addClass(aData["ClassStatus"]);
              },
-             scrollY: false,
-             scrollX: true,
-             "bScrollCollapse": false,
+             initComplete: function () {
+                 var _table = this;
+                 _table.parent().find('input[type="search"]').unbind();
+                 var timeOutTyping;
+                 _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function () {
+                         _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                     }, 600);
+                 });
+             },
          });
          $(document).on("click", ".paginate_button", function () {
              fixedColumn = 0;
@@ -99,29 +129,29 @@
              fixedColumn = 0;
          });
 
-     </script>
+    </script>
 
 )
 
 @Html.Script(
     @<script>
-        $(document).on('click', '.btnApprove', function (e) {
+         $(document).on('click', '.btnApprove', function (e) {
              e.preventDefault();
              var $sefl = $(this);
-            bootbox.confirm("Are you sure you want to approve this booking?", function(isOK) {
-                if (isOK) {
-                    location.href = $sefl.attr('href');
-                }
-            });
-        });
-        $(document).on('click', '.btnReject', function (e) {
+             bootbox.confirm("Are you sure you want to approve this booking?", function (isOK) {
+                 if (isOK) {
+                     location.href = $sefl.attr('href');
+                 }
+             });
+         });
+         $(document).on('click', '.btnReject', function (e) {
              e.preventDefault();
              var $sefl = $(this);
-            bootbox.confirm("Are you sure you want to reject this booking?", function(isOK) {
-                if (isOK) {
-                    $sefl.closest('form').submit();
-                }
-            });
-        });
-     </script>
+             bootbox.confirm("Are you sure you want to reject this booking?", function (isOK) {
+                 if (isOK) {
+                     $sefl.closest('form').submit();
+                 }
+             });
+         });
+    </script>
 )

@@ -18,7 +18,6 @@ namespace PQT.Web.Infrastructure.Notification
         {
             get { return DependencyResolver.Current.GetService<INotificationService<Lead>>(); }
         }
-
         private static ILeadService LeadRepository
         {
             get { return DependencyResolver.Current.GetService<ILeadService>(); }
@@ -103,45 +102,69 @@ namespace PQT.Web.Infrastructure.Notification
                 NotificationService.NotifyUser(users, lead);
             }
         }
+    }
 
-        //public static void NotifyRole(IEnumerable<Role> roles, Lead lead, bool email = false)
-        //{
-        //    if (lead == null || !roles.Any())
-        //        return;
-        //    var users = MemberService.GetUsersContainsInRole(roles.Select(m => m.Name).ToArray());
-        //    UserNotification notify = null;
-        //    foreach (var user in users)
-        //    {
-        //        if (CurrentUser.Identity.ID == user.ID)
-        //        {
-        //            continue;
-        //        }
-        //        notify = new UserNotification
-        //        {
-        //            UserID = user.ID,
-        //            EntryId = lead.ID,
-        //            NotifyType = NotifyType.Lead,
-        //            Title = "Called by " + lead.User.DisplayName,
-        //            Description = lead.CompanyName,
-        //            HighlightColor = lead.EventColor
-        //        };
-        //        notify = MemberService.CreateUserNotification(notify);
-        //        user.NotifyNumber++;
-        //        MemberService.UpdateUser(user);
-        //    }
 
-        //    if (notify != null)
-        //    {
-        //        notify.UserID = 0;
-        //        foreach (var role in roles)
-        //        {
-        //            NotificationHub.NotifyRole(role, notify);
-        //        }
-        //    }
-        //    if (email)
-        //    {
-        //        NotificationService.NotifyRole(roles, lead);
-        //    }
-        //}
+    public class BookingNotificator
+    {
+        private static INotificationService<Booking> NotificationService
+        {
+            get { return DependencyResolver.Current.GetService<INotificationService<Booking>>(); }
+        }
+
+        private static IMembershipService MemberService
+        {
+            get { return DependencyResolver.Current.GetService<IMembershipService>(); }
+        }
+        private static IBookingService BookingService
+        {
+            get { return DependencyResolver.Current.GetService<IBookingService>(); }
+        }
+
+        public static void NotifyEmailForUser(IEnumerable<User> users,Booking booking)
+        {
+            if (booking == null)
+                return;
+            NotificationService.NotifyUser(users, booking);
+        }
+
+        public static void NotifyUser(IEnumerable<User> users, int bookingId, string title = null, bool email = false)
+        {
+            var booking = BookingService.GetBooking(bookingId);
+            if (booking == null)
+                return;
+
+            foreach (var user in users)
+            {
+                if (CurrentUser.Identity.ID == user.ID)
+                {
+                    continue;
+                }
+                var notify = new UserNotification
+                {
+                    UserID = user.ID,
+                    EntryId = booking.ID,
+                    EventId = booking.EventID,
+                    NotifyType = NotifyType.Booking,
+                    Title = booking.StatusDisplay,
+                    EventCode = booking.Event.EventCode,
+                    Description = booking.CompanyName,
+                    HighlightColor = booking.EventColor
+                };
+                if (!string.IsNullOrEmpty(title))
+                {
+                    notify.Title = title;
+                }
+                notify = MemberService.CreateUserNotification(notify);
+                user.NotifyNumber++;
+                MemberService.UpdateUser(user);
+                NotificationHub.NotifyUser(user, notify);
+            }
+
+            if (email)
+            {
+                NotificationService.NotifyUser(users, booking);
+            }
+        }
     }
 }

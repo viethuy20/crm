@@ -4,7 +4,8 @@
 
 @{
     ViewBag.MenuBarColl = true;
-    ViewBag.Title = "Call List";
+    ViewBag.Title = "My Call List";
+    var eventClosed = Model.Event != null && (Model.Event.IsEventEnd || Model.Event.EndDate.Date < DateTime.Today) ? true : false;
 }
 
 
@@ -17,13 +18,13 @@
         background: #fff;
     }
 
-    .DTFC_Cloned td {
-        background-color: #fff;
-    }
+        .DTFC_Cloned td {
+            background-color: #fff;
+        }
 
-    .DTFC_Cloned th {
-        background-color: #f5f5f5 !important;
-    }
+        .DTFC_Cloned th {
+            background-color: #f5f5f5 !important;
+        }
 
     #tableLead td, table th {
         text-align: left;
@@ -84,14 +85,14 @@
 
     #tableLead tbody tr.RequestNCL td,
     #tableLead tbody tr.RequestLOI td,
-    #tableLead tbody tr.RequestBook td {
+    #tableLead tbody tr.RequestBooking td {
         color: #a5a100;
         background-color: #fffed5;
     }
 
     .DTFC_Cloned tbody tr.RequestNCL td,
     .DTFC_Cloned tbody tr.RequestLOI td,
-    .DTFC_Cloned tbody tr.RequestBook td {
+    .DTFC_Cloned tbody tr.RequestBooking td {
         color: #a5a100;
         background-color: #fffdb7;
     }
@@ -157,12 +158,12 @@
                             @if (CurrentUser.HasPermission("Lead", "CallingForm"))
                             {
                                 @*<a href="@Url.Action("CallingForm", new {eventId = Model.Event.ID, leadId = 0})" class="btn ink-reaction btn-floating-action btn-success simple-ajax-popup-align-top-custom" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Start New Call"><i class="fa fa-phone fa-2x"></i></a>*@
-    <a href="@Url.Action("CallingForm", new {eventId = Model.Event.ID, leadId = 0})" class="btn ink-reaction btn-floating-action btn-success" title="Start New Call" ><i class="fa fa-phone fa-2x"></i></a>
+                                <a href="@Url.Action("StartCallForm", new {id = Model.Event.ID})" class="btn ink-reaction btn-floating-action btn-success" title="Start New Call"><i class="fa fa-phone fa-2x"></i></a>
                             }
                             @*<a class="btn btn-icon-toggle btn-Expand"><i class="fa fa-expand"></i></a>*@
                         </div>
                     </div>
-                    <header><i class="fa fa-fw fa-phone"></i> My Call List - <span style="font-size: 18px;"><b>@Model.Event.EventName</b> - <b>@Model.Event.EventCode</b> - Date: <b>@Model.Event.StartDate.ToString("dd MMM yyyy")</b> - <b>@Model.Event.EndDate.ToString("dd MMM yyyy")</b></span></header>
+                    <header><i class="fa fa-fw fa-phone"></i> @ViewBag.Title - <span style="font-size: 18px;"><b>@Model.Event.EventName</b> - <b>@Model.Event.EventCode</b> - Date: <b>@Model.Event.StartDate.ToString("dd MMM yyyy")</b> - <b>@Model.Event.EndDate.ToString("dd MMM yyyy")</b></span></header>
                 </div><!--end .card-head -->
                 <div class="card-body">
                     <table class="table" id="tableLead">
@@ -267,7 +268,7 @@
              "aaSorting": [[1, "desc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
-                 $(nRow).find('td:eq(0)').html('<a class="simple-ajax-popup-align-top-custom ink-reaction btn-floating-action btn-primary" href="@Url.Action("CallingForm")?eventId=@(Model.Event.ID)&leadId=' +
+                 $(nRow).find('td:eq(0)').html('<a class="simple-ajax-popup-align-top ink-reaction btn-floating-action btn-primary" href="@Url.Action("CallingForm")?eventId=@(Model.Event.ID)&leadId=' +
                      aData["ID"] +
                      '"><i class="fa fa-fw fa-phone"></i></a>');
                  $(nRow).find('td:eq(1)').html('<a href="@Url.Action("Detail")/' +
@@ -275,9 +276,10 @@
                      '">' +
                      aData["CreatedTime"] +
                      '</a>');
-                 $(nRow).find('td:eq(16)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
-                     aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');
-
+                 if ('@eventClosed' == 'False') {
+                     $(nRow).find('td:eq(16)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
+                         aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');
+                 }
                  $(nRow).addClass(aData["ClassStatus"]);
              },
              initComplete: function () {
@@ -819,25 +821,13 @@
              m = checkTime(m);
              s = checkTime(s);
              $('#call-tick').html(m + ":" + s);
-             if ($('.callingCompany').val() != undefined) {
-                 var t = setTimeout(tickTime, 500);
-             } else {
-                 tickStarted = false;
-             }
+             setTimeout(tickTime, 500);
          }
          function checkTime(i) {
              if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
              return i;
          }
 
-         $(document).on('change', '.callingCompany',
-             function () {
-                 if ($(this).val() != "" && !tickStarted) {
-                     StartTick();
-                 }
-                 var dialingCode = $(this)[0].options[$(this)[0].selectedIndex].getAttribute("dialingCode");
-                 $('.input-phone').val(dialingCode);
-             });
          function StartTick() {
              startTime = new Date();
              $('.phoneCallStartTime').val(moment(startTime).format("DD/MM/YYYY HH:mm:ss"));

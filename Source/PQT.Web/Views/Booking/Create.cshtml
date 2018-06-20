@@ -1,0 +1,24 @@
+﻿@using Resources
+@model PQT.Web.Models.BookingModel
+@{
+    ViewBag.Title = "Request to Booking";
+}
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="card">
+        <div>
+            @using (Html.BeginForm("Create", "Booking", FormMethod.Post, new { @class = "form form-validate", enctype = "multipart/form-data" }))
+            {
+                @Html.Partial("_CreateOrEdit",Model)
+                <div class="card-actionbar">
+                    <div class="card-actionbar-row">
+                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").RouteValues(new { id = Model.Event.ID }).PrependIcon("md md-arrow-back")
+                        @Html.Bootstrap().SubmitButton().Text("Submit").Id("createbookingbtn").PrependIcon("md md-done").Style(ButtonStyle.Success)
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

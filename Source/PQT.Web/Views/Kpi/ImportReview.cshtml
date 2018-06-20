@@ -1,0 +1,38 @@
+﻿@model PQT.Web.Models.LeadMarkKPIModel
+
+@if (Model != null)
+{
+    <div class="table-responsive">
+        <table class="table" id="table">
+            <thead>
+            <tr>
+                <th>calldate</th>
+                <th>clid</th>
+                <th>dst</th>
+                <th>lastapp</th>
+                <th>duration</th>
+                <th>disposition</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.ImportVoIps)
+            {
+                <tr>
+                    <td>@item.calldate</td>                
+                    <td>@item.clid</td>                          
+                    <td>@item.dst</td>
+                    <td>@item.lastapp</td>
+                    <td>@item.duration</td>
+                    <td>@item.disposition</td>
+                    <td style="color: red">@Html.Raw(item.Error)</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <center><span style="color: red">Session Expired</span></center>
+}

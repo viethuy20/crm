@@ -225,6 +225,7 @@
     <Compile Include="EntityBase.cs" />
     <Compile Include="Enum\BookingStatus.cs" />
     <Compile Include="Enum\EmailType.cs" />
+    <Compile Include="Enum\KPIStatus.cs" />
     <Compile Include="Enum\LeadStatus.cs" />
     <Compile Include="Enum\LevelSalesman.cs" />
     <Compile Include="Enum\NameTitle.cs" />

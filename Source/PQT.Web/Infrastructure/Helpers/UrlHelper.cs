@@ -22,6 +22,16 @@ namespace PQT.Web.Infrastructure.Helpers
             }
         }
 
+        public static string Absolute(string root, string url)
+        {
+            if (url.StartsWith("/"))
+                url = url.Substring(1);
+            if (string.IsNullOrEmpty(root))
+            {
+                root = ConfigurationManager.AppSettings["DomainRoot"];
+            }
+            return root + url;
+        }
         public static string Absolute(string url)
         {
             if (url.StartsWith("/"))

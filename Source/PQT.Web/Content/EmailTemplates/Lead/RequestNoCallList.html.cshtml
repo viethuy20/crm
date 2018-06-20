@@ -67,7 +67,7 @@
         <br />
         @if (Model.ID > 0)
         {
-            <a href="@BypassAuth.Encrypt("/Lead/Detail/" + Model.ID)" target="_blank">Hyperlink here to show all information in detail</a>
+            <a href="@BypassAuth.Encrypt(ViewBag,"/Lead/Detail/" + Model.ID)" target="_blank">Hyperlink here to show all information in detail</a>
         }
         else
         {
@@ -75,7 +75,7 @@
         }
         <br />
         <br />
-        <br />
+        @*<br />
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         @if (Model.ID > 0)
         {
@@ -94,6 +94,6 @@
         {
             <a style="font-family: 'Segoe UI', 'helvetica neue', helvetica, arial, sans-serif; color: red;" href="#">Not OK</a>
         }
-        <br />
+        <br />*@
     </font>
 }

@@ -6,8 +6,10 @@ using System.Web;
 using AutoMapper;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
+using PQT.Web.Hubs;
 using PQT.Web.Infrastructure;
 using PQT.Web.Infrastructure.Helpers;
+using PQT.Web.Infrastructure.Utility;
 
 namespace PQT.Web.Models
 {
@@ -40,11 +42,12 @@ namespace PQT.Web.Models
                     continue;
                 }
                 DataTable dt = ExcelUploadHelper.GetDataFromExcel(FilePath, strSheetName);
-
+                var count = 0;
                 foreach (DataRow dtRow in dt.Rows)
                 {
                     if (dtRow[4] != null && !string.IsNullOrEmpty(dtRow[4].ToString().Trim()))
                     {
+                        count++;
                         var temp = new CompanyResourceJson();
                         try
                         {
@@ -78,6 +81,7 @@ namespace PQT.Web.Models
                         temp.MobilePhone = dtRow[7].ToString();
                         temp.WorkEmailAddress = dtRow[8].ToString();
                         temp.PersonalEmailAddress = dtRow[9].ToString();
+                        temp.Number = count;
                         ImportRows.Add(temp);
                     }
                 }
@@ -103,8 +107,13 @@ namespace PQT.Web.Models
         public void ConfirmImport()
         {
             var comRepo = DependencyHelper.GetService<ICompanyRepository>();
+
+            var count = 0;
+            var totalCount = CompanyResources.Count();
+            var userId = CurrentUser.Identity.ID;
             foreach (var com in CompanyResources)
             {
+                count++;
                 var comExist = comRepo.GetCompany(com.Organisation);
                 if (comExist == null)
                 {
@@ -118,13 +127,20 @@ namespace PQT.Web.Models
                 }
                 else
                     com.CompanyID = comExist.ID;
+                comRepo.CreateCompanyResource(com);
+                var json = new
+                {
+                    count,
+                    totalCount
+                };
+                ProgressHub.SendMessage(userId,System.Web.Helpers.Json.Encode(json));
             }
-            comRepo.CreateCompanyResources(CompanyResources);
         }
     }
 
     public class CompanyResourceJson
     {
+        public int Number { get; set; }
         public string Country { get; set; }
         public int? CountryID { get; set; }
         public string Salutation { get; set; }

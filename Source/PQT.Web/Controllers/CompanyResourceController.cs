@@ -64,19 +64,111 @@ namespace PQT.Web.Controllers
         }
 
         [AjaxOnly]
+        public ActionResult ImportReview()
+        {
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+            var searchValue = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
+            }
+
+            var session = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Session").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                session = Request.Form.GetValues("Session").FirstOrDefault();
+            }
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+
+            if (!string.IsNullOrEmpty(session))
+            {
+                var model = (CompanyResourceImportModel)Session[session];
+                if (model != null)
+                {
+                    var resourceJsons = model.ImportRows.AsEnumerable();
+                    recordsTotal = resourceJsons.Count();
+                    if (pageSize > recordsTotal)
+                    {
+                        pageSize = recordsTotal;
+                    }
+
+                    resourceJsons = resourceJsons.Skip(skip).Take(pageSize).ToList();
+                    var json = new
+                    {
+                        draw = draw,
+                        recordsFiltered = recordsTotal,
+                        recordsTotal = recordsTotal,
+                        data = resourceJsons.Select(m => new
+                        {
+                            m.Number,
+                            m.Country,
+                            m.Salutation,
+                            m.FirstName,
+                            m.LastName,
+                            m.Organisation,
+                            m.Role,
+                            m.BusinessPhone,
+                            m.MobilePhone,
+                            m.PersonalEmailAddress,
+                            m.WorkEmailAddress,
+                            m.Error,
+                        })
+                    };
+                    return Json(json, JsonRequestBehavior.AllowGet);
+                }
+            }
+            var data = new List<CompanyResourceJson>();
+            var json1 = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    m.Number,
+                    m.Country,
+                    m.Salutation,
+                    m.FirstName,
+                    m.LastName,
+                    m.Organisation,
+                    m.Role,
+                    m.BusinessPhone,
+                    m.MobilePhone,
+                    m.PersonalEmailAddress,
+                    m.WorkEmailAddress,
+                    m.Error,
+                })
+            };
+            return Json(json1, JsonRequestBehavior.AllowGet);
+        }
+
+        [AjaxOnly]
         public ActionResult ComfirmImport(string sessionName)
         {
             if (string.IsNullOrEmpty(sessionName) || Session[sessionName] == null)
             {
-                TempData["error"] = "Session is not exists or expired.";
-                return RedirectToAction("ImportFromExcel");
+                return Json("Session is not exists or expired.",JsonRequestBehavior.AllowGet);
             }
             else
             {
                 var model = (CompanyResourceImportModel)Session[sessionName];
                 model.ConfirmImport();
-                TempData["message"] = "Import completed.";
-                return RedirectToAction("Index");
+                return Json("",JsonRequestBehavior.AllowGet);
             }
         }
         [AjaxOnly]

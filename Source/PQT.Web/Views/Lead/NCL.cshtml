@@ -84,14 +84,14 @@
 
     #tableLead tbody tr.RequestNCL td,
     #tableLead tbody tr.RequestLOI td,
-    #tableLead tbody tr.RequestBook td {
+    #tableLead tbody tr.RequestBooking td {
         color: #a5a100;
         background-color: #fffed5;
     }
 
     .DTFC_Cloned tbody tr.RequestNCL td,
     .DTFC_Cloned tbody tr.RequestLOI td,
-    .DTFC_Cloned tbody tr.RequestBook td {
+    .DTFC_Cloned tbody tr.RequestBooking td {
         color: #a5a100;
         background-color: #fffdb7;
     }
@@ -100,14 +100,15 @@
     <input type="hidden" value="@Model.Event.ID" id="eventIdNCList" />
     <div class="row">
         <div class="col-md-12" style="padding-bottom: 12px;">
-            @Html.Bootstrap().ActionLinkButton("Back to Dashboard", "Index", "Home").PrependIcon("md md-arrow-back")
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").RouteValues(new { id = Model.Event.ID }).PrependIcon("md md-arrow-back")
+            @*@Html.Bootstrap().ActionLinkButton("Back to Dashboard", "Index", "Home").PrependIcon("md md-arrow-back")*@
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card  card-underline">
                 <div class="card-head">
-                    <header><i class="fa fa-fw fa-phone"></i> No Call List - <span style="font-size: 18px;"><b>@Model.Event.EventName</b> - <b>@Model.Event.EventCode</b> - Date: <b>@Model.Event.StartDate.ToString("dd MMM yyyy")</b> - <b>@Model.Event.EndDate.ToString("dd MMM yyyy")</b></span></header>
+                    <header><i class="fa fa-fw fa-phone"></i> @ViewBag.Title - <span style="font-size: 18px;"><b>@Model.Event.EventName</b> - <b>@Model.Event.EventCode</b> - Date: <b>@Model.Event.StartDate.ToString("dd MMM yyyy")</b> - <b>@Model.Event.EndDate.ToString("dd MMM yyyy")</b></span></header>
                 </div><!--end .card-head -->
                 <div class="card-body">
                     <table class="table" id="tableNCList">

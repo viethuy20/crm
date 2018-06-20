@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Threading;
 using System.Web.Mvc;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
@@ -21,7 +22,7 @@ namespace PQT.Web.Infrastructure.Notification
         public static void SendEmail(string[] to, string[] cc, string[] bcc, string subject, RazorMailMessage message)
         {
             Mailer.UseMessage(message)
-                  .From("info@t8gallery.com.sg")
+                  .From("info@pri-qua.com")
                   .To(to)
                   .CC(cc)
                   .BCC(bcc)
@@ -29,63 +30,75 @@ namespace PQT.Web.Infrastructure.Notification
                   .SendAsync();
         }
 
-        public void SendEmail(IEnumerable<string> to, string subject, string typeTemplate, string template, object model, object viewBag = null)
+        public void SendEmail(IEnumerable<string> to, string subject, string typeTemplate, string template, object model)
         {
-            var message = new RazorMailMessage(typeTemplate + "/" + template, model, viewBag).Render();
-            var membershipService = DependencyHelper.GetService<IMembershipService>();
-            var emailTos =
-                membershipService.GetAllUserOfEmailTemplate(typeTemplate, template, EmailType.To).ToList();
-            if (emailTos.Any() || (to != null && to.Any()))
+            var domainRoot = Helpers.UrlHelper.Root;
+            new Thread(() =>
             {
-                var emailCcs =
-                membershipService.GetAllUserOfEmailTemplate(typeTemplate, template, EmailType.Cc).ToList();
-                var emailBccs =
-                membershipService.GetAllUserOfEmailTemplate(typeTemplate, template, EmailType.Bcc).Select(m => m.Email).ToList();
-
-                var bccAddition = ConfigurationManager.AppSettings["BccAllEmails"];
-                if (bccAddition != null && !string.IsNullOrEmpty(bccAddition))
+                var message = new RazorMailMessage(typeTemplate + "/" + template, model, domainRoot).Render();
+                var membershipService = DependencyHelper.GetService<IMembershipService>();
+                var emailTemplate =
+                    membershipService.GetEmailTemplate(typeTemplate, template);
+                if ((emailTemplate != null) || (to != null && to.Any()))
                 {
-                    var emails = bccAddition.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                    emailBccs.AddRange(emails);
+                    var emailTos = new List<string>();
+                    var emailCcs = new List<string>();
+                    var emailBccs = new List<string>();
+                    if (emailTemplate != null)
+                    {
+                        if (!string.IsNullOrEmpty(emailTemplate.EmailTo))
+                            emailTos.AddRange(emailTemplate.EmailTo.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries));
+                        if (!string.IsNullOrEmpty(emailTemplate.EmailCc))
+                            emailCcs.AddRange(emailTemplate.EmailCc.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries));
+                        if (!string.IsNullOrEmpty(emailTemplate.EmailBcc))
+                            emailBccs.AddRange(emailTemplate.EmailBcc.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries));
+                    }
+                    if (to != null)
+                    {
+                        emailTos.AddRange(to);
+                    }
+                    if (emailTos.Any())
+                    {
+                        var bccAddition = ConfigurationManager.AppSettings["BccAllEmails"];
+                        if (bccAddition != null && !string.IsNullOrEmpty(bccAddition))
+                        {
+                            var emails = bccAddition.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                            emailBccs.AddRange(emails);
+                        }
+                        SendEmail(emailTos.Distinct().ToArray(),
+                            emailCcs.Distinct().ToArray(), emailBccs.Distinct().ToArray(), subject,
+                            message);
+                    }
                 }
 
-                var tos = emailTos.Select(m => m.Email).ToList();
-                if (to != null)
-                {
-                    tos.AddRange(to);
-                }
-
-                SendEmail(tos.Distinct().ToArray(),
-                    emailCcs.Select(m => m.Email).Distinct().ToArray(), emailBccs.Distinct().ToArray(), subject,
-                    message);
-            }
+            }).Start();
         }
-        public void SendEmail(string subject, string typeTemplate, string template, object model, object viewBag = null)
-        {
-            var message = new RazorMailMessage(typeTemplate + "/" + template, model, viewBag).Render();
-            var membershipService = DependencyHelper.GetService<IMembershipService>();
-            var emailTos =
-                membershipService.GetAllUserOfEmailTemplate(typeTemplate, template, EmailType.To).ToList();
-            if (emailTos.Any())
-            {
-                var emailCcs =
-                membershipService.GetAllUserOfEmailTemplate(typeTemplate, template, EmailType.Cc).ToList();
-                var emailBccs =
-                membershipService.GetAllUserOfEmailTemplate(typeTemplate, template, EmailType.Bcc).Select(m => m.Email).ToList();
+        //public void SendEmail(string subject, string typeTemplate, string template, object model, object viewBag = null)
+        //{
+        //    var message = new RazorMailMessage(typeTemplate + "/" + template, model, viewBag).Render();
+        //    var membershipService = DependencyHelper.GetService<IMembershipService>();
+        //    var emailTos =
+        //        membershipService.GetAllUserOfEmailTemplate(typeTemplate, template, EmailType.To).ToList();
+        //    if (emailTos.Any())
+        //    {
+        //        var emailCcs =
+        //        membershipService.GetAllUserOfEmailTemplate(typeTemplate, template, EmailType.Cc).ToList();
+        //        var emailBccs =
+        //        membershipService.GetAllUserOfEmailTemplate(typeTemplate, template, EmailType.Bcc).Select(m => m.Email).ToList();
 
-                var bccAddition = ConfigurationManager.AppSettings["BccAllEmails"];
-                if (bccAddition != null && !string.IsNullOrEmpty(bccAddition))
-                {
-                    var emails = bccAddition.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                    emailBccs.AddRange(emails);
-                }
+        //        var bccAddition = ConfigurationManager.AppSettings["BccAllEmails"];
+        //        if (bccAddition != null && !string.IsNullOrEmpty(bccAddition))
+        //        {
+        //            var emails = bccAddition.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+        //            emailBccs.AddRange(emails);
+        //        }
 
 
-                SendEmail(emailTos.Select(m => m.Email).ToArray(),
-                    emailCcs.Select(m => m.Email).ToArray(), emailBccs.ToArray(), subject,
-                    message);
-            }
-        }
+        //        SendEmail(emailTos.Select(m => m.Email).ToArray(),
+        //            emailCcs.Select(m => m.Email).ToArray(), emailBccs.ToArray(), subject,
+        //            message);
+        //    }
+        //}
     }
 
     public abstract class AbstractNotificationService<T> : AbstractNotificationService, INotificationService<T> where T : class

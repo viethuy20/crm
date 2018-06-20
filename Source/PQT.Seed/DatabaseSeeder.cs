@@ -151,6 +151,7 @@ namespace PQT.Seed
             db.Settings.Add(new Setting { Module = Enum.GetName(typeof(Setting.ModuleType), Setting.ModuleType.Lead), Name = Enum.GetName(typeof(Setting.ModuleKey.Lead), Setting.ModuleKey.Lead.NumberDaysExpired), Value = "10", Type = "Textbox", Summary = "Number Days Expired", Note = "", Description = "{0} working days rule excluding public holiday in office location" });
             db.Settings.Add(new Setting { Module = Enum.GetName(typeof(Setting.ModuleType), Setting.ModuleType.Lead), Name = Enum.GetName(typeof(Setting.ModuleKey.Lead), Setting.ModuleKey.Lead.MaxBlockeds), Value = "5", Type = "Textbox", Summary = "Maximum Blocks", Note = "", Description = "Maximum number blocks for each salesman" });
             db.Settings.Add(new Setting { Module = Enum.GetName(typeof(Setting.ModuleType), Setting.ModuleType.Lead), Name = Enum.GetName(typeof(Setting.ModuleKey.Lead), Setting.ModuleKey.Lead.MaxLOIs), Value = "5", Type = "Textbox", Summary = "Maximum LOIs", Note = "", Description = "Maximum number Letter of intention(LOI) for each salesman" });
+            db.Settings.Add(new Setting { Module = Enum.GetName(typeof(Setting.ModuleType), Setting.ModuleType.Lead), Name = Enum.GetName(typeof(Setting.ModuleKey.Lead), Setting.ModuleKey.Lead.DiscountPercent), Value = "10", Type = "Textbox", Summary = "Discount Percent", Note = "", Description = "Discount Percent for booking" });
 
             db.SaveChanges();
         }

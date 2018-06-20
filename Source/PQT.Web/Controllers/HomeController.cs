@@ -46,9 +46,12 @@ namespace PQT.Web.Controllers
         public ActionResult Index()
         {
             var model = new HomeModel();
-            model.Events = _eventService.GetAllEvents().Where(m =>
-                m.UserID == CurrentUser.Identity.ID || m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID))
-                    .Contains(CurrentUser.Identity.ID) || m.Users.Select(u => u.ID).Contains(CurrentUser.Identity.ID));
+            if (CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin"))
+                model.Events = _eventService.GetAllEvents();
+            else
+                model.Events = _eventService.GetAllEvents().Where(m =>
+                    m.UserID == CurrentUser.Identity.ID || m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID))
+                        .Contains(CurrentUser.Identity.ID));
             foreach (var modelEvent in model.Events)
             {
                 modelEvent.Notifications =
@@ -83,11 +86,11 @@ namespace PQT.Web.Controllers
         }
 
         [AjaxOnly]
-        public ActionResult UpdateSeenNotify(int leadId)
+        public ActionResult UpdateSeenNotify(int entryId)
         {
             if (CurrentUser.Identity != null)
             {
-                _memRepository.SeenUserNotification(CurrentUser.Identity.ID, leadId);
+                _memRepository.SeenUserNotification(CurrentUser.Identity.ID, entryId);
             }
             return Json(true);
         }

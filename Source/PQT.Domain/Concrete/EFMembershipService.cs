@@ -142,114 +142,10 @@ namespace PQT.Domain.Concrete
         #endregion
 
 
-        public IEnumerable<User> GetAllUserOfEmailTemplate(string type, string nameTemplate, EmailType emailType)
+        public EmailSetting GetEmailTemplate(string type, string nameTemplate)
         {
-            var usersResult = new List<User>();
-            if (string.IsNullOrEmpty(nameTemplate) || string.IsNullOrEmpty(type))
-            {
-                return usersResult;
-            }
-            var emailSetting = Get<EmailSetting>(e => e.TemplateName.ToUpper().Trim() == nameTemplate.ToUpper().Trim() && e.Type.ToUpper().Trim() == type.ToUpper().Trim());
-            if (emailSetting != null)
-            {
-                if (emailType == EmailType.To)
-                {
-                    if (emailSetting.EmailTo == null)
-                    {
-                        return usersResult;
-                    }
-                    var list = emailSetting.EmailTo.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                    var userIds = new List<int>();
-                    var roles = new List<string>();
-                    foreach (var id in list)
-                    {
-                        try
-                        {
-                            userIds.Add(int.Parse(id));
-                        }
-                        catch (Exception)
-                        {
-                            roles.Add(id);
-                        }
-                    }
-                    var usersByRole = GetAll<User>(m => m.Status == EntityStatus.Normal).ToList().Where(m => m.Roles.Select(r => StringHelper.RemoveSpecialCharacters(r.Name)).Any(roles.Contains));
-                    if (usersByRole.Any())
-                    {
-                        usersResult.AddRange(usersByRole);
-                    }
-                    var users = GetAll<User>(m => m.Status == EntityStatus.Normal && userIds.Contains(m.ID));
-                    if (users.Any())
-                    {
-                        usersResult.AddRange(users);
-                    }
-                }
-                else if (emailType == EmailType.Cc)
-                {
-                    if (emailSetting.EmailCc == null)
-                    {
-                        return usersResult;
-                    }
-                    var list = emailSetting.EmailCc.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                    var userIds = new List<int>();
-                    var roles = new List<string>();
-                    foreach (var id in list)
-                    {
-                        try
-                        {
-                            userIds.Add(int.Parse(id));
-                        }
-                        catch (Exception)
-                        {
-                            roles.Add(id);
-                        }
-                    }
-                    var usersByRole = GetAll<User>(m => m.Status == EntityStatus.Normal).ToList().Where(m => m.Roles.Select(r => StringHelper.RemoveSpecialCharacters(r.Name)).Any(roles.Contains));
-                    if (usersByRole.Any())
-                    {
-                        usersResult.AddRange(usersByRole);
-                    }
-                    var users = GetAll<User>(m => m.Status == EntityStatus.Normal && userIds.Contains(m.ID));
-                    if (users.Any())
-                    {
-                        usersResult.AddRange(users);
-                    }
-                }
-                else if (emailType == EmailType.Bcc)
-                {
-                    if (emailSetting.EmailBcc == null)
-                    {
-                        return usersResult;
-                    }
-                    var list = emailSetting.EmailBcc.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
-                    var userIds = new List<int>();
-                    var roles = new List<string>();
-                    foreach (var id in list)
-                    {
-                        try
-                        {
-                            userIds.Add(int.Parse(id));
-                        }
-                        catch (Exception)
-                        {
-                            roles.Add(id);
-                        }
-                    }
-                    var usersByRole = GetAll<User>(m => m.Status == EntityStatus.Normal).ToList().Where(m => m.Roles.Select(r => StringHelper.RemoveSpecialCharacters(r.Name)).Any(roles.Contains));
-                    if (usersByRole.Any())
-                    {
-                        usersResult.AddRange(usersByRole);
-                    }
-                    var users = GetAll<User>(m => m.Status == EntityStatus.Normal && userIds.Contains(m.ID));
-                    if (users.Any())
-                    {
-                        usersResult.AddRange(users);
-                    }
-                }
-            }
-            return usersResult.DistinctBy(m => m.ID);
+            return Get<EmailSetting>(e => e.TemplateName.ToUpper().Trim() == nameTemplate.ToUpper().Trim() && e.Type.ToUpper().Trim() == type.ToUpper().Trim());
         }
-
-
 
         public IEnumerable<User> GetAllSalesmans()
         {
@@ -284,9 +180,9 @@ namespace PQT.Domain.Concrete
             notify.Seen = true;
             return Update(notify);
         }
-        public int SeenUserNotification(int userId, int leadId)
+        public int SeenUserNotification(int userId, int entryId)
         {
-            var notifications = GetAll<UserNotification>(m=>m.UserID == userId && m.EntryId == leadId);
+            var notifications = GetAll<UserNotification>(m=>m.UserID == userId && m.EntryId == entryId);
             foreach (var userNotification in notifications)
             {
                 userNotification.Seen = true;

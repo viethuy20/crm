@@ -29,6 +29,10 @@ namespace PQT.Domain.Concrete
         {
             return Get<Booking>(m => m.ID == id);
         }
+        public Booking GetBookingByLeadId(int leadId)
+        {
+            return Get<Booking>(m => m.LeadID == leadId);
+        }
 
         public Booking CreateBooking(Booking info)
         {
@@ -80,6 +84,23 @@ namespace PQT.Domain.Concrete
                 {
                     existBooking.BookingStatusRecord = new BookingStatusRecord(info.ID, BookingStatus.Initial, userId, message);
                 }
+
+                if (info.Delegates != null && info.Delegates.Any())
+                {
+                    foreach (var item in existBooking.Delegates.Where(m => !info.Delegates.Select(n => n.ID).Contains(m.ID)).ToList())
+                    {
+                        existBooking.Delegates.Remove(item);
+                        Delete(item);
+                    }
+                    UpdateCollection(info, m => m.ID == info.ID, m => m.Delegates, m => m.ID);
+                }
+                else if (existBooking.Delegates != null)
+                    foreach (var item in existBooking.Delegates.ToList())
+                    {
+                        existBooking.Delegates.Remove(item);
+                        Delete(item);
+                    }
+
                 return Update(existBooking);
             });
         }

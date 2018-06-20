@@ -26,6 +26,10 @@ namespace PQT.Domain.Concrete
 
         public Lead GetLead(int id)
         {
+            if (id == 0)
+            {
+                return null;
+            }
             return Get<Lead>(m => m.ID == id, u => new
             {
                 u.Event,

@@ -6,7 +6,9 @@ using System.Web;
 using System.Web.Mvc;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
+using PQT.Web.Hubs;
 using PQT.Web.Infrastructure.Filters;
+using PQT.Web.Infrastructure.Utility;
 using PQT.Web.Models;
 
 namespace PQT.Web.Controllers
@@ -130,11 +132,11 @@ namespace PQT.Web.Controllers
             {
                 if (!string.IsNullOrEmpty(searchValue))
                     companies = _comRepo.GetAllCompanies(m =>
-                        (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(searchValue))||
-                        (!string.IsNullOrEmpty(m.ProductOrService) && m.ProductOrService.ToLower().Contains(searchValue))||
-                        (!string.IsNullOrEmpty(m.CountryName) && m.CountryName.ToLower().Contains(searchValue))||
-                        (!string.IsNullOrEmpty(m.CountryCode) && m.CountryCode.ToLower().Contains(searchValue))||
-                        (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(searchValue))||
+                        (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(searchValue)) ||
+                        (!string.IsNullOrEmpty(m.ProductOrService) && m.ProductOrService.ToLower().Contains(searchValue)) ||
+                        (!string.IsNullOrEmpty(m.CountryName) && m.CountryName.ToLower().Contains(searchValue)) ||
+                        (!string.IsNullOrEmpty(m.CountryCode) && m.CountryCode.ToLower().Contains(searchValue)) ||
+                        (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(searchValue)) ||
                         (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(searchValue))
                        );
             }
@@ -193,7 +195,15 @@ namespace PQT.Web.Controllers
             {
                 pageSize = recordsTotal;
             }
-            var data = companies.Skip(skip).Take(pageSize).ToList();
+            IEnumerable<Company> data;
+            if (pageSize < 1)
+            {
+                data = companies.Skip(skip).ToList();
+            }
+            else
+            {
+                data = companies.Skip(skip).Take(pageSize).ToList();
+            }
 
             var json = new
             {
@@ -213,14 +223,18 @@ namespace PQT.Web.Controllers
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
+        [DisplayName(@"End Event")]
         public ActionResult EndEvent(int id)
         {
             var ev = _repo.GetEvent(id);
             var leads = _leadService.GetAllLeads(m => m.EventID == id);
-            var companyResources = _comRepo.GetAllCompanyResources(m=> m.CompanyID != null && ev.Companies.Select(n=>n.ID).Contains(Convert.ToInt32(m.CompanyID))).ToList();
-            var newResources = new List<CompanyResource>();
+            var companyResources = _comRepo.GetAllCompanyResources(m => m.CompanyID != null && ev.Companies.Select(n => n.ID).Contains(Convert.ToInt32(m.CompanyID))).ToList();
+            var count = 0;
+            var totalCount = leads.Count();
+            var userId = CurrentUser.Identity.ID;
             foreach (var lead in leads)
             {
+                count++;
                 var existResources =
                     companyResources.Where(
                         m => m.BusinessPhone == lead.BusinessPhone && m.MobilePhone == lead.MobilePhone);
@@ -258,16 +272,28 @@ namespace PQT.Web.Controllers
                         Salutation = lead.Salutation,
                         WorkEmailAddress = lead.WorkEmailAddress
                     };
-                    newResources.Add(item);
-
+                    _comRepo.CreateCompanyResource(item);
                 }
+                var json = new
+                {
+                    count,
+                    totalCount
+                };
+                ProgressHub.SendMessage(userId, System.Web.Helpers.Json.Encode(json));
             }
-            if (newResources.Any())
-            {
-                _comRepo.CreateCompanyResources(newResources);
-            }
+
 
             return Json(true);
+        }
+
+
+        [AjaxOnly]
+        public ActionResult GetPossibleEvent(string q)
+        {
+            var bookings =
+                _repo.GetAllEvents(m => (m.EventName != null && m.EventName.ToLower().Contains(q.ToLower())) ||
+                (m.EventCode != null && m.EventCode.ToLower().Contains(q.ToLower())));
+            return Json(bookings.Select(m => new { id = m.ID, text = m.EventCode + " - " + m.EventName }), JsonRequestBehavior.AllowGet);
         }
     }
 }

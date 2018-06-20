@@ -44,9 +44,6 @@ namespace PQT.Web.Controllers
         {
             //_repoUnit.DeleteEmailAllInTemplate(model.EmailReceive.Type, model.EmailReceive.TemplateName);
             var emailReceive = model.EmailSetting;
-            emailReceive.EmailTo = string.Join(",", model.Tos);
-            emailReceive.EmailCc = string.Join(",", model.Ccs);
-            emailReceive.EmailBcc = string.Join(",", model.Bccs);
             _repoUnit.CreateEmailSetting(emailReceive);
             return "";
         }
@@ -69,11 +66,8 @@ namespace PQT.Web.Controllers
                 {
                     emailItem = new EmailSettingItem
                     {
-                        Tos = string.IsNullOrEmpty(emailTemplate.EmailTo) ? new string[] { } : emailTemplate.EmailTo.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries),
-                        Ccs = string.IsNullOrEmpty(emailTemplate.EmailCc) ? new string[] { } : emailTemplate.EmailCc.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries),
-                        Bccs = string.IsNullOrEmpty(emailTemplate.EmailBcc) ? new string[] { } : emailTemplate.EmailBcc.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries),
                         EMailBody = strBody,
-                        EmailSetting = { ID = emailTemplate.ID, Type = emailTemplate.Type, TemplateName = emailTemplate.TemplateName },
+                        EmailSetting = emailTemplate,
                     };
                 }
                 else
@@ -85,23 +79,6 @@ namespace PQT.Web.Controllers
                         EmailSetting = { Type = emailReceiveModel.Type, TemplateName = templateName },
                     };
                 }
-                var result = new List<SelectListItem>();
-                result.AddRange(
-                    _roleService.GetAllRoles().Select(m => new SelectListItem
-                    {
-                        Value = StringHelper.RemoveSpecialCharacters(m.Name),
-                        Text = @"Role: " + m.Name,
-                    }));
-                result.AddRange(
-                    _membershipService.GetUsers(
-                        m => m.Status == EntityStatus.Normal)
-                        .Select(m => new SelectListItem
-                        {
-                            Value = m.ID.ToString(),
-                            Text = m.DisplayName + @" <" + m.Email + @">",
-                        }).ToList());
-
-                emailItem.Emails = result;
                 emailReceiveModel.EmailReceiveItems.Add(emailItem);
             }
             return PartialView(emailReceiveModel);

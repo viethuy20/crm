@@ -361,6 +361,7 @@
     <Compile Include="Controllers\AuditController.cs" />
     <Compile Include="Controllers\EmailSettingController.cs" />
     <Compile Include="Controllers\ExportToPdfController.cs" />
+    <Compile Include="Controllers\KpiController.cs" />
     <Compile Include="Controllers\LeadController.cs" />
     <Compile Include="Controllers\MenusController.cs" />
     <Compile Include="Controllers\EventController.cs" />
@@ -370,6 +371,7 @@
     <Compile Include="Controllers\SalesGroupController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Hubs\ProgressHub.cs" />
     <Compile Include="Infrastructure\Helpers\ImageHelper.cs" />
     <Compile Include="Infrastructure\Helpers\LeadHelper.cs" />
     <Compile Include="Infrastructure\Notification\LeadNotificationService.cs" />
@@ -380,9 +382,11 @@
     <Compile Include="Models\CompanyImportModel.cs" />
     <Compile Include="Models\CompanyResourceImportModel.cs" />
     <Compile Include="Models\CompanyResourceModel.cs" />
+    <Compile Include="Models\ConsolidateKPIModel.cs" />
     <Compile Include="Models\EmailSettingModel.cs" />
     <Compile Include="Models\EventModelView.cs" />
     <Compile Include="Models\HomeSearchModel.cs" />
+    <Compile Include="Models\KPIViewModel.cs" />
     <Compile Include="Models\LeadMarkKPIModel.cs" />
     <Compile Include="Models\LeadModel.cs" />
     <Compile Include="Models\LeadModelView.cs" />
@@ -458,6 +462,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Validation\BookingValidator.cs" />
     <Compile Include="Validation\LeadValidator.cs" />
     <Compile Include="Validation\TrainerValidator.cs" />
     <Compile Include="Validation\EventValidator.cs" />
@@ -547,6 +552,7 @@
     <Content Include="Content\css\theme-default\libs\nestable\nestable.css" />
     <Content Include="Content\css\theme-default\libs\rickshaw\rickshaw.css" />
     <Content Include="Content\css\theme-default\libs\select2\select2-spinner.gif" />
+    <Content Include="Content\css\theme-default\libs\select2\select2-4.0.1.css" />
     <Content Include="Content\css\theme-default\libs\select2\select2.css" />
     <Content Include="Content\css\theme-default\libs\summernote\summernote.css" />
     <Content Include="Content\css\theme-default\libs\toastr\toastr.css" />
@@ -1937,6 +1943,57 @@
     <Content Include="Content\js\libs\raphael\raphael-min.js" />
     <Content Include="Content\js\libs\rickshaw\rickshaw.js" />
     <Content Include="Content\js\libs\rickshaw\rickshaw.min.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\css\select2.css" />
+    <Content Include="Content\js\libs\select2-4.0.1\css\select2.min.css" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\ar.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\az.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\bg.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\ca.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\cs.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\da.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\de.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\en.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\es.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\et.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\eu.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\fa.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\fi.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\fr.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\gl.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\he.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\hi.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\hr.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\hu.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\id.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\is.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\it.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\ja.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\ko.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\lt.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\lv.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\mk.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\ms.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\nb.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\nl.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\pl.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\pt-BR.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\pt.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\ro.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\ru.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\sk.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\sr-Cyrl.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\sr.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\sv.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\th.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\tr.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\uk.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\vi.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\zh-CN.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\i18n\zh-TW.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\select2.full.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\select2.full.min.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\select2.js" />
+    <Content Include="Content\js\libs\select2-4.0.1\js\select2.min.js" />
     <Content Include="Content\js\libs\select2\select2-bootstrap.css" />
     <Content Include="Content\js\libs\select2\select2-spinner.gif" />
     <Content Include="Content\js\libs\select2\select2.js" />
@@ -2388,9 +2445,6 @@
     <Content Include="Content\js\cldrjs-0.4.4\dist\cldr\cldr-data\supplemental\timeData.json" />
     <Content Include="Content\js\cldrjs-0.4.4\dist\cldr\cldr-data\supplemental\weekData.json" />
     <Content Include="Content\js\cldrjs-0.4.4\dist\cldr\cldr-data\supplemental\windowsZones.json" />
-    <Content Include="Content\EmailTemplates\Invoice\AlertApprovedCancel.html.cshtml" />
-    <Content Include="Content\EmailTemplates\Invoice\AlertRejectedCancel.html.cshtml" />
-    <Content Include="Content\EmailTemplates\Invoice\RequestCancel.html.cshtml" />
     <Content Include="Content\EmailTemplates\Lead\RequestNoCallList.html.cshtml" />
     <Content Include="Content\js\libs\DataTables-1.10.0\bower.json" />
     <Content Include="Content\js\libs\DataTables-1.10.0\composer.json" />
@@ -2407,6 +2461,11 @@
     <Content Include="Content\fonts\Material-Design-Iconic-Font.ttf" />
     <Content Include="Content\fonts\Material-Design-Iconic-Font.woff" />
     <Content Include="Content\SampleFiles\companies_sample.xls" />
+    <Content Include="Content\EmailTemplates\Booking\RequestBooking.html.cshtml" />
+    <Content Include="Content\EmailTemplates\Booking\AlertApprovedBooking.html.cshtml" />
+    <Content Include="Content\EmailTemplates\Booking\AlertRejectedBooking.html.cshtml" />
+    <Content Include="Content\SampleFiles\VoIP_sample.xlsx" />
+    <Content Include="Content\SampleFiles\company_resources_sample.xlsx" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -2482,14 +2541,21 @@
     <Content Include="Views\Company\ImportFromExcel.cshtml" />
     <Content Include="Views\CompanyResource\Index.cshtml" />
     <Content Include="Views\CompanyResource\ImportFromExcel.cshtml" />
-    <Content Include="Views\Lead\CallKPI.cshtml" />
-    <Content Include="Views\Lead\ImportVoIp.cshtml" />
+    <Content Include="Views\Kpi\ImportVoIp.cshtml" />
     <Content Include="Views\Lead\CompanyResourceList.cshtml" />
     <Content Include="Views\Booking\Index.cshtml" />
     <Content Include="Views\Booking\Action.cshtml" />
-    <Content Include="Views\Booking\CreateOrEdit.cshtml" />
+    <Content Include="Views\Booking\Edit.cshtml" />
     <Content Include="Views\Booking\EditorTemplates\Delegate.cshtml" />
     <Content Include="Views\Booking\RejectBooking.cshtml" />
+    <Content Include="Views\Lead\StartCallForm.cshtml" />
+    <Content Include="Views\Booking\Create.cshtml" />
+    <Content Include="Views\Booking\_CreateOrEdit.cshtml" />
+    <Content Include="Views\Booking\Detail.cshtml" />
+    <Content Include="Views\Kpi\ConfirmKPI.cshtml" />
+    <Content Include="Views\Kpi\ImportReview.cshtml" />
+    <Content Include="Views\Kpi\Index.cshtml" />
+    <Content Include="Views\Kpi\Consolidate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

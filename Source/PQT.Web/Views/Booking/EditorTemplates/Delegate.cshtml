@@ -1,45 +1,47 @@
 ﻿@model PQT.Domain.Entities.Delegate
-           
+
 @using (Html.BeginCollectionItem())
 {
-    <div class="delegateItem">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="form-group">
-                    @Html.HiddenFor(m=>m.ID)
-                    @Html.Bootstrap().TextBoxFor(m => m.Name).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Name)
+    <div class="delegateItem col-sm-6">
+        <div style="border: 1px solid #e1e1e1;padding: 20px;margin-bottom: 10px;">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.HiddenFor(m => m.ID)
+                        @Html.Bootstrap().TextBoxFor(m => m.Name).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Name)
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Destination).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Destination)
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Destination).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Destination)
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Tel).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Tel)
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Tel).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Tel)
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Mail).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Mail)
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Mail).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Mail)
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="btn-group pull-right">
-                    <a onclick="return sub.remove(this);" data-action="remove" class="btn btn-danger btn-flat"><i class="md md-delete"></i> Remove</a>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="btn-group pull-right">
+                        <a onclick="return sub.remove(this);" data-action="remove" class="btn btn-danger btn-flat"><i class="md md-delete"></i> Remove</a>
+                    </div>
                 </div>
             </div>
         </div>

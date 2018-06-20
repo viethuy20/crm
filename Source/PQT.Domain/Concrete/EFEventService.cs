@@ -19,12 +19,18 @@ namespace PQT.Domain.Concrete
         {
             return GetAll<Event>().AsEnumerable();
         }
-
+        public IEnumerable<Event> GetAllEvents(Func<Event, bool> predicate)
+        {
+            return GetAll(predicate, m => m.EventSessions, m => m.SalesGroups,m=>m.User).AsEnumerable();
+        }
         public Event GetEvent(int id)
         {
+            if (id == 0)
+            {
+                return null;
+            }
             return Get<Event>(u => u.ID == id, u => new
             {
-                u.Users,
                 u.SalesGroups
             });
         }
@@ -33,14 +39,13 @@ namespace PQT.Domain.Concrete
             return Get<Event>(m => m.EventCode == code.Trim().ToUpper());
         }
 
-        public Event CreateEvent(Event info, IEnumerable<int> companies, IEnumerable<int> groups, IEnumerable<int> users)
+        public Event CreateEvent(Event info, IEnumerable<int> companies, IEnumerable<int> groups)
         {
             return TransactionWrapper.Do(() =>
             {
                 info.EventCode = info.EventCode.Trim().ToUpper();
                 info.Companies = GetAll<Company>(r => companies.Contains(r.ID)).ToList();
                 info.SalesGroups = GetAll<SalesGroup>(r => groups.Contains(r.ID)).ToList();
-                info.Users = GetAll<User>(r => users.Contains(r.ID)).ToList();
                 return Create(info);
             });
         }
@@ -52,7 +57,7 @@ namespace PQT.Domain.Concrete
         }
 
         public bool UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> companies,
-            IEnumerable<int> groups, IEnumerable<int> users)
+            IEnumerable<int> groups)
         {
             return TransactionWrapper.Do(() =>
             {
@@ -68,8 +73,8 @@ namespace PQT.Domain.Concrete
                 groupExist.Companies = GetAll<Company>(r => companies.Contains(r.ID)).ToList();
                 groupExist.SalesGroups.Clear();
                 groupExist.SalesGroups = GetAll<SalesGroup>(r => groups.Contains(r.ID)).ToList();
-                groupExist.Users.Clear();
-                groupExist.Users = GetAll<User>(r => users.Contains(r.ID)).ToList();
+                //groupExist.Users.Clear();
+                //groupExist.Users = GetAll<User>(r => users.Contains(r.ID)).ToList();
 
 
                 if (info.EventSessions != null && info.EventSessions.Any())

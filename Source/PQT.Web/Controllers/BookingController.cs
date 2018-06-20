@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using PQT.Domain;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
@@ -12,6 +13,7 @@ using PQT.Web.Infrastructure.Helpers;
 using PQT.Web.Infrastructure.Notification;
 using PQT.Web.Infrastructure.Utility;
 using PQT.Web.Models;
+using Quartz;
 using Resources;
 
 namespace PQT.Web.Controllers
@@ -35,113 +37,203 @@ namespace PQT.Web.Controllers
         }
 
         [DisplayName(@"Booking management")]
-        public ActionResult Index()
+        public ActionResult Index(int id = 0)
         {
-            return View();
+            var eventData = _eventService.GetEvent(id);
+            if (eventData == null)
+            {
+                TempData["error"] = "Event not found";
+                return RedirectToAction("Index", "Home");
+            }
+            return View(eventData);
         }
 
-        [DisplayName(@"Create Or Edit")]
-        public ActionResult CreateOrEdit(int id, int leadId)
+        public ActionResult Detail(int id, int eventId)
         {
             var model = new BookingModel();
-            if (id > 0)
+            var booking = _bookingService.GetBooking(id);
+            if (booking == null)
             {
-                var booking = _bookingService.GetBooking(id);
-                model.Prepare(booking.LeadID);
-                model.Booking = booking;
-                model.SessionIds = booking.EventSessions.Select(m => m.ID).ToList();
+                TempData["error"] = "Booking not found";
+                return RedirectToAction("Index", new { id = eventId });
             }
-            else
+            model.Prepare(booking.LeadID);
+            model.Booking = booking;
+            return View(model);
+        }
+
+        [DisplayName(@"Detail By Lead")]
+        public ActionResult DetailByLead(int id)
+        {
+            var booking = _bookingService.GetBookingByLeadId(id);
+            if (booking == null)
             {
-                model.Prepare(leadId);
+                TempData["error"] = "Booking not found";
+                return RedirectToAction("Index", "Home");
+            }
+            return RedirectToAction("Detail", new { id = booking.ID });
+        }
+        public ActionResult Create(int id = 0)
+        {
+            if (id == 0)
+            {
+                TempData["error"] = "This call not found";
+                return RedirectToAction("Index", "Lead");
+            }
+            var booking = _bookingService.GetBookingByLeadId(id);
+            if (booking != null)
+            {
+                return RedirectToAction("Edit", new { id = booking.ID });
+            }
+            var model = new BookingModel();
+            model.Prepare(id);
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Create(BookingModel model)
+        {
+            var lead = _leadService.GetLead(model.Booking.LeadID);
+            if (lead == null)
+            {
+                TempData["error"] = "This call not found";
+                return RedirectToAction("Index", "Lead");
+            }
+            if (model.SessionIds == null || !model.SessionIds.Any())
+            {
+                ModelState.AddModelError("Event.EventSessions", @"Please choose event session");
+            }
+            if (ModelState.IsValid)
+            {
+                var flag = model.Booking.ID > 0 ? model.Update() : (model.Create() != null);
+                if (flag)
+                {
+                    var leadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.RequestBook, CurrentUser.Identity.ID);
+                    lead.LeadStatusRecord = leadStatusRecord;
+                    _leadService.UpdateLead(lead);
+                    var notiUsers = _membershipService.GetUsersInRole(new string[] { "Manager", "Finance" });
+                    var titleNotify = "Request for booking";
+                    BookingNotificator.NotifyUser(notiUsers, model.Booking.ID, titleNotify, true);
+
+                    TempData["message"] = Resource.SaveSuccessful;
+                    return RedirectToAction("Index", "Lead", new { id = model.Booking.EventID });
+                }
+                TempData["error"] = Resource.SaveError;
+            }
+            model.Event = _eventService.GetEvent(lead.EventID);
+            model.Booking.Company = lead.Company;
+            //model.Companies = _companyRepo.GetAllCompanies();
+            return View(model);
+        }
+
+        public ActionResult Edit(int id)
+        {
+            var model = new BookingModel();
+            model.PrepareEdit(id);
+            if (model.Booking == null)
+            {
+                return RedirectToAction("Index");
             }
             return View(model);
         }
 
-        [DisplayName(@"Create Or Edit")]
         [HttpPost]
-        public ActionResult CreateOrEdit(BookingModel model)
+        public ActionResult Edit(BookingModel model)
         {
-            var flag = model.Booking.ID > 0 ? model.Update() : (model.Create() != null);
             var lead = _leadService.GetLead(model.Booking.LeadID);
-            if (flag)
+            if (lead == null)
             {
-                var leadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.RequestBook, CurrentUser.Identity.ID);
-                lead.LeadStatusRecord = leadStatusRecord;
-                _leadService.UpdateLead(lead);
-                var notiUsers = _membershipService.GetUsersInRole(new string[] { "Manager", "Finance" });
-                LeadNotificator.NotifyUser(notiUsers, lead);
-                TempData["message"] = Resource.SaveSuccessful;
-                return RedirectToAction("Index", "Lead", new { id = model.Booking.EventID });
+                TempData["error"] = "This call not found";
+                return RedirectToAction("Index", "Lead");
             }
-            TempData["error"] = Resource.SaveError;
+            if (model.SessionIds == null || !model.SessionIds.Any())
+            {
+                ModelState.AddModelError("Event.EventSessions", @"Please choose event session");
+            }
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var flag = model.Booking.ID > 0 ? model.Update() : (model.Create() != null);
+                    if (flag)
+                    {
+                        TempData["message"] = Resource.SaveSuccessful;
+                        if (!CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
+                        {
+                            var leadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.RequestBook, CurrentUser.Identity.ID);
+                            lead.LeadStatusRecord = leadStatusRecord;
+                            _leadService.UpdateLead(lead);
+                            var notiUsers = _membershipService.GetUsersInRole(new string[] { "Manager", "Finance" });
+                            var titleNotify = "Request for booking";
+                            BookingNotificator.NotifyUser(notiUsers, model.Booking.ID, titleNotify, true);
+                            return RedirectToAction("Index", "Lead", new { id = model.Booking.EventID });
+                        }
+                        //no need nofify when manager edit and redirect to booking management
+                        return RedirectToAction("Index", new { id = lead.EventID });
+                    }
+                    TempData["error"] = Resource.SaveError;
+                }
+                catch (Exception e)
+                {
+                    TempData["error"] = e.Message;
+                }
+            }
             model.Event = _eventService.GetEvent(lead.EventID);
-            model.Companies = _companyRepo.GetAllCompanies();
+            model.Booking.Company = lead.Company;
             return View(model);
         }
 
         [DisplayName(@"Approve booking")]
         public ActionResult ApproveBooking(int id)
         {
-            var booking = _bookingService.GetBooking(id);
-            if (booking == null)
+            var model = new BookingModel();
+            try
             {
-                TempData["error"] = "Booking not found";
-                return RedirectToAction("Index");
+                if (model.Approve(id))
+                {
+                    TempData["message"] = Resource.SaveSuccessful;
+                    return RedirectToAction("Index", new { id = model.Booking?.EventID ?? 0 });
+                }
+                TempData["error"] = Resource.SaveError;
             }
-            if (booking.BookingStatusRecord == BookingStatus.Approved)
+            catch (Exception e)
             {
-                TempData["error"] = "This booking has been approved";
-                return RedirectToAction("Index");
+                TempData["error"] = e.Message;
             }
-            if (booking.BookingStatusRecord == BookingStatus.Rejected)
-            {
-                TempData["error"] = "This booking has been rejected";
-                return RedirectToAction("Index");
-            }
-
-            if (_bookingService.UpdateBooking(booking, BookingStatus.Approved, CurrentUser.Identity.ID))
-            {
-                TempData["message"] = Resource.SaveSuccessful;
-                return RedirectToAction("Index");
-            }
-            TempData["error"] = Resource.SaveError;
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { id = model.Booking?.EventID ?? 0 });
         }
         [DisplayName(@"Reject booking")]
         public ActionResult RejectBooking(int id)
         {
             var model = new BookingModel();
             model.BookingID = id;
+            model.Booking = _bookingService.GetBooking(id);
+            model.EventID = model.Booking.EventID;
             return PartialView(model);
         }
         [DisplayName(@"Reject booking")]
         [HttpPost]
         public ActionResult RejectBooking(BookingModel model)
         {
-            var booking = _bookingService.GetBooking(model.BookingID);
-            if (booking == null)
+            if (string.IsNullOrEmpty(model.Message))
             {
-                TempData["error"] = "Booking not found";
-                return RedirectToAction("Index");
+                TempData["error"] = "`Reason` must not be empty";
+                return RedirectToAction("Index", new { id = model.EventID });
             }
-            if (booking.BookingStatusRecord == BookingStatus.Approved)
+            try
             {
-                TempData["error"] = "This booking has been approved";
-                return RedirectToAction("Index");
+                if (model.Reject())
+                {
+                    TempData["message"] = "The booking was declined.";
+                    return RedirectToAction("Index", new { id = model.Booking?.EventID ?? 0 });
+                }
+                TempData["error"] = Resource.SaveError;
             }
-            if (booking.BookingStatusRecord == BookingStatus.Rejected)
+            catch (Exception e)
             {
-                TempData["error"] = "This booking has been rejected";
-                return RedirectToAction("Index");
+                TempData["error"] = e.Message;
             }
-            if (_bookingService.UpdateBooking(booking, BookingStatus.Rejected, CurrentUser.Identity.ID, model.Message))
-            {
-                TempData["message"] = "The booking was declined.";
-                return RedirectToAction("Index");
-            }
-            TempData["error"] = Resource.SaveError;
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { id = model.Booking?.EventID ?? 0 });
         }
 
         public ActionResult Action(int id)
@@ -154,7 +246,7 @@ namespace PQT.Web.Controllers
         }
 
         [AjaxOnly]
-        public ActionResult AjaxGetBookings()
+        public ActionResult AjaxGetBookings(int eventId)
         {
             // ReSharper disable once AssignNullToNotNullAttribute
             var draw = Request.Form.GetValues("draw").FirstOrDefault();
@@ -182,7 +274,7 @@ namespace PQT.Web.Controllers
             IEnumerable<Booking> bookings = new HashSet<Booking>();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                bookings = _bookingService.GetAllBookings(m => (
+                bookings = _bookingService.GetAllBookings(m => m.EventID == eventId && (
                                                    (m.CreatedTime.ToString("dd/MM/yyyy HH:mm:ss").Contains(searchValue) ||
                                                    m.Company != null && m.Company.CompanyName.Contains(searchValue)) ||
                                                    m.Address.Contains(searchValue) ||
@@ -200,7 +292,7 @@ namespace PQT.Web.Controllers
             }
             else
             {
-                bookings = _bookingService.GetAllBookings();
+                bookings = _bookingService.GetAllBookings(m => m.EventID == eventId);
             }
             // ReSharper disable once AssignNullToNotNullAttribute
 
@@ -339,6 +431,7 @@ namespace PQT.Web.Controllers
                     m.RevenueAmount,
                     m.TotalPaidRevenue,
                     Status = m.BookingStatusRecord != null ? m.BookingStatusRecord.Status.DisplayName : "",
+                    ClassStatus = m.ClassStatus
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

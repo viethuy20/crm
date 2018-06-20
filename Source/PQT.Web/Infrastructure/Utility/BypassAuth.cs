@@ -12,20 +12,20 @@ namespace PQT.Web.Infrastructure.Utility
             get { return DependencyResolver.Current.GetService<IStringEncryptor>(); }
         }
 
-        public static string Encrypt(string url)
+        public static string Encrypt(string domainRoot, string url)
         {
             string data = url;
             string token = Encryptor.Encrypt(data);
 
-            return UrlHelper.Absolute("/n/" + token);
+            return UrlHelper.Absolute(domainRoot, "/n/" + token);
         }
-        public static string Encrypt(string url, string username)
-        {
-            string data = url + "::" + username;
-            string token = Encryptor.Encrypt(data);
+        //public static string Encrypt(string url, string username)
+        //{
+        //    string data = url + "::" + username;
+        //    string token = Encryptor.Encrypt(data);
 
-            return UrlHelper.Absolute("/n/" + token);
-        }
+        //    return UrlHelper.Absolute("/n/" + token);
+        //}
 
         public static string Decrypt(string token)
         {

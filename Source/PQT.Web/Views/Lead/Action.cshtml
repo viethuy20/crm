@@ -1,6 +1,8 @@
 ﻿@using PQT.Domain.Enum
 @model PQT.Domain.Entities.Lead
-
+@{
+    var eventClosed = Model.Event != null && (Model.Event.IsEventEnd || Model.Event.EndDate.Date < DateTime.Today) ? true : false;
+}
 
 <div class="card card-underline" style="background: white; margin: auto; max-width: 950px; position: relative;">
     <div class="card-head">
@@ -86,38 +88,45 @@
         <div class="card-actionbar">
             <div class="card-actionbar-row">
                 <a href="@Url.Action("Detail")?id=@Model.ID&eventId=@Model.EventID" class="btn btn-default"><i class="fa fa-eye"></i> Detail</a>
-                @if (Model.LeadStatusRecord != LeadStatus.Booked)
+                @if (!eventClosed && Model.LeadStatusRecord != LeadStatus.Booked)
                 {
                     if (CurrentUser.HasPermission("Lead", "Edit"))
                     {
                         @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { leadId = Model.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
                     }
                 }
-                @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord == LeadStatus.Initial ||
-                                                    Model.LeadStatusRecord == LeadStatus.Reject))
+                @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord == LeadStatus.Initial ||
+                                Model.LeadStatusRecord == LeadStatus.Reject))
                 {
                     <a href="#" data-id="@Model.ID" class="btn btn-info btnRequestNCL"><i class="md md-phone-locked"></i> Request To NCL</a>
                 }
-                @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord == LeadStatus.Initial ||
-                                                    Model.LeadStatusRecord == LeadStatus.Reject ||
-                                                    Model.LeadStatusRecord == LeadStatus.RequestNCL ||
-                                                    Model.LeadStatusRecord == LeadStatus.Live))
+                @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord == LeadStatus.Initial ||
+                                Model.LeadStatusRecord == LeadStatus.Reject ||
+                                Model.LeadStatusRecord == LeadStatus.RequestNCL ||
+                                Model.LeadStatusRecord == LeadStatus.Live))
                 {
                     @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.ID, requestType = LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
                 }
-                @if (CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord != LeadStatus.RequestBook &&
-                                                    Model.LeadStatusRecord != LeadStatus.Booked))
+                @if (!eventClosed && (Model.Booking == null || (Model.Booking != null && Model.LeadStatusRecord != LeadStatus.Reject)) && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord != LeadStatus.RequestBook &&
+                                Model.LeadStatusRecord != LeadStatus.Booked))
                 {
                     @*@Html.Bootstrap().ActionLinkButton("Request To Book", "CreateBooking").RouteValues(new { id = Model.ID }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-my-library-books")*@
-                    @Html.Bootstrap().ActionLinkButton("Request To Book", "CreateOrEdit", "Booking").RouteValues(new { id= 0, leadId = Model.ID }).Class("btn-success").PrependIcon("md md-my-library-books")
+                    @Html.Bootstrap().ActionLinkButton("Request Booking", "Create", "Booking").RouteValues(new { id = Model.ID }).Class("btn-success").PrependIcon("md md-my-library-books")
                 }
-                @if (CurrentUser.HasPermission("Lead", "CancelRequest") && (Model.LeadStatusRecord == LeadStatus.RequestNCL ||
-                                                Model.LeadStatusRecord == LeadStatus.RequestLOI ||
-                                                Model.LeadStatusRecord == LeadStatus.RequestBook))
+                @if (!eventClosed && Model.Booking != null && (Model.LeadStatusRecord == LeadStatus.RequestBook || Model.LeadStatusRecord == LeadStatus.Reject))
+                {
+                    if (CurrentUser.HasPermission("Booking", "Edit"))
+                    {
+                        @Html.Bootstrap().ActionLinkButton("Edit Request Booking", "Edit", "Booking").RouteValues(new { id = Model.Booking.ID, leadId = Model.ID }).Class("btn-primary").PrependIcon("md md-edit")
+                    }
+                }
+                @if (!eventClosed && CurrentUser.HasPermission("Lead", "CancelRequest") && (Model.LeadStatusRecord == LeadStatus.RequestNCL ||
+                            Model.LeadStatusRecord == LeadStatus.RequestLOI ||
+                            Model.LeadStatusRecord == LeadStatus.RequestBook))
                 {
                     <a href="#" class="btn btn-warning btnCancelRequest" data-id="@Model.ID"><i class="md md-cancel"></i> Cancel @Model.StatusDisplay</a>
                 }
-                @if ((Model.LeadStatusRecord != LeadStatus.Booked))
+                @if (!eventClosed && (Model.LeadStatusRecord != LeadStatus.Booked))
             {
                 if (Model.LeadStatusRecord != LeadStatus.Blocked)
                 {
@@ -134,11 +143,11 @@
                         }
                     }
                 }
-                @if (Model.LeadStatusRecord == LeadStatus.Initial || Model.LeadStatusRecord == LeadStatus.Reject)
+                @if (!eventClosed && (Model.LeadStatusRecord == LeadStatus.Initial || Model.LeadStatusRecord == LeadStatus.Reject))
             {
                 if (CurrentUser.HasPermission("Lead", "Delete"))
                 {
-                    <a href="#" class="btn btn-danger btnDelete" data-id="@Model.ID"><i class="md md-delete"></i> Delete</a>
+                        <a href="#" class="btn btn-danger btnDelete" data-id="@Model.ID"><i class="md md-delete"></i> Delete</a>
                     }
                 }
             </div>
