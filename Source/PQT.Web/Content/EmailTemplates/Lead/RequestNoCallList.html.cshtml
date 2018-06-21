@@ -67,7 +67,7 @@
         <br />
         @if (Model.ID > 0)
         {
-            <a href="@BypassAuth.Encrypt(ViewBag,"/Lead/Detail/" + Model.ID)" target="_blank">Hyperlink here to show all information in detail</a>
+            <a href="@BypassAuth.Encrypt(ViewBag.DomainRoot,"/Lead/Detail/" + Model.ID)" target="_blank">Hyperlink here to show all information in detail</a>
         }
         else
         {

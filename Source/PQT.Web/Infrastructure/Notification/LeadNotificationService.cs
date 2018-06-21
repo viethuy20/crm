@@ -8,6 +8,7 @@ using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
 using PQT.Web.Hubs;
+using PQT.Web.Infrastructure.Helpers;
 using PQT.Web.Infrastructure.Utility;
 
 namespace PQT.Web.Infrastructure.Notification
@@ -47,7 +48,7 @@ namespace PQT.Web.Infrastructure.Notification
         private void SendEmail_RequestNCL(Lead lead, string[] users)
         {
             string subject = lead.StatusDisplay + " #" + lead.ID;
-            SendEmail(users, subject, "Lead", "RequestNoCallList", lead);
+            EmailHelper.SendEmail(users, subject, "Lead", "RequestNoCallList", lead);
         }
 
     }
@@ -96,19 +97,19 @@ namespace PQT.Web.Infrastructure.Notification
         private void SendEmail_RequestBooking(Booking booking, string[] users)
         {
             string subject = "Request booking #" + booking.ID;
-            SendEmail(users, subject, "Lead", "RequestBooking", booking);
+            EmailHelper.SendEmail(users, subject, "Lead", "RequestBooking", booking);
         }
 
         private void SendEmail_ApprovedBooking(Booking booking, string[] users)
         {
             string subject = "Approved booking #" + booking.ID;
-            SendEmail(users, subject, "Lead", "AlertApprovedBooking.html", booking);
+            EmailHelper.SendEmail(users, subject, "Lead", "AlertApprovedBooking", booking);
         }
 
         private void SendEmail_RejectedBooking(Booking booking, string[] users)
         {
             string subject = "Rejected booking #" + booking.ID;
-            SendEmail(users, subject, "Lead", "AlertRejectedBooking.html", booking);
+            EmailHelper.SendEmail(users, subject, "Lead", "AlertRejectedBooking", booking);
         }
 
     }

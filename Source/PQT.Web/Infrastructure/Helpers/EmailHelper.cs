@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -57,7 +58,49 @@ namespace PQT.Web.Infrastructure.Helpers
                   .SendAsync();
         }
 
+        public static void SendEmail(IEnumerable<string> to, string subject, string typeTemplate, string template, object model)
+        {
+            var domainRoot = Helpers.UrlHelper.Root;
+            new Thread(() =>
+            {
+                var message = new RazorMailMessage(typeTemplate + "/" + template, model, new { DomainRoot = domainRoot }).Render();
+                var membershipService = DependencyHelper.GetService<IMembershipService>();
+                var emailTemplate =
+                    membershipService.GetEmailTemplate(typeTemplate, template);
+                if ((emailTemplate != null) || (to != null && to.Any()))
+                {
+                    var emailTos = new List<string>();
+                    var emailCcs = new List<string>();
+                    var emailBccs = new List<string>();
+                    if (emailTemplate != null)
+                    {
+                        if (!string.IsNullOrEmpty(emailTemplate.EmailTo))
+                            emailTos.AddRange(emailTemplate.EmailTo.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries));
+                        if (!string.IsNullOrEmpty(emailTemplate.EmailCc))
+                            emailCcs.AddRange(emailTemplate.EmailCc.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries));
+                        if (!string.IsNullOrEmpty(emailTemplate.EmailBcc))
+                            emailBccs.AddRange(emailTemplate.EmailBcc.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries));
+                    }
+                    if (to != null)
+                    {
+                        emailTos.AddRange(to);
+                    }
+                    if (emailTos.Any())
+                    {
+                        var bccAddition = ConfigurationManager.AppSettings["BccAllEmails"];
+                        if (bccAddition != null && !string.IsNullOrEmpty(bccAddition))
+                        {
+                            var emails = bccAddition.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                            emailBccs.AddRange(emails);
+                        }
+                        SendEmail(emailTos.Distinct().ToArray(),
+                            emailCcs.Distinct().ToArray(), emailBccs.Distinct().ToArray(), subject,
+                            message);
+                    }
+                }
 
+            }).Start();
+        }
 
         #endregion Config
 
@@ -67,7 +110,7 @@ namespace PQT.Web.Infrastructure.Helpers
             new Thread(() =>
             {
                 string subject = "PQT Logs Exception " + domainRoot;
-                var message = new RazorMailMessage("Logs/Exception", audit, domainRoot).Render();
+                var message = new RazorMailMessage("Logs/Exception", audit, new { DomainRoot = domainRoot }).Render();
                 var receiveEmail = ConfigurationManager.AppSettings["LogsEmail"];
                 if (receiveEmail != null && !string.IsNullOrEmpty(receiveEmail))
                 {

@@ -32,7 +32,6 @@ namespace PQT.Web
                 //, "~/Content/js/libs/DataTables-1.10.0/extensions/FixedHeader/css/dataTables.fixedHeader.min.css"
                 //, "~/Content/js/libs/DataTables-1.10.0/extensions/FixedColumns/css/dataTables.fixedColumns.min.css"
                 , "~/Content/js/magnific-popup/magnific-popup.css"
-                , "~/Content/js/libs/croppie/croppie.css"
                 , "~/Content/css/theme-default/libs/rickshaw/rickshaw.css"
                 , "~/Content/css/theme-default/libs/morris/morris.core.css"
                 , "~/Content/css/theme-default/libs/toastr/toastr.min.css"
@@ -87,8 +86,7 @@ namespace PQT.Web
                 , "~/Content/js/core/demo/DemoFormComponents.js"
                 , "~/Content/js/core/demo/DemoTableDynamic.js"
 
-
-                , "~/Content/js/libs/croppie/croppie.min.js"
+                
                 , "~/Content/js/magnific-popup/jquery.magnific-popup.js"
                 , "~/Content/js/ultilities/LINQ_JS.js"
                 , "~/Content/js/ultilities/string.js"

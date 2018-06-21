@@ -100,5 +100,40 @@ namespace PQT.Web.Controllers
             _memRepository.SeenUserNotification(notifyId);
             return Json(true);
         }
+        [AjaxOnly]
+        public ActionResult TestMail()
+        {
+            try
+            {
+
+                var record = new Audit
+                {
+                    ID = 1,
+                    Username = "Test Mail",
+                    Email = "Test Mail",
+                    IPAddress = "Test Mail",
+                    UrlAccessed = "Test Mail",
+                    TimeAccessed = DateTime.Now,
+                    SessionId = "Test Mail",
+                    Message = "Test Mail",
+                    Data = "Test Mail",
+                    Type = (int)AuditType.Exception,
+                    ActionId = 0
+                };
+                string subject = "Test Mail";
+                var message = new RazorMailMessage("Logs/Exception", record, new { DomainRoot = Infrastructure.Helpers.UrlHelper.Root }).Render();
+                var receiveEmail = ConfigurationManager.AppSettings["LogsEmail"];
+                if (receiveEmail != null && !string.IsNullOrEmpty(receiveEmail))
+                {
+                    var emails = receiveEmail.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    EmailHelper.SendEmail(emails, subject, message);
+                }
+                return Json("successful", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(e.Message, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }

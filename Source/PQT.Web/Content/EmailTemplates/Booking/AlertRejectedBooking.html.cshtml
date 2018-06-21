@@ -82,7 +82,7 @@
         <br />
         @if (Model.ID > 0)
         {
-            <a href="@BypassAuth.Encrypt(ViewBag,"/Booking/Detail/" + Model.ID)" target="_blank">Hyperlink here to show all information in detail</a>
+            <a href="@BypassAuth.Encrypt(ViewBag.DomainRoot,"/Booking/Detail/" + Model.ID)" target="_blank">Hyperlink here to show all information in detail</a>
         }
         else
         {
