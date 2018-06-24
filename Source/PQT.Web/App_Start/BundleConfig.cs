@@ -83,7 +83,7 @@ namespace PQT.Web
                 , "~/Content/js/core/source/AppNavSearch.js"
                 , "~/Content/js/core/source/AppVendor.js"
                 , "~/Content/js/core/demo/Demo.js"
-                , "~/Content/js/core/demo/DemoFormComponents.js?v=2"
+                , "~/Content/js/core/demo/DemoFormComponents.js"
                 , "~/Content/js/core/demo/DemoTableDynamic.js"
 
                 
