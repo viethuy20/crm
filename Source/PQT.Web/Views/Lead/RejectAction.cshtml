@@ -20,7 +20,7 @@
         <div class="card-head">
             <header><b>@title</b></header>
         </div><!--end .card-head -->
-        @using (Ajax.BeginForm("RejectAction", "routeValues", new AjaxOptions { OnFailure = "onFailRejectAction", OnSuccess = "onSuccessRejectAction" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
+        @using (Ajax.BeginForm("RejectAction", "routeValues", new AjaxOptions { OnFailure = "onFailRejectAction", OnSuccess = "onSuccessRejectAction" }, new { @id = "CreateOrEditForm", @class = "form" }))
             {
             <div class="card-body">
                 @Html.HiddenFor(m => m.id)
@@ -38,7 +38,7 @@
                 </div>
                 <div class="col-sm-12">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Reason).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().TextBoxFor(m => m.Reason).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Reason).LabelText("Rejection reason").ShowRequiredStar(true)
                     </div>
                 </div>

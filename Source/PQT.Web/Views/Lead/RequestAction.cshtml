@@ -19,7 +19,7 @@
         <div class="card-head">
             <header><b>@title</b></header>
         </div><!--end .card-head -->
-        @using (Ajax.BeginForm("RequestAction", "routeValues", new AjaxOptions { OnFailure = "onFailRequestAction", OnSuccess = "onSuccessRequestAction" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
+        @using (Ajax.BeginForm("RequestAction", "routeValues", new AjaxOptions { OnFailure = "onFailRequestAction", OnSuccess = "onSuccessRequestAction" }, new { @id = "CreateOrEditForm", @class = "form" }))
             {
             <div class="card-body">
                 @Html.HiddenFor(m => m.id, new { @id = "request_id" })
@@ -28,7 +28,7 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Attachment File<br /></label>
                         <div class="col-sm-9" style="margin-top: 15px">
-                            @Html.Bootstrap().FileFor(m => m.AttachmentFile).Id("request-attachment").ShowValidationMessage(false)
+                            @Html.Bootstrap().FileFor(m => m.AttachmentFile).Id("request-attachment").HtmlAttributes(new { required = "required" }).ShowValidationMessage(false)
                         </div>
                     </div>
                 </div>

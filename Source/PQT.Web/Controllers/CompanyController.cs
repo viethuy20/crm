@@ -120,7 +120,7 @@ namespace PQT.Web.Controllers
                 }
                 catch (Exception)
                 {
-                    TempData["error"] = "Import failed";
+                    TempData["error"] = "Import failed... Format file is wrong";
                     return View(model);
                 }
                 if (model.ImportRows.Any(m => !string.IsNullOrEmpty(m.Error)))

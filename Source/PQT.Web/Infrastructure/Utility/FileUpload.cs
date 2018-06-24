@@ -18,28 +18,28 @@ namespace PQT.Web.Infrastructure.Utility
                 {
                     var guid = Guid.NewGuid().ToString("N");
                     string fileName = guid + Path.GetExtension(file.FileName);
-                    if (fileName.ToLower().Contains(".jpg") ||
-                        fileName.ToLower().Contains(".jpeg") ||
-                        fileName.ToLower().Contains(".png"))
-                    {
-                        var thumbWidth = ImageHelper.MaxWidthThumbnailUpload;
-                        var thumbHeigth = ImageHelper.MaxHeightThumbnailUpload;
-                        string thumbName = guid + "_" + thumbWidth + "x" + thumbHeigth + Path.GetExtension(file.FileName);
-                        string filePath = GetImagePath(type, fileName);
-                        string directory = Path.GetDirectoryName(filePath);
-                        if (directory != null) Directory.CreateDirectory(directory);
-                        file.SaveAs(filePath);
-                        ImageHelper.CreateImageHighQuality(GetfolderPath(type), GetfolderPath(type), fileName, thumbName, thumbHeigth, thumbWidth);
-                        return thumbName;
-                    }
-                    else
-                    {
-                        string filePath = GetImagePath(type, fileName);
+                    //if (fileName.ToLower().Contains(".jpg") ||
+                    //    fileName.ToLower().Contains(".jpeg") ||
+                    //    fileName.ToLower().Contains(".png"))
+                    //{
+                    //    var thumbWidth = ImageHelper.MaxWidthThumbnailUpload;
+                    //    var thumbHeigth = ImageHelper.MaxHeightThumbnailUpload;
+                    //    string thumbName = guid + "_" + thumbWidth + "x" + thumbHeigth + Path.GetExtension(file.FileName);
+                    //    string filePath = GetImagePath(type, fileName);
+                    //    string directory = Path.GetDirectoryName(filePath);
+                    //    if (directory != null) Directory.CreateDirectory(directory);
+                    //    file.SaveAs(filePath);
+                    //    ImageHelper.CreateImageHighQuality(GetfolderPath(type), GetfolderPath(type), fileName, thumbName, thumbHeigth, thumbWidth);
+                    //    return thumbName;
+                    //}
+                    //else
+                    //{
+                    string filePath = GetImagePath(type, fileName);
                         string directory = Path.GetDirectoryName(filePath);
                         if (directory != null) Directory.CreateDirectory(directory);
                         file.SaveAs(filePath);
                         return fileName;
-                    }
+                    //}
                 }
             }
             catch (Exception ex)
@@ -68,6 +68,11 @@ namespace PQT.Web.Infrastructure.Utility
         protected static string GetImagePath(FileUploadType type, string fileName)
         {
             return HttpContext.Current.Server.MapPath("~/data/" + type.Value + "/" + fileName);
+        }
+
+        public static string GetImageUrl(FileUploadType type, string fileName)
+        {
+            return "/data/" + type.Value + "/" + fileName;
         }
 
         public static string GetfolderPath(FileUploadType type)

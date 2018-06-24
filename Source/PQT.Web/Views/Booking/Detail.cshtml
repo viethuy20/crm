@@ -61,7 +61,7 @@
     </div>
 </div>
 <div class="card">
-    <div class="card-body @Model.Booking.ClassStatus form form-validate">
+    <div class="card-body @Model.Booking.ClassStatus form">
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
@@ -94,7 +94,7 @@
     </div>
 </div>
 <div class="card">
-<div class="card-body form form-validate">
+<div class="card-body form">
 <div class="card-body">
     <div class="card card-underline">
         <div class="card-head">
@@ -289,7 +289,7 @@
         <div class="form-group">
             @if (!string.IsNullOrEmpty(Model.Booking.Attachment))
             {
-                @Html.Bootstrap().Link(Model.Booking.Attachment, FileUpload.GetfolderPath(FileUploadType.Booking) + Model.Booking.Attachment).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                @Html.Bootstrap().Link(Model.Booking.Attachment, FileUpload.GetImageUrl(FileUploadType.Booking, Model.Booking.Attachment)).Class("form-control").HtmlAttributes(new { target = "_blank" })
             }
             @Html.Bootstrap().LabelFor(m => m.Booking.Attachment)
         </div>
@@ -302,20 +302,14 @@
 
 @Html.Script(
     @<script>
-
-         $(document).unbind('ajaxStart');
+    
          $.ajax({
+             global: false,
              url: '@Url.Action("UpdateSeenNotify","Home")?entryId=@Model.Booking.ID',
              type: 'POST',
              success: function (data) {
-                 $(document).ajaxStart(function () {
-                     $("#dvLoading").show();
-                 });
              },
              error: function () {
-                 $(document).ajaxStart(function () {
-                     $("#dvLoading").show();
-                 });
              }
          });
 

@@ -280,12 +280,12 @@ namespace PQT.Web.Models
     {
         public int LeadID { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
-        [RegularExpression(@"^[0-9\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string GeneralLine { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string ClientName { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
-        [RegularExpression(@"^[0-9\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string DirectLine { get; set; }
         public string CompanyName { get; set; }
 
@@ -297,9 +297,9 @@ namespace PQT.Web.Models
         public string Salutation { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        [RegularExpression(@"^[0-9\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string BusinessPhone { get; set; }
-        [RegularExpression(@"^[0-9\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string MobilePhone { get; set; }
         [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessage = "Email is invalid")]
         public string WorkEmailAddress { get; set; }

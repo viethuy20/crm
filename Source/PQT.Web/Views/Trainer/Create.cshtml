@@ -8,7 +8,7 @@
     <div class="section-header">
         <h2 class="text-primary">@ViewBag.Title</h2>
     </div>
-    @using (Html.BeginForm("Create", "Trainer", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form form-validate" }))
+    @using (Html.BeginForm("Create", "Trainer", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
     {
         @Html.Partial("_CreateOrEdit", Model)
         <div class="row">

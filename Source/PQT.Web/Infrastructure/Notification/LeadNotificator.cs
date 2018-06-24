@@ -97,10 +97,10 @@ namespace PQT.Web.Infrastructure.Notification
                 NotificationHub.NotifyUser(user, notify);
             }
 
-            if (email)
-            {
-                NotificationService.NotifyUser(users, lead);
-            }
+            //if (email)
+            //{
+            //    NotificationService.NotifyUser(users, lead);
+            //}
         }
     }
 
@@ -161,10 +161,10 @@ namespace PQT.Web.Infrastructure.Notification
                 NotificationHub.NotifyUser(user, notify);
             }
 
-            if (email)
-            {
-                NotificationService.NotifyUser(users, booking);
-            }
+            //if (email)
+            //{
+            //    NotificationService.NotifyUser(users, booking);
+            //}
         }
     }
 }

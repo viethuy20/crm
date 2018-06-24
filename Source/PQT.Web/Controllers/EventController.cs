@@ -114,12 +114,40 @@ namespace PQT.Web.Controllers
             var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
             // ReSharper disable once AssignNullToNotNullAttribute
             var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
-            var searchValue = "";
+            var companyName = "";
             // ReSharper disable once AssignNullToNotNullAttribute
-            if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
+            if (Request.Form.GetValues("CompanyName") != null && Request.Form.GetValues("CompanyName").FirstOrDefault() != null)
             {
                 // ReSharper disable once PossibleNullReferenceException
-                searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
+                companyName = Request.Form.GetValues("CompanyName").FirstOrDefault().Trim().ToLower();
+            }
+            var countryName = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("CountryName") != null && Request.Form.GetValues("CountryName").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                countryName = Request.Form.GetValues("CountryName").FirstOrDefault().Trim().ToLower();
+            }
+            var productService = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("ProductService") != null && Request.Form.GetValues("ProductService").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                productService = Request.Form.GetValues("ProductService").FirstOrDefault().Trim().ToLower();
+            }
+            var sector = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Sector") != null && Request.Form.GetValues("Sector").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                sector = Request.Form.GetValues("Sector").FirstOrDefault().Trim().ToLower();
+            }
+            var industry = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Industry") != null && Request.Form.GetValues("Industry").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                industry = Request.Form.GetValues("Industry").FirstOrDefault().Trim().ToLower();
             }
 
 
@@ -128,22 +156,15 @@ namespace PQT.Web.Controllers
             int recordsTotal = 0;
 
             IEnumerable<Company> companies = new HashSet<Company>();
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                if (!string.IsNullOrEmpty(searchValue))
-                    companies = _comRepo.GetAllCompanies(m =>
-                        (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(searchValue)) ||
-                        (!string.IsNullOrEmpty(m.ProductOrService) && m.ProductOrService.ToLower().Contains(searchValue)) ||
-                        (!string.IsNullOrEmpty(m.CountryName) && m.CountryName.ToLower().Contains(searchValue)) ||
-                        (!string.IsNullOrEmpty(m.CountryCode) && m.CountryCode.ToLower().Contains(searchValue)) ||
-                        (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(searchValue)) ||
-                        (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(searchValue))
-                       );
-            }
-            else
-            {
-                companies = _comRepo.GetAllCompanies();
-            }
+            companies = _comRepo.GetAllCompanies(m =>
+                (string.IsNullOrEmpty(companyName) || (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
+                (string.IsNullOrEmpty(productService) || (!string.IsNullOrEmpty(m.ProductOrService) && m.ProductOrService.ToLower().Contains(productService))) &&
+                (string.IsNullOrEmpty(countryName) || (!string.IsNullOrEmpty(m.CountryCode) && m.CountryCode.ToLower().Contains(countryName)) || 
+                (!string.IsNullOrEmpty(m.CountryName) && m.CountryName.ToLower().Contains(countryName))) &&
+                (string.IsNullOrEmpty(sector) || (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
+                (string.IsNullOrEmpty(industry) || (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry)))
+               );
+
 
 
             if (sortColumnDir == "asc")

@@ -2556,6 +2556,7 @@
     <Content Include="Views\Kpi\ImportReview.cshtml" />
     <Content Include="Views\Kpi\Index.cshtml" />
     <Content Include="Views\Kpi\Consolidate.cshtml" />
+    <Content Include="Views\Kpi\Update.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

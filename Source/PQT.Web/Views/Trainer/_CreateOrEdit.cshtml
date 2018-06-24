@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group floating-label">
-                    @Html.Bootstrap().TextBoxFor(m => m.Trainer.Name).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().TextBoxFor(m => m.Trainer.Name).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Trainer.Name).ShowRequiredStar(true)
                 </div>
             </div>
@@ -116,6 +116,9 @@
                 $('.form-horizontal .form-control').each(function () {
                     $(this).after('<div class="form-control-line"></div>');
                 });
+
+                ReValidateForm();
+
             },
 
             remove: function (sender) {

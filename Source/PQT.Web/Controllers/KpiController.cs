@@ -33,6 +33,53 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
+        [DisplayName(@"Update KPI")]
+        public ActionResult Update(int id = 0)
+        {
+            var model = new Lead();
+            if (id > 0)
+            {
+                model = _leadService.GetLead(id);
+            }
+            return PartialView(model);
+        }
+        [HttpPost]
+        [DisplayName(@"Update KPI")]
+        public ActionResult Update(int ID, string KPIRemarks, bool MarkKPI = false)
+        {
+            var lead = _leadService.GetLead(ID);
+            if (lead == null)
+                return Json(new
+                {
+                    Code = 3,
+                    Message = "Call not found"
+                });
+            if (ModelState.IsValid)
+            {
+                lead.MarkKPI = MarkKPI;
+                lead.KPIRemarks = KPIRemarks;
+                if (_leadService.UpdateLead(lead))
+                {
+                    return Json(new
+                    {
+                        Code = 1,
+                        lead.ID,
+                        MarkKPI,
+                        KPIRemarks,
+                        lead.ClassKPIStatus
+                    });
+                }
+                return Json(new
+                {
+                    Code = 2
+                });
+            }
+            return Json(new
+            {
+                Code = 3,
+                Message = "Model State is invalid"
+            });
+        }
         [DisplayName(@"Consolidate KPIs")]
         public ActionResult Consolidate()
         {

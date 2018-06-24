@@ -8,15 +8,21 @@
         <h2 class="text-primary">@ViewBag.Title</h2>
     </div>
     <div class="card">
-        @using (Html.BeginForm("Edit", "Event", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form form-validate" }))
+        @using (Html.BeginForm("Edit", "Event", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
         {
             <div class="card-body">
+                <div class="row">
+                    <div class="form-group  col-md-offset-2">
+                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                        @Html.Bootstrap().SubmitButton().Class("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+                    </div>
+                </div>
                 @Html.HiddenFor(m => m.Event.ID)
                 @Html.Partial("_CreateOrEdit", Model)
                 <div class="row">
                     <div class="form-group  col-md-offset-2">
                         @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
-                        @Html.Bootstrap().SubmitButton().Id("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+                        @Html.Bootstrap().SubmitButton().Class("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
                     </div>
                 </div>
             </div>
@@ -25,7 +31,7 @@
 </section>
 @Html.Script(
     @<script>
-        $("#submitbutton").on('click', function (e) {
+        $(".submitbutton").on('click', function (e) {
             e.preventDefault();
             bootbox.confirm('@Resource.ConfirmSave', function (isOK) {
                 if (isOK) {

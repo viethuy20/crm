@@ -48,7 +48,7 @@ namespace PQT.Web.Controllers
             return View(eventData);
         }
 
-        public ActionResult Detail(int id, int eventId)
+        public ActionResult Detail(int id, int eventId=0)
         {
             var model = new BookingModel();
             var booking = _bookingService.GetBooking(id);

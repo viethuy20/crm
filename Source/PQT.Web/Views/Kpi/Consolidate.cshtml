@@ -33,14 +33,14 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <div class="input-daterange input-group" id="demo-date-range">
+                                <div class="input-daterange input-group">
                                     <div class="input-group-content">
-                                        @Html.DatePickerFor(m => m.DateFrom, new { @class = "input-clear form-control" })
+                                        @Html.DatePickerRangeFor(m => m.DateFrom, new { @class = "input-clear form-control" })
                                         @Html.Bootstrap().LabelFor(m => m.DateFrom)
                                     </div>
                                     <span class="input-group-addon">to</span>
                                     <div class="input-group-content">
-                                        @Html.DatePickerFor(m => m.DateTo, new { @class = "input-clear form-control" })
+                                        @Html.DatePickerRangeFor(m => m.DateTo, new { @class = "input-clear form-control" })
                                         @Html.Bootstrap().LabelFor(m => m.DateTo)
                                     </div>
                                 </div>

@@ -4,6 +4,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using PQT.Domain.Abstract;
 using PQT.Domain.Concrete;
+using PQT.Domain.Entities;
 using PQT.Domain.Helpers;
 using PQT.Web.Models;
 using PQT.Web.Infrastructure.Filters;
@@ -84,7 +85,8 @@ namespace PQT.Web.Controllers
         [DisplayName("Edit Profile")]
         public ActionResult EditProfile()
         {
-            var model = new AccountModel(CurrentUser.Identity);
+            User user = _membership.GetUserIncludeAll(CurrentUser.Identity.ID);
+            var model = new AccountModel(user);
             return View(model);
         }
 

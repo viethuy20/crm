@@ -6,7 +6,7 @@
         <header>@(Model.ID > 0 ? "Edit Data" : "Add New Data")</header>
     </div><!--end .card-head -->
 
-    @using (Ajax.BeginForm("CreateOrEdit", "routeValues", new AjaxOptions { OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
+    @using (Ajax.BeginForm("CreateOrEdit", "routeValues", new AjaxOptions { OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
     {
         <div class="card-body">
             <div class="success hide">
@@ -23,11 +23,11 @@
             </div>
             @Html.HiddenFor(m => m.ID)
             <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.GroupName).Class("form-control code").ShowValidationMessage(true)
+                @Html.Bootstrap().TextBoxFor(m => m.GroupName).HtmlAttributes(new { required = "required" }).Class("form-control code").ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.GroupName).LabelText("Group Name").ShowRequiredStar(true)
             </div>
             <div class="form-group">
-                <select multiple class="form-control  select2-list" name="@Html.NameFor(m=>m.UsersSelected)">
+                <select multiple class="form-control" name="@Html.NameFor(m=>m.UsersSelected)" required="required">
                     @foreach (var user in Model.Users)
                     {
                         <option value="@user.ID" selected="@(Model.UsersSelected.Contains(user.ID))">@user.DisplayName</option>

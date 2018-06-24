@@ -218,8 +218,6 @@
 
 @Html.Script(
     @<script>
-         $(document).unbind('ajaxStart');
-
          var windowW = $(window).width();
          var windowH = $(window).height();
          var fixedColumn = 0;
@@ -234,6 +232,7 @@
              "orderMulti": false, // for disable multiple column at once
              "stateSave": false,
              "ajax": {
+                 "global": false,
                  "url": "@Url.Action("AjaxGetNoCallListForManager")?eventId=@Model.Event.ID",
                  "type": "POST",
                  "datatype": "json",

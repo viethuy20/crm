@@ -132,7 +132,6 @@
 
 @Html.Script(
     @<script>
-         $(document).unbind('ajaxStart');
          var windowW = $(window).width();
          var windowH = $(window).height();
          var fixedColumn = 0;
@@ -147,6 +146,7 @@
              "stateSave": false,
              //"fixedHeader": true,
              "ajax": {
+                 "global": false,
                  "url": "@Url.Action("AjaxGetNCList")?eventId=@Model.Event.ID",
                  "type": "POST",
                  "datatype": "json",

@@ -10,9 +10,22 @@
     </div>
     <div class="card">
         <div>
-            @using (Html.BeginForm("Edit", "Booking", FormMethod.Post, new { @class = "form form-validate", enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("Edit", "Booking", FormMethod.Post, new { @class = "form", enctype = "multipart/form-data" }))
             {
 
+                <div class="row  pull-right">
+                    <div class="form-group" style="margin-right: 50px;">
+                        @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
+                        {
+                            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").RouteValues(new { id = Model.Event.ID }).PrependIcon("md md-arrow-back")
+                        }
+                        else
+                        {
+                            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").RouteValues(new { id = Model.Event.ID }).PrependIcon("md md-arrow-back")
+                        }
+                        @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("createbookingbtn").PrependIcon("md md-done").Style(ButtonStyle.Success)
+                    </div>
+                </div>
                 @Html.Partial("_CreateOrEdit", Model)
                 <div class="card-actionbar">
                     <div class="card-actionbar-row">
@@ -29,5 +42,6 @@
                 </div>
             }
         </div>
+
     </div>
 </section>

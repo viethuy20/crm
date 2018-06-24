@@ -12,19 +12,19 @@
     </div>
     <div class="card">
         <div class="card-body">
-            @using (Html.BeginForm("Edit", "Users", FormMethod.Post, new { @class = "form form-validate", enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("Edit", "Users", FormMethod.Post, new { @class = "form", enctype = "multipart/form-data" }))
             {
                 <div class="row">
                     <div class="col-sm-6">
                         @Html.HiddenFor(m => m.ID)
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Email).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.Email).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email").ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.DisplayName).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.DisplayName).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.DisplayName).LabelText("Display Name").ShowRequiredStar(true)
                         </div>
                     </div>
@@ -105,6 +105,26 @@
                         @Html.Bootstrap().SubmitButton().Id("submitbutton").Class("btn btn-primary-me").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
                     </div>
                 </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">Salary Histories</h2>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            @if (Model.UserSalaryHistories.Any())
+            {
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextAreaFor(m => m.UserSalaryHistories).Disabled().Value(string.Join("\r\n", Model.UserSalaryHistories.Select(m => "Level Salary: " + m.LevelSalesman.DisplayName + " - Basic Salary: " + m.BasicSalary.ToString("N")))).Readonly().Rows(5).Class("form-control")
+                    </div>
+                </div>
+            </div>
             }
         </div>
     </div>

@@ -4,7 +4,7 @@
     <div class="card-head">
         <header><b>Reject Booking</b> @*- <span style="font-size: 18px;">Company: @Model.Booking.Company.CompanyName - Sender: @Model.Booking.SenderName </span>*@</header>
     </div>
-    @using (Html.BeginForm("RejectBooking", "Booking", FormMethod.Post, new { @class = "form form-validate", enctype = "multipart/form-data" }))
+    @using (Html.BeginForm("RejectBooking", "Booking", FormMethod.Post, new { @class = "form", enctype = "multipart/form-data" }))
     {
         <div class="card-body">
             <div class="col-sm-12">
@@ -23,7 +23,7 @@
                 <div class="form-group">
                     @Html.HiddenFor(m => m.BookingID)
                     @Html.HiddenFor(m => m.EventID)
-                    @Html.Bootstrap().TextAreaFor(m => m.Message).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().TextAreaFor(m => m.Message).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Message).LabelText("Rejection reason")
                 </div>
             </div>

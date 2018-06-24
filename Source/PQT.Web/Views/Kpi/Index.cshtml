@@ -34,14 +34,14 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <div class="input-daterange input-group" id="demo-date-range">
+                                <div class="input-daterange input-group">
                                     <div class="input-group-content">
-                                        @Html.DatePickerFor(m => m.DateFrom, new { @class = "input-clear form-control" })
+                                        @Html.DatePickerRangeFor(m => m.DateFrom, new { @class = "input-clear form-control" })
                                         @Html.Bootstrap().LabelFor(m => m.DateFrom)
                                     </div>
                                     <span class="input-group-addon">to</span>
                                     <div class="input-group-content">
-                                        @Html.DatePickerFor(m => m.DateTo, new { @class = "input-clear form-control" })
+                                        @Html.DatePickerRangeFor(m => m.DateTo, new { @class = "input-clear form-control" })
                                         @Html.Bootstrap().LabelFor(m => m.DateTo)
                                     </div>
                                 </div>
@@ -89,7 +89,9 @@
                                     <th>Mobile Phone</th>
                                     <th>Personal Email</th>
                                     <th>Work Email</th>
+                                    <th>Mark KPI</th>
                                     <th>KPI Remarks</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                         </table>
@@ -138,12 +140,23 @@
                  { "data": "MobilePhone", "name": "MobilePhone", "orderable": true },
                  { "data": "PersonalEmailAddress", "name": "PersonalEmailAddress", "orderable": true },
                  { "data": "WorkEmailAddress", "name": "WorkEmailAddress", "orderable": true },
+                 { "data": "MarkKPI", "name": "MarkKPI", "orderable": true },
                  { "data": "KPIRemarks", "name": "KPIRemarks", "orderable": true },
+                 { "data": "ID", "name": "ID", "orderable": false },
              ],
              "iDisplayLength": 50,
              "aaSorting": [[1, "desc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  $(nRow).addClass(aData["ClassKPIStatus"]);
+                 $(nRow).attr("data-id", aData["ID"]);
+                 if ('@CurrentUser.HasPermission("KPI","Update")' == 'True') {
+                     $(nRow).find('td:eq(13)').html(
+                         '<a class="simple-ajax-popup-align-top" href="@Url.Action("Update")?id=' +
+                         aData["ID"] +
+                         '" ><span class=" text-info" style="white-space: nowrap;"><i class="md fa-fw md-edit"></i> Update<span></a>');
+                 } else {
+                     $(nRow).find('td:eq(13)').html('');
+                 }
              },
              initComplete: function () {
                  var _table = this;
@@ -170,8 +183,49 @@
              oTable.fnFilter('');
          });
 
-         initAjaxDropdown($('@Html.JquerySelectorFor(m=>m.EventID)'), "@Url.Action("GetPossibleEvent", "Event")", "Search for user");
+         initAjaxDropdown($('@Html.JquerySelectorFor(m=>m.EventID)'), "@Url.Action("GetPossibleEvent", "Event")", "Search for Event");
          initAjaxDropdown($('@Html.JquerySelectorFor(m=>m.UserID)'), "@Url.Action("GetPossibleSalesman", "Users")", "Search for user");
+
+
+         function onUpdateFail() {
+            $(".error").removeClass('hide');
+            $(".success").addClass('hide');
+            $(".texterror").text("@Resource.Error");
+        }
+        function onUpdateSuccess(data) {
+            $(".error").addClass('hide');
+            $(".success").addClass('hide');
+
+            if (data.Code == 1) {
+                $(".success").removeClass('hide');
+                    $("textsuccess").data('@Resource.SaveSuccessful');
+                    updateItem(data);
+                $.magnificPopup.close();
+            } else {
+                if (data.Code == 3)
+                    $(".texterror").text(data.Message);
+                else
+                    $(".texterror").text('@Resource.SaveError');
+                $(".error").removeClass('hide');
+            }
+        }
+
+        function updateItem(data) {
+            var tr = $(oTable.fnGetNodes());
+            tr.each(function (index, item) {
+                if ($(item).data('id') == data.ID) {
+                    var td = $(item).find("td");
+                    if (td.length > 0) {
+                        $(td[11]).text(data.MarkKPI);
+                        $(td[12]).text(data.KPIRemarks);
+                    }
+                    $(item).removeClass("KPI");
+                    $(item).removeClass("NoKPI");
+                    $(item).removeClass("NoCheckKPI");
+                    $(item).addClass(data.ClassKPIStatus);
+                }
+            });
+        }
     </script>
 
 )

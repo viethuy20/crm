@@ -13,30 +13,30 @@
     </div>
     <div class="card">
         <div class="card-body">
-            @using (Html.BeginForm("Create", "Users", FormMethod.Post, new { @class = "form form-validate", enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("Create", "Users", FormMethod.Post, new { @class = "form", enctype = "multipart/form-data" }))
             {
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.DisplayName).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.DisplayName).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.DisplayName).LabelText("Display Name").ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Email).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.Email).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email").ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().PasswordFor(m => m.Password).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().PasswordFor(m => m.Password).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Password).LabelText("Password").ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().PasswordFor(m => m.ConfirmPassword).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().PasswordFor(m => m.ConfirmPassword).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.ConfirmPassword).LabelText("Retype password").ShowRequiredStar(true)
                         </div>
                     </div>

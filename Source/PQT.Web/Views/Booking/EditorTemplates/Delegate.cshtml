@@ -8,8 +8,8 @@
                 <div class="col-sm-12">
                     <div class="form-group">
                         @Html.HiddenFor(m => m.ID)
-                        @Html.Bootstrap().TextBoxFor(m => m.Name).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Name)
+                        @Html.Bootstrap().TextBoxFor(m => m.Name).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Name).ShowRequiredStar(true)
                     </div>
                 </div>
             </div>
@@ -24,8 +24,8 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Tel).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Tel)
+                        @Html.Bootstrap().TextBoxFor(m => m.Tel).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Tel).ShowRequiredStar(true)
                     </div>
                 </div>
             </div>

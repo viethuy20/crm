@@ -143,7 +143,7 @@
         </div>
     </div>
     <div class="card">
-        <div class="card-body @Model.Lead.ClassStatus form form-validate">
+        <div class="card-body @Model.Lead.ClassStatus form">
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
@@ -187,7 +187,7 @@
         </div>
     </div>
     <div class="card">
-        <div class="card-body form form-validate">
+        <div class="card-body form">
             <div class="row">
                 @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
             {
@@ -317,19 +317,13 @@
 </section>
 @Html.Script(
     @<script>
-         $(document).unbind('ajaxStart');
          $.ajax({
+             global: false,
              url: '@Url.Action("UpdateSeenNotify","Home")?entryId=@Model.Lead.ID',
              type: 'POST',
              success: function (data) {
-                 $(document).ajaxStart(function () {
-                     $("#dvLoading").show();
-                 });
              },
              error: function () {
-                 $(document).ajaxStart(function () {
-                     $("#dvLoading").show();
-                 });
              }
          });
          $(document).on('click', '#lead_delete', function (e) {

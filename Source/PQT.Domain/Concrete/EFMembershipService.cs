@@ -24,6 +24,7 @@ namespace PQT.Domain.Concrete
         {
             return GetAll(predicate, u => new
             {
+                u.UserSalaryHistories,
                 Roles = u.Roles.Select(r => r.Permissions),
             }).OrderBy(u => u.DisplayName)
                 .AsEnumerable();
@@ -32,6 +33,7 @@ namespace PQT.Domain.Concrete
         {
             return GetAll<User>(u => new
             {
+                u.UserSalaryHistories,
                 Roles = u.Roles.Select(r => r.Permissions),
             })
                 .OrderBy(u => u.DisplayName)
@@ -41,6 +43,7 @@ namespace PQT.Domain.Concrete
         {
             return GetAll<User>(u => new
             {
+                u.UserSalaryHistories,
                 Roles = u.Roles.Select(r => r.Permissions),
             }).OrderBy(u => u.DisplayName)
                 .AsEnumerable();
@@ -66,6 +69,15 @@ namespace PQT.Domain.Concrete
         {
             return Get<User>(u => u.ID == id, u => new
             {
+                u.UserSalaryHistories,
+                Roles = u.Roles.Select(r => r.Permissions),
+            });
+        }
+        public virtual User GetUserIncludeAll(int id)
+        {
+            return Get<User>(u => u.ID == id, u => new
+            {
+                u.UserSalaryHistories,
                 Roles = u.Roles.Select(r => r.Permissions),
             });
         }
@@ -90,6 +102,7 @@ namespace PQT.Domain.Concrete
         {
             return GetAll<User>(m => m.Email.Trim().ToLower() == email.Trim().ToLower(), u => new
             {
+                u.UserSalaryHistories,
                 Roles = u.Roles.Select(r => r.Permissions),
             }).ToList();
         }
@@ -128,6 +141,7 @@ namespace PQT.Domain.Concrete
                                       .Select(r => r.Name.ToUpper())
                                       .Intersect(roleName.Select(r1 => r1.ToUpper()))
                                       .Any(),
+                u=>u.UserSalaryHistories,
                                 u => u.Roles.Select(r => r.Permissions)).AsEnumerable();
         }
 
@@ -137,6 +151,7 @@ namespace PQT.Domain.Concrete
                                       .Select(r => r.Name.ToUpper())
                                       .Intersect(roleName.Select(r1 => r1.ToUpper()))
                                       .Any(),
+                u => u.UserSalaryHistories,
                                 u => u.Roles.Select(r => r.Permissions)).AsEnumerable();
         }
         #endregion
@@ -152,7 +167,7 @@ namespace PQT.Domain.Concrete
             return GetAll<User>().AsEnumerable().Where(u => u.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel));
         }
 
-        public IEnumerable<UserNotification> GetAllUserNotifications(int userId,int pageSize = 10, int page = 1)
+        public IEnumerable<UserNotification> GetAllUserNotifications(int userId, int pageSize = 10, int page = 1)
         {
             return _db.Set<UserNotification>()
                 .Where(m => m.UserID == userId).OrderByDescending(m => m.CreatedTime)
@@ -182,7 +197,7 @@ namespace PQT.Domain.Concrete
         }
         public int SeenUserNotification(int userId, int entryId)
         {
-            var notifications = GetAll<UserNotification>(m=>m.UserID == userId && m.EntryId == entryId);
+            var notifications = GetAll<UserNotification>(m => m.UserID == userId && m.EntryId == entryId);
             foreach (var userNotification in notifications)
             {
                 userNotification.Seen = true;

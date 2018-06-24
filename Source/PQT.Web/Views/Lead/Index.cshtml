@@ -135,6 +135,16 @@
                 </div><!--end .card-body -->
             </div><!--end .card -->
         </div>
+        <div style="width: 150px;margin: 15px;">
+            <div class="card">
+                <div class="card-body no-padding">
+                    <div class="alert alert-callout alert-success no-margin">
+                        <strong class="text-xl" id="total_kpi">0</strong><br />
+                        <span class="opacity-50">TOTAL KPIs</span>
+                    </div>
+                </div><!--end .card-body -->
+            </div><!--end .card -->
+        </div>
     </div><!--end .col -->
 </div>
 <div class="row">
@@ -183,6 +193,8 @@
                                 <th>Work Email</th>
                                 <th>Work Email 1</th>
                                 <th>Personal Email</th>
+                                <th>KPI</th>
+                                <th>KPI Remarks</th>
                                 <th>Call Back</th>
                                 <th>Status</th>
                                 <th>&nbsp;</th>
@@ -224,7 +236,6 @@
 
 @Html.Script(
     @<script>
-         $(document).unbind('ajaxStart');
          var windowW = $(window).width();
          var windowH = $(window).height();
          var fixedColumn = 0;
@@ -239,6 +250,7 @@
              "orderMulti": false, // for disable multiple column at once
              "stateSave": false,
              "ajax": {
+                 "global": false,
                  "url": "@Url.Action("AjaxGetLeads")?eventId=@Model.Event.ID",
                  "type": "POST",
                  "datatype": "json",
@@ -260,6 +272,8 @@
                  { "data": "WorkEmailAddress", "name": "WorkEmailAddress", "orderable": true },
                  { "data": "WorkEmailAddress1", "name": "WorkEmailAddress1", "orderable": true },
                  { "data": "PersonalEmailAddress", "name": "PersonalEmailAddress", "orderable": true },
+                 { "data": "MarkKPI", "name": "MarkKPI", "orderable": true },
+                 { "data": "KPIRemarks", "name": "KPIRemarks", "orderable": true },
                  { "data": "CallBackDate", "name": "CallBackDate", "orderable": true },
                  { "data": "StatusDisplay", "name": "StatusDisplay", "orderable": true },
                  { "data": "ID", "name": "ID", "orderable": false },
@@ -277,7 +291,7 @@
                      aData["CreatedTime"] +
                      '</a>');
                  if ('@eventClosed' == 'False') {
-                     $(nRow).find('td:eq(16)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
+                     $(nRow).find('td:eq(18)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
                          aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');
                  }
                  $(nRow).addClass(aData["ClassStatus"]);
@@ -467,6 +481,7 @@
              "stateSave": false,
              //"fixedHeader": true,
              "ajax": {
+                 "global": false,
                  "url": "@Url.Action("AjaxGetNCList")?eventId=@Model.Event.ID",
                  "type": "POST",
                  "datatype": "json",
@@ -839,22 +854,17 @@
 @Html.Script(
     @<script>
          function LoadTotalNCLSummary() {
-             $(document).unbind('ajaxStart');
              $.ajax({
+                 global: false,
                  url: '@Url.Action("AjaxGetTotalNCL")?eventId=@Model.Event.ID',
                  type: 'POST',
                  success: function (data) {
                      $("#total_loi").text(data.TotalLOI);
                      $("#total_blocked").text(data.TotalBlocked);
                      $("#total_booked").text(data.TotalBooked);
-                     $(document).ajaxStart(function() {
-                         $("#dvLoading").show();
-                     });
+                     $("#total_kpi").text(data.TotalKPI);
                  },
                  error: function () {
-                     $(document).ajaxStart(function() {
-                         $("#dvLoading").show();
-                     });
                  }
              });
          }

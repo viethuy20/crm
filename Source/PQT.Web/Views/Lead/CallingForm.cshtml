@@ -10,7 +10,7 @@
             <header><b>Calling Form</b></header>
         </div><!--end .card-head -->
         <button title="Close (Esc)" type="button" class="mfp-close">×</button>
-        @using (Ajax.BeginForm("CallingForm", "routeValues", new AjaxOptions { OnFailure = "onFailCalling", OnSuccess = "onSuccessCalling" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
+        @using (Ajax.BeginForm("CallingForm", "routeValues", new AjaxOptions { OnFailure = "onFailCalling", OnSuccess = "onSuccessCalling" }, new { @id = "CreateOrEditForm", @class = "form" }))
         {
             <div class="card-body" style="height: 150px; padding: 30px;">
                 @Html.HiddenFor(m => m.LeadID)
@@ -28,7 +28,7 @@
                     </div>
                     <div class="row">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.GeneralLine).Class("form-control  input-phone").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.GeneralLine).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.GeneralLine).LabelText("GENERAL LINE")
                         </div>
                     </div>
@@ -69,7 +69,7 @@
                 <div class="row" style="margin-top: 30px;">
                     <div class="col-sm-2">
                         <div class="form-group">
-                            @Html.Bootstrap().DropDownListFor(m => m.Salutation, Enumeration.GetAll<NameTitle>().ToSelectList(m => m.DisplayName, m => m.DisplayName)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.Salutation).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Salutation).LabelText("Salutation")
                         </div>
                     </div>
@@ -118,7 +118,7 @@
                     <div class="col-sm-8">
                         <div class="form-group">
                             @Html.Bootstrap().TextAreaFor(m => m.PhoneCall.Remark).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.PhoneCall.Remark).LabelText("HIGHLIGHTS").ShowRequiredStar(true)
+                            @Html.Bootstrap().LabelFor(m => m.PhoneCall.Remark).LabelText("HIGHLIGHTS").HtmlAttributes(new { required = "required" }).ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-4">

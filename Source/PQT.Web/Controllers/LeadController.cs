@@ -70,7 +70,7 @@ namespace PQT.Web.Controllers
             }
             return View(model);
         }
-        
+
         public ActionResult Edit(int leadId)
         {
             var model = new CallingModel(leadId);
@@ -472,6 +472,12 @@ namespace PQT.Web.Controllers
                     case "StatusDisplay":
                         leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
+                    case "KPIRemarks":
+                        leads = leads.OrderBy(s => s.KPIRemarks).ThenBy(s => s.ID);
+                        break;
+                    case "MarkKPI":
+                        leads = leads.OrderBy(s => s.MarkKPI).ThenBy(s => s.ID);
+                        break;
                     default:
                         leads = leads.OrderBy(s => s.ID);
                         break;
@@ -526,6 +532,12 @@ namespace PQT.Web.Controllers
                     case "StatusDisplay":
                         leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
+                    case "KPIRemarks":
+                        leads = leads.OrderByDescending(s => s.KPIRemarks).ThenBy(s => s.ID);
+                        break;
+                    case "MarkKPI":
+                        leads = leads.OrderByDescending(s => s.MarkKPI).ThenBy(s => s.ID);
+                        break;
                     default:
                         leads = leads.OrderByDescending(s => s.ID);
                         break;
@@ -570,6 +582,8 @@ namespace PQT.Web.Controllers
                     m.PersonalEmailAddress,
                     m.StatusCode,
                     m.ClassStatus,
+                    m.MarkKPI,
+                    m.KPIRemarks,
                     actionBlock = m.LeadStatusRecord == LeadStatus.Blocked ? "Unblock" : "Block"
                 })
             };
@@ -932,20 +946,19 @@ namespace PQT.Web.Controllers
             var leads = _repo.GetAllLeads(m => m.EventID == eventId &&
                                                (saleId == 0 || m.UserID == saleId ||
                                                 (m.User != null && m.User.TransferUserID == saleId)) &&
-                                           (m.LeadStatusRecord == LeadStatus.LOI ||
+                                           (m.MarkKPI || m.LeadStatusRecord == LeadStatus.LOI ||
                                             m.LeadStatusRecord == LeadStatus.Booked ||
-                                            m.LeadStatusRecord == LeadStatus.Blocked) &&
-                                           (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
-                                            DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired())));
+                                            m.LeadStatusRecord == LeadStatus.Blocked));
 
             return Json(new
             {
                 TotalLOI = leads.Count(m => m.LeadStatusRecord == LeadStatus.LOI),
                 TotalBlocked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Blocked),
-                TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked)
+                TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked),
+                TotalKPI = leads.Count(m => m.MarkKPI)
             }, JsonRequestBehavior.AllowGet);
         }
-        
+
 
         [DisplayName(@"Get List Of Company Resource")]
         [AjaxOnly]

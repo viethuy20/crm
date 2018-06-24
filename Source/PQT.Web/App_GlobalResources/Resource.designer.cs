@@ -358,6 +358,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fax number is invalid.
+        /// </summary>
+        internal static string FaxNumberIsInvalid {
+            get {
+                return ResourceManager.GetString("FaxNumberIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Format invalid.
         /// </summary>
         internal static string FormatInvalid {
@@ -444,6 +453,15 @@ namespace Resources {
         internal static string PhoneNumber {
             get {
                 return ResourceManager.GetString("PhoneNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Phone number is invalid.
+        /// </summary>
+        internal static string PhoneNumberIsInvalid {
+            get {
+                return ResourceManager.GetString("PhoneNumberIsInvalid", resourceCulture);
             }
         }
         
@@ -592,7 +610,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The field is invalid.
+        ///   Looks up a localized string similar to This field is invalid..
         /// </summary>
         internal static string TheFieldIsInvalid {
             get {
@@ -610,7 +628,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The field should not be empty.
+        ///   Looks up a localized string similar to This field is required..
         /// </summary>
         internal static string TheFieldShouldNotBeEmpty {
             get {

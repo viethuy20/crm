@@ -1,6 +1,6 @@
 ﻿@using Resources
 @model PQT.Web.Models.BookingModel
-@Html.ValidationSummary()
+
     <div class="card-body">
         <div class=" col-sm-12">
             <div class="card card-underline">
@@ -121,7 +121,7 @@
                     <div class="form-group">
                         <div class="checkbox checkbox-styled">
                             <label>
-                                <input type="checkbox" id="authorSameSender" name="@Html.NameFor(m => m.Booking.SameAsSender)" @(Model.Booking.SameAsSender ? "checked" : "")>
+                                <input type="checkbox" id="@Html.IdFor(m => m.Booking.SameAsSender)" name="@Html.NameFor(m => m.Booking.SameAsSender)" value="@(Model.Booking.SameAsSender?"true":"false")" @(Model.Booking.SameAsSender ? "checked" : "")>
                                 <span>Same as sender</span>
                             </label>
                         </div>
@@ -182,6 +182,11 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">Attachment File<br /></label>
                 <div class="col-sm-9" style="margin-top: 15px">
+                    @if (!string.IsNullOrEmpty(Model.Booking.Attachment))
+                    {
+                        @Html.Bootstrap().Link(Model.Booking.Attachment, FileUpload.GetImageUrl(FileUploadType.Booking, Model.Booking.Attachment)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                        <br/>
+                    }
                     @Html.Bootstrap().FileFor(m => m.AttachmentFile).Id("booking-attachment").ShowValidationMessage(false)
                 </div>
             </div>
@@ -199,6 +204,7 @@
 
             _addNew: function (templateID) {
                 $(templateID).tmpl({ index: this._generateGuid() }).appendTo('#delegateContain');
+                ReValidateForm();
             },
 
             remove: function (sender) {
@@ -214,20 +220,20 @@
             }
         };
 
-        $(document).on('change', '#authorSameSender', function () {
-            if ($(this).is(':checked')) {
-                $("#Booking_AuthoriserName").val($("#Booking_SenderName").val());
-                $("#Booking_AuthoriserDestination").val($("#Booking_SenderDestination").val());
-                $("#Booking_AuthoriserMail").val($("#Booking_SenderMail").val());
-                $("#Booking_AuthoriserTel").val($("#Booking_SenderTel").val());
-                $("#authorSameSender").val(true);
-            } else {
-                $("#authorSameSender").val(false);
-                $("#Booking_AuthoriserName").val('');
-                $("#Booking_AuthoriserDestination").val('');
-                $("#Booking_AuthoriserMail").val('');
-                $("#Booking_AuthoriserTel").val('');
-            }
-        })
+        $(document).on('change',
+            '@Html.JquerySelectorFor(m=>m.Booking.SameAsSender)',
+            function() {
+                if ($(this).is(':checked')) {
+                    $("#Booking_AuthoriserName").val($("#Booking_SenderName").val());
+                    $("#Booking_AuthoriserDestination").val($("#Booking_SenderDestination").val());
+                    $("#Booking_AuthoriserMail").val($("#Booking_SenderMail").val());
+                    $("#Booking_AuthoriserTel").val($("#Booking_SenderTel").val());
+                } else {
+                    $("#Booking_AuthoriserName").val('');
+                    $("#Booking_AuthoriserDestination").val('');
+                    $("#Booking_AuthoriserMail").val('');
+                    $("#Booking_AuthoriserTel").val('');
+                }
+            });
     </script>
     )

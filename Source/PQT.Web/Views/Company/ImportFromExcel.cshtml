@@ -117,11 +117,12 @@
         <h2 class="text-primary">@ViewBag.Title</h2>
     </div>
     <div class="form-group row">
-        <div class="col-sm-6">
-            @Html.Bootstrap().Button().Id("btnUpload").HtmlAttributes(new { @class = "DTTT_button btn btn-info" }).Text("Import Excel File").PrependIcon("md md-cloud-upload")
+        <div class="col-sm-12">
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+            @Html.Bootstrap().Button().Id("btnUpload").HtmlAttributes(new {@class = "DTTT_button btn btn-info"}).Text("Import Excel File").PrependIcon("md md-cloud-upload")
             @if (Model.Companies != null && Model.Companies.Count > 0)
             {
-                @Html.Bootstrap().ActionLinkButton("Confirm Upload", "ComfirmImport").RouteValues(new { sessionName = Model.SessionName }).Style(ButtonStyle.Success).PrependIcon("md md-done").Id("finish")
+                @Html.Bootstrap().ActionLinkButton("Confirm Upload", "ComfirmImport").RouteValues(new {sessionName = Model.SessionName}).Style(ButtonStyle.Success).PrependIcon("md md-done").Id("finish")
             }
         </div>
     </div>

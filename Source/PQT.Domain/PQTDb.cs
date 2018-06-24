@@ -42,7 +42,7 @@ namespace PQT.Domain
             //mb.Entity<Event>().HasMany(m => m.Users).WithMany().Map(map => map.ToTable("Event_Users").MapLeftKey("Event_Id").MapRightKey("User_Id"));
             mb.Entity<Event>().HasMany(m => m.Companies).WithMany().Map(map => map.ToTable("Event_Companies").MapLeftKey("Event_Id").MapRightKey("Company_Id"));
             //mb.Entity<Event>().HasMany(m => m.Trainers).WithMany().Map(map => map.ToTable("Event_Trainers").MapLeftKey("Event_Id").MapRightKey("Trainer_Id"));
-            mb.Entity<Booking>().HasMany(m => m.EventSessions).WithMany().Map(map => map.ToTable("Registration_EventSessions").MapLeftKey("Registration_Id").MapRightKey("EventSession_Id"));
+            mb.Entity<Booking>().HasMany(m => m.EventSessions).WithMany().Map(map => map.ToTable("Booking_EventSessions").MapLeftKey("Booking_Id").MapRightKey("EventSession_Id"));
         }
     }
 }

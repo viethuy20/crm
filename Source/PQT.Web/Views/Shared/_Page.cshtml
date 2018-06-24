@@ -21,7 +21,7 @@
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="headerbar-left">
             <ul class="header-nav header-nav-options">
-                <li class="header-nav-brand">
+                <li class="header-nav-brand"  style="@(menus.Any()?"": "display: inline-table;")">
                     <div class="brand-holder">
                         <a href="/">
                             <span class="text-lg text-bold text-primary">Prime QT</span>
@@ -193,7 +193,7 @@
 
             <div class="menubar-foot-panel">
                 <small class="no-linebreak hidden-folded">
-                    <span class="opacity-75">Copyright &copy; @DateTime.Today.Year</span> <strong>CodeCovers</strong>
+                    <span class="opacity-75">Copyright &copy; @DateTime.Today.Year</span> <strong>pri-qua</strong>
                 </small>
             </div>
         </div><!--end .menubar-scroll-panel-->
@@ -246,7 +246,19 @@
                 });
         }
 
+        function initDatepickerRange() {
+            $('.input-daterange').datepicker({
+                autoclose: true,
+                todayHighlight: true,
+                format: 'dd/mm/yyyy'
+            }).on('changeDate',
+                function (ev) {
+                    $(this).datepicker('hide');
+                });
+        }
+
         initDatepicker();
+        initDatepickerRange();
 
         $('.monthTime').datepicker({
             autoclose: true,
@@ -268,6 +280,7 @@
         }
 
         initSelect2();
+        ReValidateForm();
 
         function ReValidateForm() {
             $("form").removeData("validator");
@@ -365,6 +378,15 @@
             });
         });
 
+        $(document).on('change',
+            'input[type=checkbox]',
+            function() {
+                if ($(this).is(':checked')) {
+                    $(this).val(true);
+                } else {
+                    $(this).val(false);
+                }
+            });
         $(document).on('click',
             'input[type=submit],a',
             function(e) {
@@ -566,7 +588,6 @@
 
             Lead.prototype.notify = function () {
                 var $eventIdNCList = $("#eventIdNCList");
-                $(document).unbind('ajaxStart');
                 try {
                     if ($nclTable) {
                         if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
@@ -597,19 +618,13 @@
                 $notifyCounter.addClass('hide');
                 $notifyCounter.html('0');
                 document.title = documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
-                $(document).unbind('ajaxStart');
                 $.ajax({
+                    global: false,
                     url: '@Url.Action("RemoveNotifyCounter", "Home")',
                     type: 'POST',
                     success: function(data) {
-                        $(document).ajaxStart(function() {
-                            $("#dvLoading").show();
-                        });
                     },
                     error: function() {
-                        $(document).ajaxStart(function() {
-                            $("#dvLoading").show();
-                        });
                     }
                 });
             });

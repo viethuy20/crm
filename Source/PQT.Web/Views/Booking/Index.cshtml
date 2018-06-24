@@ -60,7 +60,6 @@
 @Html.Script(
 
     @<script>
-         $(document).unbind('ajaxStart');
          var windowW = $(window).width();
          var windowH = $(window).height();
          var fixedColumn = 0;
@@ -82,8 +81,8 @@
                  }
              },
              "columns": [
-                 { "data": "Event", "name": "Event", "orderable": true },
                  { "data": "CreatedTime", "name": "CreatedTime", "orderable": true },
+                 { "data": "Event", "name": "Event", "orderable": true },
                  { "data": "Company", "name": "Company", "orderable": true },
                  { "data": "Address", "name": "Address", "orderable": true },
                  { "data": "Tel", "name": "Tel", "orderable": true },
@@ -101,11 +100,11 @@
              "iDisplayLength": sizeLenght,
              "aaSorting": [[1, "desc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 @*$(nRow).find('td:eq(0)').html('<a href="@Url.Action("Details")/' +
+                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
                      aData["ID"] +
                      '">' +
                      aData["CreatedTime"] +
-                     '</a>');*@
+                     '</a>');
                  $(nRow).find('td:eq(14)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")/' +
                      aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');
                  $(nRow).addClass(aData["ClassStatus"]);

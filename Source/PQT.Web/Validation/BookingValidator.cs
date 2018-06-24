@@ -18,11 +18,11 @@ namespace PQT.Web.Validation
             _repo = repo;
             RuleFor(u => u.Delegates).Must(CheckDelegates).WithMessage("Delegate Item is required");
             RuleFor(m => m.AuthoriserName).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(u => u.Tel).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.FormatInvalid);
-            RuleFor(u => u.Fax).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.FormatInvalid);
-            RuleFor(u => u.SenderTel).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.FormatInvalid);
+            RuleFor(u => u.Tel).Matches(new Regex(@"^[0-9\-\+\ \(\)]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
+            RuleFor(u => u.Fax).Matches(new Regex(@"^[0-9\-\+\ \(\)]*$")).WithMessage(Resource.FaxNumberIsInvalid);
+            RuleFor(u => u.SenderTel).Matches(new Regex(@"^[0-9\-\+\ \(\)]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
             RuleFor(u => u.SenderMail).EmailAddress().WithMessage(Resource.EmailIsInvalid);
-            RuleFor(u => u.AuthoriserTel).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.FormatInvalid);
+            RuleFor(u => u.AuthoriserTel).Matches(new Regex(@"^[0-9\-\+\ \(\)]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
             RuleFor(u => u.AuthoriserMail).EmailAddress().WithMessage(Resource.EmailIsInvalid);
         }
 
@@ -36,7 +36,9 @@ namespace PQT.Web.Validation
         public DelegateValidator()
         {
             RuleFor(m => m.Name).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(u => u.Tel).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.FormatInvalid);
+            RuleFor(u => u.Tel).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
+            RuleFor(u => u.Mail).EmailAddress().WithMessage(Resource.EmailIsInvalid);
+
         }
     }
 }

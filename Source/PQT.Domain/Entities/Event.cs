@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,8 @@ namespace PQT.Domain.Entities
     {
         public Event()
         {
+            StartDate=DateTime.Today;
+            EndDate=DateTime.Today.AddMonths(1);
             var rand = new Random((int)DateTime.Now.Ticks).Next(0x1000000);
             EventSessions = new HashSet<EventSession>();
             SalesGroups = new HashSet<SalesGroup>();
@@ -25,7 +28,9 @@ namespace PQT.Domain.Entities
         public string Description { get; set; }
         public string CallFilterKeywords { get; set; }
         public string Remark { get; set; }
+        [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
+        [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
         public bool IsEventEnd { get; set; }
         public int UserID { get; set; }

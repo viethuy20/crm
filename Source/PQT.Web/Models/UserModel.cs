@@ -36,14 +36,10 @@ namespace PQT.Web.Models
         [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "EmailIsInvalid")]
         public string Email { get; set; }
 
-
-        [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^[0-9\+]{1,}[0-9\-\ ]{3,15}$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldIsInvalid")]
+        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string MobilePhone { get; set; }
 
-
-        [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^[0-9\+]{1,}[0-9\-\ ]{3,15}$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldIsInvalid")]
+        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string BusinessPhone { get; set; }
 
         public string Address { get; set; }
@@ -91,24 +87,20 @@ namespace PQT.Web.Models
         public string DisplayName { get; set; }
 
         [MinLength(6, ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldPasswordMustBeaMinimumLengthOf6")]
-        [DataType(DataType.Password)]
         public string Password { get; set; }
 
         [Compare("Password", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "ConfirmPasswordAndPasswordDoNotMatch")]
-        [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
 
         //[Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         //[RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheEmailAddressEnteredIsInvalid")]
         public string Email { get; set; }
 
-        [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^[0-9\+]{1,}[0-9\-\ ]{3,15}$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldIsInvalid")]
+        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string MobilePhone { get; set; }
 
 
-        [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^[0-9\+]{1,}[0-9\-\ ]{3,15}$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldIsInvalid")]
+        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string BusinessPhone { get; set; }
 
 
@@ -154,24 +146,20 @@ namespace PQT.Web.Models
         public string OldPassword { get; set; }
 
         [MinLength(6, ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldPasswordMustBeaMinimumLengthOf6")]
-        [DataType(DataType.Password)]
         public string Password { get; set; }
 
         [Compare("Password", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "ConfirmPasswordAndPasswordDoNotMatch")]
-        [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
 
         //[Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         //[RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "EmailIsInvalid")]
         public string Email { get; set; }
 
-        [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^[0-9\+]{1,}[0-9\-\ ]{3,15}$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldIsInvalid")]
+        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string MobilePhone { get; set; }
 
 
-        [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^[0-9\+]{1,}[0-9\-\ ]{3,15}$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldIsInvalid")]
+        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string BusinessPhone { get; set; }
 
         //public HttpPostedFileBase Picture { get; set; }

@@ -10,7 +10,7 @@
         <header><b>Edit Form</b></header>
     </div><!--end .card-head -->
 
-    @using (Ajax.BeginForm("Edit", "routeValues", new AjaxOptions { OnFailure = "onFailEdit", OnSuccess = "onSuccessEdit" }, new { @id = "CreateOrEditForm", @class = "form form-validate" }))
+    @using (Ajax.BeginForm("Edit", "routeValues", new AjaxOptions { OnFailure = "onFailEdit", OnSuccess = "onSuccessEdit" }, new { @id = "CreateOrEditForm", @class = "form" }))
     {
         @Html.HiddenFor(m => m.LeadID)
         <div class="card-body">
@@ -42,7 +42,7 @@
 
                 <div class="col-sm-2">
                     <div class="form-group">
-                        @Html.Bootstrap().DropDownListFor(m => m.Salutation, Enumeration.GetAll<NameTitle>().ToSelectList(m => m.DisplayName, m => m.DisplayName)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().TextBoxFor(m => m.Salutation).Class("form-control").ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Salutation).LabelText("Salutation")
                     </div>
                 </div>

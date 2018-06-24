@@ -12,6 +12,7 @@ namespace PQT.Domain.Abstract
         IEnumerable<User> GetUsers();
         IEnumerable<User> GetUsersDeleted();
         User GetUser(int id);
+        User GetUserIncludeAll(int id);
         User GetUserByName(string username);
         User GetUserByEmail(string email);
         User CreateUser(User userInfo);

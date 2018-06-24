@@ -14,12 +14,13 @@
     </div>
     <div class="card">
         <div class="card-body">
-            @using (Html.BeginForm("Profile", "Account", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form form-validate ", @novalidate = "novalidate" }))
+            @using (Html.BeginForm("Profile", "Account", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form"}))
             {
+                @Html.ValidationSummary()
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="form-group">
-                            @Html.Bootstrap().PasswordFor(m => m.OldPassword).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().PasswordFor(m => m.OldPassword).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.OldPassword).LabelText("Current password").ShowRequiredStar(true)
                         </div>
                     </div>
@@ -37,7 +38,7 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Username).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.Username).Class("form-control").Readonly().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Username).LabelText("Name").ShowRequiredStar(true)
                         </div>
                     </div>
@@ -83,25 +84,25 @@
                             <input type="file" value="Choose a file" accept="image/*" />
                         </div>
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Roles).Disabled().Class("form-control")
+                            @Html.Bootstrap().TextBoxFor(m => m.Roles).Readonly().Class("form-control")
                             @Html.Bootstrap().LabelFor(m => m.Roles).LabelText("Roles")
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.LevelSalesman).Disabled().Class("form-control")
+                            @Html.Bootstrap().TextBoxFor(m => m.LevelSalesman).Readonly().Class("form-control")
                             @Html.Bootstrap().LabelFor(m => m.LevelSalesman).LabelText("Level Salary")
                         </div>
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.BasicSalary).Disabled().Class("form-control")
+                            @Html.Bootstrap().TextBoxFor(m => m.BasicSalary).Readonly().Class("form-control")
                             @Html.Bootstrap().LabelFor(m => m.BasicSalary).LabelText("Basic Salary")
                         </div>
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.DateOfStarting).Disabled().Class("form-control")
+                            @Html.Bootstrap().TextBoxFor(m => m.DateOfStarting).Readonly().Class("form-control")
                             @Html.Bootstrap().LabelFor(m => m.DateOfStarting).LabelText("Date Of Starting")
                         </div>
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.DateOfContract).Disabled().Class("form-control")
+                            @Html.Bootstrap().TextBoxFor(m => m.DateOfContract).Readonly().Class("form-control")
                             @Html.Bootstrap().LabelFor(m => m.DateOfContract).LabelText("Date Of Contract")
                         </div>
                     </div>
@@ -111,7 +112,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                @Html.Bootstrap().TextAreaFor(m => m.UserSalaryHistories).Value(string.Join("\r\n", Model.UserSalaryHistories.Select(m => "Level Salary: " + m.LevelSalesman.DisplayName + " - Basic Salary: " + m.BasicSalary.ToString("N")))).Readonly().Rows(5).Class("form-control")
+                                @Html.Bootstrap().TextAreaFor(m => m.UserSalaryHistories).Value(string.Join("\r\n", Model.UserSalaryHistories.Select(m => "Level Salary: " + m.LevelSalesman.DisplayName + " - Basic Salary: " + m.BasicSalary.ToString("N")))).Disabled().Rows(5).Class("form-control")
                                 @Html.Bootstrap().LabelFor(m => m.UserSalaryHistories).LabelText("Salary Histories")
                             </div>
                         </div>

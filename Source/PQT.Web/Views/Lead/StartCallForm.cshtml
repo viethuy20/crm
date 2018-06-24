@@ -31,7 +31,7 @@
                     <div class="col-sm-4">
                         <div class="row">
                             <div class="form-group">
-                                <select class="form-control select2-list callingCompany" name="@Html.NameFor(m => m.CompanyID)">
+                                <select class="form-control callingCompany" required="required" name="@Html.NameFor(m => m.CompanyID)">
                                     <option value=""></option>
                                     @foreach (var user in Model.Companies)
                                     {
@@ -44,7 +44,7 @@
                         </div>
                         <div class="row">
                             <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.GeneralLine).Class("form-control  input-phone").ShowValidationMessage(true)
+                                @Html.Bootstrap().TextBoxFor(m => m.GeneralLine).HtmlAttributes(new { required = "required" }).Class("form-control  dialingCode").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.GeneralLine).LabelText("GENERAL LINE")
                             </div>
                         </div>
@@ -66,13 +66,13 @@
                     <div class="col-sm-4">
                         <div class="row">
                             <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.ClientName).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().TextBoxFor(m => m.ClientName).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.ClientName).LabelText("CLIENT NAME/ JOB TITLE")
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.DirectLine).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().TextBoxFor(m => m.DirectLine).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER")
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                     <div class="row" style="margin-top: 30px;">
                         <div class="col-sm-2">
                             <div class="form-group">
-                                @Html.Bootstrap().DropDownListFor(m => m.Salutation, Enumeration.GetAll<NameTitle>().ToSelectList(m => m.DisplayName, m => m.DisplayName)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().TextBoxFor(m => m.Salutation).Class("form-control").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.Salutation).LabelText("Salutation")
                             </div>
                         </div>
@@ -133,7 +133,7 @@
                         </div>
                         <div class="col-sm-8">
                             <div class="form-group">
-                                @Html.Bootstrap().TextAreaFor(m => m.PhoneCall.Remark).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().TextAreaFor(m => m.PhoneCall.Remark).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.PhoneCall.Remark).LabelText("HIGHLIGHTS").ShowRequiredStar(true)
                             </div>
                         </div>
@@ -456,7 +456,7 @@
             $("@Html.JquerySelectorFor(m => m.ClientName)").val($(this).data("role"));
             $("@Html.JquerySelectorFor(m => m.DirectLine)").val($(this).data("mobilephone"));
             $("@Html.JquerySelectorFor(m => m.GeneralLine)").val($(this).data("businessphone"));
-            $("@Html.JquerySelectorFor(m => m.Salutation)").select2('val',$(this).data("salutation"));
+            $("@Html.JquerySelectorFor(m => m.Salutation)").val($(this).data("salutation"));
             $("@Html.JquerySelectorFor(m => m.FirstName)").val($(this).data("firstname"));
             $("@Html.JquerySelectorFor(m => m.LastName)").val($(this).data("lastname"));
             $("@Html.JquerySelectorFor(m => m.BusinessPhone)").val($(this).data("businessphone"));
@@ -467,8 +467,10 @@
             //if ($("select.callingCompany").val() != "" && !tickStarted) {
             //    StartTick();
             //}
-            var dialingCode = $("select.callingCompany")[0].options[$("select.callingCompany")[0].selectedIndex].getAttribute("dialingCode");
-            $('.input-phone').val(dialingCode);
+            if ($('.dialingCode').val() == "") {
+                var dialingCode = $("select.callingCompany")[0].options[$("select.callingCompany")[0].selectedIndex].getAttribute("dialingCode");
+                $('.dialingCode').val(dialingCode);
+            }
 
 
             if ($("select.callingCompany").val() != companyIdSelected) {

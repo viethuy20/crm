@@ -219,6 +219,12 @@
   <data name="FormatInvalid" xml:space="preserve">
     <value>Format invalid</value>
   </data>
+  <data name="PhoneNumberIsInvalid" xml:space="preserve">
+    <value>Phone number is invalid</value>
+  </data>
+  <data name="FaxNumberIsInvalid" xml:space="preserve">
+    <value>Fax number is invalid</value>
+  </data>
   <data name="ImportFromExcel" xml:space="preserve">
     <value>Import From Excel</value>
   </data>
@@ -295,13 +301,13 @@
     <value>Target</value>
   </data>
   <data name="TheFieldIsInvalid" xml:space="preserve">
-    <value>The field is invalid</value>
+    <value>This field is invalid.</value>
   </data>
   <data name="TheFieldPasswordMustBeaMinimumLengthOf6" xml:space="preserve">
     <value>The password field must have a minimum length of 6</value>
   </data>
   <data name="TheFieldShouldNotBeEmpty" xml:space="preserve">
-    <value>The field should not be empty</value>
+    <value>This field is required.</value>
   </data>
   <data name="TheOldPasswordDoNotMatch" xml:space="preserve">
     <value>The old password does not match</value>

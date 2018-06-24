@@ -93,7 +93,7 @@ namespace PQT.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            User user = _membershipService.GetUser(id);
+            User user = _membershipService.GetUserIncludeAll(id);
             var model = new EditUserModel(user)
             {
                 Roles = _roleService.GetAllRoles(),

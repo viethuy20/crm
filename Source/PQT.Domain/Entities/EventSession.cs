@@ -10,6 +10,8 @@ namespace PQT.Domain.Entities
     {
         public EventSession()
         {
+            StartDate = DateTime.Today;
+            EndDate = DateTime.Today;
         }
         public string SessionTitle { get; set; }
         public string ShortDescription { get; set; }
