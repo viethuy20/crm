@@ -66,13 +66,22 @@ namespace PQT.Web.Infrastructure.Notification
         //    }
         //}
 
+        private static IEventService EventService
+        {
+            get { return DependencyResolver.Current.GetService<IEventService>(); }
+        }
         public static void NotifyUser(IEnumerable<User> users, Lead lead, string title = null, bool email = false)
         {
             if (lead == null)
                 return;
+
+            if (lead.Event == null)
+            {
+                lead.Event = EventService.GetEvent(lead.EventID);
+            }
             foreach (var user in users)
             {
-                if (CurrentUser.Identity.ID == user.ID)
+                if (user == null || CurrentUser.Identity.ID == user.ID)
                 {
                     continue;
                 }
@@ -120,8 +129,12 @@ namespace PQT.Web.Infrastructure.Notification
         {
             get { return DependencyResolver.Current.GetService<IBookingService>(); }
         }
+        private static IEventService EventService
+        {
+            get { return DependencyResolver.Current.GetService<IEventService>(); }
+        }
 
-        public static void NotifyEmailForUser(IEnumerable<User> users,Booking booking)
+        public static void NotifyEmailForUser(IEnumerable<User> users, Booking booking)
         {
             if (booking == null)
                 return;
@@ -133,32 +146,41 @@ namespace PQT.Web.Infrastructure.Notification
             var booking = BookingService.GetBooking(bookingId);
             if (booking == null)
                 return;
-
+            if (booking.Event == null)
+            {
+                booking.Event = EventService.GetEvent(booking.EventID);
+            }
             foreach (var user in users)
             {
-                if (CurrentUser.Identity.ID == user.ID)
+                if (user == null || CurrentUser.Identity.ID == user.ID)
                 {
                     continue;
                 }
-                var notify = new UserNotification
+                try
                 {
-                    UserID = user.ID,
-                    EntryId = booking.ID,
-                    EventId = booking.EventID,
-                    NotifyType = NotifyType.Booking,
-                    Title = booking.StatusDisplay,
-                    EventCode = booking.Event.EventCode,
-                    Description = booking.CompanyName,
-                    HighlightColor = booking.EventColor
-                };
-                if (!string.IsNullOrEmpty(title))
-                {
-                    notify.Title = title;
+                    var notify = new UserNotification
+                    {
+                        UserID = user.ID,
+                        EntryId = booking.ID,
+                        EventId = booking.EventID,
+                        NotifyType = NotifyType.Booking,
+                        Title = booking.StatusDisplay,
+                        EventCode = booking.Event != null ? booking.Event.EventCode : "",
+                        Description = booking.CompanyName,
+                        HighlightColor = booking.EventColor
+                    };
+                    if (!string.IsNullOrEmpty(title))
+                    {
+                        notify.Title = title;
+                    }
+                    notify = MemberService.CreateUserNotification(notify);
+                    user.NotifyNumber++;
+                    MemberService.UpdateUser(user);
+                    NotificationHub.NotifyUser(user, notify);
                 }
-                notify = MemberService.CreateUserNotification(notify);
-                user.NotifyNumber++;
-                MemberService.UpdateUser(user);
-                NotificationHub.NotifyUser(user, notify);
+                catch (Exception e)
+                {
+                }
             }
 
             //if (email)

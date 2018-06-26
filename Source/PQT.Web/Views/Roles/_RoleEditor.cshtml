@@ -8,15 +8,15 @@
 
 @Html.HiddenFor(m => m.Role.ID)
 <div class="form-group">
-    @Html.Bootstrap().TextBoxFor(m => m.Role.Name).Class("form-control").ShowValidationMessage(true)
+    @Html.Bootstrap().TextBoxFor(m => m.Role.Name).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
     @Html.Bootstrap().LabelFor(m => m.Role.Name).LabelText("Role Name").ShowRequiredStar(true)
 </div>
 <div class="form-group">
-    @Html.Bootstrap().TextBoxFor(m => m.Role.Description).Class("form-control").ShowValidationMessage(true)
+    @Html.Bootstrap().TextBoxFor(m => m.Role.Description).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
     @Html.Bootstrap().LabelFor(m => m.Role.Description).LabelText("Description").ShowRequiredStar(true)
 </div>
 <div class="form-group">
-    @Html.Bootstrap().DropDownListFor(m => m.Role.RoleLevel, EnumerationHelper.ToSelectList<RoleLevel>().Where(m => m.Value != RoleLevel.None.Value)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+    @Html.Bootstrap().DropDownListFor(m => m.Role.RoleLevel, EnumerationHelper.ToSelectList<RoleLevel>().Where(m => m.Value != RoleLevel.None.Value)).HtmlAttributes(new{required="required"}).OptionLabel("").Class("form-control").ShowValidationMessage(true)
     @Html.Bootstrap().LabelFor(m => m.Role.RoleLevel).LabelText("Role Level").ShowRequiredStar(true)
 </div>
 <div class="row col-md-offset-2">

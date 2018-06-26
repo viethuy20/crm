@@ -10,12 +10,12 @@
     </div>
     @using (Html.BeginForm("Create", "Event", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
     {
-        <div class="row">
+        @*<div class="row">
             <div class="form-group  col-md-offset-2">
                 @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
                 @Html.Bootstrap().SubmitButton().Class("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
             </div>
-        </div>
+        </div>*@
         @Html.Partial("_CreateOrEdit", Model)
         <div class="row">
             <div class="form-group  col-md-offset-2">
@@ -34,7 +34,7 @@
             e.preventDefault();
             bootbox.confirm('@Resource.ConfirmCreate', function (isOK) {
                 if (isOK) {
-                    var form = $('#submitbutton').parents("form");
+                    var form = $('.submitbutton').parents("form");
                     // Iterate over all selected checkboxes
                     $.each(companies_selected, function (index, rowId) {
                         // Create a hidden element

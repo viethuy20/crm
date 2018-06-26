@@ -121,7 +121,7 @@
                     <div class="form-group">
                         <div class="checkbox checkbox-styled">
                             <label>
-                                <input type="checkbox" id="@Html.IdFor(m => m.Booking.SameAsSender)" name="@Html.NameFor(m => m.Booking.SameAsSender)" value="@(Model.Booking.SameAsSender?"true":"false")" @(Model.Booking.SameAsSender ? "checked" : "")>
+                                <input type="checkbox"  class="cbx-sign" id="@Html.IdFor(m => m.Booking.SameAsSender)" name="@Html.NameFor(m => m.Booking.SameAsSender)" value="@(Model.Booking.SameAsSender?"true":"false")" @(Model.Booking.SameAsSender ? "checked" : "")>
                                 <span>Same as sender</span>
                             </label>
                         </div>
@@ -206,7 +206,6 @@
                 $(templateID).tmpl({ index: this._generateGuid() }).appendTo('#delegateContain');
                 ReValidateForm();
             },
-
             remove: function (sender) {
                 $(sender).closest('.delegateItem').remove();
             },
@@ -219,7 +218,7 @@
                 });
             }
         };
-
+        
         $(document).on('change',
             '@Html.JquerySelectorFor(m=>m.Booking.SameAsSender)',
             function() {

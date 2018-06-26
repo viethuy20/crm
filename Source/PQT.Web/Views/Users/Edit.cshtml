@@ -121,7 +121,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group">
-                        @Html.Bootstrap().TextAreaFor(m => m.UserSalaryHistories).Disabled().Value(string.Join("\r\n", Model.UserSalaryHistories.Select(m => "Level Salary: " + m.LevelSalesman.DisplayName + " - Basic Salary: " + m.BasicSalary.ToString("N")))).Readonly().Rows(5).Class("form-control")
+                        @Html.Bootstrap().TextAreaFor(m => m.UserSalaryHistories).Disabled().Value(string.Join("\r\n", Model.UserSalaryHistories.Select(m => m.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss") + ": Level Salary-" + m.LevelSalesman.DisplayName + ", Basic Salary-" + m.BasicSalary.ToString("N")))).Readonly().Rows(5).Class("form-control")
                     </div>
                 </div>
             </div>

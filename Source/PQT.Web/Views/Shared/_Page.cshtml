@@ -360,6 +360,18 @@
                     $(this).addClass('active');
                 }
             });
+        
+    
+        $(document).on('change',
+            '.cbx-sign',
+            function() {
+                if ($(this).is(':checked')) {
+                    $(this).val(true);
+                } else {
+                    $(this).val(false);
+                }
+            });
+
 
         $(document).ajaxStart(function() {
             $("#dvLoading").show();
@@ -378,15 +390,7 @@
             });
         });
 
-        $(document).on('change',
-            'input[type=checkbox]',
-            function() {
-                if ($(this).is(':checked')) {
-                    $(this).val(true);
-                } else {
-                    $(this).val(false);
-                }
-            });
+        
         $(document).on('click',
             'input[type=submit],a',
             function(e) {

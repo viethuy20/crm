@@ -188,44 +188,44 @@
 
 
          function onUpdateFail() {
-            $(".error").removeClass('hide');
-            $(".success").addClass('hide');
-            $(".texterror").text("@Resource.Error");
-        }
-        function onUpdateSuccess(data) {
-            $(".error").addClass('hide');
-            $(".success").addClass('hide');
+             $(".error").removeClass('hide');
+             $(".success").addClass('hide');
+             $(".texterror").text("@Resource.Error");
+         }
+         function onUpdateSuccess(data) {
+             $(".error").addClass('hide');
+             $(".success").addClass('hide');
 
-            if (data.Code == 1) {
-                $(".success").removeClass('hide');
-                    $("textsuccess").data('@Resource.SaveSuccessful');
-                    updateItem(data);
-                $.magnificPopup.close();
-            } else {
-                if (data.Code == 3)
-                    $(".texterror").text(data.Message);
-                else
-                    $(".texterror").text('@Resource.SaveError');
-                $(".error").removeClass('hide');
-            }
-        }
+             if (data.Code == 1) {
+                 $(".success").removeClass('hide');
+                 $("textsuccess").data('@Resource.SaveSuccessful');
+                 updateItem(data);
+                 $.magnificPopup.close();
+             } else {
+                 if (data.Code == 3)
+                     $(".texterror").text(data.Message);
+                 else
+                     $(".texterror").text('@Resource.SaveError');
+                 $(".error").removeClass('hide');
+             }
+         }
 
-        function updateItem(data) {
-            var tr = $(oTable.fnGetNodes());
-            tr.each(function (index, item) {
-                if ($(item).data('id') == data.ID) {
-                    var td = $(item).find("td");
-                    if (td.length > 0) {
-                        $(td[11]).text(data.MarkKPI);
-                        $(td[12]).text(data.KPIRemarks);
-                    }
-                    $(item).removeClass("KPI");
-                    $(item).removeClass("NoKPI");
-                    $(item).removeClass("NoCheckKPI");
-                    $(item).addClass(data.ClassKPIStatus);
-                }
-            });
-        }
-    </script>
+         function updateItem(data) {
+             var tr = $(oTable.fnGetNodes());
+             tr.each(function (index, item) {
+                 if ($(item).data('id') == data.ID) {
+                     var td = $(item).find("td");
+                     if (td.length > 0) {
+                         $(td[11]).text(data.MarkKPI);
+                         $(td[12]).text(data.KPIRemarks);
+                     }
+                     $(item).removeClass("KPI");
+                     $(item).removeClass("NoKPI");
+                     $(item).removeClass("NoCheckKPI");
+                     $(item).addClass(data.ClassKPIStatus);
+                 }
+             });
+         }
+     </script>
 
 )

@@ -35,7 +35,7 @@
             e.preventDefault();
             bootbox.confirm('@Resource.ConfirmSave', function (isOK) {
                 if (isOK) {
-                    var form = $('#submitbutton').parents("form");
+                    var form = $('.submitbutton').parents("form");
                     // Iterate over all selected checkboxes
                     $.each(companies_selected, function (index, rowId) {
                         // Create a hidden element

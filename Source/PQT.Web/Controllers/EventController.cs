@@ -85,7 +85,7 @@ namespace PQT.Web.Controllers
                 if (model.Update())
                 {
                     TempData["message"] = "Updated successful";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Edit", new { id = model.Event.ID });
                 }
             }
             model.PrepareEdit(model.Event.ID);

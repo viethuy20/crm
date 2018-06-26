@@ -156,11 +156,11 @@ namespace PQT.Web.Controllers
             if (success)
             {
                 TempData["message"] = Resource.SaveSuccessful;
-                return RedirectToAction("Index");
+                return RedirectToAction("Edit", new { id = model.ID });
             }
             ViewBag.Success = true;
             TempData["error"] = Resource.SaveFailed;
-            return RedirectToAction("Edit", new { Id = model.ID });
+            return RedirectToAction("Edit", new { id = model.ID });
         }
         [AjaxOnly]
         public ActionResult Delete_keeptrack(int id)
