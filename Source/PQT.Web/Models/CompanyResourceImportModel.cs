@@ -122,7 +122,7 @@ namespace PQT.Web.Models
                         CountryID = com.CountryID,
                         CompanyName = com.Organisation,
                     };
-                    newCom = comRepo.CreateCompany(newCom);
+                    newCom = comRepo.CreateCompany(newCom,new List<int>());
                     com.CompanyID = newCom.ID;
                 }
                 else

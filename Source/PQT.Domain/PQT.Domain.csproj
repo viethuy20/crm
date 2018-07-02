@@ -188,6 +188,7 @@
     <Compile Include="Entities\EmailSetting.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\EventCompany.cs" />
     <Compile Include="Entities\Holiday.cs" />
     <Compile Include="Entities\Lead.cs" />
     <Compile Include="Entities\LeadStatusRecord.cs" />

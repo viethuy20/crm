@@ -16,70 +16,21 @@
     </div>
     <div class="card">
         <div class="card-body">
-            <div class="table-responsive">
                 <table class="table" id="table">
                     <thead>
                         <tr>
                             <th>@Resource.Code</th>
                             <th>@Resource.Name</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
+                            <th>Color</th>
+                            <th>Sales Start Date</th>
+                            <th>Sales End Date</th>
+                            <th>Date Of Confirmation</th>
+                            <th>Closing Date</th>
+                            <th>Sectors</th>
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr data-id="@item.ID">
-                                <td>
-                                    <a class="text-primary" href="@Url.Action("Edit",new{id = item.ID})" style="text-decoration: underline;">@item.EventCode</a>
-                                </td>
-                                <td>@item.EventName</td>
-                                <td>@item.StartDate.ToString("dd/MM/yyyy")</td>
-                                <td>@item.EndDate.ToString("dd/MM/yyyy")</td>
-                                <td>
-
-                                    <a href="@Url.Action("Detail", new {id = item.ID})" data-action="detail">
-                                        <i class="fa fa-eye"> Detail </i>
-                                    </a>
-                                    @if (CurrentUser.HasPermission("Lead", "NCLForManager"))
-                                    {
-                                        @:| <a href="@Url.Action("NCLForManager", "Lead", new {id = item.ID})" data - action="detail"><i class="fa fa-eye"> View NCL </i></a>
-                                    }
-                                    @if (CurrentUser.HasPermission("Booking", "Index"))
-                                    {@:|
-                                        <a href="@Url.Action("Index", "Booking", new {id = item.ID})" data-action="detail">
-                                            <i class="fa fa-eye"> View Bookings</i>
-                                        </a>}
-                                    @if (CurrentUser.HasPermission("Event", "Edit"))
-                                    {@:|
-                                        <a href="@Url.Action("Edit", new {id = item.ID})" data-action="edit">
-                                            <i class="md md-edit text-info"> Edit</i>
-                                        </a>
-                                    }
-                                    @if (CurrentUser.HasPermission("Event", "Delete"))
-                                    {@:|
-                                        <a href="#" data-action="delete" data-id="@item.ID">
-                                            <i class="md md-delete text-danger"> Delete</i>
-                                        </a> }
-                                    @if (CurrentUser.HasPermission("Event", "EndEvent"))
-                                    {@:|
-                                        <a href="#" data-action="endevent" data-id="@item.ID">
-                                            <i class="md md-alarm text-info"> End Event</i>
-                                        </a>}
-                                    @if (CurrentUser.HasPermission("Kpi", "ImportVoIp"))
-                                    {
-                                        @:|
-                                        <a href="@Url.Action("ImportVoIp", "Kpi", new {id = item.ID})" title="Import VoIP & Check KPI">
-                                            <i class="fa fa-upload text-primary"> Import VoIP & Check KPI</i>
-                                        </a>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
                 </table>
-            </div>
         </div>
     </div>
 </section>
@@ -88,7 +39,76 @@
 @Html.Script(
     @<script>
 
-        var $Table = $('#table').dataTable({ "aaSorting": [[1, "asc"]] });
+        var $Table = $('#table').dataTable({
+            "processing": true, // for show progress bar
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "stateSave": false,
+            "ajax": {
+                "url": "@Url.Action("AjaxGetEventAlls")",
+                "type": "POST",
+                "datatype": "json",
+                "data": function (d) {
+                }
+            },
+            "columns": [
+                { "data": "EventCode", "name": "EventCode", "orderable": true },
+                { "data": "EventName", "name": "EventName", "orderable": true },
+                { "data": "ID", "name": "ID", "orderable": false },
+                { "data": "StartDate", "name": "StartDate", "orderable": true },
+                { "data": "EndDate", "name": "EndDate", "orderable": true },
+                { "data": "DateOfConfirmation", "name": "DateOfConfirmation", "orderable": true },
+                { "data": "ClosingDate", "name": "ClosingDate", "orderable": true },
+                { "data": "Sectors", "name": "Sectors", "orderable": true },
+                { "data": "ID", "name": "ID", "orderable": false },
+            ],
+            "iDisplayLength": 50,
+            "aaSorting": [[1, "asc"]],
+            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+
+                $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' + aData["ID"] + '">' + aData["EventCode"] + '</a>');
+                $(nRow).find('td:eq(2)').html('<span class="EventColor" style="cursor: default;display: inline-block;width: 30px;height: 30px;background:' + aData["BackgroundColor"] + ';border:1px solid #c3c3c3;border-radius: 50%;">&nbsp;</span>');
+
+                var dropdowns = '<li><a href="@Url.Action("Detail")/' + aData["ID"] + '"><i class="fa fa-eye"> Detail</i></a></li>';
+                if ('@CurrentUser.HasPermission("Lead", "NCLForManager")' == 'True') {
+                   dropdowns += '<li class="divider"></li><li><a href="@Url.Action("NCLForManager", "Lead")/' + aData["ID"] + '"><i class="fa fa-eye"> View NCL</i></a></li>';
+                }
+                if ('@CurrentUser.HasPermission("Booking", "Index")' == 'True') {
+                   dropdowns += '<li class="divider"></li><li><a href="@Url.Action("Index", "Booking")/' + aData["ID"] + '"><i class="fa fa-eye"> View Bookings</i></a></li>';
+                }
+                if ('@CurrentUser.HasPermission("Event", "Edit")' == 'True') {
+                    dropdowns += '<li class="divider"></li><li><a href="@Url.Action("Edit")/' + aData["ID"] + '"><i class="md md-edit text-info"> Edit</i></a></li>';
+                }
+                if ('@CurrentUser.HasPermission("Event", "AssignCompany")' == 'True') {
+                    dropdowns += '<li class="divider"></li><li><a href="@Url.Action("AssignCompany")/' + aData["ID"] + '"><i class="md md-edit text-info"> Assign Company</i></a></li>';
+                }
+                if ('@CurrentUser.HasPermission("Event", "Delete")' == 'True') {
+                    dropdowns += '<li class="divider"></li><li><a href="#"  data-action="delete" data-id="' + aData["ID"] + '"><i class="md md-delete text-danger"> Delete</i></a></li>';
+                }
+                if ('@CurrentUser.HasPermission("Event", "EndEvent")' == 'True') {
+                    dropdowns += '<li class="divider"></li><li><a href="#"  data-action="delete" data-id="' + aData["ID"] + '"><i class="md md-alarm text-info"> End Event</i></a></li>';
+                }
+                if ('@CurrentUser.HasPermission("Kpi", "ImportVoIp")' == 'True') {
+                    dropdowns += '<li class="divider"></li><li><a href="@Url.Action("ImportVoIp", "Kpi")/' + aData["ID"] + '"><i class="fa fa-upload text-primary"> Import VoIP & Check KPI</i></a></li>';
+                }
+                $(nRow).find('td:eq(8)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
+                    dropdowns +
+                    '</ul></div>');
+                $(nRow).attr("data-id", ["ID"]);
+            },
+            initComplete: function () {
+                var _table = this;
+                _table.parent().find('input[type="search"]').unbind();
+                var timeOutTyping;
+                _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                    clearTimeout(timeOutTyping);
+                    timeOutTyping = setTimeout(function () {
+                        _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                    }, 600);
+                });
+            },
+        });
         $Table.on('click', '[data-action="delete"]', function (e) {
             e.preventDefault();
             var selftr = $(this);

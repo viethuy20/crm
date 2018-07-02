@@ -21,7 +21,7 @@ namespace PQT.Web.Validation
     {
         public PhoneCallValidator()
         {
-            RuleFor(m => m.Remark).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
+            //RuleFor(m => m.Remark).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
         }
     }
 }

@@ -103,7 +103,7 @@ namespace PQT.Web.Models
             var comRepo = DependencyHelper.GetService<ICompanyRepository>();
             foreach (var com in Companies)
             {
-                comRepo.CreateCompany(com);
+                comRepo.CreateCompany(com, new List<int>());
             }
         }
     }

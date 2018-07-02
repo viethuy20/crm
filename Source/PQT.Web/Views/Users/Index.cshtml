@@ -5,6 +5,7 @@
 
 
 @{
+    var roles = ViewBag.roles;
     ViewBag.Title = Resource.Users;
     var count = 0;
 }
@@ -12,14 +13,18 @@
     <div class="section-header">
         <h2 class="text-primary">@ViewBag.Title</h2>
     </div>
-    @if (CurrentUser.HasPermission("Users", "Create"))
-    {
-        <div class="form-group row">
+
+    <div class="form-group row">
+        @if (CurrentUser.HasPermission("Users", "Create"))
+        {
             <div class="col-sm-6">
                 @Html.Bootstrap().ActionLinkButton(Resource.AddNew, "Create").PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary" })
             </div>
+        }
+        <div class="col-sm-4 pull-right">
+            @Html.Bootstrap().DropDownList("Role", new SelectList(roles, "ID", "Name")).Class("form-control").OptionLabel("SELECT ROLE").Id("role")
         </div>
-    }
+    </div>
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -29,41 +34,14 @@
                             <th>@Resource.SNo</th>
                             <th>@Resource.Name</th>
                             <th>@Resource.Email</th>
-                            <th>@Resource.PhoneNumber</th>
+                            <th>Business Phone</th>
+                            <th>Mobile Phone</th>
                             <th>@Resource.Roles</th>
                             <th></th>
                             <th></th>
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach (User user in Model)
-                        {
-                            count++;
-                            <tr data-roles="@(string.Join(" ", user.Roles.Select(m => m.ID)))">
-                                <td class="text-center">@count</td>
-                                <td>
-                                    @if (user.Picture != null)
-                                    {
-                                        <img src="@user.AvatarUrl" class="img-rounded user-picture-small" style="width: 40px;height: 40px;border-radius: 20px;" />
-                                    }
-                                    @user.DisplayName
-                                </td>
-                                <td>@user.Email</td>
-                                <td>@user.BusinessPhone</td>
-                                <td>@Html.Raw(string.Join("<br/>", user.Roles.Select(m => m.Name).ToArray()))</td>
-                                <td>
-                                    @Html.Bootstrap().ActionLink(Resource.Logviewer, "Index", "Audit").RouteValues(new { Username = user.DisplayName })
-                                </td>
-                                <td>
-                                    <a href="@Url.Action("Edit", "Users", new {Id = user.ID})" class="active" data-toggle="class"><i class="md md-edit text-info"></i></a>
-                                </td>
-                                <td>
-                                    <a href="#" data-action="delete" data-id=@user.ID class="active" data-toggle="class"><i class="md md-delete text-danger"></i></a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
                 </table>
             </div>
         </div>
@@ -73,9 +51,58 @@
 @Html.Script(
     @<script>
 
-        var $modelTable = $('#users-table').dataTable({
-            fixedHeader: true
-        });
+         var $modelTable = $('#users-table').dataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             //"stateSave": true,
+             "ajax": {
+                 "url": "@Url.Action("AjaxGetIndexView")",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function(d) {
+                     d.RoleID = $("#role").val();
+                 }
+             },
+             "columns": [
+                 { "data": "ID", "name": "ID", "orderable": false },
+                 { "data": "DisplayNameHtml", "name": "DisplayName", "orderable": true },
+                 { "data": "Email", "name": "Email", "orderable": true },
+                 { "data": "BusinessPhone", "name": "BusinessPhone", "orderable": true },
+                 { "data": "MobilePhone", "name": "MobilePhone", "orderable": true },
+                 { "data": "RolesHtml", "name": "RolesHtml", "orderable": true },
+                 { "data": "ID", "name": "ID", "orderable": false },
+                 { "data": "ID", "name": "ID", "orderable": false },
+                 { "data": "ID", "name": "ID", "orderable": false }
+             ],
+             "iDisplayLength": 25,
+             "aaSorting": [[0, "asc"]],
+             "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 $(nRow).find('td:eq(6)').html('<a href="@Url.Action("Index", "Audit")?Username=' +
+                     aData["Username"] +
+                     '" >@Resource.Logviewer</a>');
+                 $(nRow).find('td:eq(7)').html('<a href="@Url.Action("Edit")/' +
+                     aData["ID"] +
+                     '" class="active" data-toggle="class"><i class="fa fa-pencil-square-o text-violet text-active"></i></a>');
+                 $(nRow).find('td:eq(8)').html('<a data-action="delete" data-id="' +
+                     aData["ID"] +
+                     '" href="#"><i class="fa fa-times text-danger "></i></a>');
+             },
+             initComplete: function() {
+                 var _table = this;
+                 _table.parent().find('input[type="search"]').unbind();
+                 var timeOutTyping;
+                 _table.parent().find('input[type="search"]').bind('keyup',
+                     function(e) {
+                         clearTimeout(timeOutTyping);
+                         timeOutTyping = setTimeout(function() {
+                                 _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                             },
+                             600);
+                     });
+             },
+         });
 
         $(document).on('click', '[data-action="delete"]', function (e) {
             e.preventDefault();
@@ -98,21 +125,7 @@
         });
 
         $("#role").change(function () {
-            var roleID = $(this).val();
-            //if (roleID == '') {
-            //    $('tbody tr').removeClass('hide');
-            //} else {
-            //    $('tbody tr').addClass('hide');
-            //    $('tbody tr').each(function (index, value) {
-            //        if ($(this).attr('data-roles').indexOf(roleID) != -1) {
-
-            //            $(this).removeClass('hide');
-            //        }
-            //    });
-            //}
-            if (roleID == '')
-                roleID = 0;
-            location.href = "@Url.Action("Index", "Users")?role=" + roleID;
+            $modelTable.fnFilter('');
         });
 
     </script>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using PQT.Domain.Abstract;
@@ -74,42 +75,47 @@ namespace PQT.Web.Infrastructure.Notification
         {
             if (lead == null)
                 return;
-
-            if (lead.Event == null)
+            var currentUserId = CurrentUser.Identity.ID;
+            var thread = new Thread(() =>
             {
-                lead.Event = EventService.GetEvent(lead.EventID);
-            }
-            foreach (var user in users)
-            {
-                if (user == null || CurrentUser.Identity.ID == user.ID)
+                if (lead.Event == null)
                 {
-                    continue;
+                    lead.Event = EventService.GetEvent(lead.EventID);
                 }
-                var notify = new UserNotification
+                foreach (var user in users)
                 {
-                    UserID = user.ID,
-                    EntryId = lead.ID,
-                    EventId = lead.EventID,
-                    NotifyType = NotifyType.Lead,
-                    Title = lead.StatusDisplay,
-                    EventCode = lead.Event.EventCode,
-                    Description = lead.CompanyName,
-                    HighlightColor = lead.EventColor
-                };
-                if (!string.IsNullOrEmpty(title))
-                {
-                    notify.Title = title;
+                    if (user == null || currentUserId == user.ID)
+                    {
+                        continue;
+                    }
+                    var notify = new UserNotification
+                    {
+                        UserID = user.ID,
+                        EntryId = lead.ID,
+                        EventId = lead.EventID,
+                        NotifyType = NotifyType.Lead,
+                        Title = lead.StatusDisplay,
+                        EventCode = lead.Event.EventCode,
+                        Description = lead.CompanyName,
+                        HighlightColor = lead.EventColor
+                    };
+                    if (!string.IsNullOrEmpty(title))
+                    {
+                        notify.Title = title;
+                    }
+                    notify = MemberService.CreateUserNotification(notify);
+                    user.NotifyNumber++;
+                    MemberService.UpdateUser(user);
+                    NotificationHub.NotifyUser(user, notify);
                 }
-                notify = MemberService.CreateUserNotification(notify);
-                user.NotifyNumber++;
-                MemberService.UpdateUser(user);
-                NotificationHub.NotifyUser(user, notify);
-            }
 
-            //if (email)
-            //{
-            //    NotificationService.NotifyUser(users, lead);
-            //}
+                //if (email)
+                //{
+                //    NotificationService.NotifyUser(users, lead);
+                //}
+
+            });
+            thread.Start();
         }
     }
 
@@ -143,50 +149,56 @@ namespace PQT.Web.Infrastructure.Notification
 
         public static void NotifyUser(IEnumerable<User> users, int bookingId, string title = null, bool email = false)
         {
-            var booking = BookingService.GetBooking(bookingId);
-            if (booking == null)
-                return;
-            if (booking.Event == null)
+            var currentUserId = CurrentUser.Identity.ID;
+            var thread = new Thread(() =>
             {
-                booking.Event = EventService.GetEvent(booking.EventID);
-            }
-            foreach (var user in users)
-            {
-                if (user == null || CurrentUser.Identity.ID == user.ID)
+                var booking = BookingService.GetBooking(bookingId);
+                if (booking == null)
+                    return;
+                if (booking.Event == null)
                 {
-                    continue;
+                    booking.Event = EventService.GetEvent(booking.EventID);
                 }
-                try
+                foreach (var user in users)
                 {
-                    var notify = new UserNotification
+                    if (user == null || currentUserId == user.ID)
                     {
-                        UserID = user.ID,
-                        EntryId = booking.ID,
-                        EventId = booking.EventID,
-                        NotifyType = NotifyType.Booking,
-                        Title = booking.StatusDisplay,
-                        EventCode = booking.Event != null ? booking.Event.EventCode : "",
-                        Description = booking.CompanyName,
-                        HighlightColor = booking.EventColor
-                    };
-                    if (!string.IsNullOrEmpty(title))
-                    {
-                        notify.Title = title;
+                        continue;
                     }
-                    notify = MemberService.CreateUserNotification(notify);
-                    user.NotifyNumber++;
-                    MemberService.UpdateUser(user);
-                    NotificationHub.NotifyUser(user, notify);
+                    try
+                    {
+                        var notify = new UserNotification
+                        {
+                            UserID = user.ID,
+                            EntryId = booking.ID,
+                            EventId = booking.EventID,
+                            NotifyType = NotifyType.Booking,
+                            Title = booking.StatusDisplay,
+                            EventCode = booking.Event != null ? booking.Event.EventCode : "",
+                            Description = booking.CompanyName,
+                            HighlightColor = booking.EventColor
+                        };
+                        if (!string.IsNullOrEmpty(title))
+                        {
+                            notify.Title = title;
+                        }
+                        notify = MemberService.CreateUserNotification(notify);
+                        user.NotifyNumber++;
+                        MemberService.UpdateUser(user);
+                        NotificationHub.NotifyUser(user, notify);
+                    }
+                    catch (Exception e)
+                    {
+                    }
                 }
-                catch (Exception e)
-                {
-                }
-            }
 
-            //if (email)
-            //{
-            //    NotificationService.NotifyUser(users, booking);
-            //}
+                //if (email)
+                //{
+                //    NotificationService.NotifyUser(users, booking);
+                //}
+
+            });
+            thread.Start();
         }
     }
 }

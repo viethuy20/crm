@@ -15,7 +15,7 @@
             @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
             @if (CurrentUser.HasPermission("Event", "Edit"))
             {
-                @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new {id = Model.Event.ID}).Class("btn-primary").PrependIcon("md md-edit")
+                @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.Event.ID }).Class("btn-primary").PrependIcon("md md-edit")
             }
         </div>
     </div>
@@ -39,7 +39,7 @@
                         <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.StartDate)">
                             @Model.Event.StartDate.ToString("dd MMM yyyy")
                         </div>
-                        @Html.Bootstrap().LabelFor(m => m.Event.StartDate).LabelText("Start Date")
+                        @Html.Bootstrap().LabelFor(m => m.Event.StartDate).LabelText("Sales Start Date")
                     </div>
                 </div>
                 <div class="col-sm-4">
@@ -47,7 +47,7 @@
                         <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.EndDate)">
                             @Model.Event.EndDate.ToString("dd MMM yyyy")
                         </div>
-                        @Html.Bootstrap().LabelFor(m => m.Event.EndDate).LabelText("End Date")
+                        @Html.Bootstrap().LabelFor(m => m.Event.EndDate).LabelText("Sales End Date")
                     </div>
                 </div>
                 <div class="col-sm-4">
@@ -64,14 +64,14 @@
                 </div>
                 <div class="col-sm-12">
                     <div class="form-group">
-                        @Html.Bootstrap().TextAreaFor(m => m.Event.ShortDescription).Rows(4).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Event.ShortDescription).LabelText("Short Description")
+                        @Html.Bootstrap().TextAreaFor(m => m.Event.VenueOfEvent).Rows(4).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.VenueOfEvent).LabelText("Venue Of Event")
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="form-group">
-                        @Html.Bootstrap().TextAreaFor(m => m.Event.Description).Rows(7).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Event.Description).LabelText("Description")
+                        @Html.Bootstrap().TextAreaFor(m => m.Event.SalesRules).Rows(7).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.SalesRules).LabelText("Sales Rules")
                     </div>
                 </div>
             </div>
@@ -79,38 +79,6 @@
     </div>
 
 
-    <div class="card card-underline">
-        <div class="card-head">
-            <header>Companies</header>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <table class="table no-margin" id="grid_companies">
-                    <thead>
-                    <tr>
-                        <th>Country</th>
-                        <th>Company</th>
-                        <th>Product/Service</th>
-                        <th>Sector</th>
-                        <th>Industry</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var phonecall in Model.Event.Companies)
-                    {
-                        <tr>
-                            <td>@phonecall.CountryName (@phonecall.CountryCode)</td>
-                            <td>@phonecall.CompanyName</td>
-                            <td>@phonecall.ProductOrService</td>
-                            <td>@phonecall.Sector</td>
-                            <td>@phonecall.Industry</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        </div><!--end .card-body -->
-    </div>
     <div class="card card-underline">
         <div class="card-head">
             <header>Sales Group</header>
@@ -119,19 +87,45 @@
             <div class="row">
                 <table class="table no-margin">
                     <thead>
-                    <tr>
-                        <th>Group Name</th>
-                        <th>Salesman</th>
-                    </tr>
+                        <tr>
+                            <th>Group Name</th>
+                            <th>Salesman</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    @foreach (var phonecall in Model.Event.SalesGroups)
-                    {
+                        @foreach (var phonecall in Model.Event.SalesGroups)
+                        {
+                            <tr>
+                                <td>@phonecall.GroupName</td>
+                                <td>@string.Join("; ", phonecall.Users.Select(m => m.DisplayName))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div><!--end .card-body -->
+    </div>
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Account Manager</header>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <table class="table no-margin">
+                    <thead>
                         <tr>
-                            <td>@phonecall.GroupName</td>
-                            <td>@string.Join("; ", phonecall.Users.Select(m=>m.DisplayName))</td>
+                            <th>Salesman</th>
+                            <th>Email</th>
                         </tr>
-                    }
+                    </thead>
+                    <tbody>
+                        @foreach (var phonecall in Model.Event.ManagerUsers)
+                        {
+                            <tr>
+                                <td>@phonecall.DisplayName</td>
+                                <td>@phonecall.Email</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -177,11 +171,97 @@
             </div>
         </div><!--end .card-body -->
     </div>
+    
+    
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Companies</header>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <table class="table no-margin" id="grid_companies">
+                    <thead>
+                    <tr>
+                        <th>Country</th>
+                        <th>Company</th>
+                        <th>Product/Service</th>
+                        <th>Sector</th>
+                        <th>Industry</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div><!--end .card-body -->
+    </div>
 </section>
 
 @Html.Script(
     @<script>
-         var $Table = $('#grid_companies').dataTable({
-             "iDisplayLength": 25
-         });
-     </script>)
+        var table = $("#grid_companies").DataTable({
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "stateSave": false,
+                "ajax": {
+                    "url": "@Url.Action("AjaxGetEventCompanies")?eventId=@Model.Event.ID",
+                    "type": "POST",
+                    "datatype": "json",
+                    "data": function (d) {
+                        d.CountryName = $('input[name="search_country"]').val();
+                        d.CompanyName = $('input[name="search_name"]').val();
+                        d.ProductService = $('input[name="search_service"]').val();
+                        d.Sector = $('input[name="search_sector"]').val();
+                        d.Industry = $('input[name="search_industry"]').val();
+                    }
+                },
+                "columns": [
+                    { "data": "Country", "name": "Country", "orderable": true },
+                    { "data": "CompanyName", "name": "CompanyName", "orderable": true },
+                    { "data": "ProductOrService", "name": "ProductOrService", "orderable": true },
+                    { "data": "Sector", "name": "Sector", "orderable": true },
+                    { "data": "Industry", "name": "Industry", "orderable": true },
+                ],
+                'columnDefs': [
+                    {
+                        'targets': 0,
+                        'searchable': false,
+                        'orderable': false,
+                        'width': '1%',
+                        'className': 'dt-body-center',
+                        'render': function(data, type, full, meta) {
+                            return '<input type="checkbox">';
+                        }
+                    }
+                ],
+                "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
+                "iDisplayLength": 50,
+                "aaSorting": [[0, "asc"]],
+                "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                },
+                initComplete: function() {
+                    var _table = this;
+                    var filter_box = _table.parent().find("#grid_companies_filter");
+                    var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
+                    htmlFilter +='<label>Company:<input type="search" name="search_name" /></label>';
+                    htmlFilter +='<label>Product/Service:<input type="search" name="search_service" /></label>';
+                    htmlFilter +='<label>Sector:<input type="search" name="search_sector" /></label>';
+                    htmlFilter +='<label>Industry:<input type="search" name="search_industry" /></label>';
+                    filter_box.html(htmlFilter);
+
+                    searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
+                },
+            });
+            function searchBindingKeyUp(elementSearch,tableElement) {
+                elementSearch.unbind();
+                var timeOutTyping;
+                elementSearch.bind('keyup',
+                    function(e) {
+                        clearTimeout(timeOutTyping);
+                        timeOutTyping = setTimeout(function() {
+                            tableElement.fnFilter(elementSearch.eq(0).val());
+                            },
+                            600);
+                    });
+            }
+    </script>)

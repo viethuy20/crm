@@ -118,14 +118,14 @@
                     <div class="col-sm-8">
                         <div class="form-group">
                             @Html.Bootstrap().TextAreaFor(m => m.PhoneCall.Remark).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.PhoneCall.Remark).LabelText("HIGHLIGHTS").HtmlAttributes(new { required = "required" }).ShowRequiredStar(true)
+                            @Html.Bootstrap().LabelFor(m => m.PhoneCall.Remark).LabelText("Remarks").ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group">
                             @Html.DatePickerFor(m => m.PhoneCall.CallBackDate, new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.PhoneCall.CallBackDate)
-                            @Html.Bootstrap().LabelFor(m => m.PhoneCall.CallBackDate).LabelText("CALL BACK DATE")
+                            @Html.Bootstrap().LabelFor(m => m.PhoneCall.CallBackDate).LabelText("Call Back Date")
                         </div>
                     </div>
                 </div>

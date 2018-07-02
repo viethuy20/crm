@@ -12,9 +12,10 @@ namespace PQT.Domain.Abstract
         IEnumerable<Event> GetAllEvents(Func<Event, bool> predicate);
         Event GetEvent(int id);
         Event GetEvent(string code);
-        Event CreateEvent(Event info, IEnumerable<int> companies, IEnumerable<int> groups);
+        Event CreateEvent(Event info, IEnumerable<int> groups, IEnumerable<int> users);
         bool UpdateEvent(Event info);
-        bool UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> companies, IEnumerable<int> groups);
+        bool UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> groups, IEnumerable<int> users);
+        bool AssignCompany(int id, IEnumerable<int> companies);
         bool DeleteEvent(int id);
     }
 }

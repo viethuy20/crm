@@ -132,8 +132,8 @@ namespace PQT.Seed
                 {
                     EventCode = string.Format("{0:X6}", rand),
                     EventName = "Event TEST " + i,
-                    ShortDescription = "A Singapore based industry expert, with a solid track record of operational excellence, innovation and solutions provided in Africa the world’s fastest growing continent.",
-                    Description = "We provide business intelligences, education and consulting services to the world. Together with international experts, customers, governments and communities, we help companies thrive by applying our insights and over 20 years of experience. We have over 06 operating offices, over 200 employees, and agents in 15 countries who are committed to train the corporate world in a responsible way, reducing process waste, improving business environment and the communities, and economy where we live and work. We are also a dynamic and rapidly-growing business with a commitment to excellence, offering promising opportunities for career development.",
+                    VenueOfEvent = "A Singapore based industry expert, with a solid track record of operational excellence, innovation and solutions provided in Africa the world’s fastest growing continent.",
+                    SalesRules = "We provide business intelligences, education and consulting services to the world. Together with international experts, customers, governments and communities, we help companies thrive by applying our insights and over 20 years of experience. We have over 06 operating offices, over 200 employees, and agents in 15 countries who are committed to train the corporate world in a responsible way, reducing process waste, improving business environment and the communities, and economy where we live and work. We are also a dynamic and rapidly-growing business with a commitment to excellence, offering promising opportunities for career development.",
                     StartDate = DateTime.Today,
                     EndDate = DateTime.Today.AddDays(30),
                     UserID = 2,

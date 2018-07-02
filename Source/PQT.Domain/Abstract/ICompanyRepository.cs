@@ -9,13 +9,14 @@ namespace PQT.Domain.Abstract
     public interface ICompanyRepository
     {
         #region Company
-        IEnumerable<Company> GetAllCompanies();
-        IEnumerable<Company> GetAllCompanies(Func<Company, bool> predicate);
+        int GetCountCompanies(Func<Company, bool> predicate);
+        IEnumerable<Company> GetAllCompanies(string sortColumnDir, string sortColumn, int page, int pageSize);
+        IEnumerable<Company> GetAllCompanies(Func<Company, bool> predicate, string sortColumnDir, string sortColumn, int page, int pageSize);
         Company GetCompany(int companyID);
         Company GetCompany(string name);
-        Company CreateCompany(Company company);
+        Company CreateCompany(Company company, IEnumerable<int> users);
         void CreateCompanies(List<Company> companies);
-        bool UpdateCompany(Company company);
+        bool UpdateCompany(Company company, IEnumerable<int> users);
         bool DeleteCompany(int companyID);
         #endregion Company
 

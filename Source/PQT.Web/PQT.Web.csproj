@@ -380,6 +380,7 @@
     <Compile Include="Models\AjaxResult.cs" />
     <Compile Include="Models\BookingModel.cs" />
     <Compile Include="Models\CompanyImportModel.cs" />
+    <Compile Include="Models\CompanyModel.cs" />
     <Compile Include="Models\CompanyResourceImportModel.cs" />
     <Compile Include="Models\CompanyResourceModel.cs" />
     <Compile Include="Models\ConsolidateKPIModel.cs" />
@@ -2557,6 +2558,7 @@
     <Content Include="Views\Kpi\Index.cshtml" />
     <Content Include="Views\Kpi\Consolidate.cshtml" />
     <Content Include="Views\Kpi\Update.cshtml" />
+    <Content Include="Views\Event\AssignCompany.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

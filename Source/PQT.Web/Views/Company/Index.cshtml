@@ -3,7 +3,16 @@
 @{
     ViewBag.Title = "Companies";
 }
-
+<style>
+    #table tbody tr.tier1 {
+        color: #a94442;
+        background-color: #ffdad7;
+    }
+    #table tbody tr.tier2 {
+        color: #31708f;
+        background-color: #d8edff !important;
+    }
+</style>
 <section>
     <div class="section-header">
         <h2 class="text-primary">@ViewBag.Title</h2>
@@ -32,6 +41,7 @@
                             <th>Product/Service</th>
                             <th>Sector</th>
                             <th>Industry</th>
+                            <th>Tier</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -64,14 +74,16 @@
                 { "data": "ProductOrService", "name": "ProductOrService", "orderable": true },
                 { "data": "Sector", "name": "Sector", "orderable": true },
                 { "data": "Industry", "name": "Industry", "orderable": true },
+                { "data": "Tier", "name": "Tier", "orderable": true },
                 { "data": "ID", "name": "ID", "orderable": false },
             ],
             "iDisplayLength": 50,
             "aaSorting": [[2, "asc"]],
             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                $(nRow).find('td:eq(5)').html('<a href="@Url.Action("CreateOrEdit")?id="' + aData["ID"] + ' data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a> ' + 
+                $(nRow).find('td:eq(6)').html('<a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a> ' + 
                     ' <a href="#" data-action="delete" data-id="' + aData["ID"] +'"><i class="md md-delete text-danger"></i></a>');
-                $(nRow).attr("data-id", ["ID"]);
+                $(nRow).attr("data-id", aData["ID"]);
+                $(nRow).addClass("tier" + aData["Tier"]);
             },
             initComplete: function () {
                 var _table = this;

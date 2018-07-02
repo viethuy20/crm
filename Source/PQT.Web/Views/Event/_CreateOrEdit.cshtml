@@ -23,35 +23,19 @@
                 <div class="form-group">
                     <div class="input-daterange input-group">
                         <div class="input-group-content">
-                            @Html.DatePickerRangeFor(m => m.Event.StartDate, new {@class = "form-control", required = "required"})
+                            @Html.DatePickerRangeFor(m => m.Event.StartDate, new { @class = "form-control", required = "required" })
                             @Html.ValidationMessageFor(m => m.Event.StartDate)
                             @Html.Bootstrap().LabelFor(m => m.Event.StartDate).ShowRequiredStar(true)
                         </div>
                         <span class="input-group-addon">to</span>
                         <div class="input-group-content">
-                            @Html.DatePickerRangeFor(m => m.Event.EndDate, new {@class = "form-control", required = "required"})
+                            @Html.DatePickerRangeFor(m => m.Event.EndDate, new { @class = "form-control", required = "required" })
                             @Html.ValidationMessageFor(m => m.Event.EndDate)
                             @Html.Bootstrap().LabelFor(m => m.Event.EndDate).ShowRequiredStar(true)
                         </div>
                     </div>
                 </div>
             </div>
-            @*<div class="col-sm-6">
-                    <div class="form-group">
-                        <select multiple class="form-control" name="@Html.NameFor(m=>m.CompaniesSelected)">
-                            @foreach (var country in Model.Companies.Select(m => m.Country).Distinct().OrderBy(m => m.Name))
-                            {
-                                <optgroup label="@country.Name">
-                                    @foreach (var com in Model.Companies.Where(m => m.CountryID == country.ID))
-                                    {
-                                        <option value="@com.ID" selected="@(Model.CompaniesSelected.Contains(com.ID))">@com.CompanyName</option>
-                                    }
-                                </optgroup>
-                            }
-                        </select>
-                        <label>Companies</label>
-                    </div>
-                </div>*@
             <div class="col-sm-6">
                 <div class="form-group">
                     <select multiple class="form-control" name="@Html.NameFor(m=>m.GroupsSelected)">
@@ -63,17 +47,17 @@
                     <label>Sales Group</label>
                 </div>
             </div>
-            @*<div class="col-sm-6">
-                    <div class="form-group">
-                        <select multiple class="form-control " name="@Html.NameFor(m=>m.UsersSelected)">
-                            @foreach (var com in Model.Users.OrderBy(m => m.DisplayName))
-                            {
-                                <option value="@com.ID" selected="@(Model.UsersSelected.Contains(com.ID))">@com.DisplayName</option>
-                            }
-                        </select>
-                        <label>Salesman</label>
-                    </div>
-                </div>*@
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <select multiple class="form-control " name="@Html.NameFor(m=>m.UsersSelected)">
+                        @foreach (var com in Model.Users.OrderBy(m => m.DisplayName))
+                        {
+                            <option value="@com.ID" selected="@(Model.UsersSelected.Contains(com.ID))">@com.DisplayName</option>
+                        }
+                    </select>
+                    <label>Account Manager</label>
+                </div>
+            </div>
             <div class="col-sm-6">
                 <div class="form-group floating-label">
                     <input type="text" name="@Html.NameFor(m=>m.Event.CallFilterKeywords)" value="@Model.Event.CallFilterKeywords" data-role="tagsinput" />
@@ -89,43 +73,18 @@
             </div>
             <div class="col-sm-12">
                 <div class="form-group floating-label">
-                    @Html.Bootstrap().TextAreaFor(m => m.Event.ShortDescription).Rows(3).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Event.ShortDescription)
+                    @Html.Bootstrap().TextAreaFor(m => m.Event.VenueOfEvent).Rows(3).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.VenueOfEvent)
                 </div>
             </div>
             <div class="col-sm-12">
                 <div class="form-group floating-label">
-                    @Html.Bootstrap().TextAreaFor(m => m.Event.Description).Rows(6).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Event.Description)
+                    @Html.Bootstrap().TextAreaFor(m => m.Event.SalesRules).Rows(6).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.SalesRules)
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div class="card card-underline">
-    <div class="card-head">
-        <header>Companies Assign</header>
-    </div>
-    <div class="card-body text-default-light">
-        <div class="row">
-            <div class="form-group">
-                <div class="col-sm-12">
-                    <table id="grid_companies" class="table">
-                        <thead>
-                            <tr>
-                                <th><input name="select_all" value="1" type="checkbox"></th>
-                                <th>Country</th>
-                                <th>Company</th>
-                                <th>Product/Service</th>
-                                <th>Sector</th>
-                                <th>Industry</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div><!--end .card-body -->
 </div>
 <div class="card card-underline">
     <div class="card-head">
@@ -197,186 +156,4 @@
             }
         };
 
-        function updateDataTableSelectAllCtrl(table) {
-            var $table = table.table().node();
-            var $chkbox_all = $('tbody input[type="checkbox"]', $table);
-            var $chkbox_checked = $('tbody input[type="checkbox"]:checked', $table);
-            var chkbox_select_all = $('thead input[name="select_all"]', $table).get(0);
-
-            // If none of the checkboxes are checked
-            if ($chkbox_checked.length === 0) {
-                chkbox_select_all.checked = false;
-                if ('indeterminate' in chkbox_select_all) {
-                    chkbox_select_all.indeterminate = false;
-                }
-
-                // If all of the checkboxes are checked
-            } else if ($chkbox_checked.length === $chkbox_all.length) {
-                chkbox_select_all.checked = true;
-                if ('indeterminate' in chkbox_select_all) {
-                    chkbox_select_all.indeterminate = false;
-                }
-
-                // If some of the checkboxes are checked
-            } else {
-                chkbox_select_all.checked = true;
-                if ('indeterminate' in chkbox_select_all) {
-                    chkbox_select_all.indeterminate = true;
-                }
-            }
-        }
-
-        var companies_selected = @Html.Serialize(Model.CompaniesSelected);
-
-        $(document).ready(function () {
-            // Array holding selected row IDs
-            var table = $("#grid_companies").DataTable({
-                "processing": true, // for show progress bar
-                "serverSide": true, // for process server side
-                "filter": true, // this is for disable filter (search box)
-                "orderMulti": false, // for disable multiple column at once
-                "stateSave": false,
-                "ajax": {
-                    "url": "@Url.Action("AjaxGetCompanies")",
-                    "type": "POST",
-                    "datatype": "json",
-                    "data": function (d) {
-                        d.CountryName = $('input[name="search_country"]').val();
-                        d.CompanyName = $('input[name="search_name"]').val();
-                        d.ProductService = $('input[name="search_service"]').val();
-                        d.Sector = $('input[name="search_sector"]').val();
-                        d.Industry = $('input[name="search_industry"]').val();
-                    }
-                },
-                "columns": [
-                    { "data": "ID", "name": "ID", "orderable": true },
-                    { "data": "Country", "name": "Country", "orderable": true },
-                    { "data": "CompanyName", "name": "CompanyName", "orderable": true },
-                    { "data": "ProductOrService", "name": "ProductOrService", "orderable": true },
-                    { "data": "Sector", "name": "Sector", "orderable": true },
-                    { "data": "Industry", "name": "Industry", "orderable": true },
-                ],
-                'columnDefs': [
-                    {
-                        'targets': 0,
-                        'searchable': false,
-                        'orderable': false,
-                        'width': '1%',
-                        'className': 'dt-body-center',
-                        'render': function(data, type, full, meta) {
-                            return '<input type="checkbox">';
-                        }
-                    }
-                ],
-                "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
-                "iDisplayLength": 50,
-                "aaSorting": [[1, "desc"]],
-                "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                    var rowId = aData["ID"];
-                    // If row ID is in the list of selected row IDs
-                    if ($.inArray(rowId, companies_selected) !== -1) {
-                        $(nRow).find('input[type="checkbox"]').prop('checked', true);
-                        $(nRow).addClass('selected');
-                    }
-                },
-                initComplete: function() {
-                    var _table = this;
-                    var filter_box = _table.parent().find("#grid_companies_filter");
-                    var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
-                    htmlFilter +='<label>Company:<input type="search" name="search_name" /></label>';
-                    htmlFilter +='<label>Product/Service:<input type="search" name="search_service" /></label>';
-                    htmlFilter +='<label>Sector:<input type="search" name="search_sector" /></label>';
-                    htmlFilter +='<label>Industry:<input type="search" name="search_industry" /></label>';
-                    filter_box.html(htmlFilter);
-
-                    searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
-                },
-            });
-            function searchBindingKeyUp(elementSearch,tableElement) {
-                elementSearch.unbind();
-                var timeOutTyping;
-                elementSearch.bind('keyup',
-                    function(e) {
-                        clearTimeout(timeOutTyping);
-                        timeOutTyping = setTimeout(function() {
-                            tableElement.fnFilter(elementSearch.eq(0).val());
-                            },
-                            600);
-                    });
-            }
-            // Handle click on checkbox
-            $('#grid_companies tbody').on('click', 'input[type="checkbox"]', function (e) {
-                var $row = $(this).closest('tr');
-
-                // Get row data
-                var data = table.row($row).data();
-
-                // Get row ID
-                var rowId = data.ID;
-
-                // Determine whether row ID is in the list of selected row IDs
-                var index = $.inArray(rowId, companies_selected);
-
-                // If checkbox is checked and row ID is not in list of selected row IDs
-                if (this.checked && index === -1) {
-                    companies_selected.push(rowId);
-
-                    // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
-                } else if (!this.checked && index !== -1) {
-                    companies_selected.splice(index, 1);
-                }
-
-                if (this.checked) {
-                    $row.addClass('selected');
-                } else {
-                    $row.removeClass('selected');
-                }
-
-                // Update state of "Select all" control
-                updateDataTableSelectAllCtrl(table);
-
-                // Prevent click event from propagating to parent
-                e.stopPropagation();
-            });
-
-            // Handle click on table cells with checkboxes
-            $('#grid_companies').on('click', 'tbody td, thead th:first-child', function (e) {
-                $(this).parent().find('input[type="checkbox"]').trigger('click');
-            });
-
-            // Handle click on "Select all" control
-            $('thead input[name="select_all"]', table.table().container()).on('click', function (e) {
-                if (this.checked) {
-                    $('#grid_companies tbody input[type="checkbox"]:not(:checked)').trigger('click');
-                } else {
-                    $('#grid_companies tbody input[type="checkbox"]:checked').trigger('click');
-                }
-
-                // Prevent click event from propagating to parent
-                e.stopPropagation();
-            });
-
-            // Handle table draw event
-            table.on('draw', function () {
-                // Update state of "Select all" control
-                updateDataTableSelectAllCtrl(table);
-            });
-
-            // Handle form submission event
-            //$('.form').on('submit', function (e) {
-            //    var form = this;
-            //    // Iterate over all selected checkboxes
-            //    $.each(companies_selected, function (index, rowId) {
-            //        // Create a hidden element
-            //        $(form).append(
-            //            $('<input>')
-            //                .attr('type', 'hidden')
-            //                .attr('id', 'CompaniesSelected_' + rowId)
-            //                .attr('name', 'CompaniesSelected')
-            //                .val(rowId)
-            //        );
-            //    });
-            //});
-
-        });
     </script>)

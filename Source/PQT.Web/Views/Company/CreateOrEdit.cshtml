@@ -3,81 +3,106 @@
 @using PQT.Domain.Abstract
 @using PQT.Web.Infrastructure
 @using Resources
-@model PQT.Domain.Entities.Company
-
-@{
-    var unitRepo = DependencyHelper.GetService<IUnitRepository>();
-    var countries = unitRepo.GetAllCountries().OrderBy(m=>m.Name);
-}
-<div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
-    <div class="card-head">
-        <header>@(Model.ID > 0 ? "Edit Data" : "Add New Data")</header>
-    </div><!--end .card-head -->
-
-    @using (Ajax.BeginForm("CreateOrEdit", "routeValues", new AjaxOptions { OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form"}))
-    {
-        <div class="card-body">
-            <div class="success hide">
-                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Success).Closeable()))
-                {
-                    @Html.Bootstrap().Label("success").HtmlAttributes(new { @class = "textsuccess" }).LabelText(Resource.SaveSuccessful)
-                }
-            </div>
-            <div class="error hide alert-danger">
-                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Error).Closeable()))
-                {
-                    @Html.Bootstrap().Label("error").HtmlAttributes(new { @class = "texterror" }).LabelText(Resource.SaveFailed)
-                }
-            </div>
-            @Html.HiddenFor(m => m.ID)
-            <div class="form-group">
-                @Html.Bootstrap().DropDownListFor(m => m.CountryID, countries.ToSelectList(m => m.ID, m => m.Name)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.CountryID).LabelText("Country").ShowRequiredStar(true)
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.CompanyName).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.CompanyName).LabelText("Name").ShowRequiredStar(true)
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextAreaFor(m => m.ProductOrService).Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.ProductOrService).LabelText("Product/Service")
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Sector).Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Sector).LabelText("Sector")
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Industry).Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Industry).LabelText("Industry")
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Ownership).Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Ownership).LabelText("Ownership")
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.BusinessUnits).Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.BusinessUnits).LabelText("Business Units")
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Designation).Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Designation).LabelText("Designation")
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Email).Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email")
-            </div>
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.PersonalContact).Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.PersonalContact).LabelText("Personal Contact")
-            </div>
-
-        </div><!--end .card-body -->
-
-        <div class="card-actionbar">
-            <div class="card-actionbar-row">
-                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
-                @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("submitbutton").PrependIcon("md md-done").Style(ButtonStyle.Success)
-            </div>
-        </div>
+@model PQT.Web.Models.CompanyModel
+    @{
+        var unitRepo = DependencyHelper.GetService<IUnitRepository>();
+        var countries = unitRepo.GetAllCountries().OrderBy(m => m.Name);
     }
-</div><!--end .card -->
+    <div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
+        <div class="card-head">
+            <header>@(Model.Company.ID > 0 ? "Edit Data" : "Add New Data")</header>
+        </div><!--end .card-head -->
+
+        @using (Ajax.BeginForm("CreateOrEdit", "routeValues", new AjaxOptions { OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
+        {
+            <div class="card-body">
+                <div class="success hide">
+                    @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Success).Closeable()))
+                {
+                        @Html.Bootstrap().Label("success").HtmlAttributes(new { @class = "textsuccess" }).LabelText(Resource.SaveSuccessful)
+                    }
+                </div>
+                <div class="error hide alert-danger">
+                    @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Error).Closeable()))
+                {
+                        @Html.Bootstrap().Label("error").HtmlAttributes(new { @class = "texterror" }).LabelText(Resource.SaveFailed)
+                    }
+                </div>
+                @Html.HiddenFor(m => m.Company.ID)
+                <div class="form-group col-md-6">
+                    @Html.Bootstrap().DropDownListFor(m => m.Company.CountryID, countries.ToSelectList(m => m.ID, m => m.Name)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.CountryID).LabelText("Country").ShowRequiredStar(true)
+                </div>
+                <div class="form-group col-md-6">
+                    @Html.Bootstrap().TextBoxFor(m => m.Company.CompanyName).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.CompanyName).LabelText("Name").ShowRequiredStar(true)
+                </div>
+                <div class="form-group col-md-6">
+                    @Html.Bootstrap().TextBoxFor(m => m.Company.ProductOrService).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.ProductOrService).LabelText("Product/Service")
+                </div>
+                <div class="form-group col-md-6">
+                    @Html.Bootstrap().TextBoxFor(m => m.Company.Sector).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.Sector).LabelText("Sector")
+                </div>
+                <div class="form-group col-md-6">
+                    @Html.Bootstrap().TextBoxFor(m => m.Company.Industry).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.Industry).LabelText("Industry")
+                </div>
+                <div class="form-group col-md-6">
+                    @Html.Bootstrap().TextBoxFor(m => m.Company.Ownership).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.Ownership).LabelText("Ownership")
+                </div>
+                <div class="form-group col-md-6">
+                    @Html.Bootstrap().TextBoxFor(m => m.Company.BusinessUnits).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.BusinessUnits).LabelText("Business Units")
+                </div>
+                <div class="form-group col-md-6">
+                    @Html.Bootstrap().TextBoxFor(m => m.Company.Designation).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.Designation).LabelText("Designation")
+                </div>
+                <div class="form-group col-md-6">
+                    @Html.Bootstrap().TextBoxFor(m => m.Company.Email).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.Email).LabelText("Email")
+                </div>
+                <div class="form-group col-md-6">
+                    @Html.Bootstrap().TextBoxFor(m => m.Company.PersonalContact).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.PersonalContact).LabelText("Personal Contact")
+                </div>
+                <div class="form-group col-md-6">
+                    @Html.Bootstrap().TextBoxFor(m => m.Company.BudgetPerHead).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.BudgetPerHead).LabelText("Budget Per Head")
+                </div>
+                <div class="form-group col-md-6">
+                    @Html.Bootstrap().TextBoxFor(m => m.Company.FinancialYear).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.FinancialYear).LabelText("Financial Year")
+                </div>
+                <div class="form-group col-md-6">
+                    @Html.Bootstrap().DropDownListFor(m => m.Company.Tier, new List<SelectListItem> {
+                        new SelectListItem { Selected = Model.Company.Tier == 1, Value = "1", Text = "1" },
+                        new SelectListItem {Selected = Model.Company.Tier == 2, Value = "2", Text = "2" },
+                        new SelectListItem {Selected = Model.Company.Tier == 3, Value = "3", Text = "3" } }).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.Tier).LabelText("Tier")
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <select multiple class="form-control " name="@Html.NameFor(m=>m.UsersSelected)">
+                            @foreach (var com in Model.Users.OrderBy(m => m.DisplayName))
+                            {
+                                <option value="@com.ID" selected="@(Model.UsersSelected.Contains(com.ID))">@com.DisplayName</option>
+                            }
+                        </select>
+                        <label>Account Manager</label>
+                    </div>
+                </div>
+
+            </div><!--end .card-body -->
+
+            <div class="card-actionbar">
+                <div class="card-actionbar-row">
+                    @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                    @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("submitbutton").PrependIcon("md md-done").Style(ButtonStyle.Success)
+                </div>
+            </div>
+        }
+    </div><!--end .card -->

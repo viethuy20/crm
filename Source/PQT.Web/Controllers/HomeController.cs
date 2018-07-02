@@ -73,7 +73,6 @@ namespace PQT.Web.Controllers
             return PartialView(notify);
         }
 
-
         [AjaxOnly]
         public ActionResult RemoveNotifyCounter()
         {

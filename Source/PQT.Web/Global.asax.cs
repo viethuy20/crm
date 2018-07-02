@@ -97,8 +97,8 @@ namespace PQT.Web
             {
             }
 
-            //if (Request.IsLocal)
-            //    MiniProfiler.Start();
+            if (Request.IsLocal)
+                MiniProfiler.Start();
         }
 
         protected void Application_EndRequest()

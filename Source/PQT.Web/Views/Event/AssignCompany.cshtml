@@ -1,0 +1,515 @@
+﻿@using Resources
+@model PQT.Web.Models.EventModel
+
+@{
+    ViewBag.Title = "Assign Companies";
+}
+
+<style>
+    
+
+    #grid1_companies tbody tr {
+        color: #a94442;
+        background-color: #ffdad7;
+    }
+        #grid1_companies tbody tr.selected {
+            color: #a94442;
+            background-color: #fcaca6;
+        }
+
+    #grid2_companies tbody tr {
+        color: #31708f;
+        background-color: #d8edff !important;
+    }
+        #grid2_companies tbody tr.selected {
+            color: #31708f;
+            background-color: #add9ff !important;
+        }
+
+    #grid3_companies tbody tr.selected {
+        color: #313534;
+        background-color: #e5e6e6 !important;
+    }
+</style>
+<section>
+    <div class="row section-header" style="height: auto">
+        <h2 class="text-primary col-sm-3">@ViewBag.Title</h2>
+    </div>
+    <div class="row">
+        <div class="col-sm-12" style="padding-right: 24px; padding-bottom: 12px">
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+        </div>
+    </div>
+
+    @using (Html.BeginForm("AssignCompany", "Event", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
+    {
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="form-group  col-md-offset-2">
+                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                        @Html.Bootstrap().SubmitButton().Class("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+                    </div>
+                </div>
+                @Html.HiddenFor(m => m.ID)
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.EventCode).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.EventCode).LabelText("Event Code")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.EventName).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.EventName).LabelText("Event Name")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.StartDate)">
+                                @Model.Event.StartDate.ToString("dd MMM yyyy")
+                            </div>
+                            @Html.Bootstrap().LabelFor(m => m.Event.StartDate).LabelText("Sales Start Date")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.EndDate)">
+                                @Model.Event.EndDate.ToString("dd MMM yyyy")
+                            </div>
+                            @Html.Bootstrap().LabelFor(m => m.Event.EndDate).LabelText("Sales End Date")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.BackgroundColor).HtmlAttributes(new { @style = "color:#fff;background:" + Model.Event.BackgroundColor }).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.BackgroundColor).LabelText("Event Color")
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="card card-underline">
+            <div class="card-head">
+                <header>Companies For Tier 1 (Only for account manager)</header>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <table class="table no-margin" id="grid1_companies">
+                        <thead>
+                            <tr>
+                                <th><input name="select_all" value="1" type="checkbox"></th>
+                                <th>Country</th>
+                                <th>Company</th>
+                                <th>Product/Service</th>
+                                <th>Sector</th>
+                                <th>Industry</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div><!--end .card-body -->
+        </div>
+        <div class="card card-underline">
+            <div class="card-head">
+                <header>Companies For Tier 2</header>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <table class="table no-margin" id="grid2_companies">
+                        <thead>
+                            <tr>
+                                <th><input name="select_all" value="1" type="checkbox"></th>
+                                <th>Country</th>
+                                <th>Company</th>
+                                <th>Product/Service</th>
+                                <th>Sector</th>
+                                <th>Industry</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div><!--end .card-body -->
+        </div>
+        <div class="card card-underline">
+            <div class="card-head">
+                <header>Companies For Tier 3</header>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <table class="table no-margin" id="grid3_companies">
+                        <thead>
+                        <tr>
+                            <th><input name="select_all" value="1" type="checkbox"></th>
+                            <th>Country</th>
+                            <th>Company</th>
+                            <th>Product/Service</th>
+                            <th>Sector</th>
+                            <th>Industry</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div><!--end .card-body -->
+        </div>
+
+        
+        <div class="row">
+            <div class="form-group  col-md-offset-2">
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                @Html.Bootstrap().SubmitButton().Class("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+            </div>
+        </div>
+    }
+
+</section>
+
+
+@Html.Script(
+    @<script>
+
+         $(".submitbutton").on('click', function (e) {
+             e.preventDefault();
+             bootbox.confirm('@Resource.ConfirmSave', function (isOK) {
+                 if (isOK) {
+                     var form = $('.submitbutton').parents("form");
+                     form.submit();
+                 }
+             });
+         });
+
+         function updateDataTableSelectAllCtrl(tableTable) {
+             var $table = tableTable.table().node();
+             var $chkbox_all = $('tbody input[type="checkbox"]', $table);
+             var $chkbox_checked = $('tbody input[type="checkbox"]:checked', $table);
+             var chkbox_select_all = $('thead input[name="select_all"]', $table).get(0);
+
+             // If none of the checkboxes are checked
+             if ($chkbox_checked.length === 0) {
+                 chkbox_select_all.checked = false;
+                 if ('indeterminate' in chkbox_select_all) {
+                     chkbox_select_all.indeterminate = false;
+                 }
+
+                 // If all of the checkboxes are checked
+             } else if ($chkbox_checked.length === $chkbox_all.length) {
+                 chkbox_select_all.checked = true;
+                 if ('indeterminate' in chkbox_select_all) {
+                     chkbox_select_all.indeterminate = false;
+                 }
+
+                 // If some of the checkboxes are checked
+             } else {
+                 chkbox_select_all.checked = true;
+                 if ('indeterminate' in chkbox_select_all) {
+                     chkbox_select_all.indeterminate = true;
+                 }
+             }
+         }
+
+         var companies_selected = @Html.Serialize(Model.CompaniesSelected);
+         var salesId = "@(String.Join(",",Model.Event.ManagerUsers.Select(m=>m.ID)))";
+
+         var table1 = $("#grid1_companies").DataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "url": "@Url.Action("AjaxGetAssignCompanies")?type=1",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function (d) {
+                     d.CountryName = $('#grid1_companies_filter').find('input[name="search_country"]').val();
+                     d.CompanyName = $('#grid1_companies_filter').find('input[name="search_name"]').val();
+                     d.ProductService = $('#grid1_companies_filter').find('input[name="search_service"]').val();
+                     d.Sector = $('#grid1_companies_filter').find('input[name="search_sector"]').val();
+                     d.Industry = $('#grid1_companies_filter').find('input[name="search_industry"]').val();
+                     d.SaleIds = salesId;
+                 }
+             },
+             "columns": [
+                 { "data": "ID", "name": "ID", "orderable": false },
+                 { "data": "Country", "name": "Country", "orderable": true },
+                 { "data": "CompanyName", "name": "CompanyName", "orderable": true },
+                 { "data": "ProductOrService", "name": "ProductOrService", "orderable": true },
+                 { "data": "Sector", "name": "Sector", "orderable": true },
+                 { "data": "Industry", "name": "Industry", "orderable": true },
+             ],
+             'columnDefs': [
+                 {
+                     'targets': 0,
+                     'searchable': false,
+                     'orderable': false,
+                     'width': '1%',
+                     'className': 'dt-body-center',
+                     'render': function(data, type, full, meta) {
+                         return '<input type="checkbox">';
+                     }
+                 }
+             ],
+             "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
+             "iDisplayLength": 25,
+             "aaSorting": [[2, "asc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 var rowId = aData["ID"];
+                 // If row ID is in the list of selected row IDs
+                 if ($.inArray(rowId, companies_selected) !== -1) {
+                     $(nRow).find('input[type="checkbox"]').prop('checked', true);
+                     $(nRow).addClass('selected');
+                 }
+             },
+             initComplete: function() {
+                 var _table = this;
+                 var filter_box = _table.parent().find("#grid1_companies_filter");
+                 var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
+                 htmlFilter +='<label>Company:<input type="search" name="search_name" /></label>';
+                 htmlFilter +='<label>Product/Service:<input type="search" name="search_service" /></label>';
+                 htmlFilter +='<label>Sector:<input type="search" name="search_sector" /></label>';
+                 htmlFilter +='<label>Industry:<input type="search" name="search_industry" /></label>';
+                 filter_box.html(htmlFilter);
+
+                 searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
+             },
+         });
+         function searchBindingKeyUp(elementSearch,tableElement) {
+             elementSearch.unbind();
+             var timeOutTyping;
+             elementSearch.bind('keyup',
+                 function(e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function() {
+                             tableElement.fnFilter(elementSearch.eq(0).val());
+                         },
+                         600);
+                 });
+         }
+         var table2 = $("#grid2_companies").DataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "url": "@Url.Action("AjaxGetAssignCompanies")?type=2",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function (d) {
+                     d.CountryName = $('#grid2_companies_filter').find('input[name="search_country"]').val();
+                     d.CompanyName = $('#grid2_companies_filter').find('input[name="search_name"]').val();
+                     d.ProductService = $('#grid2_companies_filter').find('input[name="search_service"]').val();
+                     d.Sector = $('#grid2_companies_filter').find('input[name="search_sector"]').val();
+                     d.Industry = $('#grid2_companies_filter').find('input[name="search_industry"]').val();
+                 }
+             },
+             "columns": [
+                 { "data": "ID", "name": "ID", "orderable": false },
+                 { "data": "Country", "name": "Country", "orderable": true },
+                 { "data": "CompanyName", "name": "CompanyName", "orderable": true },
+                 { "data": "ProductOrService", "name": "ProductOrService", "orderable": true },
+                 { "data": "Sector", "name": "Sector", "orderable": true },
+                 { "data": "Industry", "name": "Industry", "orderable": true },
+             ],
+             'columnDefs': [
+                 {
+                     'targets': 0,
+                     'searchable': false,
+                     'orderable': false,
+                     'width': '1%',
+                     'className': 'dt-body-center',
+                     'render': function(data, type, full, meta) {
+                         return '<input type="checkbox">';
+                     }
+                 }
+             ],
+             "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
+             "iDisplayLength": 25,
+             "aaSorting": [[2, "asc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 var rowId = aData["ID"];
+                 // If row ID is in the list of selected row IDs
+                 if ($.inArray(rowId, companies_selected) !== -1) {
+                     $(nRow).find('input[type="checkbox"]').prop('checked', true);
+                     $(nRow).addClass('selected');
+                 }
+             },
+             initComplete: function() {
+                 var _table = this;
+                 var filter_box = _table.parent().find("#grid2_companies_filter");
+                 var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
+                 htmlFilter +='<label>Company:<input type="search" name="search_name" /></label>';
+                 htmlFilter +='<label>Product/Service:<input type="search" name="search_service" /></label>';
+                 htmlFilter +='<label>Sector:<input type="search" name="search_sector" /></label>';
+                 htmlFilter +='<label>Industry:<input type="search" name="search_industry" /></label>';
+                 filter_box.html(htmlFilter);
+
+                 searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
+             },
+         });
+         var table3 = $("#grid3_companies").DataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "url": "@Url.Action("AjaxGetAssignCompanies")?type=3",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function (d) {
+                     d.CountryName = $('#grid3_companies_filter').find('input[name="search_country"]').val();
+                     d.CompanyName = $('#grid3_companies_filter').find('input[name="search_name"]').val();
+                     d.ProductService = $('#grid3_companies_filter').find('input[name="search_service"]').val();
+                     d.Sector = $('#grid3_companies_filter').find('input[name="search_sector"]').val();
+                     d.Industry = $('#grid3_companies_filter').find('input[name="search_industry"]').val();
+                 }
+             },
+             "columns": [
+                 { "data": "ID", "name": "ID", "orderable": false },
+                 { "data": "Country", "name": "Country", "orderable": true },
+                 { "data": "CompanyName", "name": "CompanyName", "orderable": true },
+                 { "data": "ProductOrService", "name": "ProductOrService", "orderable": true },
+                 { "data": "Sector", "name": "Sector", "orderable": true },
+                 { "data": "Industry", "name": "Industry", "orderable": true },
+             ],
+             'columnDefs': [
+                 {
+                     'targets': 0,
+                     'searchable': false,
+                     'orderable': false,
+                     'width': '1%',
+                     'className': 'dt-body-center',
+                     'render': function(data, type, full, meta) {
+                         return '<input type="checkbox" name="CompaniesSelected">';
+                     }
+                 }
+             ],
+             "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
+             "iDisplayLength": 25,
+             "aaSorting": [[2, "asc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 var rowId = aData["ID"];
+                 $(nRow).find('input[type="checkbox"]').val(rowId);
+                 // If row ID is in the list of selected row IDs
+                 if ($.inArray(rowId, companies_selected) !== -1) {
+                     $(nRow).find('input[type="checkbox"]').prop('checked', true);
+                     $(nRow).addClass('selected');
+                 }
+             },
+             initComplete: function() {
+                 var _table = this;
+                 var filter_box = _table.parent().find("#grid3_companies_filter");
+                 var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
+                 htmlFilter +='<label>Company:<input type="search" name="search_name" /></label>';
+                 htmlFilter +='<label>Product/Service:<input type="search" name="search_service" /></label>';
+                 htmlFilter +='<label>Sector:<input type="search" name="search_sector" /></label>';
+                 htmlFilter +='<label>Industry:<input type="search" name="search_industry" /></label>';
+                 filter_box.html(htmlFilter);
+
+                 searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
+             },
+         });
+
+        function handelClickOnCheckbox(e,$this, $table) {
+            var $row = $($this).closest('tr');
+
+            // Get row data
+            var data = $table.row($row).data();
+
+            // Get row ID
+            var rowId = data.ID;
+
+            // Determine whether row ID is in the list of selected row IDs
+            var index = $.inArray(rowId, companies_selected);
+
+            // If checkbox is checked and row ID is not in list of selected row IDs
+            if ($this.checked && index === -1) {
+                companies_selected.push(rowId);
+
+                // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+            } else if (!$this.checked && index !== -1) {
+                companies_selected.splice(index, 1);
+            }
+
+            if ($this.checked) {
+                $row.addClass('selected');
+            } else {
+                $row.removeClass('selected');
+            }
+
+            // Update state of "Select all" control
+            updateDataTableSelectAllCtrl($table);
+
+            // Prevent click event from propagating to parent
+            e.stopPropagation();
+        }
+         // Handle click on checkbox
+         $('#grid1_companies tbody').on('click', 'input[type="checkbox"]', function (e) {
+             handelClickOnCheckbox(e,this, table1);
+         });
+         $('#grid2_companies tbody').on('click', 'input[type="checkbox"]', function (e) {
+             handelClickOnCheckbox(e,this, table2);
+         });
+         $('#grid3_companies tbody').on('click', 'input[type="checkbox"]', function (e) {
+             handelClickOnCheckbox(e,this, table3);
+         });
+
+         // Handle click on table cells with checkboxes
+         $('#grid1_companies,#grid2_companies,#grid3_companies').on('click', 'tbody td, thead th:first-child', function (e) {
+             $(this).parent().find('input[type="checkbox"]').trigger('click');
+         });
+
+         // Handle click on "Select all" control
+         $('thead input[name="select_all"]', table1.table().container()).on('click', function (e) {
+             if (this.checked) {
+                 $('#grid1_companies tbody input[type="checkbox"]:not(:checked)').trigger('click');
+             } else {
+                 $('#grid1_companies tbody input[type="checkbox"]:checked').trigger('click');
+             }
+
+             // Prevent click event from propagating to parent
+             e.stopPropagation();
+         });
+
+         $('thead input[name="select_all"]', table2.table().container()).on('click', function (e) {
+             if (this.checked) {
+                 $('#grid2_companies tbody input[type="checkbox"]:not(:checked)').trigger('click');
+             } else {
+                 $('#grid2_companies tbody input[type="checkbox"]:checked').trigger('click');
+             }
+
+             // Prevent click event from propagating to parent
+             e.stopPropagation();
+         });
+
+         $('thead input[name="select_all"]', table3.table().container()).on('click', function (e) {
+             if (this.checked) {
+                 $('#grid3_companies tbody input[type="checkbox"]:not(:checked)').trigger('click');
+             } else {
+                 $('#grid3_companies tbody input[type="checkbox"]:checked').trigger('click');
+             }
+
+             // Prevent click event from propagating to parent
+             e.stopPropagation();
+         });
+
+         // Handle table draw event
+         table1.on('draw', function () {
+             // Update state of "Select all" control
+             updateDataTableSelectAllCtrl(table1);
+         });
+         table2.on('draw', function () {
+             // Update state of "Select all" control
+             updateDataTableSelectAllCtrl(table2);
+         });
+         table3.on('draw', function () {
+             // Update state of "Select all" control
+             updateDataTableSelectAllCtrl(table3);
+         });
+
+     </script>)

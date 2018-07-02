@@ -33,9 +33,9 @@ namespace PQT.Web.Controllers
         [DisplayName("User management")]
         public ActionResult Index(int role = 0)
         {
-            IEnumerable<User> users = _membershipService.GetUsers(m => m.Status == EntityStatus.Normal);
+            //IEnumerable<User> users = _membershipService.GetUsers(m => m.Status == EntityStatus.Normal);
             ViewBag.roles = _roleService.GetAllRoles();
-            return View(users);
+            return View(new List<User>());
         }
 
         [DisplayName("List deleted user")]
@@ -198,6 +198,86 @@ namespace PQT.Web.Controllers
                 (m.DisplayName != null && m.DisplayName.ToLower().Contains(q.ToLower())) ||
                                         (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
             return Json(bookings.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
+        }
+
+
+        [AjaxOnly]
+        public ActionResult AjaxGetIndexView()
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+
+            #region For Search
+
+            var searchValue = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
+            }
+
+            var roleID = 0;
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("RoleID").FirstOrDefault() != null && !string.IsNullOrEmpty(Request.Form.GetValues("RoleID").FirstOrDefault()))
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                roleID = Convert.ToInt32(Request.Form.GetValues("RoleID").FirstOrDefault().Trim());
+            }
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+            IEnumerable<User> users = new HashSet<User>();
+
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                Func<User, bool> predicate = m =>
+                    (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID)) &&
+                    ((m.DisplayName.ToLower().Contains(searchValue)) ||
+                     (m.Email != null && m.Email.ToLower().Contains(searchValue)) ||
+                     (m.BusinessPhone != null && m.BusinessPhone.ToLower().Contains(searchValue)) ||
+                     (m.MobilePhone != null && m.MobilePhone.ToLower().Contains(searchValue)) ||
+                     (m.Roles != null && m.Roles.Any(r => r.Name.ToLower().Contains(searchValue))));
+                users = _membershipService.GetUsers(predicate, sortColumnDir, sortColumn,
+                    skip, pageSize);
+                recordsTotal = _membershipService.GetCountUsers(predicate);
+            }
+            else
+            {
+                Func<User, bool> predicate = m =>
+                    (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID));
+                users = _membershipService.GetUsers(predicate, sortColumnDir, sortColumn,
+                    skip, pageSize);
+                recordsTotal = _membershipService.GetCountUsers(predicate);
+            }
+            #endregion For Search
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = users.Select(m => new
+                {
+                    m.ID,
+                    m.DisplayName,
+                    m.Email,
+                    m.MobilePhone,
+                    m.BusinessPhone,
+                    m.RolesHtml,
+                    DisplayNameHtml = !string.IsNullOrEmpty(m.Picture) ? "<img src='/data/user_img/" + m.ID + "/" + m.Picture + "' class='img-rounded user-picture-small' style='max-width: 50px; max-height: 50px;' /> " + m.DisplayName : m.DisplayName,
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
         }
     }
 

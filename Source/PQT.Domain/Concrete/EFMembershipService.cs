@@ -20,32 +20,129 @@ namespace PQT.Domain.Concrete
 
         #region IMembershipService Members
 
+        public int GetCountUsers(Func<User, bool> predicate)
+        {
+            if (predicate != null)
+            {
+                return _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).Count();
+            }
+            return _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Count();
+        }
+        public IEnumerable<User> GetUsers(Func<User, bool> predicate, string sortColumnDir, string sortColumn, int page, int pageSize)
+        {
+            IEnumerable<User> users = new HashSet<User>();
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "DisplayName":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.DisplayName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "Email":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.Email).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "BusinessPhone":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.BusinessPhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "MobilePhone":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "RolesHtml":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    default:
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "DisplayName":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.DisplayName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "Email":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.Email).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "BusinessPhone":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.BusinessPhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "MobilePhone":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "RolesHtml":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    default:
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                }
+            }
+            return users;
+        }
+        public IEnumerable<User> GetUsers(string sortColumnDir, string sortColumn, int page, int pageSize)
+        {
+            IEnumerable<User> users = new HashSet<User>();
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "DisplayName":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderBy(s => s.DisplayName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "Email":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderBy(s => s.Email).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "BusinessPhone":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderBy(s => s.BusinessPhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "MobilePhone":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderBy(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "RolesHtml":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderBy(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    default:
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderBy(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "DisplayName":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderByDescending(s => s.DisplayName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "Email":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderByDescending(s => s.Email).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "BusinessPhone":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderByDescending(s => s.BusinessPhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "MobilePhone":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderByDescending(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "RolesHtml":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderByDescending(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    default:
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                }
+            }
+            return users;
+        }
         public IEnumerable<User> GetUsers(Func<User, bool> predicate)
         {
-            return GetAll(predicate, u => new
-            {
-                u.UserSalaryHistories,
-                Roles = u.Roles.Select(r => r.Permissions),
-            }).OrderBy(u => u.DisplayName)
-                .AsEnumerable();
-        }
-        public IEnumerable<User> GetUsers()
-        {
-            return GetAll<User>(u => new
-            {
-                u.UserSalaryHistories,
-                Roles = u.Roles.Select(r => r.Permissions),
-            })
-                .OrderBy(u => u.DisplayName)
-                .AsEnumerable();
+            return _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).AsEnumerable();
         }
         public IEnumerable<User> GetUsersDeleted()
         {
-            return GetAll<User>(u => new
-            {
-                u.UserSalaryHistories,
-                Roles = u.Roles.Select(r => r.Permissions),
-            }).OrderBy(u => u.DisplayName)
+            return _db.Set<User>().Include(m => m.UserSalaryHistories)
+                .Include(m => m.Roles.Select(r => r.Permissions))
+                .Where(m => m.Status.Value == EntityStatus.Deleted.Value).OrderBy(u => u.DisplayName)
                 .AsEnumerable();
         }
 
@@ -67,44 +164,31 @@ namespace PQT.Domain.Concrete
 
         public virtual User GetUser(int id)
         {
-            return Get<User>(u => u.ID == id, u => new
-            {
-                u.UserSalaryHistories,
-                Roles = u.Roles.Select(r => r.Permissions),
-            });
+            return _db.Set<User>().Include(m => m.UserSalaryHistories).Include(m => m.Roles.Select(r => r.Permissions))
+                .FirstOrDefault(m => m.ID == id);
         }
-        public virtual User GetUserIncludeAll(int id)
+        public User GetUserIncludeAll(int id)
         {
-            return Get<User>(u => u.ID == id, u => new
-            {
-                u.UserSalaryHistories,
-                Roles = u.Roles.Select(r => r.Permissions),
-            });
-        }
-        public User GetUserByName(string username)
-        {
-            return string.IsNullOrWhiteSpace(username)
-                       ? null
-                       : Get<User>(u => u.DisplayName != null &&
-                                        u.DisplayName.ToLower() == username.ToLower(),
-                                   u => u.Roles.Select(r => r.Permissions));
+            return _db.Set<User>()
+                .Include(m => m.UserSalaryHistories)
+                .Include(m => m.Roles.Select(r => r.Permissions))
+                .FirstOrDefault(u => u.ID == id);
         }
 
         public User GetUserByEmail(string email)
         {
             return string.IsNullOrWhiteSpace(email)
-                       ? null
-                       : Get<User>(u => u.Email != null &&
-                                        u.Email.Trim().ToLower() == email.Trim().ToLower(),
-                                   u => u.Roles.Select(r => r.Permissions));
+                ? null
+                : _db.Set<User>().Include(m => m.UserSalaryHistories)
+                    .Include(m => m.Roles.Select(r => r.Permissions))
+                    .FirstOrDefault(u => u.Email != null &&
+                                         u.Email.Trim().ToLower() == email.Trim().ToLower());
         }
         public IEnumerable<User> GetAllUserByEmail(string email)
         {
-            return GetAll<User>(m => m.Email.Trim().ToLower() == email.Trim().ToLower(), u => new
-            {
-                u.UserSalaryHistories,
-                Roles = u.Roles.Select(r => r.Permissions),
-            }).ToList();
+            return _db.Set<User>().Include(m => m.UserSalaryHistories)
+                .Include(m => m.Roles.Select(r => r.Permissions))
+                .Where(m => m.Email.Trim().ToLower() == email.Trim().ToLower()).AsEnumerable();
         }
         public User ValidateLogin(string email, string password)
         {
@@ -137,22 +221,23 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<User> GetUsersInRole(params string[] roleName)
         {
-            return GetAll<User>(u => u.Roles
-                                      .Select(r => r.Name.ToUpper())
-                                      .Intersect(roleName.Select(r1 => r1.ToUpper()))
-                                      .Any(),
-                u=>u.UserSalaryHistories,
-                                u => u.Roles.Select(r => r.Permissions)).AsEnumerable();
+            return _db.Set<User>().Include(m => m.UserSalaryHistories)
+                .Include(m => m.Roles.Select(r => r.Permissions))
+                .Where(u => u.Roles
+                    .Select(r => r.Name.ToUpper())
+                    .Intersect(roleName.Select(r1 => r1.ToUpper()))
+                    .Any()).AsEnumerable();
         }
 
         public IEnumerable<User> GetUsersContainsInRole(params string[] roleName)
         {
-            return GetAll<User>(u => u.Roles
-                                      .Select(r => r.Name.ToUpper())
-                                      .Intersect(roleName.Select(r1 => r1.ToUpper()))
-                                      .Any(),
-                u => u.UserSalaryHistories,
-                                u => u.Roles.Select(r => r.Permissions)).AsEnumerable();
+            return _db.Set<User>()
+                .Include(m => m.UserSalaryHistories)
+                .Include(m => m.Roles.Select(r => r.Permissions))
+                .Where(u => u.Roles
+                    .Select(r => r.Name.ToUpper())
+                    .Intersect(roleName.Select(r1 => r1.ToUpper()))
+                    .Any()).AsEnumerable();
         }
         #endregion
 
@@ -164,7 +249,9 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<User> GetAllSalesmans()
         {
-            return GetAll<User>().AsEnumerable().Where(u => u.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel));
+            return _db.Set<User>()
+                .Include(m => m.Roles.Select(r => r.Permissions))
+                .Where(u => u.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel)).AsEnumerable();
         }
 
         public IEnumerable<UserNotification> GetAllUserNotifications(int userId, int pageSize = 10, int page = 1)
@@ -172,14 +259,12 @@ namespace PQT.Domain.Concrete
             return _db.Set<UserNotification>()
                 .Where(m => m.UserID == userId).OrderByDescending(m => m.CreatedTime)
                 .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
-            //return GetAll<UserNotification>(m => m.UserID == userId).ToList().Skip((page - 1) * pageSize).Take(pageSize);
         }
         public IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int eventId, int pageSize = 10, int page = 1)
         {
             return _db.Set<UserNotification>()
                 .Where(m => m.UserID == userId && m.EventId == eventId).OrderByDescending(m => m.CreatedTime)
                 .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
-            //return GetAll<UserNotification>(m => m.UserID == userId).ToList().Skip((page - 1) * pageSize).Take(pageSize);
         }
         public UserNotification CreateUserNotification(UserNotification notify)
         {
@@ -191,17 +276,38 @@ namespace PQT.Domain.Concrete
         }
         public bool SeenUserNotification(int notifyId)
         {
-            var notify = Get<UserNotification>(notifyId);
-            notify.Seen = true;
-            return Update(notify);
+            return TransactionWrapper.Do(() =>
+            {
+                var notify = _db.Set<UserNotification>().FirstOrDefault(m => m.ID == notifyId);
+                if (notify == null) return false;
+                if (!notify.Seen)
+                {
+                    notify.Seen = true;
+                    var user = _db.Set<User>().FirstOrDefault(m => m.ID == notify.UserID);
+                    if (user != null && user.NotifyNumber > 0)
+                    {
+                        user.NotifyNumber--;
+                        Update(user);
+                    }
+                    return Update(notify);
+                }
+                return true;
+            });
         }
         public int SeenUserNotification(int userId, int entryId)
         {
-            var notifications = GetAll<UserNotification>(m => m.UserID == userId && m.EntryId == entryId);
-            foreach (var userNotification in notifications)
+            var notifications = _db.Set<UserNotification>().Where(m => m.UserID == userId && m.EntryId == entryId);
+            foreach (var notify in notifications)
             {
-                userNotification.Seen = true;
-                Update(userNotification);
+                if (notify.Seen) continue;
+                notify.Seen = true;
+                var user = _db.Set<User>().FirstOrDefault(m => m.ID == notify.UserID);
+                if (user != null && user.NotifyNumber > 0)
+                {
+                    user.NotifyNumber--;
+                    Update(user);
+                }
+                Update(notify);
             }
             return notifications.Count();
         }

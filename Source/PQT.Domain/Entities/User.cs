@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using PQT.Domain.Helpers;
 using NS.Entity;
 using PQT.Domain.Enum;
@@ -67,5 +68,17 @@ namespace PQT.Domain.Entities
             }
         }
         #endregion
+
+        public string RolesHtml
+        {
+            get
+            {
+                if (Roles != null)
+                {
+                    return string.Join("<br/>", Roles.Select(m => m.Name).OrderBy(m => m).ToArray());
+                }
+                return "";
+            }
+        }
     }
 }

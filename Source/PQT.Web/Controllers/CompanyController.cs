@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Web;
 using System.Web.Mvc;
 using PQT.Domain.Abstract;
@@ -26,25 +27,22 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Company management")]
         public ActionResult Index()
         {
-            var models = _comRepo.GetAllCompanies();
-            return View(models);
+            //var models = _comRepo.GetAllCompanies();
+            return View(new List<Company>());
         }
 
         [DisplayName(@"Create Or Edit")]
         public ActionResult CreateOrEdit(int id = 0)
         {
-            var model = new Company();
-            if (id > 0)
-            {
-                model = _comRepo.GetCompany(id);
-            }
+            var model = new CompanyModel();
+            model.Prepare(id);
             return PartialView(model);
         }
         [HttpPost]
         [DisplayName(@"Create Or Edit")]
-        public ActionResult CreateOrEdit(Company model)
+        public ActionResult CreateOrEdit(CompanyModel model)
         {
-            if (model.CountryID == 0)
+            if (model.Company.CountryID == 0)
             {
                 return Json(new
                 {
@@ -54,11 +52,11 @@ namespace PQT.Web.Controllers
             }
             if (ModelState.IsValid)
             {
-                if (model.ID == 0)
+                if (model.Company.ID == 0)
                 {
-                    if (_comRepo.CreateCompany(model) != null)
+                    if (_comRepo.CreateCompany(model.Company, model.UsersSelected) != null)
                     {
-                        model.Country = _unitRepo.GetCountry((int)model.CountryID);
+                        model.Company.Country = _unitRepo.GetCountry((int)model.Company.CountryID);
                         return Json(new
                         {
                             Code = 1,
@@ -70,9 +68,9 @@ namespace PQT.Web.Controllers
                         Code = 2
                     });
                 }
-                if (_comRepo.UpdateCompany(model))
+                if (_comRepo.UpdateCompany(model.Company, model.UsersSelected))
                 {
-                    model.Country = _unitRepo.GetCountry((int)model.CountryID);
+                    model.Company.Country = _unitRepo.GetCountry((int)model.Company.CountryID);
                     return Json(new
                     {
                         Code = 3,
@@ -176,83 +174,36 @@ namespace PQT.Web.Controllers
 
 
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
-            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int page = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
 
-            IEnumerable<Company> audits = new HashSet<Company>();
+            IEnumerable<Company> companies = new HashSet<Company>();
+
             if (!string.IsNullOrEmpty(searchValue))
             {
-                if (!string.IsNullOrEmpty(searchValue))
-                    audits = _comRepo.GetAllCompanies(m =>
-                        m.CountryName.ToLower().Contains(searchValue) ||
-                        m.CompanyName.ToLower().Contains(searchValue) ||
-                        m.ProductOrService.ToLower().Contains(searchValue) ||
-                        m.Sector.ToLower().Contains(searchValue) ||
-                        m.Industry.ToLower().Contains(searchValue)
-                       );
+
+                Func<Company, bool> predicate = m =>
+                    (m.Country != null && m.Country.Name.ToLower().Contains(searchValue)) ||
+                    (m.CompanyName != null && m.CompanyName.ToLower().Contains(searchValue)) ||
+                    (m.ProductOrService != null && m.ProductOrService.ToLower().Contains(searchValue)) ||
+                    (m.Sector != null && m.Sector.ToLower().Contains(searchValue)) ||
+                    (m.Industry != null && m.Industry.ToLower().Contains(searchValue));
+                companies = _comRepo.GetAllCompanies(predicate, sortColumnDir, sortColumn,
+                    page, pageSize);
+                recordsTotal = _comRepo.GetCountCompanies(predicate);
             }
             else
             {
-                audits = _comRepo.GetAllCompanies();
+                companies = _comRepo.GetAllCompanies(sortColumnDir, sortColumn, page, pageSize);
+                recordsTotal = _comRepo.GetCountCompanies(null);
             }
-
-            if (sortColumnDir == "asc")
-            {
-                switch (sortColumn)
-                {
-                    case "CountryName":
-                        audits = audits.OrderBy(s => s.CountryName).ThenBy(s => s.CompanyName);
-                        break;
-                    case "ProductOrService":
-                        audits = audits.OrderBy(s => s.ProductOrService).ThenBy(s => s.CompanyName);
-                        break;
-                    case "Sector":
-                        audits = audits.OrderBy(s => s.Sector).ThenBy(s => s.CompanyName);
-                        break;
-                    case "Industry":
-                        audits = audits.OrderBy(s => s.Industry).ThenBy(s => s.CompanyName);
-                        break;
-                    default:
-                        audits = audits.OrderBy(s => s.CompanyName);
-                        break;
-                }
-            }
-            else
-            {
-                switch (sortColumn)
-                {
-                    case "CountryName":
-                        audits = audits.OrderByDescending(s => s.CountryName).ThenBy(s => s.CompanyName);
-                        break;
-                    case "ProductOrService":
-                        audits = audits.OrderByDescending(s => s.ProductOrService).ThenBy(s => s.CompanyName);
-                        break;
-                    case "Sector":
-                        audits = audits.OrderByDescending(s => s.Sector).ThenBy(s => s.CompanyName);
-                        break;
-                    case "Industry":
-                        audits = audits.OrderByDescending(s => s.Industry).ThenBy(s => s.CompanyName);
-                        break;
-                    default:
-                        audits = audits.OrderByDescending(s => s.CompanyName);
-                        break;
-                }
-            }
-
-
-            recordsTotal = audits.Count();
-            if (pageSize > recordsTotal)
-            {
-                pageSize = recordsTotal;
-            }
-            var data = audits.Skip(skip).Take(pageSize).ToList();
 
             var json = new
             {
                 draw = draw,
                 recordsFiltered = recordsTotal,
                 recordsTotal = recordsTotal,
-                data = data.Select(m => new
+                data = companies.Select(m => new
                 {
                     m.ID,
                     m.CountryName,
@@ -260,6 +211,7 @@ namespace PQT.Web.Controllers
                     m.ProductOrService,
                     m.Sector,
                     m.Industry,
+                    m.Tier,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

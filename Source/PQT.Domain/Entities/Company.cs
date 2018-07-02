@@ -8,6 +8,10 @@ namespace PQT.Domain.Entities
 {
     public class Company : Entity
     {
+        public Company()
+        {
+            ManagerUsers = new HashSet<User>();
+        }
         public int? CountryID { get; set; }
         [ForeignKey("CountryID")]
         public virtual Country Country { get; set; }
@@ -20,12 +24,15 @@ namespace PQT.Domain.Entities
         public string Designation { get; set; }
         public string Email { get; set; }
         public string PersonalContact { get; set; }
+        public decimal BudgetPerHead { get; set; }
+        public int FinancialYear { get; set; }
+        public int Tier { get; set; }//tier: 1-red 2-blue -3-black
 
         public string CountryName
         {
             get
             {
-                if (Country!=null)
+                if (Country != null)
                 {
                     return Country.Name;
                 }
@@ -37,7 +44,7 @@ namespace PQT.Domain.Entities
         {
             get
             {
-                if (Country!=null)
+                if (Country != null)
                 {
                     return Country.Code;
                 }
@@ -49,5 +56,6 @@ namespace PQT.Domain.Entities
         public string Address { get; set; }
         public string Tel { get; set; }
         public string Fax { get; set; }
+        public virtual ICollection<User> ManagerUsers { get; set; }
     }
 }

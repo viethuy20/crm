@@ -100,9 +100,37 @@ namespace PQT.Web.Controllers
             return Json(false);
         }
 
-
+        [DisplayName(@"Assign Company")]
+        public ActionResult AssignCompany(int id)
+        {
+            var model = new EventModel();
+            model.PrepareAssign(id);
+            if (model.Event == null)
+            {
+                TempData["error"] = "Data not found";
+                return RedirectToAction("Index");
+            }
+            return View(model);
+        }
+        [DisplayName(@"Assign Company")]
+        [HttpPost]
+        public ActionResult AssignCompany(EventModel model)
+        {
+            if (model.AssignCompany())
+            {
+                TempData["message"] = "Assign successful";
+                return RedirectToAction("AssignCompany", new { id = model.ID });
+            }
+            model.PrepareAssign(model.ID);
+            if (model.Event == null)
+            {
+                TempData["error"] = "Data not found";
+                return RedirectToAction("Index");
+            }
+            return View(model);
+        }
         [AjaxOnly]
-        public ActionResult AjaxGetCompanies()
+        public ActionResult AjaxGetAssignCompanies(int type = 0)
         {
             // ReSharper disable once AssignNullToNotNullAttribute
             var draw = Request.Form.GetValues("draw").FirstOrDefault();
@@ -150,88 +178,44 @@ namespace PQT.Web.Controllers
                 industry = Request.Form.GetValues("Industry").FirstOrDefault().Trim().ToLower();
             }
 
+            var saleIds = new List<int>();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("SaleIds") != null && !string.IsNullOrEmpty(Request.Form.GetValues("SaleIds").FirstOrDefault()))
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                saleIds = Request.Form.GetValues("SaleIds").FirstOrDefault().ToString()
+                    .Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => Convert.ToInt32(m)).ToList();
+            }
+
 
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
-            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int page = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
 
             IEnumerable<Company> companies = new HashSet<Company>();
-            companies = _comRepo.GetAllCompanies(m =>
-                (string.IsNullOrEmpty(companyName) || (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
-                (string.IsNullOrEmpty(productService) || (!string.IsNullOrEmpty(m.ProductOrService) && m.ProductOrService.ToLower().Contains(productService))) &&
-                (string.IsNullOrEmpty(countryName) || (!string.IsNullOrEmpty(m.CountryCode) && m.CountryCode.ToLower().Contains(countryName)) || 
-                (!string.IsNullOrEmpty(m.CountryName) && m.CountryName.ToLower().Contains(countryName))) &&
-                (string.IsNullOrEmpty(sector) || (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
-                (string.IsNullOrEmpty(industry) || (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry)))
-               );
-
-
-
-            if (sortColumnDir == "asc")
-            {
-                switch (sortColumn)
-                {
-                    case "Country":
-                        companies = companies.OrderBy(s => s.CountryName).ThenBy(s => s.CompanyName);
-                        break;
-                    case "ProductOrService":
-                        companies = companies.OrderBy(s => s.ProductOrService).ThenBy(s => s.CompanyName);
-                        break;
-                    case "Sector":
-                        companies = companies.OrderBy(s => s.Sector).ThenBy(s => s.CompanyName);
-                        break;
-                    case "Industry":
-                        companies = companies.OrderBy(s => s.Industry).ThenBy(s => s.CompanyName);
-                        break;
-                    default:
-                        companies = companies.OrderBy(s => s.CompanyName);
-                        break;
-                }
-            }
-            else
-            {
-                switch (sortColumn)
-                {
-                    case "Country":
-                        companies = companies.OrderByDescending(s => s.CountryName).ThenBy(s => s.CompanyName);
-                        break;
-                    case "ProductOrService":
-                        companies = companies.OrderByDescending(s => s.ProductOrService).ThenBy(s => s.CompanyName);
-                        break;
-                    case "Sector":
-                        companies = companies.OrderByDescending(s => s.Sector).ThenBy(s => s.CompanyName);
-                        break;
-                    case "Industry":
-                        companies = companies.OrderByDescending(s => s.Industry).ThenBy(s => s.CompanyName);
-                        break;
-                    default:
-                        companies = companies.OrderByDescending(s => s.CompanyName);
-                        break;
-                }
-            }
-
-
-            recordsTotal = companies.Count();
-            if (pageSize > recordsTotal)
-            {
-                pageSize = recordsTotal;
-            }
-            IEnumerable<Company> data;
-            if (pageSize < 1)
-            {
-                data = companies.Skip(skip).ToList();
-            }
-            else
-            {
-                data = companies.Skip(skip).Take(pageSize).ToList();
-            }
+            Func<Company, bool> predicate = m =>
+                (m.Tier == type) &&
+                (type != 1 || m.ManagerUsers.Any(s => saleIds.Contains(s.ID))) &&
+                (string.IsNullOrEmpty(companyName) ||
+                 (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
+                (string.IsNullOrEmpty(productService) || (!string.IsNullOrEmpty(m.ProductOrService) &&
+                                                          m.ProductOrService.ToLower().Contains(productService))) &&
+                (string.IsNullOrEmpty(countryName) ||
+                 (m.Country != null && m.Country.Code.ToLower().Contains(countryName)) ||
+                 (m.Country != null && m.Country.Name.ToLower().Contains(countryName))) &&
+                (string.IsNullOrEmpty(sector) ||
+                 (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
+                (string.IsNullOrEmpty(industry) ||
+                 (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry)));
+            companies = _comRepo.GetAllCompanies(predicate, sortColumnDir, sortColumn,
+                page, pageSize);
 
             var json = new
             {
                 draw = draw,
                 recordsFiltered = recordsTotal,
                 recordsTotal = recordsTotal,
-                data = data.Select(m => new
+                data = companies.Select(m => new
                 {
                     m.ID,
                     Country = m.CountryName,
@@ -239,6 +223,7 @@ namespace PQT.Web.Controllers
                     m.ProductOrService,
                     m.Sector,
                     m.Industry,
+                    m.Tier,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);
@@ -249,7 +234,7 @@ namespace PQT.Web.Controllers
         {
             var ev = _repo.GetEvent(id);
             var leads = _leadService.GetAllLeads(m => m.EventID == id);
-            var companyResources = _comRepo.GetAllCompanyResources(m => m.CompanyID != null && ev.Companies.Select(n => n.ID).Contains(Convert.ToInt32(m.CompanyID))).ToList();
+            var companyResources = _comRepo.GetAllCompanyResources(m => m.CompanyID != null && ev.EventCompanies.Select(n => n.CompanyID).Contains(Convert.ToInt32(m.CompanyID))).ToList();
             var count = 0;
             var totalCount = leads.Count();
             var userId = CurrentUser.Identity.ID;
@@ -316,5 +301,300 @@ namespace PQT.Web.Controllers
                 (m.EventCode != null && m.EventCode.ToLower().Contains(q.ToLower())));
             return Json(bookings.Select(m => new { id = m.ID, text = m.EventCode + " - " + m.EventName }), JsonRequestBehavior.AllowGet);
         }
+
+
+
+
+        [AjaxOnly]
+        public ActionResult AjaxGetEventAlls()
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+            var searchValue = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
+            }
+
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+
+            IEnumerable<Event> events = new HashSet<Event>();
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                if (!string.IsNullOrEmpty(searchValue))
+                    events = _repo.GetAllEvents(m =>
+                        m.EventCode.ToLower().Contains(searchValue) ||
+                        m.EventName.ToLower().Contains(searchValue) ||
+                        m.StartDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
+                        m.EndDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
+                        m.DateOfConfirmation.ToString("dd/MM/yyyy").Contains(searchValue) ||
+                        m.ClosingDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
+                        (m.Sectors != null && m.Sectors.ToLower().Contains(searchValue))
+                       );
+            }
+            else
+            {
+                events = _repo.GetAllEvents();
+            }
+
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "EventCode":
+                        events = events.OrderBy(s => s.EventCode).ThenBy(s => s.ID);
+                        break;
+                    case "EventName":
+                        events = events.OrderBy(s => s.EventName).ThenBy(s => s.ID);
+                        break;
+                    case "StartDate":
+                        events = events.OrderBy(s => s.StartDate).ThenBy(s => s.ID);
+                        break;
+                    case "EndDate":
+                        events = events.OrderBy(s => s.EndDate).ThenBy(s => s.ID);
+                        break;
+                    case "DateOfConfirmation":
+                        events = events.OrderBy(s => s.DateOfConfirmation).ThenBy(s => s.ID);
+                        break;
+                    case "ClosingDate":
+                        events = events.OrderBy(s => s.ClosingDate).ThenBy(s => s.ID);
+                        break;
+                    case "Sectors":
+                        events = events.OrderBy(s => s.Sectors).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        events = events.OrderBy(s => s.ID);
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "EventCode":
+                        events = events.OrderByDescending(s => s.EventCode).ThenBy(s => s.ID);
+                        break;
+                    case "EventName":
+                        events = events.OrderByDescending(s => s.EventName).ThenBy(s => s.ID);
+                        break;
+                    case "StartDate":
+                        events = events.OrderByDescending(s => s.StartDate).ThenBy(s => s.ID);
+                        break;
+                    case "EndDate":
+                        events = events.OrderByDescending(s => s.EndDate).ThenBy(s => s.ID);
+                        break;
+                    case "DateOfConfirmation":
+                        events = events.OrderByDescending(s => s.DateOfConfirmation).ThenBy(s => s.ID);
+                        break;
+                    case "ClosingDate":
+                        events = events.OrderByDescending(s => s.ClosingDate).ThenBy(s => s.ID);
+                        break;
+                    case "Sectors":
+                        events = events.OrderByDescending(s => s.Sectors).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        events = events.OrderByDescending(s => s.ID);
+                        break;
+                }
+            }
+
+
+            recordsTotal = events.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            var data = events.Skip(skip).Take(pageSize).ToList();
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    m.ID,
+                    m.EventCode,
+                    m.EventName,
+                    m.BackgroundColor,
+                    StartDate = m.StartDate.ToString("dd/MM/yyyy"),
+                    EndDate = m.EndDate.ToString("dd/MM/yyyy"),
+                    DateOfConfirmation = m.DateOfConfirmation.ToString("dd/MM/yyyy"),
+                    ClosingDate = m.ClosingDate.ToString("dd/MM/yyyy"),
+                    m.Sectors
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [AjaxOnly]
+        public ActionResult AjaxGetEventCompanies(int eventId)
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+            var companyName = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("CompanyName") != null && Request.Form.GetValues("CompanyName").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                companyName = Request.Form.GetValues("CompanyName").FirstOrDefault().Trim().ToLower();
+            }
+            var countryName = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("CountryName") != null && Request.Form.GetValues("CountryName").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                countryName = Request.Form.GetValues("CountryName").FirstOrDefault().Trim().ToLower();
+            }
+            var productService = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("ProductService") != null && Request.Form.GetValues("ProductService").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                productService = Request.Form.GetValues("ProductService").FirstOrDefault().Trim().ToLower();
+            }
+            var sector = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Sector") != null && Request.Form.GetValues("Sector").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                sector = Request.Form.GetValues("Sector").FirstOrDefault().Trim().ToLower();
+            }
+            var industry = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Industry") != null && Request.Form.GetValues("Industry").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                industry = Request.Form.GetValues("Industry").FirstOrDefault().Trim().ToLower();
+            }
+
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+
+            IEnumerable<Company> companies = new HashSet<Company>();
+            var eventData = _repo.GetEvent(eventId);
+            if (eventData != null)
+            {
+                companies = eventData.EventCompanies.Select(m => m.Company).Where(m =>
+                      (string.IsNullOrEmpty(companyName) || (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
+                      (string.IsNullOrEmpty(productService) || (!string.IsNullOrEmpty(m.ProductOrService) && m.ProductOrService.ToLower().Contains(productService))) &&
+                      (string.IsNullOrEmpty(countryName) || (!string.IsNullOrEmpty(m.CountryCode) && m.CountryCode.ToLower().Contains(countryName)) ||
+                      (!string.IsNullOrEmpty(m.CountryName) && m.CountryName.ToLower().Contains(countryName))) &&
+                      (string.IsNullOrEmpty(sector) || (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
+                      (string.IsNullOrEmpty(industry) || (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry)))
+                   );
+            }
+
+
+
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "Country":
+                        companies = companies.OrderBy(s => s.CountryName).ThenBy(s => s.Tier);
+                        break;
+                    case "ProductOrService":
+                        companies = companies.OrderBy(s => s.ProductOrService).ThenBy(s => s.Tier);
+                        break;
+                    case "Sector":
+                        companies = companies.OrderBy(s => s.Sector).ThenBy(s => s.Tier);
+                        break;
+                    case "Industry":
+                        companies = companies.OrderBy(s => s.Industry).ThenBy(s => s.Tier);
+                        break;
+                    case "CompanyName":
+                        companies = companies.OrderBy(s => s.CompanyName).ThenBy(s => s.Tier);
+                        break;
+                    default:
+                        companies = companies.OrderBy(s => s.Tier);
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "Country":
+                        companies = companies.OrderByDescending(s => s.CountryName).ThenBy(s => s.Tier);
+                        break;
+                    case "ProductOrService":
+                        companies = companies.OrderByDescending(s => s.ProductOrService).ThenBy(s => s.Tier);
+                        break;
+                    case "Sector":
+                        companies = companies.OrderByDescending(s => s.Sector).ThenBy(s => s.Tier);
+                        break;
+                    case "Industry":
+                        companies = companies.OrderByDescending(s => s.Industry).ThenBy(s => s.Tier);
+                        break;
+                    case "CompanyName":
+                        companies = companies.OrderByDescending(s => s.CompanyName).ThenBy(s => s.Tier);
+                        break;
+                    default:
+                        companies = companies.OrderByDescending(s => s.Tier);
+                        break;
+                }
+            }
+
+
+            recordsTotal = companies.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            IEnumerable<Company> data;
+            if (pageSize < 1)
+            {
+                data = companies.Skip(skip).ToList();
+            }
+            else
+            {
+                data = companies.Skip(skip).Take(pageSize).ToList();
+            }
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    m.ID,
+                    Country = m.CountryName,
+                    m.CompanyName,
+                    m.ProductOrService,
+                    m.Sector,
+                    m.Tier,
+                    m.Industry,
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
+
     }
 }

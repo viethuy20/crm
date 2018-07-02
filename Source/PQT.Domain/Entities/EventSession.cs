@@ -21,7 +21,7 @@ namespace PQT.Domain.Entities
         public DateTime EndDate { get; set; }
         public int? EventID { get; set; }
         [ForeignKey("EventID")]
-        public virtual Event Event { get; set; }
+        public Event Event { get; set; }
 
         public int? TrainerID { get; set; }
         [ForeignKey("TrainerID")]

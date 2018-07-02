@@ -244,7 +244,7 @@ namespace PQT.Web.Models
                     (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked ||
                      m.LeadStatusRecord.UpdatedTime.Date >=
                      DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))).Select(m => m.CompanyID).Distinct();// get list company blocked
-                Companies = eventLead.Companies.Where(m => !companyIds.Contains(m.ID));
+                Companies = eventLead.EventCompanies.Where(m => !companyIds.Contains(m.CompanyID)).Select(m => m.Company);
             }
             else
             {
@@ -391,7 +391,7 @@ namespace PQT.Web.Models
                     (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked ||
                      m.LeadStatusRecord.UpdatedTime.Date >=
                      DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))).Select(m => m.CompanyID).Distinct();// get list company blocked
-                Companies = eventLead.Companies.Where(m => !companiesInNcl.Contains(m.ID));
+                Companies = eventLead.EventCompanies.Where(m => !companiesInNcl.Contains(m.CompanyID)).Select(m => m.Company);
             }
             else
             {
