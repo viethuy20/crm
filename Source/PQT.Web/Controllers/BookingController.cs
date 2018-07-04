@@ -114,7 +114,7 @@ namespace PQT.Web.Controllers
                     var notiUsers = _membershipService.GetUsersInRole(new string[] { "Manager", "Finance" });
                     var titleNotify = "Request for booking";
                     BookingNotificator.NotifyUser(notiUsers, model.Booking.ID, titleNotify, true);
-
+                    BookingNotificator.NotifyUpdateBooking(model.Booking.ID);
                     TempData["message"] = Resource.SaveSuccessful;
                     return RedirectToAction("Index", "Lead", new { id = model.Booking.EventID });
                 }
@@ -166,6 +166,7 @@ namespace PQT.Web.Controllers
                             var notiUsers = _membershipService.GetUsersInRole(new string[] { "Manager", "Finance" });
                             var titleNotify = "Request for booking";
                             BookingNotificator.NotifyUser(notiUsers, model.Booking.ID, titleNotify, true);
+                            BookingNotificator.NotifyUpdateBooking(model.Booking.ID);
                             return RedirectToAction("Index", "Lead", new { id = model.Booking.EventID });
                         }
                         //no need nofify when manager edit and redirect to booking management
@@ -192,7 +193,14 @@ namespace PQT.Web.Controllers
                 if (model.Approve(id))
                 {
                     TempData["message"] = Resource.SaveSuccessful;
-                    return RedirectToAction("Index", new { id = model.Booking?.EventID ?? 0 });
+                    if (CurrentUser.HasRole("Finance"))
+                    {
+                        return RedirectToAction("Index", new { id = model.Booking?.EventID ?? 0 });
+                    }
+                    else
+                    {
+                        return RedirectToAction("NCLForManager", "Lead", new { id = model.Booking?.EventID ?? 0 });
+                    }
                 }
                 TempData["error"] = Resource.SaveError;
             }
@@ -225,7 +233,14 @@ namespace PQT.Web.Controllers
                 if (model.Reject())
                 {
                     TempData["message"] = "The booking was declined.";
-                    return RedirectToAction("Index", new { id = model.Booking?.EventID ?? 0 });
+                    if (CurrentUser.HasRole("Finance"))
+                    {
+                        return RedirectToAction("Index", new { id = model.Booking?.EventID ?? 0 });
+                    }
+                    else
+                    {
+                        return RedirectToAction("NCLForManager", "Lead", new { id = model.Booking?.EventID ?? 0 });
+                    }
                 }
                 TempData["error"] = Resource.SaveError;
             }
@@ -270,7 +285,7 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
-            var saleId = PermissionHelper.SalesmanId();
+            //var saleId = PermissionHelper.SalesmanId();
             IEnumerable<Booking> bookings = new HashSet<Booking>();
             if (!string.IsNullOrEmpty(searchValue))
             {

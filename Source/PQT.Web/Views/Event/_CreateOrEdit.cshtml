@@ -38,6 +38,20 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
+                    @Html.DatePickerFor(m => m.Event.DateOfConfirmation, new { @class = "form-control", required = "required" })
+                    @Html.ValidationMessageFor(m => m.Event.DateOfConfirmation)
+                    @Html.Bootstrap().LabelFor(m => m.Event.DateOfConfirmation).ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.DatePickerFor(m => m.Event.ClosingDate, new { @class = "form-control", required = "required" })
+                    @Html.ValidationMessageFor(m => m.Event.ClosingDate)
+                    @Html.Bootstrap().LabelFor(m => m.Event.ClosingDate).ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
                     <select multiple class="form-control" name="@Html.NameFor(m=>m.GroupsSelected)">
                         @foreach (var com in Model.SalesGroups.OrderBy(m => m.GroupName))
                         {

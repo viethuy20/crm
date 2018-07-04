@@ -57,7 +57,8 @@ namespace PQT.Domain.Entities
         public virtual ICollection<Delegate> Delegates { get; set; }
         public virtual ICollection<EventSession> EventSessions { get; set; }
 
-
+        [NotMapped]
+        public bool ReloadTableLead { get; set; }
         public string CompanyName
         {
             get
@@ -135,5 +136,31 @@ namespace PQT.Domain.Entities
             }
         }
 
+        public int StatusCode
+        {
+            get
+            {
+                if (BookingStatusRecord != null)
+                {
+                    return Convert.ToInt32(BookingStatusRecord.Status.Value);
+                }
+                return 0;
+            }
+        }
+        public object Serializing()
+        {
+            return new
+            {
+                EventID,
+                EventColor,
+                StatusCode,
+                Salesman,
+                DateCreatedDisplay = StatusUpdateTimeStr,
+                StatusDisplay,
+                CompanyName,
+                ReloadTableLead,
+                ID
+            };
+        }
     }
 }

@@ -242,8 +242,8 @@
          var sizeLenght = 50;
 
 
-         var oTable = $("#tableLead");
-         oTable.dataTable({
+         var tableLead = $("#tableLead");
+         tableLead.dataTable({
              "processing": true, // for show progress bar
              "serverSide": true, // for process server side
              "filter": true, // this is for disable filter (search box)
@@ -317,7 +317,7 @@
          function FixedTable() {
              if (fixedColumn < 3) {
                  fixedColumn ++;
-                 var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
+                 var fixColumn = new $.fn.dataTable.FixedColumns(tableLead, {
                      leftColumns: 5,
                      sHeightMatch: "auto",
                      rightColumns: 3
@@ -352,7 +352,7 @@
                          success: function (data) {
                              if (data == "") {
                                  toastr.success("Delete successful");
-                                 oTable.fnDeleteRow($sefl.closest('tr')[0]);
+                                 tableLead.fnDeleteRow($sefl.closest('tr')[0]);
                              } else {
                                  toastr.error(data);
                              }
@@ -377,7 +377,7 @@
                              if (data == "") {
                                  toastr.success("Request successful");
                                  fixedColumn = 0;
-                                 oTable.fnFilter('');
+                                 tableLead.fnFilter('');
                                  $.magnificPopup.close();
                              } else {
                                  toastr.error(data);
@@ -403,7 +403,7 @@
                              if (data == "") {
                                  toastr.success("Cancel successful");
                                  fixedColumn = 0;
-                                 oTable.fnFilter('');
+                                 tableLead.fnFilter('');
                                  $.magnificPopup.close();
                              } else {
                                  toastr.error(data);
@@ -429,7 +429,7 @@
                              if (data == "") {
                                  toastr.success("Blocked successful");
                                  fixedColumn = 0;
-                                 oTable.fnFilter('');
+                                 tableLead.fnFilter('');
                                  $.magnificPopup.close();
                                  LoadTotalNCLSummary();
                              } else {
@@ -456,7 +456,7 @@
                              if (data == "") {
                                  toastr.success("Unblock successful");
                                  fixedColumn = 0;
-                                 oTable.fnFilter('');
+                                 tableLead.fnFilter('');
                                  $.magnificPopup.close();
                                  LoadTotalNCLSummary();
                              } else {
@@ -525,10 +525,10 @@
 
          ////Select username event
          //$('#userfilter').change(function () {
-         //    oTable.fnDraw();
+         //    tableLead.fnDraw();
          //});
          //$('#btnSearch').click(function () {
-         //    oTable.fnDraw();
+         //    tableLead.fnDraw();
          //});
          $('.expand_new_ncl').click(function () {
              $('.expand_new_ncl').removeClass('ncl_new');
@@ -541,7 +541,7 @@
          //            $(this).parents(".card").parent().removeClass("col-md-8");
          //            $(this).find('i').addClass("fa-compress");
          //            $(this).find('i').removeClass("fa-expand");
-         //            oTable.css("width", "100%");
+         //            tableLead.css("width", "100%");
          //            fixedColumn = 0;
          //            FixedTable();
          //        } else {
@@ -631,7 +631,7 @@
                      toastr.success('@Resource.UpdateSuccessful');
                      $.magnificPopup.close();
                      fixedColumn = 0;
-                     oTable.fnFilter('');
+                     tableLead.fnFilter('');
                  }
                  if (data) {
                      $(".leadcontent").html(data);
@@ -690,24 +690,24 @@
                                          if (data == "") {
                                              toastr.success("Request successful");
                                              fixedColumn = 0;
-                                             oTable.fnFilter('');
+                                             tableLead.fnFilter('');
                                          } else {
                                              toastr.error(data);
                                              fixedColumn = 0;
-                                             oTable.fnFilter('');
+                                             tableLead.fnFilter('');
                                          }
                                      },
                                      error: function () {
                                          toastr.error("Request failed");
                                          fixedColumn = 0;
-                                         oTable.fnFilter('');
+                                         tableLead.fnFilter('');
                                      }
                                  });
                              }
                          });
                      } else {
                          fixedColumn = 0;
-                         oTable.fnFilter('');
+                         tableLead.fnFilter('');
                      }
                  }
                  //if (data) {
@@ -766,7 +766,7 @@
                      if (data == "") {
                          toastr.success("Submit successful");
                          $.magnificPopup.close();
-                         oTable.fnFilter('');
+                         tableLead.fnFilter('');
                      } else {
                          toastr.error(data);
                      }
@@ -789,7 +789,7 @@
                  toastr.success("Reject successful");
                  $.magnificPopup.close();
                  fixedColumn = 0;
-                 oTable.fnFilter('');
+                 tableLead.fnFilter('');
              } else {
                  toastr.error(data);
              }
@@ -814,7 +814,7 @@
                      toastr.success('@Resource.UpdateSuccessful');
                      $.magnificPopup.close();
                      fixedColumn = 0;
-                     oTable.fnFilter('');
+                     tableLead.fnFilter('');
                  }
              }
          }

@@ -41,7 +41,7 @@ namespace PQT.Web.Controllers
         [DisplayName("List deleted user")]
         public ActionResult ListDeletedUsers()
         {
-            IEnumerable<User> users = _membershipService.GetUsers(m => m.Status == EntityStatus.Deleted);
+            IEnumerable<User> users = _membershipService.GetUsersDeleted();
             ViewBag.roles = _roleService.GetAllRoles();
             return View(users);
         }

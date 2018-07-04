@@ -26,16 +26,17 @@ namespace PQT.Web.Models
             GroupsSelected = new List<int>();
             UsersSelected = new List<int>();
             CompaniesSelected = new List<int>();
-            Event = new Event
-            {
-                UserID = CurrentUser.Identity.ID
-            };
+            Event = new Event();
         }
         public void Prepare()
         {
             var saleRepo = DependencyHelper.GetService<ISalesGroupService>();
             Users = saleRepo.GetAllSalesmans();
             SalesGroups = saleRepo.GetAllSalesGroups();
+            Event = new Event
+            {
+                UserID = CurrentUser.Identity.ID
+            };
         }
         public void PrepareEdit(int id)
         {
@@ -65,7 +66,8 @@ namespace PQT.Web.Models
         public bool Create()
         {
             var repo = DependencyHelper.GetService<IEventService>();
-            if (repo.CreateEvent(Event, GroupsSelected, UsersSelected) != null)
+            Event = repo.CreateEvent(Event, GroupsSelected, UsersSelected);
+            if (Event != null)
             {
                 return true;
             }

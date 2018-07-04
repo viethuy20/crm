@@ -165,11 +165,57 @@
     }
 </style>
 <section>
+    <div class="row text-center" style="margin-bottom: -30px;">
+        <div style="margin: 0 auto;float: none;display: inline-flex">
+            <div style="width: 150px;margin: 15px;">
+                <div class="card">
+                    <div class="card-body no-padding">
+                        <div class="alert alert-callout alert-info no-margin">
+                            <strong class="text-xl" id="total_loi">0</strong><br />
+                            <span class="opacity-50">TOTAL LOI</span>
+                        </div>
+                    </div><!--end .card-body -->
+                </div><!--end .card -->
+            </div>
+            <div style="width: 150px;margin: 15px;">
+                <div class="card">
+                    <div class="card-body no-padding">
+                        <div class="alert alert-callout alert-danger no-margin">
+                            <strong class="text-xl" id="total_blocked">0</strong><br />
+                            <span class="opacity-50">TOTAL BLOCK</span>
+                        </div>
+                    </div><!--end .card-body -->
+                </div><!--end .card -->
+            </div>
+            <div style="width: 150px;margin: 15px;">
+                <div class="card">
+                    <div class="card-body no-padding">
+                        <div class="alert alert-callout alert-success no-margin">
+                            <strong class="text-xl" id="total_booked">0</strong><br />
+                            <span class="opacity-50">TOTAL BOOKED</span>
+                        </div>
+                    </div><!--end .card-body -->
+                </div><!--end .card -->
+            </div>
+            <div style="width: 150px;margin: 15px;">
+                <div class="card">
+                    <div class="card-body no-padding">
+                        <div class="alert alert-callout alert-success no-margin">
+                            <strong class="text-xl" id="total_kpi">0</strong><br />
+                            <span class="opacity-50">TOTAL KPIs</span>
+                        </div>
+                    </div><!--end .card-body -->
+                </div><!--end .card -->
+            </div>
+        </div><!--end .col -->
+    </div>
+
     <div class="row">
         <div class="col-md-12" style="padding-bottom: 12px;">
             @Html.Bootstrap().ActionLinkButton("Back to Dashboard", "Index", "Home").PrependIcon("md md-arrow-back")
         </div>
     </div>
+
     <div class="row">
         <input type="hidden" value="@Model.Event.ID" id="eventIdNCList"/>
         <div class="col-md-12">
@@ -224,8 +270,8 @@
          var sizeLenght = 100;
 
 
-         var oTable = $("#tableLead");
-         oTable.dataTable({
+         var tableLead = $("#tableLead");
+         tableLead.dataTable({
              "processing": true, // for show progress bar
              "serverSide": true, // for process server side
              "filter": true, // this is for disable filter (search box)
@@ -309,7 +355,7 @@
          function FixedTable() {
              if (fixedColumn<4) {
                  fixedColumn ++;
-                 var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
+                 var fixColumn = new $.fn.dataTable.FixedColumns(tableLead, {
                      leftColumns: 5,
                      sHeightMatch: "auto",
                      rightColumns: 4
@@ -332,7 +378,7 @@
          });
 
 
-         oTable.on('click', '[data-action="Approval"]', function (e) {
+         tableLead.on('click', '[data-action="Approval"]', function (e) {
              e.preventDefault();
              var $sefl = $(this);
              bootbox.confirm("@Resource.ConfirmApprove", function (isOK) {
@@ -345,7 +391,7 @@
                              if (data == "") {
                                  toastr.success("Approved successful");
                                  fixedColumn = false;
-                                 oTable.fnFilter('');
+                                 tableLead.fnFilter('');
                              } else {
                                  toastr.error(data);
                              }
@@ -377,10 +423,30 @@
                  toastr.success("Reject successful");
                  $.magnificPopup.close();
                  fixedColumn = 0;
-                 oTable.fnFilter('');
+                 tableLead.fnFilter('');
              } else {
                  toastr.error(data);
              }
          }
      </script>)
 
+@Html.Script(
+    @<script>
+         function LoadTotalNCLSummary() {
+             $.ajax({
+                 global: false,
+                 url: '@Url.Action("AjaxGetTotalNCLForManager")?eventId=@Model.Event.ID',
+                 type: 'POST',
+                 success: function (data) {
+                     $("#total_loi").text(data.TotalLOI);
+                     $("#total_blocked").text(data.TotalBlocked);
+                     $("#total_booked").text(data.TotalBooked);
+                     $("#total_kpi").text(data.TotalKPI);
+                 },
+                 error: function () {
+                 }
+             });
+         }
+
+         LoadTotalNCLSummary();
+     </script>)

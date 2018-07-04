@@ -7,6 +7,8 @@ using PQT.Web.Models;
 using PQT.Web.Infrastructure;
 using PQT.Web.Models;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Infrastructure;
+using PQT.Web.Infrastructure.Utility;
 
 namespace PQT.Web.Hubs
 {
@@ -31,7 +33,6 @@ namespace PQT.Web.Hubs
             RemoveConnectionFromGroups();
             return base.OnDisconnected();
         }
-
         public override Task OnReconnected()
         {
             AddConnectionIntoGroups();
@@ -102,6 +103,10 @@ namespace PQT.Web.Hubs
         public static void Notify(Lead lead)
         {
             Notify(Json.Encode(lead.Serializing()), GetEntityName(lead));
+        }
+        public static void Notify(Booking booking)
+        {
+            Notify(Json.Encode(booking.Serializing()), GetEntityName(booking));
         }
         public static void NotifyUser(User user, UserNotification notify)
         {

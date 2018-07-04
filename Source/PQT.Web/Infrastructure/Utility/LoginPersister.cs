@@ -37,11 +37,10 @@ namespace PQT.Web.Infrastructure.Utility
             User user = LoginTracker.RetrieveUser(HttpContext.Current.Session.SessionID);
             //Log.Debug("Debug 2");
             // login if cookie exists
-            if (user == null && HttpContext.Current.User.Identity.IsAuthenticated)
+            if (user == null && HttpContext.Current.User.Identity != null && HttpContext.Current.User.Identity.IsAuthenticated)
             {
-               
                 LoginTracker.SignIn(HttpContext.Current.User.Identity.Name, HttpContext.Current.Session.SessionID);
-                    //Log.Debug("Login by email");
+                //Log.Debug("Login by email");
                 user = LoginTracker.RetrieveUser(HttpContext.Current.Session.SessionID);
                 //Log.Debug("Retrieve User");
             }

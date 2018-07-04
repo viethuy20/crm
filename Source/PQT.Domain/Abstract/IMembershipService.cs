@@ -18,15 +18,12 @@ namespace PQT.Domain.Abstract
         User GetUserByEmail(string email);
         User CreateUser(User userInfo);
         bool UpdateUser(User userInfo);
-        void UpdateUserPicture(int id, string fileName);
         bool DeleteUser(int id);
         IEnumerable<User> GetUsersInRole(params string[] roleName);
-        IEnumerable<User> GetUsersContainsInRole(params string[] roleName);
         EmailSetting GetEmailTemplate(string type, string nameTemplate);
 
         bool ReActiveUser(int id);
 
-        IEnumerable<User> GetAllUserByEmail(string email);
         IEnumerable<User> GetAllSalesmans();
 
         IEnumerable<UserNotification> GetAllUserNotifications(int userId, int pageSize = 10, int page = 1);

@@ -52,13 +52,15 @@ namespace PQT.Web.Controllers
                 model.Events = _eventService.GetAllEvents().Where(m =>
                     m.UserID == CurrentUser.Identity.ID || m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID))
                         .Contains(CurrentUser.Identity.ID));
-            foreach (var modelEvent in model.Events)
-            {
-                modelEvent.Notifications =
-                    _memRepository.GetAllUserNotificationsByEvent(CurrentUser.Identity.ID, modelEvent.ID,
-                        Settings.System.NotificationNumber());
-            }
             return View(model);
+        }
+
+        public ActionResult GetNotifyForEvent(int eventId, int page = 1)
+        {
+            var notifications =
+                _memRepository.GetAllUserNotificationsByEvent(CurrentUser.Identity.ID, eventId,
+                    Settings.System.NotificationNumber());
+            return Json(notifications, JsonRequestBehavior.AllowGet);
         }
 
 

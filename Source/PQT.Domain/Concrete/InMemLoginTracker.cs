@@ -32,7 +32,6 @@ namespace PQT.Domain.Concrete
         public User RetrieveUser(string hashKey)
         {
             InMemLoginRecord record = LoginRecords.FirstOrDefault(r => r.SessionID == hashKey);
-
             return record != null ? record.User : null;
         }
 

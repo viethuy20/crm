@@ -57,7 +57,7 @@ namespace PQT.Web.Controllers
                 if (model.Create())
                 {
                     TempData["message"] = "Created successful";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("AssignCompany", new { id = model.Event.ID });
                 }
             }
             model.Prepare();

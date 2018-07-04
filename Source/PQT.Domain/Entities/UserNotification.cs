@@ -19,6 +19,11 @@ namespace PQT.Domain.Entities
         public int EventId { get; set; }
         public bool Seen { get; set; }
         public NotifyType NotifyType { get; set; }
+
+        public string NotifyTypeCode
+        {
+            get { return NotifyType != null ? NotifyType.Value : ""; }
+        }
         public string EventCode { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

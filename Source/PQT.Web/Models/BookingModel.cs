@@ -155,7 +155,8 @@ namespace PQT.Web.Models
                 {
                     var titleNotify = "Request for booking has been approved";
                     BookingNotificator.NotifyUser(new List<User> { Booking.Lead.User }, Booking.ID, titleNotify, true);
-                    LeadNotificator.NotifyUpdateNCL(Booking.Lead);
+                    LeadNotificator.NotifyUpdateNCL(Booking.Lead.ID);
+                    BookingNotificator.NotifyUpdateBooking(Booking.ID, false);
                     return true;
                 }
                 return false;
@@ -188,6 +189,7 @@ namespace PQT.Web.Models
                 {
                     var titleNotify = "Request for booking has been rejected";
                     BookingNotificator.NotifyUser(new List<User> { Booking.Lead.User }, Booking.ID, titleNotify, true);
+                    BookingNotificator.NotifyUpdateBooking(Booking.ID);
                     return true;
                 }
                 return false;

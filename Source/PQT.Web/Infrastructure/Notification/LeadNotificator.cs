@@ -29,12 +29,18 @@ namespace PQT.Web.Infrastructure.Notification
             get { return DependencyResolver.Current.GetService<IMembershipService>(); }
         }
 
-        public static void NotifyUpdateNCL(Lead lead)
+        public static void NotifyUpdateNCL(int leadId)
         {
-            if (lead == null)
-                return;
-            NotificationHub.Notify(lead);
+            var thread = new Thread(() =>
+            {
+                var lead = LeadRepository.GetLead(leadId);
+                if (lead == null)
+                    return;
+                NotificationHub.Notify(lead);
+            });
+            thread.Start();
         }
+
 
         //public static void NotifyAll(Lead lead, bool email = false)
         //{
@@ -71,13 +77,14 @@ namespace PQT.Web.Infrastructure.Notification
         {
             get { return DependencyResolver.Current.GetService<IEventService>(); }
         }
-        public static void NotifyUser(IEnumerable<User> users, Lead lead, string title = null, bool email = false)
+        public static void NotifyUser(IEnumerable<User> users, int leadId, string title = null, bool email = false)
         {
-            if (lead == null)
-                return;
             var currentUserId = CurrentUser.Identity.ID;
             var thread = new Thread(() =>
             {
+                var lead = LeadRepository.GetLead(leadId);
+                if (lead == null)
+                    return;
                 if (lead.Event == null)
                 {
                     lead.Event = EventService.GetEvent(lead.EventID);
@@ -147,6 +154,19 @@ namespace PQT.Web.Infrastructure.Notification
             NotificationService.NotifyUser(users, booking);
         }
 
+        public static void NotifyUpdateBooking(int bookingId,bool reloadTableLead = true)
+        {
+            var thread = new Thread(() =>
+            {
+                var booking = BookingService.GetBooking(bookingId);
+                if (booking == null)
+                    return;
+                booking.ReloadTableLead = reloadTableLead;
+                NotificationHub.Notify(booking);
+
+            });
+            thread.Start();
+        }
         public static void NotifyUser(IEnumerable<User> users, int bookingId, string title = null, bool email = false)
         {
             var currentUserId = CurrentUser.Identity.ID;

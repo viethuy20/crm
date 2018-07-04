@@ -71,7 +71,7 @@ namespace PQT.Web.Models
             users.AddRange(lead.Event.SalesGroups.SelectMany(m => m.Users));
             //users.Add(lead.Event.User);//notify for manager
             //LeadNotificator.NotifyUser(users, lead);
-            LeadNotificator.NotifyUpdateNCL(lead);
+            LeadNotificator.NotifyUpdateNCL(lead.ID);
             return "";
 
         }
@@ -87,7 +87,7 @@ namespace PQT.Web.Models
             lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Initial, CurrentUser.Identity.ID,
                 "action unblock");
             if (!leadRepo.UpdateLead(lead)) return "Unblock failed";
-            LeadNotificator.NotifyUpdateNCL(lead);
+            LeadNotificator.NotifyUpdateNCL(lead.ID);
             return "";
         }
 
@@ -128,8 +128,8 @@ namespace PQT.Web.Models
             }
             lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, Enumeration.FromValue<LeadStatus>(requestType), CurrentUser.Identity.ID, fileName, "");
             if (!leadRepo.UpdateLead(lead)) return "Submit failed";
-            LeadNotificator.NotifyUser(new List<User> { lead.Event.User }, lead); // notify for manager
-            LeadNotificator.NotifyUpdateNCL(lead);
+            LeadNotificator.NotifyUser(new List<User> { lead.Event.User }, lead.ID); // notify for manager
+            LeadNotificator.NotifyUpdateNCL(lead.ID);
             return "";
         }
 
@@ -161,7 +161,8 @@ namespace PQT.Web.Models
             lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Initial, CurrentUser.Identity.ID);
             if (!leadRepo.UpdateLead(lead))
                 return "Cancel failed";
-            LeadNotificator.NotifyUser(new List<User> { lead.Event.User }, lead, titleNotify); // notify for manager
+            LeadNotificator.NotifyUser(new List<User> { lead.Event.User }, lead.ID, titleNotify); // notify for manager
+            LeadNotificator.NotifyUpdateNCL(lead.ID);
             return "";
         }
         public string ApprovalRequest()
@@ -199,8 +200,8 @@ namespace PQT.Web.Models
                 lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Booked, CurrentUser.Identity.ID);
             }
             if (!leadRepo.UpdateLead(lead)) return "Approval failed";
-            LeadNotificator.NotifyUser(new List<User> { lead.User }, lead, titleNotify); // notify for manager
-            LeadNotificator.NotifyUpdateNCL(lead);
+            LeadNotificator.NotifyUser(new List<User> { lead.User }, lead.ID, titleNotify); // notify for manager
+            LeadNotificator.NotifyUpdateNCL(lead.ID);
             return "";
         }
         public string RejectRequest()
@@ -217,7 +218,8 @@ namespace PQT.Web.Models
             var titleNotify = lead.LeadStatusRecord.Status.DisplayName + " rejected";
             lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Reject, CurrentUser.Identity.ID, Reason);
             if (!leadRepo.UpdateLead(lead)) return "Reject failed";
-            LeadNotificator.NotifyUser(new List<User> { lead.User }, lead, titleNotify); // notify for manager
+            LeadNotificator.NotifyUser(new List<User> { lead.User }, lead.ID, titleNotify); // notify for manager
+            LeadNotificator.NotifyUpdateNCL(lead.ID);
             return "";
         }
     }

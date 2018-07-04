@@ -1,6 +1,7 @@
 ﻿@using System.Security.Policy
 @using System.Threading
 @using PQT.Domain.Entities
+@using PQT.Domain.Enum
 @using Resources
 @{
     var currentUser = CurrentUser.Identity;
@@ -21,7 +22,7 @@
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="headerbar-left">
             <ul class="header-nav header-nav-options">
-                <li class="header-nav-brand"  style="@(menus.Any()?"": "display: inline-table;")">
+                <li class="header-nav-brand" style="@(menus.Any()?"": "display: inline-table;")">
                     <div class="brand-holder">
                         <a href="/">
                             <span class="text-lg text-bold text-primary">Prime QT</span>
@@ -218,10 +219,8 @@
 
     @Scripts.Render("~/content/js/min")
 
-    <script src="~/signalr/hubs"></script>
-    <script>
-        $.connection.hub.start();
-    </script>
+
+    <script src="/signalr/hubs"></script>
 
 
     <script>
@@ -360,8 +359,8 @@
                     $(this).addClass('active');
                 }
             });
-        
-    
+
+
         $(document).on('change',
             '.cbx-sign',
             function() {
@@ -390,7 +389,7 @@
             });
         });
 
-        
+
         $(document).on('click',
             'input[type=submit],a',
             function(e) {
@@ -467,9 +466,17 @@
 
     <script>
 
-        ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 // notification
 ///////////////////////////////////////////////////////////////////////////
+
+        $.connection.hub.start();
+
+        $.connection.hub.disconnected(function () {
+            setTimeout(function () {
+                $.connection.hub.start();
+            }, 5000); // Restart connection after 5 seconds.you can set the time based your requirement
+        });
 
         var notificator = $.connection.notificationHub,
             $triggerNotify = $('#notify-trigger'),
@@ -477,7 +484,7 @@
             $notifyFlyerContent = $('.notify-trigger-no-content'),
             documentTitle = document.title;
 
-        notificator.client.notify = function(dataJson, dataType) {
+        notificator.client.notify = function (dataJson, dataType) {
             try {
                 var data = eval('(' + dataJson + ')');
                 new window[dataType](data).notify();
@@ -502,10 +509,13 @@
                 document.title = '(' + notifyCount + ') ' + documentTitle;
                 //toastr.info(this.notifyData.Description, this.notifyData.Title);
                 var $eventIdNCList = $("#eventIdNCList");
-                if (oTable && $eventIdNCList && $eventIdNCList.val() == this.notifyData.EventId) {
+                if (tableLead && $eventIdNCList && $eventIdNCList.val() == this.notifyData.EventId) {
                     fixedColumn = false;
-                    oTable.fnDraw();
-                    LoadTotalNCLSummary();
+                    tableLead.fnDraw();
+                    try {
+                        LoadTotalNCLSummary();
+                    } catch (e) {
+                    }
                 }
 
             };
@@ -546,14 +556,15 @@
 
                 var $dashboardNotify = $("#dashboard_notify_" + this.notifyData.EventId);
                 if ($dashboardNotify) {
+                    var urlNotify = '@Url.Action("Detail", "Lead")?id=' +
+                        this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
+                    if (this.notifyData.NotifyTypeCode == '@NotifyType.Booking.Value') {
+                        urlNotify = '@Url.Action("Detail", "Booking")?id=' +
+                            this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
+                    }
                     var row = '<div class="notify_item dashboard_ncl_new" name="notify-' +
-                        this.notifyData.ID +
-                        '">\
-                    <a class="tile-content ink-reaction" href="@Url.Action("Detail", "Lead")?id=' +
-                        this.notifyData.EntryId +
-                        '& eventId=' +
-                        this.notifyData.EventId +
-                        '" >\
+                        this.notifyData.ID + '">\
+                    <a class="tile-content ink-reaction" href="'+ urlNotify +'" >\
                     <b>' +
                         this.notifyData.Description +
                         '</b> - ' +
@@ -574,7 +585,11 @@
                         30000);
                 }
 
-                if (location.href.toLowerCase().indexOf('lead/detail') > 1) {
+                if (this.notifyData.NotifyTypeCode == '@NotifyType.Booking.Value' &&
+                    location.href.toLowerCase().indexOf('booking/detail') > 1) {
+                    location.reload();
+                } else if (this.notifyData.NotifyTypeCode != '@NotifyType.Booking.Value' &&
+                    location.href.toLowerCase().indexOf('lead/detail') > 1) {
                     location.reload();
                 }
             };
@@ -601,10 +616,10 @@
                 } catch (e) {
                 }
                 try {
-                    if (oTable) {
+                    if (tableLead) {
                         if ($eventIdNCList && $eventIdNCList.val() == this.lead.EventID) {
                             fixedColumn = 0;
-                            oTable.fnDraw();
+                            tableLead.fnDraw();
                             LoadTotalNCLSummary();
                         }
                     }
@@ -614,6 +629,36 @@
 
             return Lead;
 
+        })();
+
+        var Booking = (function() {
+
+            function Booking(data) {
+                this.booking = data;
+            }
+
+            Booking.prototype.notify = function () {
+                var $eventIdNCList = $("#eventIdNCList");
+                try {
+                    if (bookingTable) {
+                        if ($eventIdNCList && $eventIdNCList.val() == this.booking.EventID) {
+                            bookingTable.fnDraw();
+                        }
+                    }
+                } catch (e) {
+                }
+                try {
+                    if (this.booking.ReloadTableLead && tableLead) {
+                        if ($eventIdNCList && $eventIdNCList.val() == this.booking.EventID) {
+                            fixedColumn = 0;
+                            tableLead.fnDraw();
+                            LoadTotalNCLSummary();
+                        }
+                    }
+                } catch (e) {
+                }
+            };
+            return Booking;
         })();
 
         $triggerNotify.on('click',
@@ -634,6 +679,40 @@
             });
 
     </script>
+
+    <script>
+        $(window).bind('storage', function () {
+            var updateInfo = JSON.parse(localStorage.getItem('updateInfo'));
+            if (updateInfo.action == 'removeNotification')
+                removeNotification(updateInfo.notificationId);
+            else if (updateInfo.action == 'setNotification')
+                setNotification(updateInfo.notification);
+        });
+        function removeNotification(id) {
+            // Check if signalR is connected. If so, I am the tab that will update
+            // the other tabs.
+            if ($.connection.hub.state === 1) {
+                var updateInfo = {
+                    action: 'removeNotification',
+                    notificationId: id
+                };
+                localStorage.setItem('updateInfo', JSON.stringify(updateInfo));
+            }
+            // brevity brevity
+        }
+        function setNotification(notification) {
+            if ($.connection.hub.state === 1) {
+                var updateInfo = {
+                    action: 'setNotification',
+                    notification: notification
+                };
+                localStorage.setItem('updateInfo', JSON.stringify(updateInfo));
+            }
+            // brevity brevity
+        }
+
+    </script>
+
 
     @RenderSection("js", required: false)
 }

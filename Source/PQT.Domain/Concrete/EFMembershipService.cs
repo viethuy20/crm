@@ -152,43 +152,32 @@ namespace PQT.Domain.Concrete
             return Update(userInfo);
         }
 
-        public void UpdateUserPicture(int id, string fileName)
-        {
-            User user = GetUser(id);
-            if (user == null) return;
-
-            user.Picture = fileName;
-            Update(user);
-            //_db.SaveChanges();
-        }
-
         public virtual User GetUser(int id)
         {
-            return _db.Set<User>().Include(m => m.UserSalaryHistories).Include(m => m.Roles.Select(r => r.Permissions))
-                .FirstOrDefault(m => m.ID == id);
+            return Get<User>(u => u.ID == id, u => new
+            {
+                Roles = u.Roles.Select(r => r.Permissions),
+            });
         }
         public User GetUserIncludeAll(int id)
         {
-            return _db.Set<User>()
-                .Include(m => m.UserSalaryHistories)
-                .Include(m => m.Roles.Select(r => r.Permissions))
-                .FirstOrDefault(u => u.ID == id);
+            return Get<User>(u => u.ID == id, u => new
+            {
+                u.UserSalaryHistories,
+                Roles = u.Roles.Select(r => r.Permissions),
+            });
         }
 
         public User GetUserByEmail(string email)
         {
             return string.IsNullOrWhiteSpace(email)
                 ? null
-                : _db.Set<User>().Include(m => m.UserSalaryHistories)
-                    .Include(m => m.Roles.Select(r => r.Permissions))
-                    .FirstOrDefault(u => u.Email != null &&
-                                         u.Email.Trim().ToLower() == email.Trim().ToLower());
-        }
-        public IEnumerable<User> GetAllUserByEmail(string email)
-        {
-            return _db.Set<User>().Include(m => m.UserSalaryHistories)
-                .Include(m => m.Roles.Select(r => r.Permissions))
-                .Where(m => m.Email.Trim().ToLower() == email.Trim().ToLower()).AsEnumerable();
+                : Get<User>(u => u.Email != null &&
+                                 u.Email.Trim().ToLower() == email.Trim().ToLower(),
+                    u => new
+                    {
+                        Roles = u.Roles.Select(r => r.Permissions),
+                    });
         }
         public User ValidateLogin(string email, string password)
         {
@@ -221,24 +210,16 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<User> GetUsersInRole(params string[] roleName)
         {
-            return _db.Set<User>().Include(m => m.UserSalaryHistories)
-                .Include(m => m.Roles.Select(r => r.Permissions))
-                .Where(u => u.Roles
+            return GetAll<User>(u => u.Roles
                     .Select(r => r.Name.ToUpper())
                     .Intersect(roleName.Select(r1 => r1.ToUpper()))
-                    .Any()).AsEnumerable();
+                    .Any(),
+                u => new
+                {
+                    Roles = u.Roles.Select(r => r.Permissions),
+                }).AsEnumerable();
         }
 
-        public IEnumerable<User> GetUsersContainsInRole(params string[] roleName)
-        {
-            return _db.Set<User>()
-                .Include(m => m.UserSalaryHistories)
-                .Include(m => m.Roles.Select(r => r.Permissions))
-                .Where(u => u.Roles
-                    .Select(r => r.Name.ToUpper())
-                    .Intersect(roleName.Select(r1 => r1.ToUpper()))
-                    .Any()).AsEnumerable();
-        }
         #endregion
 
 
@@ -249,9 +230,11 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<User> GetAllSalesmans()
         {
-            return _db.Set<User>()
-                .Include(m => m.Roles.Select(r => r.Permissions))
-                .Where(u => u.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel)).AsEnumerable();
+            return GetAll<User>(u => u.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel),
+                    u => new
+                    {
+                        Roles = u.Roles.Select(r => r.Permissions),
+                    }).AsEnumerable();
         }
 
         public IEnumerable<UserNotification> GetAllUserNotifications(int userId, int pageSize = 10, int page = 1)
@@ -283,7 +266,7 @@ namespace PQT.Domain.Concrete
                 if (!notify.Seen)
                 {
                     notify.Seen = true;
-                    var user = _db.Set<User>().FirstOrDefault(m => m.ID == notify.UserID);
+                    var user = Get<User>(m => m.ID == notify.UserID);
                     if (user != null && user.NotifyNumber > 0)
                     {
                         user.NotifyNumber--;
@@ -296,12 +279,12 @@ namespace PQT.Domain.Concrete
         }
         public int SeenUserNotification(int userId, int entryId)
         {
-            var notifications = _db.Set<UserNotification>().Where(m => m.UserID == userId && m.EntryId == entryId);
+            var notifications = _db.Set<UserNotification>().Where(m => m.UserID == userId && m.EntryId == entryId).ToList();
             foreach (var notify in notifications)
             {
                 if (notify.Seen) continue;
                 notify.Seen = true;
-                var user = _db.Set<User>().FirstOrDefault(m => m.ID == notify.UserID);
+                var user = Get<User>(m => m.ID == notify.UserID);
                 if (user != null && user.NotifyNumber > 0)
                 {
                     user.NotifyNumber--;

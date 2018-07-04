@@ -393,7 +393,7 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
-            var saleId = PermissionHelper.SalesmanId();
+            var saleId = CurrentUser.Identity.ID;
             IEnumerable<Lead> leads = new HashSet<Lead>();
             if (!string.IsNullOrEmpty(searchValue))
             {
@@ -594,6 +594,29 @@ namespace PQT.Web.Controllers
         [AjaxOnly]
         public ActionResult AjaxGetNCList(int eventId)
         {
+            if (Request.Form != null && Request.Form.Count == 0)
+            {
+                var data1 = new List<Lead>();
+                return Json(new
+                {
+                    recordsFiltered = 0,
+                    recordsTotal = 0,
+                    data = data1.Select(m => new
+                    {
+                        m.ID,
+                        m.EventID,
+                        m.Salesman,
+                        DateCreatedDisplay = m.StatusUpdateTimeStr,
+                        m.CompanyName,
+                        m.CountryCode,
+                        m.ClientName,
+                        m.ClassStatus,
+                        ClassHighlight = m.LeadStatusRecord == LeadStatus.Booked ? "booked" : (m.UserID == CurrentUser.Identity.ID ? "lead_owner" : ""),
+                        ClassNewHighlight = m.UserID != CurrentUser.Identity.ID && m.UpdatedTime >= DateTime.Now.AddMinutes(-1) ? "ncl_new" : "",
+                        m.StatusDisplay,
+                    })
+                }, JsonRequestBehavior.AllowGet);
+            }
             // ReSharper disable once AssignNullToNotNullAttribute
             var draw = Request.Form.GetValues("draw").FirstOrDefault();
             // ReSharper disable once AssignNullToNotNullAttribute
@@ -942,10 +965,29 @@ namespace PQT.Web.Controllers
         [AjaxOnly]
         public ActionResult AjaxGetTotalNCL(int eventId)
         {
-            var saleId = PermissionHelper.SalesmanId();
+            //var saleId = PermissionHelper.SalesmanId();
+            var saleId = CurrentUser.Identity.ID;
             var leads = _repo.GetAllLeads(m => m.EventID == eventId &&
                                                (saleId == 0 || m.UserID == saleId ||
                                                 (m.User != null && m.User.TransferUserID == saleId)) &&
+                                           (m.MarkKPI || m.LeadStatusRecord == LeadStatus.LOI ||
+                                            m.LeadStatusRecord == LeadStatus.Booked ||
+                                            m.LeadStatusRecord == LeadStatus.Blocked));
+
+            return Json(new
+            {
+                TotalLOI = leads.Count(m => m.LeadStatusRecord == LeadStatus.LOI),
+                TotalBlocked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Blocked),
+                TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked),
+                TotalKPI = leads.Count(m => m.MarkKPI)
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [AjaxOnly]
+        public ActionResult AjaxGetTotalNCLForManager(int eventId)
+        {
+            //var saleId = PermissionHelper.SalesmanId();
+            var leads = _repo.GetAllLeads(m => m.EventID == eventId &&
                                            (m.MarkKPI || m.LeadStatusRecord == LeadStatus.LOI ||
                                             m.LeadStatusRecord == LeadStatus.Booked ||
                                             m.LeadStatusRecord == LeadStatus.Blocked));
