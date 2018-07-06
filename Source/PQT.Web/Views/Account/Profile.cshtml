@@ -16,7 +16,6 @@
         <div class="card-body">
             @using (Html.BeginForm("Profile", "Account", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form"}))
             {
-                @Html.ValidationSummary()
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="form-group">
