@@ -17,7 +17,7 @@
     }
 
         .event-panel .card {
-            width: 280px;
+            width: 300px;
             margin-bottom: 12px;
         }
 
@@ -30,7 +30,7 @@
     .event-footer {
         position: relative;
         background: #eeeeee;
-        padding: 5px;
+        padding: 3px;
     }
 
     .link-event {
@@ -42,7 +42,7 @@
     }
 
     .notify_panel {
-        height: calc(100vh - 270px);
+        height: calc(100vh - 290px);
         overflow-y: auto;
     }
 
@@ -65,16 +65,20 @@
             color: #a3a3a3;
         }
 
-    .tier3, .tier1, .tier2 {
+    .tier3, .tier1, .tier2, .totalcalled {
         font-style: italic;
     }
 
-    .col-tier3, .col-tier1, .col-tier2, .total-booked {
+    .col-tier3, .col-tier1, .col-tier2, .total-booked, .totalcalled, .total-companies {
+        font-weight: bold;
+    }
+    .text-bold {
         font-weight: bold;
     }
     .text-italic {
         font-style: italic;
-    } 
+    }
+
     .col-tier1 {
         color: #a94442;
     }
@@ -119,11 +123,11 @@
                                 </div>
                             </div>
                             <div class="row no-margin event-footer">
-                                <div class="col-sm-6"><span class="text-italic">Total booked:</span> <span class="total-booked">N.A</span></div>
-                                <div class="col-sm-6"><span class="text-italic">Companies called:</span></div>
-                                <div class="col-sm-4  text-center col-tier1">Tier 1<br/><span class="tier1">N.A</span>/<span class="total-tier1">N.A</span></div>
-                                <div class="col-sm-4  text-center col-tier2">Tier 2<br/><span class="tier2">N.A</span>/<span class="total-tier2">N.A</span></div>
-                                <div class="col-sm-4  text-center col-tier3">Tier 3<br/><span class="tier3">N.A</span>/<span class="total-tier3">N.A</span></div>
+                                <div class="col-sm-5 text-center "><span class="text-italic text-bold">Total booked</span><br/><span class="total-booked">N.A</span></div>
+                                <div class="col-sm-7 text-center "><span class="text-italic text-bold">Companies called</span><br /><span class="totalcalled">N.A</span>/<span class="total-companies">N.A</span></div>
+                                <div class="col-sm-4  text-center col-tier1"><span class="text-italic">Tier 1</span><br /><span class="tier1">N.A</span>/<span class="total-tier1">N.A</span></div>
+                                <div class="col-sm-4  text-center col-tier2"><span class="text-italic">Tier 2</span><br /><span class="tier2">N.A</span>/<span class="total-tier2">N.A</span></div>
+                                <div class="col-sm-4  text-center col-tier3"><span class="text-italic">Tier 3</span><br /><span class="tier3">N.A</span>/<span class="total-tier3">N.A</span></div>
                             </div>
                         </div><!--end .card-body -->
                     </div><!--end .card -->
@@ -199,6 +203,8 @@
                         $eventFooter.find(".tier2").html(data.Tier2);
                         $eventFooter.find(".total-tier2").html(data.TotalTier2);
                         $eventFooter.find(".total-booked").html(data.TotalBooked);
+                        $eventFooter.find(".totalcalled").html(data.Tier1 + data.Tier2 + data.Tier3);
+                        $eventFooter.find(".total-companies").html(data.TotalTier1 + data.TotalTier2 + data.TotalTier3);
                     }
                 },
                 error: function () {
