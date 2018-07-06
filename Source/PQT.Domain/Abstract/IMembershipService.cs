@@ -27,10 +27,10 @@ namespace PQT.Domain.Abstract
         IEnumerable<User> GetAllSalesmans();
 
         IEnumerable<UserNotification> GetAllUserNotifications(int userId, int pageSize = 10, int page = 1);
-        IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId,int eventId, int pageSize = 10, int page = 1);
+        IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int eventId, int pageSize = 10, int page = 1);
         UserNotification CreateUserNotification(UserNotification notify);
         bool UpdateUserNotification(UserNotification notify);
         bool SeenUserNotification(int notifyId);
-        int SeenUserNotification(int userId,int entryId);
+        int SeenUserNotification(int userId, int entryId, NotifyType type);
     }
 }

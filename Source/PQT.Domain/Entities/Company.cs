@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Forms.VisualStyles;
+using NS;
 
 namespace PQT.Domain.Entities
 {
@@ -11,6 +12,7 @@ namespace PQT.Domain.Entities
         public Company()
         {
             ManagerUsers = new HashSet<User>();
+            Tier = 0;
         }
         public int? CountryID { get; set; }
         [ForeignKey("CountryID")]
@@ -26,7 +28,7 @@ namespace PQT.Domain.Entities
         public string PersonalContact { get; set; }
         public decimal BudgetPerHead { get; set; }
         public int FinancialYear { get; set; }
-        public int Tier { get; set; }//tier: 1-red 2-blue -3-black
+        public int Tier { get; set; }//tier: 1-red 2-blue -0-black
 
         public string CountryName
         {
@@ -52,10 +54,30 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
+        public string DialingCode
+        {
+            get
+            {
+                if (Country != null)
+                {
+                    return Country.DialingCode;
+                }
+
+                return "";
+            }
+        }
 
         public string Address { get; set; }
         public string Tel { get; set; }
         public string Fax { get; set; }
         public virtual ICollection<User> ManagerUsers { get; set; }
+    }
+
+
+    public class TierType : Enumeration
+    {
+        public static readonly TierType Tier3 = New<TierType>(3, "Tier 3");
+        public static readonly TierType Tier1 = New<TierType>(1, "Tier 1");
+        public static readonly TierType Tier2 = New<TierType>(2, "Tier 2");
     }
 }

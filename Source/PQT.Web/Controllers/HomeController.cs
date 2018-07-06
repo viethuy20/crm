@@ -87,13 +87,23 @@ namespace PQT.Web.Controllers
         }
 
         [AjaxOnly]
-        public ActionResult UpdateSeenNotify(int entryId)
+        public ActionResult UpdateSeenNotify(int entryId, NotifyType type)
         {
             if (CurrentUser.Identity != null)
             {
-                _memRepository.SeenUserNotification(CurrentUser.Identity.ID, entryId);
+                var countSeen = _memRepository.SeenUserNotification(CurrentUser.Identity.ID, entryId, type);
+                if (countSeen > 0)
+                {
+                    CurrentUser.Identity.NotifyNumber = CurrentUser.Identity.NotifyNumber - countSeen;
+                    if (CurrentUser.Identity.NotifyNumber < 0)
+                    {
+                        CurrentUser.Identity.NotifyNumber = 0;
+                    }
+                    _memRepository.UpdateUser(CurrentUser.Identity);
+                }
+                return Json(countSeen);
             }
-            return Json(true);
+            return Json(0);
         }
         [AjaxOnly]
         public ActionResult SeenNotify(int notifyId)

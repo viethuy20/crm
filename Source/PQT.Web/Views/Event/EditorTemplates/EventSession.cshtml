@@ -25,6 +25,7 @@
                         <option value="@trainer.ID" selected="@(Model.TrainerID == trainer.ID)">@trainer.Name</option>
                     }
                 </select>
+                @Html.ValidationMessageFor(m => m.TrainerID)
                 <label>Trainer</label>
             </div>
         </div>

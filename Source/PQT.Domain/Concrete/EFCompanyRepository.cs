@@ -272,7 +272,37 @@ namespace PQT.Domain.Concrete
         {
             return Delete<CompanyResource>(resourceID);
         }
+
         #endregion Company Resource
 
+        public EventCompany GetEventCompany(int eventId, int companyId)
+        {
+            return GetAll<EventCompany>(m => m.EventID == eventId && m.CompanyID == companyId).LastOrDefault();
+        }
+
+        public EventCompany GetEventCompany(int companyId)
+        {
+            return GetAll<EventCompany>(m => m.CompanyID == companyId).OrderBy(m => m.UpdatedTime).LastOrDefault(m => m.UpdatedTime != null);
+        }
+
+        public bool UpdateEventCompany(EventCompany company)
+        {
+            var exist = Get<EventCompany>(company.ID);
+            if (exist != null)
+            {
+                exist.EstimatedDelegateNumber = company.EstimatedDelegateNumber;
+                //exist.FirstFollowUpStatus = company.FirstFollowUpStatus;
+                //exist.FinalStatus = company.FinalStatus;
+                //exist.DateNextFollowUp = company.DateNextFollowUp;
+                exist.BudgetMonth = company.BudgetMonth;
+                exist.GoodTrainingMonth = company.GoodTrainingMonth;
+                exist.TopicsInterested = company.TopicsInterested;
+                exist.LocationInterested = company.LocationInterested;
+                exist.TrainingBudget = company.TrainingBudget;
+                exist.Remarks = company.Remarks;
+                return Update(exist);
+            }
+            return false;
+        }
     }
 }

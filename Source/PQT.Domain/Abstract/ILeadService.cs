@@ -8,7 +8,6 @@ namespace PQT.Domain.Abstract
 {
     public interface ILeadService
     {
-        IEnumerable<Lead> GetAllLeads();
         IEnumerable<Lead> GetAllLeads(Func<Lead,bool> predicate);
         Lead GetLead(int id);
         Lead CreateLead(Lead info);

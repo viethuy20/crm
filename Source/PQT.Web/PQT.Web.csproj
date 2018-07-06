@@ -2559,6 +2559,7 @@
     <Content Include="Views\Kpi\Consolidate.cshtml" />
     <Content Include="Views\Kpi\Update.cshtml" />
     <Content Include="Views\Event\AssignCompany.cshtml" />
+    <Content Include="Views\Lead\_CallingInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

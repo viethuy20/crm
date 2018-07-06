@@ -43,6 +43,13 @@ namespace PQT.Domain.Entities
                 return CreatedTime.TimeAgo();
             }
         }
+        public string TimeToString
+        {
+            get
+            {
+                return CreatedTime.ToString("ddMMyyyyHHmmss");
+            }
+        }
         public string Timestamp
         {
             get

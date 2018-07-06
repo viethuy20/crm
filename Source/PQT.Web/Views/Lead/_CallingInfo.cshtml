@@ -1,0 +1,252 @@
+﻿
+@using PQT.Domain.Entities
+@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.CallingModel
+
+<section>
+    <div class="col-md-7 ">
+        <div class="card card-underline form-group">
+            <div class="card-head">
+                <header><b>Call Info</b></header>
+            </div><!--end .card-head -->
+            <div class="form">
+                <div class="card-body" style="padding-bottom: 0px;">
+                    @Html.HiddenFor(m => m.LeadID)
+                    @Html.HiddenFor(m => m.EventID)
+                    <div class="col-sm-4">
+                        <div class="row">
+                            @Html.HiddenFor(m => m.CompanyID)
+                            <div class="row">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.CompanyName).Class("form-control").Readonly().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.CompanyName).LabelText("COMPANY NAME")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.GeneralLine).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.GeneralLine).LabelText("GENERAL LINE")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4  text-center">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="call-animation startCall">
+                                    <i class="md md-phone-in-talk"></i>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row text-center" style="margin-top: 20px; font-size: 26px;">
+                                    <span id="call-tick">00:00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="row">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.ClientName).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.ClientName).LabelText("CLIENT NAME/ JOB TITLE")
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.DirectLine).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" style="padding-top: 0px;">
+                    @Html.HiddenFor(m => m.PhoneCall.StartTime, new { @class = "phoneCallStartTime" })
+                    @Html.HiddenFor(m => m.PhoneCall.LeadID)
+                    @Html.HiddenFor(m => m.TypeSubmit, new { @class = "typeSubmit" })
+                    <div class="row" style="margin-top: 30px;">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.Salutation).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.Salutation).LabelText("Salutation")
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.FirstName).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.FirstName).LabelText("First Name")
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.LastName).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.LastName).LabelText("Last Name")
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.BusinessPhone).LabelText("Business Phone")
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.MobilePhone).LabelText("Mobile Phone")
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.WorkEmailAddress).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.WorkEmailAddress).LabelText("Work Email")
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.WorkEmailAddress1).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.WorkEmailAddress1).LabelText("Work Email 1")
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.PersonalEmailAddress).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.PersonalEmailAddress).LabelText("Personal Email")
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.PhoneCall.Remark).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.PhoneCall.Remark).LabelText("Call Remarks")
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.DatePickerFor(m => m.PhoneCall.CallBackDate, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.PhoneCall.CallBackDate)
+                                @Html.Bootstrap().LabelFor(m => m.PhoneCall.CallBackDate).LabelText("Call Back Date")
+                            </div>
+                        </div>
+                    </div>
+                </div><!--end .card-body -->
+                @*<div class="card-actionbar">
+                        <div class="card-actionbar-row">
+                            <button type="button" class="btn btn-default pull-left" id="endcall_save"><i class="md md-call-end"></i> End Call & Save</button>
+                            @if (Model.Lead == null || Model.Lead.LeadStatusRecord == LeadStatus.Initial || Model.Lead.LeadStatusRecord == LeadStatus.Reject)
+                            {
+                                <button type="button" class="btn btn-success" id="endcall_requestncl"><i class="md md-call-end"></i> End Call & Request To NCL</button>
+                            }
+                        </div>
+                    </div>*@
+            </div><!--end .card -->
+        </div><!--end .card -->
+    </div>
+    <div class="col-md-5">
+        <div class="card card-underline  form-group">
+            <div class="card-head">
+                <header><b>Company Info</b></header>
+            </div><!--end .card-head -->
+            <div class="form">
+                <div class="card-body">
+                    @Html.HiddenFor(m => m.EventCompany.ID)
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.EventCompany.EstimatedDelegateNumber).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.EventCompany.EstimatedDelegateNumber)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.EventCompany.TrainingBudget).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.EventCompany.TrainingBudget)
+                        </div>
+                    </div>
+                    @*<div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.EventCompany.FirstFollowUpStatus).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.EventCompany.FirstFollowUpStatus)
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.EventCompany.FinalStatus).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.EventCompany.FinalStatus)
+                            </div>
+                        </div>*@
+                    @*<div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.DatePickerFor(m => m.EventCompany.DateNextFollowUp, new {@class = "form-control"})
+                                @Html.ValidationMessageFor(m => m.EventCompany.DateNextFollowUp)
+                                @Html.Bootstrap().LabelFor(m => m.EventCompany.DateNextFollowUp)
+                            </div>
+                        </div>*@
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().DropDownListFor(m => m.EventCompany.BudgetMonth, EnumerationHelper.ToSelectList<MonthStatus>()).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.EventCompany.BudgetMonth)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().DropDownListFor(m => m.EventCompany.GoodTrainingMonth, EnumerationHelper.ToSelectList<MonthStatus>()).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.EventCompany.GoodTrainingMonth)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.EventCompany.TopicsInterested).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.EventCompany.TopicsInterested)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.EventCompany.LocationInterested).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.EventCompany.LocationInterested)
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.EventCompany.Remarks).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.EventCompany.Remarks)
+                        </div>
+                    </div>
+                </div><!--end .card -->
+            </div><!--end .form -->
+        </div><!--end .card -->
+    </div>
+</section>
+
+@Html.Script(
+    @<script>
+        function precisionRound(number, precision) {
+            var factor = Math.pow(10, precision);
+            return Math.round(number * factor) / factor;
+        }
+
+        var tickStarted = false;
+        var startTime = new Date();
+        function tickTime() {
+            var seconds = precisionRound((new Date() - startTime) / 1000, 0);
+            var m = Math.floor(seconds / 60);
+            var s = seconds - m * 60;
+            m = checkTime(m);
+            s = checkTime(s);
+            $('#call-tick').html(m + ":" + s);
+            if (tickStarted) {
+                var t = setTimeout(tickTime, 500);
+            } else {
+                tickStarted = false;
+            }
+        }
+        function checkTime(i) {
+            if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
+            return i;
+        }
+        function StartTick() {
+            startTime = new Date();
+            tickStarted = true;
+            $('.phoneCallStartTime').val(moment(startTime).format("DD/MM/YYYY HH:mm:ss"));
+            tickTime();
+        }
+
+    </script>
+                        )

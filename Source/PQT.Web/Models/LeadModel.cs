@@ -289,9 +289,11 @@ namespace PQT.Web.Models
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string DirectLine { get; set; }
+        [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string CompanyName { get; set; }
 
         public int EventID { get; set; }
+        public Event Event { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public int? CompanyID { get; set; }
         public IEnumerable<Company> Companies { get; set; }
@@ -313,9 +315,11 @@ namespace PQT.Web.Models
         public string TypeSubmit { get; set; }
         public PhoneCall PhoneCall { get; set; }
         public Lead Lead { get; set; }
+        public EventCompany EventCompany { get; set; }
         public CallingModel()
         {
             PhoneCall = new PhoneCall();
+            EventCompany = new EventCompany();
         }
         public CallingModel(int leadId)
         {
@@ -328,6 +332,8 @@ namespace PQT.Web.Models
                 if (lead != null)
                 {
                     LeadID = leadId;
+                    EventID = lead.EventID;
+                    Event = lead.Event;
                     GeneralLine = lead.GeneralLine;
                     ClientName = lead.ClientName;
                     DirectLine = lead.DirectLine;
@@ -348,8 +354,8 @@ namespace PQT.Web.Models
         {
             EventID = eventId;
             LeadID = leadId;
-            LoadCompanies(eventId);
-
+            var evetnRepo = DependencyHelper.GetService<IEventService>();
+            Event = evetnRepo.GetEvent(eventId);
             if (leadId > 0)
             {
                 var leadRepo = DependencyHelper.GetService<ILeadService>();
@@ -380,26 +386,26 @@ namespace PQT.Web.Models
             }
         }
 
-        public void LoadCompanies(int eventId)
-        {
-            var eventRepo = DependencyHelper.GetService<IEventService>();
-            var eventLead = eventRepo.GetEvent(eventId);
-            if (eventLead != null)
-            {
-                var leadRepo = DependencyHelper.GetService<ILeadService>();
-                var companiesInNcl = leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
-                    m.UserID != CurrentUser.Identity.ID &&
-                    m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
-                    (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked ||
-                     m.LeadStatusRecord.UpdatedTime.Date >=
-                     DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))).Select(m => m.CompanyID).Distinct();// get list company blocked
-                Companies = eventLead.EventCompanies.Where(m => !companiesInNcl.Contains(m.CompanyID)).Select(m => m.Company);
-            }
-            else
-            {
-                Companies = new List<Company>();
-            }
-        }
+        //public void LoadCompanies(int eventId)
+        //{
+        //    var eventRepo = DependencyHelper.GetService<IEventService>();
+        //    var eventLead = eventRepo.GetEvent(eventId);
+        //    if (eventLead != null)
+        //    {
+        //        var leadRepo = DependencyHelper.GetService<ILeadService>();
+        //        var companiesInNcl = leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
+        //            m.UserID != CurrentUser.Identity.ID &&
+        //            m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
+        //            (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked ||
+        //             m.LeadStatusRecord.UpdatedTime.Date >=
+        //             DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))).Select(m => m.CompanyID).Distinct();// get list company blocked
+        //        Companies = eventLead.EventCompanies.Where(m => !companiesInNcl.Contains(m.CompanyID)).Select(m => m.Company);
+        //    }
+        //    else
+        //    {
+        //        Companies = new List<Company>();
+        //    }
+        //}
         public bool SaveEdit()
         {
             return TransactionWrapper.Do(() =>
@@ -462,6 +468,7 @@ namespace PQT.Web.Models
                     PhoneCall.EndTime = DateTime.Now;
                     PhoneCall.LeadID = Lead.ID;
                     var result = leadRepo.CreatePhoneCall(PhoneCall);
+                    comRepo.UpdateEventCompany(EventCompany);
                     if (result != null)
                     {
                         return true;
@@ -476,6 +483,7 @@ namespace PQT.Web.Models
             return TransactionWrapper.Do(() =>
             {
                 var leadRepo = DependencyHelper.GetService<ILeadService>();
+                var comRepo = DependencyHelper.GetService<ICompanyRepository>();
                 PhoneCall.EndTime = DateTime.Now;
                 var result = leadRepo.CreatePhoneCall(PhoneCall);
                 if (result != null)
@@ -493,6 +501,7 @@ namespace PQT.Web.Models
                     Lead.WorkEmailAddress1 = WorkEmailAddress1;
                     Lead.PersonalEmailAddress = PersonalEmailAddress;
                     leadRepo.UpdateLead(Lead);
+                    comRepo.UpdateEventCompany(EventCompany);
                     return true;
                 }
                 return false;

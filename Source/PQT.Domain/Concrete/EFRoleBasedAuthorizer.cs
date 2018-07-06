@@ -106,9 +106,10 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<Permission> GetUserPermissions(int userID)
         {
-            var user = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions))
-                .FirstOrDefault(m => m.ID == userID);
-
+            var user = Get<User>(u => u.ID == userID, u => new
+            {
+                Roles = u.Roles.Select(r => r.Permissions),
+            });
             if (user == null)
                 return new List<Permission>();
 
@@ -125,8 +126,10 @@ namespace PQT.Domain.Concrete
 
         public void AssignRoles(User user, IEnumerable<int> userRoles)
         {
-            var userExist = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions))
-                .FirstOrDefault(m => m.ID == user.ID); 
+            var userExist = Get<User>(u => u.ID == user.ID, u => new
+            {
+                Roles = u.Roles.Select(r => r.Permissions),
+            });
             if (user == null) return;
             userExist.Roles.Clear();
             userExist.Roles = GetAll<Role>(r => userRoles.Contains(r.ID)).ToList();
@@ -162,8 +165,10 @@ namespace PQT.Domain.Concrete
 
         public virtual bool CheckAccess(int userID, string controller, string action, string permissionType = null)
         {
-            var user = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions))
-                .FirstOrDefault(m => m.ID == userID);
+            var user = Get<User>(u => u.ID == userID, u => new
+            {
+                Roles = u.Roles.Select(r => r.Permissions),
+            });
             if (user == null) return false;
 
             // Admin

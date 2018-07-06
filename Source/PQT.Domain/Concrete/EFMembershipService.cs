@@ -277,22 +277,18 @@ namespace PQT.Domain.Concrete
                 return true;
             });
         }
-        public int SeenUserNotification(int userId, int entryId)
+        public int SeenUserNotification(int userId, int entryId, NotifyType type)
         {
-            var notifications = _db.Set<UserNotification>().Where(m => m.UserID == userId && m.EntryId == entryId).ToList();
+            var notifications = _db.Set<UserNotification>().Where(m => m.UserID == userId && m.EntryId == entryId && m.NotifyType.Value == type.Value).ToList();
+            var countSeen = 0;
             foreach (var notify in notifications)
             {
                 if (notify.Seen) continue;
                 notify.Seen = true;
-                var user = Get<User>(m => m.ID == notify.UserID);
-                if (user != null && user.NotifyNumber > 0)
-                {
-                    user.NotifyNumber--;
-                    Update(user);
-                }
+                countSeen++;
                 Update(notify);
             }
-            return notifications.Count();
+            return countSeen;
         }
     }
 }

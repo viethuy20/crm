@@ -4,147 +4,82 @@
 @using Resources
 @model PQT.Web.Models.CallingModel
 
+@{
+    ViewBag.Title = "Call Back";
+}
 <section>
-    <div class="card card-underline" style="background: white; margin: auto; max-width: 900px; position: relative;">
-        <div class="card-head">
-            <header><b>Calling Form</b></header>
-        </div><!--end .card-head -->
-        <button title="Close (Esc)" type="button" class="mfp-close">×</button>
-        @using (Ajax.BeginForm("CallingForm", "routeValues", new AjaxOptions { OnFailure = "onFailCalling", OnSuccess = "onSuccessCalling" }, new { @id = "CreateOrEditForm", @class = "form" }))
-        {
-            <div class="card-body" style="height: 150px; padding: 30px;">
-                @Html.HiddenFor(m => m.LeadID)
-                @Html.HiddenFor(m => m.EventID)
-
-                <div class="col-sm-4">
-                    <div class="row">
-                        @Html.HiddenFor(m => m.CompanyID)
-                        <div class="row">
-                            <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.CompanyName).LabelText("COMPANY NAME")
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.GeneralLine).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.GeneralLine).LabelText("GENERAL LINE")
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4  text-center">
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="call-animation startCall">
-                                <i class="md md-phone-in-talk"></i>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="row text-center" style="margin-top: 20px; font-size: 26px;">
-                                <span id="call-tick">00:00</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="row">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.ClientName).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.ClientName).LabelText("CLIENT NAME/ JOB TITLE")
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.DirectLine).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER")
-                        </div>
-                    </div>
-                </div>
+    <div class="section-header">
+        <h2><span class="text-primary"><i class="fa fa-fw fa-phone"></i> @ViewBag.Title</span> - <span style="font-size: 18px;"><b>@Model.Event.EventName (@Model.Event.EventCode)</b> - Sales Date: <b>@Model.Event.StartDate.ToString("dd/MM/yy")</b> - <b>@Model.Event.EndDate.ToString("dd/MM/yy")</b></span></h2>
+    </div>
+    <div class="row">
+        <div class="col-sm-12" style="padding-right: 24px;padding-bottom: 12px">
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").RouteValues(new { id = Model.EventID }).PrependIcon("md md-arrow-back")
+        </div>
+    </div>
+    <div>
+        @using (Html.BeginForm("CallingForm", "Lead", FormMethod.Post, new { @class = "form", enctype = "multipart/form-data" }))
+            {
+            <div class="row">
+                @Html.Partial("_CallingInfo", Model)
             </div>
-            <div class="card-body">
-                @Html.HiddenFor(m => m.PhoneCall.StartTime, new { @class = "phoneCallStartTime" })
-                @Html.HiddenFor(m => m.PhoneCall.LeadID)
-                @Html.HiddenFor(m => m.TypeSubmit, new { @class = "typeSubmit" })
-                <div class="row" style="margin-top: 30px;">
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Salutation).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Salutation).LabelText("Salutation")
-                        </div>
-                    </div>
-                    <div class="col-sm-5">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.FirstName).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.FirstName).LabelText("First Name")
-                        </div>
-                    </div>
-                    <div class="col-sm-5">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.LastName).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.LastName).LabelText("Last Name")
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.BusinessPhone).LabelText("Business Phone")
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.MobilePhone).LabelText("Mobile Phone")
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.WorkEmailAddress).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.WorkEmailAddress).LabelText("Work Email Address")
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.WorkEmailAddress1).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.WorkEmailAddress1).LabelText("Work Email Address1")
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.PersonalEmailAddress).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.PersonalEmailAddress).LabelText("Personal Email Address")
-                        </div>
-                    </div>
-                    <div class="col-sm-8">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextAreaFor(m => m.PhoneCall.Remark).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.PhoneCall.Remark).LabelText("Remarks").ShowRequiredStar(true)
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            @Html.DatePickerFor(m => m.PhoneCall.CallBackDate, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.PhoneCall.CallBackDate)
-                            @Html.Bootstrap().LabelFor(m => m.PhoneCall.CallBackDate).LabelText("Call Back Date")
-                        </div>
+                <div class="row">
+                    <div class="col-lg-offset-4">
+                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").RouteValues(new { id = Model.EventID }).PrependIcon("md md-arrow-back")
+                        @Html.Bootstrap().SubmitButton().Text("Finish").Class("createbookingbtn").PrependIcon("md md-call-end").Style(ButtonStyle.Success)
                     </div>
                 </div>
-            </div><!--end .card-body -->
-            <div class="card-actionbar">
-                <div class="card-actionbar-row">
-                    <button type="button" class="btn btn-default pull-left" id="endcall_save"><i class="md md-call-end"></i> End Call & Save</button>
-                    @if (Model.Lead == null || Model.Lead.LeadStatusRecord == LeadStatus.Initial || Model.Lead.LeadStatusRecord == LeadStatus.Reject)
-                    {
-                        <button type="button" class="btn btn-success" id="endcall_requestncl"><i class="md md-call-end"></i> End Call & Request To NCL</button>
-                    }
-                </div>
-            </div>
         }
-    </div><!--end .card -->
+    </div>
 </section>
-<text>
-    <script>
 
-        StartTick();
+<div id="dvLoading1"></div>
+@Html.Script(
+    @<script>
+         function LoadEventCompanyInfo() {
+                 $.ajax({
+                     url: '@Url.Action("EventCompanyInfo")?eventId=@Model.EventID&companyID=@Model.Lead.CompanyID',
+                     type: 'POST',
+                     success: function (data) {
+                         StartTick();
+                         SetEventCompanyInfo(data);
+                         $("#dvLoading1").hide();
+                     },
+                     error: function () {
+                         StartTick();
+                         SetEventCompanyInfo(null);
+                         $("#dvLoading1").hide();
+                     }
+                 });
+         }
+
+        function SetEventCompanyInfo(data) {
+            if (data) {
+                $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(data.ID);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.EstimatedDelegateNumber)").val(data.EstimatedDelegateNumber);
+                @*$("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val(data.FirstFollowUpStatus);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.FinalStatus)").val(data.FinalStatus);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val(data.DateNextFollowUp);*@
+                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
+                $("@Html.JquerySelectorFor(m => m.EventCompany.GoodTrainingMonth)").val(data.GoodTrainingMonth).trigger("change");
+                $("@Html.JquerySelectorFor(m => m.EventCompany.TopicsInterested)").val(data.TopicsInterested);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val(data.LocationInterested);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val(data.TrainingBudget);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val(data.Remarks);
+            } else {
+                $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(0);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.EstimatedDelegateNumber)").val(0);
+                @*$("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val('');
+                $("@Html.JquerySelectorFor(m => m.EventCompany.FinalStatus)").val('');
+                $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val('');*@
+                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val('').trigger("change");
+                $("@Html.JquerySelectorFor(m => m.EventCompany.GoodTrainingMonth)").val('').trigger("change");
+                $("@Html.JquerySelectorFor(m => m.EventCompany.TopicsInterested)").val('');
+                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val('');
+                $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val('');
+                $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val('');
+            }
+        }
+
+        LoadEventCompanyInfo();
     </script>
-</text>
+                        )

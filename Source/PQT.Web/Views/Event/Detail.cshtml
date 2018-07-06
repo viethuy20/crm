@@ -5,6 +5,36 @@
     ViewBag.Title = "Event Detail";
 }
 
+<style>
+    #grid_companies tbody tr {
+        cursor: pointer;
+    }
+
+    #grid_companies tbody tr.Tier1 {
+        color: #a94442;
+        background-color: #ffdad7;
+    }
+
+    #grid_companies tbody tr.Tier1.selected {
+        color: #a94442;
+        background-color: #fcaca6;
+    }
+
+    #grid_companies tbody tr.Tier2 {
+        color: #31708f;
+        background-color: #d8edff !important;
+    }
+
+    #grid_companies tbody tr.Tier2.selected {
+        color: #31708f;
+        background-color: #add9ff !important;
+    }
+
+    #grid_companies tbody tr.Tier0.selected {
+        color: #313534;
+        background-color: #e5e6e6 !important;
+    }
+</style>
 <section>
 
     <div class="row section-header" style="height: auto">
@@ -182,6 +212,7 @@
                 <table class="table no-margin" id="grid_companies">
                     <thead>
                     <tr>
+                        <th class="hide"></th>
                         <th>Country</th>
                         <th>Company</th>
                         <th>Product/Service</th>
@@ -216,28 +247,19 @@
                     }
                 },
                 "columns": [
+                    { "data": "ID", "name": "ID", "orderable": true },
                     { "data": "Country", "name": "Country", "orderable": true },
                     { "data": "CompanyName", "name": "CompanyName", "orderable": true },
                     { "data": "ProductOrService", "name": "ProductOrService", "orderable": true },
                     { "data": "Sector", "name": "Sector", "orderable": true },
                     { "data": "Industry", "name": "Industry", "orderable": true },
                 ],
-                'columnDefs': [
-                    {
-                        'targets': 0,
-                        'searchable': false,
-                        'orderable': false,
-                        'width': '1%',
-                        'className': 'dt-body-center',
-                        'render': function(data, type, full, meta) {
-                            return '<input type="checkbox">';
-                        }
-                    }
-                ],
                 "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
-                "iDisplayLength": 50,
+                "iDisplayLength": 25,
                 "aaSorting": [[0, "asc"]],
                 "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $(nRow).addClass('Tier' + aData["Tier"]);
+                    $(nRow).find('td:eq(0)').addClass("hide");
                 },
                 initComplete: function() {
                     var _table = this;

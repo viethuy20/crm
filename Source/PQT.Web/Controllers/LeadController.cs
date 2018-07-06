@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using NS.Helpers;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
@@ -22,12 +23,14 @@ namespace PQT.Web.Controllers
         private readonly ILeadService _repo;
         private readonly IBookingService _bookingService;
         private readonly ICompanyRepository _companyRepo;
+        private readonly IEventService _eventService;
 
-        public LeadController(ILeadService repo, ICompanyRepository companyRepo, IBookingService bookingService)
+        public LeadController(ILeadService repo, ICompanyRepository companyRepo, IBookingService bookingService, IEventService eventService)
         {
             _repo = repo;
             _companyRepo = companyRepo;
             _bookingService = bookingService;
+            _eventService = eventService;
         }
         /// <summary>
         /// 
@@ -71,9 +74,9 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
-        public ActionResult Edit(int leadId)
+        public ActionResult Edit(int id)
         {
-            var model = new CallingModel(leadId);
+            var model = new CallingModel(id);
             if (model.Lead == null)
             {
                 TempData["error"] = "Data not found";
@@ -180,11 +183,12 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Start Call Form")]
         public ActionResult StartCallForm(int id = 0)
         {
-            if (id == 0)
+            var model = new CallingModel(id, 0);
+            if (model.Event == null)
             {
+                TempData["error"] = "Event not found";
                 return RedirectToAction("Index");
             }
-            var model = new CallingModel(id, 0);
             return View(model);
         }
 
@@ -206,93 +210,42 @@ namespace PQT.Web.Controllers
                 if (leadExists.Any())
                 {
                     TempData["error"] = "Cannot process... This company is existing in NCL";
-                    return View(model);
-                }
-                if (model.TypeSubmit == "SaveCall")
-                {
-                    if (model.Create())
-                    {
-                        TempData["message"] = "Save successful";
-                        return RedirectToAction("Index", new { id = model.EventID });
-                    }
-                }
-                else if (model.Create())
-                {
-                    TempData["message"] = "Save successful";
                     return RedirectToAction("Index", new { id = model.EventID });
                 }
+
+                if (model.Create())
+                {
+                    TempData["message"] = "Call successful";
+                    return RedirectToAction("Detail", new { id = model.Lead.ID });
+                }
             }
-            model.LoadCompanies(model.EventID);
+            //model.LoadCompanies(model.EventID);
             TempData["error"] = "Save failed";
             return View(model);
         }
 
-        [DisplayName(@"Calling Form")]
-        public ActionResult CallingForm(int eventId, int leadId = 0)
+        [DisplayName(@"Call Back Form")]
+        public ActionResult CallingForm(int id = 0)
         {
-            var model = new CallingModel(eventId, leadId);
-            return PartialView(model);
+            var model = new CallingModel(id);
+            return View(model);
         }
 
         [HttpPost]
-        [DisplayName(@"Calling Form")]
+        [DisplayName(@"Call Back Form")]
         public ActionResult CallingForm(CallingModel model)
         {
-            if (model.CompanyID == 0)
+            if (model.Save())
             {
-                return Json(new { Code = 0, Message = "Please select company" });
+                TempData["message"] = "Call successful";
+                return RedirectToAction("Detail", new { id = model.Lead.ID });
             }
-
-            var leadExists = _repo.GetAllLeads(m =>
-                m.EventID == model.EventID && m.UserID != CurrentUser.Identity.ID &&
-                m.CompanyID == model.CompanyID &&
-                (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
-                 DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired())) &&
-                (m.LeadStatusRecord == LeadStatus.Blocked ||
-                 m.LeadStatusRecord == LeadStatus.Live ||
-                 m.LeadStatusRecord == LeadStatus.LOI ||
-                 m.LeadStatusRecord == LeadStatus.Booked));
-            if (leadExists.Any())
+            if (model.Event == null)
             {
-                return Json(new { Code = 0, Message = "Cannot process... This company is existing in NCL" });
+                model.Event = _eventService.GetEvent(model.EventID);
             }
-            if (model.TypeSubmit == "SaveCall")
-            {
-                if (model.LeadID > 0)
-                {
-                    if (model.Save())
-                    {
-                        var callingModel = new CallingModel
-                        {
-                            Lead = model.Lead,
-                            PhoneCall = { LeadID = model.Lead.ID }
-                        };
-                        return PartialView("CallingForm", callingModel);
-                    }
-                }
-                else if (model.Create())
-                {
-                    var callingModel = new CallingModel
-                    {
-                        Lead = model.Lead,
-                        PhoneCall = { LeadID = model.Lead.ID }
-                    };
-                    return PartialView("CallingForm", callingModel);
-                }
-                return Json(new { Code = 0, Message = "Save failed" });
-            }
-            if (model.LeadID > 0)
-            {
-                if (model.Save())
-                {
-                    return Json(new { Code = 1, TypeSubmit = model.TypeSubmit, LeadID = model.PhoneCall.LeadID });
-                }
-            }
-            else if (model.Create())
-            {
-                return Json(new { Code = 1, TypeSubmit = model.TypeSubmit, LeadID = model.PhoneCall.LeadID });
-            }
-            return Json(new { Code = 0, Message = "Save failed" });
+            TempData["error"] = "Save failed";
+            return View(model);
         }
 
         [DisplayName(@"Request NCL")]
@@ -428,7 +381,7 @@ namespace PQT.Web.Controllers
                 switch (sortColumn)
                 {
                     case "CreatedTime":
-                        leads = leads.OrderBy(s => s.CreatedTime).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.StatusUpdateTime).ThenBy(s => s.ID);
                         break;
                     case "Company":
                         leads = leads.OrderBy(s => s.Company.CompanyName).ThenBy(s => s.ID);
@@ -488,7 +441,7 @@ namespace PQT.Web.Controllers
                 switch (sortColumn)
                 {
                     case "CreatedTime":
-                        leads = leads.OrderByDescending(s => s.CreatedTime).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.StatusUpdateTime).ThenBy(s => s.ID);
                         break;
                     case "Company":
                         leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenBy(s => s.ID);
@@ -562,7 +515,7 @@ namespace PQT.Web.Controllers
                 {
                     m.ID,
                     m.EventID,
-                    CreatedTime = m.CreatedTime.ToString("dd/MM/yyyy HH:mm:ss"),
+                    CreatedTime = m.StatusUpdateTimeStr,
                     Company = m.Company.CompanyName,
                     Country = m.Company.CountryCode,
                     m.GeneralLine,
@@ -669,7 +622,7 @@ namespace PQT.Web.Controllers
                 switch (sortColumn)
                 {
                     case "DateCreatedDisplay":
-                        leads = leads.OrderBy(s => s.LeadStatusRecord.UpdatedTime).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.StatusUpdateTime).ThenBy(s => s.ID);
                         break;
                     case "CompanyName":
                         leads = leads.OrderBy(s => s.Company.CompanyName).ThenBy(s => s.ID);
@@ -696,7 +649,7 @@ namespace PQT.Web.Controllers
                 switch (sortColumn)
                 {
                     case "DateCreatedDisplay":
-                        leads = leads.OrderByDescending(s => s.LeadStatusRecord.UpdatedTime).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.StatusUpdateTime).ThenBy(s => s.ID);
                         break;
                     case "CompanyName":
                         leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenBy(s => s.ID);
@@ -864,7 +817,7 @@ namespace PQT.Web.Controllers
                 switch (sortColumn)
                 {
                     case "CreatedTime":
-                        leads = leads.OrderByDescending(s => s.CreatedTime).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.StatusUpdateTime).ThenBy(s => s.ID);
                         break;
                     case "Company":
                         leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenBy(s => s.ID);
@@ -1009,6 +962,213 @@ namespace PQT.Web.Controllers
             var model =
                 _companyRepo.GetAllCompanyResources(m => m.CompanyID == companyID);
             return PartialView(model);
+        }
+        [AjaxOnly]
+        public ActionResult EventCompanyInfo(int eventId, int companyId)
+        {
+            var model = _companyRepo.GetEventCompany(eventId, companyId);
+            if (model != null && model.UpdatedTime == null)
+            {
+                var other = _companyRepo.GetEventCompany(companyId);
+                if (other != null)
+                {
+                    model = other;
+                }
+            }
+            return Json(new
+            {
+                model.ID,
+                model.EstimatedDelegateNumber,
+                //model.FirstFollowUpStatus,
+                //model.FinalStatus,
+                //DateNextFollowUp = model.DateNextFollowUp != default(DateTime) ? model.DateNextFollowUp.ToString("dd/MM/yyyy") : "",
+                model.BudgetMonth,
+                model.GoodTrainingMonth,
+                model.TopicsInterested,
+                model.LocationInterested,
+                model.TrainingBudget,
+                model.Remarks,
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [AjaxOnly]
+        public ActionResult AjaxGetAssignCompanies(int eventId = 0)
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+            var companyName = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("CompanyName") != null && Request.Form.GetValues("CompanyName").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                companyName = Request.Form.GetValues("CompanyName").FirstOrDefault().Trim().ToLower();
+            }
+            var countryName = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("CountryName") != null && Request.Form.GetValues("CountryName").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                countryName = Request.Form.GetValues("CountryName").FirstOrDefault().Trim().ToLower();
+            }
+            var productService = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("ProductService") != null && Request.Form.GetValues("ProductService").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                productService = Request.Form.GetValues("ProductService").FirstOrDefault().Trim().ToLower();
+            }
+            var sector = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Sector") != null && Request.Form.GetValues("Sector").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                sector = Request.Form.GetValues("Sector").FirstOrDefault().Trim().ToLower();
+            }
+            var industry = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Industry") != null && Request.Form.GetValues("Industry").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                industry = Request.Form.GetValues("Industry").FirstOrDefault().Trim().ToLower();
+            }
+
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int page = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+
+            IEnumerable<Company> companies = new HashSet<Company>();
+            var eventLead = _eventService.GetEvent(eventId);
+            if (eventLead != null)
+            {
+                var companiesInNcl = _repo.GetAllLeads(m => m.EventID == eventId).Where(m =>
+                    m.UserID != CurrentUser.Identity.ID &&
+                    m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
+                    (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked ||
+                     m.LeadStatusRecord.UpdatedTime.Date >=
+                     DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))).Select(m => m.CompanyID).Distinct();// get list company blocked
+                companies = eventLead.EventCompanies.Where(m => !companiesInNcl.Contains(m.CompanyID)).Select(m => m.Company);
+            }
+            else
+            {
+                companies = new List<Company>();
+            }
+            Func<Company, bool> predicate = m =>
+            (m.Tier.ToString() == TierType.Tier3 || m.Tier.ToString() == TierType.Tier2 || (
+            m.Tier.ToString() == TierType.Tier1 && m.ManagerUsers.Select(u => u.ID).Contains(CurrentUser.Identity.ID)
+            )) &&
+                (string.IsNullOrEmpty(companyName) ||
+                 (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
+                (string.IsNullOrEmpty(productService) || (!string.IsNullOrEmpty(m.ProductOrService) &&
+                                                          m.ProductOrService.ToLower().Contains(productService))) &&
+                (string.IsNullOrEmpty(countryName) ||
+                 (m.Country != null && m.Country.Code.ToLower().Contains(countryName)) ||
+                 (m.Country != null && m.Country.Name.ToLower().Contains(countryName))) &&
+                (string.IsNullOrEmpty(sector) ||
+                 (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
+                (string.IsNullOrEmpty(industry) ||
+                 (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry)));
+            companies = companies.Where(predicate);
+
+            #region sort
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "CountryName":
+                        companies = companies.OrderBy(s => s.CountryName).ThenBy(s => s.Tier);
+                        break;
+                    case "ProductOrService":
+                        companies = companies.OrderBy(s => s.ProductOrService).ThenBy(s => s.Tier);
+                        break;
+                    case "Sector":
+                        companies = companies.OrderBy(s => s.Sector).ThenBy(s => s.Tier);
+                        break;
+                    case "Industry":
+                        companies = companies.OrderBy(s => s.Industry).ThenBy(s => s.Tier);
+                        break;
+                    default:
+                        companies = companies.OrderBy(s => s.Tier).ThenBy(s => s.CompanyName);
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "CountryName":
+                        companies = companies.OrderByDescending(s => s.CountryName).ThenBy(s => s.Tier);
+                        break;
+                    case "ProductOrService":
+                        companies = companies.OrderByDescending(s => s.ProductOrService).ThenBy(s => s.Tier);
+                        break;
+                    case "Sector":
+                        companies = companies.OrderByDescending(s => s.Sector).ThenBy(s => s.Tier);
+                        break;
+                    case "Industry":
+                        companies = companies.OrderByDescending(s => s.Industry).ThenBy(s => s.Tier);
+                        break;
+                    default:
+                        companies = companies.OrderByDescending(s => s.Tier).ThenBy(s => s.CompanyName);
+                        break;
+                }
+            }
+
+            #endregion sort
+
+            recordsTotal = companies.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            var data = companies.Skip(page).Take(pageSize).ToList();
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    m.ID,
+                    Country = m.CountryName,
+                    m.CompanyName,
+                    m.DialingCode,
+                    m.ProductOrService,
+                    m.Sector,
+                    m.Industry,
+                    m.Tier,
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
+        [AjaxOnly]
+        public ActionResult AjaxGetTotalCallSummary(int eventId)
+        {
+            var saleId = PermissionHelper.SalesmanId();
+            var leads = _repo.GetAllLeads(m => m.EventID == eventId && (saleId == 0 || m.UserID == saleId ||
+                                                                    (m.User != null && m.User.TransferUserID == saleId)));
+            var eventData = _eventService.GetEvent(eventId);
+            return Json(new
+            {
+                Tier3 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier3),
+                Tier1 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier1),
+                Tier2 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier2),
+                TotalTier3 = eventData.EventCompanies.Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier3),
+                TotalTier1 = eventData.EventCompanies.Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier1),
+                TotalTier2 = eventData.EventCompanies.Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier2),
+                TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked),
+            }, JsonRequestBehavior.AllowGet);
         }
     }
 }

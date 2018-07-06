@@ -63,18 +63,18 @@
         <div class="col-sm-12" style="padding-right: 24px;padding-bottom: 12px">
             @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
             {
-                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "NCLForManager").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "NCLForManager").Id("btnBacklist").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
             }
             else
             {
-                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").Id("btnBacklist").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
             }
 
             @if (!eventClosed && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
             {
                 if (CurrentUser.HasPermission("Lead", "Edit"))
                 {
-                    @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { leadId = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
+                    @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
                 }
             }
             @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
@@ -309,7 +309,7 @@
             <div class="card-actionbar-row">
                 @if (CurrentUser.HasPermission("Lead", "CallingForm") && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
                 {
-                    <a class="btn btn-success pull-left simple-ajax-popup-align-top-custom" href="@Url.Action("CallingForm")?eventId=@(Model.Lead.EventID)&leadId=@Model.Lead.ID"><i class="md md-phone"></i> Start Call</a>
+                    <a class="btn btn-success pull-left " href="@Url.Action("CallingForm")/@Model.Lead.ID"><i class="md md-phone"></i> Start Call Back</a>
                 }
             </div>
         </div>
@@ -317,15 +317,7 @@
 </section>
 @Html.Script(
     @<script>
-         $.ajax({
-             global: false,
-             url: '@Url.Action("UpdateSeenNotify","Home")?entryId=@Model.Lead.ID',
-             type: 'POST',
-             success: function (data) {
-             },
-             error: function () {
-             }
-         });
+         UpdateSeenNotify(@Model.Lead.ID, @NotifyType.Lead.Value);
          $(document).on('click', '#lead_delete', function (e) {
              e.preventDefault();
              bootbox.confirm("Do you want to delete this call?", function (isOK) {
@@ -459,7 +451,7 @@
 
 
 
-         $(document).on('click', '.simple-ajax-popup-align-top-custom', function (e) {
+         @*$(document).on('click', '.simple-ajax-popup-align-top-custom', function (e) {
              e.preventDefault();
              $(this).magnificPopup({
                  type: 'ajax',
@@ -492,102 +484,10 @@
                      }
                  }
              }).magnificPopup('open');
-         });
-    </script>)
+         });*@
+     </script>)
 
 
-@Html.Script(
-    @<script>
-
-         function onFailCalling() {
-             toastr.error('@Resource.SaveError');
-         }
-         function onSuccessCalling(data) {
-             if (data.Code == 0) {
-                 if (data.Message)
-                     toastr.error(data.Message);
-                 else
-                     toastr.error('@Resource.SaveFailed');
-             } else {
-                 if (data.TypeSubmit == "SaveRequestNCL") {
-                     $.magnificPopup.close();
-                     bootbox.confirm("@Resource.ConfirmRequestNCL", function (isOK) {
-                         if (isOK) {
-                             $.ajax({
-                                 url: '@Url.Action("RequestAction")?id=' + data.LeadID + '&requestType=@LeadStatus.RequestNCL',
-                                 type: 'POST',
-                                 success: function (data) {
-                                     if (data == "") {
-                                         //toastr.success("Request successful");
-                                         location.reload();
-                                     } else {
-                                         toastr.error(data);
-                                     }
-                                 },
-                                 error: function () {
-                                     toastr.error("Request failed");
-                                 }
-                             });
-                         }
-                     });
-                 } else {
-                     $.magnificPopup.close();
-                     location.reload();
-                 }
-                 //if (data) {
-                 //    $(".leadcontent").html(data);
-                 //}
-
-             }
-         }
-         $(document).on('click', '#endcall_save', function (e) {
-             e.preventDefault();
-             $(".typeSubmit").val("SaveExist");
-             $(this).parents("form").submit();
-         });
-         $(document).on('click', '#endcall_book', function (e) {
-             e.preventDefault();
-             $(".typeSubmit").val("SaveBook");
-             $(this).parents("form").submit();
-         });
-         $(document).on('click', '#endcall_requestncl', function (e) {
-             e.preventDefault();
-             $(".typeSubmit").val("SaveRequestNCL");
-             $(this).parents("form").submit();
-         });
-    </script>)
-
-@Html.Script(
-    @<script>
-         function precisionRound(number, precision) {
-             var factor = Math.pow(10, precision);
-             return Math.round(number * factor) / factor;
-         }
-
-         var tickStarted = false;
-         var startTime = new Date();
-         function tickTime() {
-             var seconds = precisionRound((new Date() - startTime) / 1000, 0);
-             var m = Math.floor(seconds / 60);
-             var s = seconds - m * 60;
-             m = checkTime(m);
-             s = checkTime(s);
-             $('#call-tick').html(m + ":" + s);
-             setTimeout(tickTime, 500);
-         }
-         function checkTime(i) {
-             if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
-             return i;
-         }
-
-         function StartTick() {
-             startTime = new Date();
-             $('.phoneCallStartTime').val(moment(startTime).format("DD/MM/YYYY HH:mm:ss"));
-             tickTime();
-             tickStarted = true;
-         }
-     </script>
-    )
 @Html.Script(
     @<script>
 
@@ -630,7 +530,7 @@
              });
          });
 
-    </script>)
+     </script>)
 
 @Html.Script(
     @<script>
@@ -647,7 +547,7 @@
                  toastr.error(data);
              }
          }
-    </script>)
+     </script>)
 
 
 @Html.Script(
@@ -663,9 +563,24 @@
                  else
                      toastr.error('@Resource.SaveFailed');
              } else if (data.Code == 1) {
-                toastr.success('@Resource.UpdateSuccessful');
-                $.magnificPopup.close();
-                location.reload();
+                 toastr.success('@Resource.UpdateSuccessful');
+                 $.magnificPopup.close();
+                 location.reload();
              }
          }
-    </script>)
+     </script>)
+@Html.Script(
+    @<script>
+
+         //$("#btnBacklist").on("click",
+         //    function(e) {
+         //        e.preventDefault();
+         //        if (document.referrer != "" && (document.referrer.toLowerCase().indexOf("/booking/") < 0
+         //            || document.referrer.toLowerCase().indexOf("/lead/startcallform/") < 0
+         //            || document.referrer.toLowerCase().indexOf("/lead/callingform/") < 0)) {
+         //            history.back();
+         //        } else {
+         //            location.href = $(this).href;
+         //        }
+         //    });
+     </script>)

@@ -4,6 +4,7 @@
 
 @{
     ViewBag.MenuBarColl = true;
+    ViewBag.StartSocket = true;
     ViewBag.Title = "My Call List";
     var eventClosed = Model.Event != null && (Model.Event.IsEventEnd || Model.Event.EndDate.Date < DateTime.Today) ? true : false;
 }
@@ -173,14 +174,14 @@
                             @*<a class="btn btn-icon-toggle btn-Expand"><i class="fa fa-expand"></i></a>*@
                         </div>
                     </div>
-                    <header><i class="fa fa-fw fa-phone"></i> @ViewBag.Title - <span style="font-size: 18px;"><b>@Model.Event.EventName</b> - <b>@Model.Event.EventCode</b> - Date: <b>@Model.Event.StartDate.ToString("dd MMM yyyy")</b> - <b>@Model.Event.EndDate.ToString("dd MMM yyyy")</b></span></header>
+                    <header><span class="text-primary"><i class="fa fa-fw fa-phone"></i> @ViewBag.Title</span> - <span style="font-size: 18px;"><b>@Model.Event.EventName (@Model.Event.EventCode)</b> - Sales Date: <b>@Model.Event.StartDate.ToString("dd/MM/yy")</b> - <b>@Model.Event.EndDate.ToString("dd/MM/yy")</b></span></header>
                 </div><!--end .card-head -->
                 <div class="card-body">
                     <table class="table" id="tableLead">
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Date Created</th>
+                                <th>Time Updated</th>
                                 <th>Country</th>
                                 <th style="width: 150px">Company</th>
                                 <th>Client Name/Job Title</th>
@@ -282,7 +283,7 @@
              "aaSorting": [[1, "desc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
-                 $(nRow).find('td:eq(0)').html('<a class="simple-ajax-popup-align-top ink-reaction btn-floating-action btn-primary" href="@Url.Action("CallingForm")?eventId=@(Model.Event.ID)&leadId=' +
+                 $(nRow).find('td:eq(0)').html('<a class="ink-reaction btn-floating-action btn-primary" title="Call Back" href="@Url.Action("CallingForm")/' +
                      aData["ID"] +
                      '"><i class="fa fa-fw fa-phone"></i></a>');
                  $(nRow).find('td:eq(1)').html('<a href="@Url.Action("Detail")/' +
@@ -577,165 +578,6 @@
 @Html.Script(
     @<script>
 
-         $(document).on('click', '.simple-ajax-popup-align-top-custom', function (e) {
-             e.preventDefault();
-             $(this).magnificPopup({
-                 type: 'ajax',
-                 closeOnBgClick:false,
-                 callbacks: {
-                     ajaxContentAdded: function () {
-                         $('.mfp-container .date-picker,.mfp-container .datepicker').datepicker({
-                             autoclose: true,
-                             todayHighlight: true,
-                             format: 'dd/mm/yyyy'
-                         }).on('changeDate', function (ev) {
-                             $(this).datepicker('hide');
-                         });
-
-                         $(".mfp-container select:not(.select-ajax)").select2({
-                             placeholder: "@Resource.PleaseSelect",
-                             width: '100%',
-                             allowClear: true,
-                         });
-
-                         $(".mfp-container select[data-display=select2]").select2({
-                             placeholder: "@Resource.PleaseSelect",
-                             width: '100%',
-                             allowClear: true,
-                         });
-
-                         $("form").removeData("validator");
-                         $("form").removeData("unobtrusiveValidation");
-                         $.validator.unobtrusive.parse("form");
-                     }
-                 }
-             }).magnificPopup('open');
-         });
-    </script>)
-
-
-@Html.Script(
-    @<script>
-
-         function onFailCallSheet() {
-             toastr.error('@Resource.SaveError');
-         }
-         function onSuccessCallSheet(data) {
-             if (data.Code == 0) {
-                 if (data.Message)
-                     toastr.error(data.Message);
-                 else
-                     toastr.error('@Resource.SaveFailed');
-             } else {
-                 if (data.Code == 1) {
-                     toastr.success('@Resource.UpdateSuccessful');
-                     $.magnificPopup.close();
-                     fixedColumn = 0;
-                     tableLead.fnFilter('');
-                 }
-                 if (data) {
-                     $(".leadcontent").html(data);
-
-
-                     $('.mfp-container .date-picker,.mfp-container .datepicker').datepicker({
-                         autoclose: true,
-                         todayHighlight: true,
-                         format: 'dd/mm/yyyy'
-                     }).on('changeDate', function (ev) {
-                         $(this).datepicker('hide');
-                     });
-
-                     $("form").removeData("validator");
-                     $("form").removeData("unobtrusiveValidation");
-                     $.validator.unobtrusive.parse("form");
-                 }
-
-             }
-         }
-         $(document).on('click', '#leadsave_exist', function (e) {
-             e.preventDefault();
-             $(".typeSubmit").val("SaveExist");
-             $(this).parents("form").submit();
-         });
-         $(document).on('click', '#leadsave_call', function (e) {
-             e.preventDefault();
-             $(".typeSubmit").val("SaveCall");
-             $(this).parents("form").submit();
-         });
-    </script>)
-
-@Html.Script(
-    @<script>
-
-         function onFailCalling() {
-             toastr.error('@Resource.SaveError');
-         }
-         function onSuccessCalling(data) {
-             if (data.Code == 0) {
-                 if (data.Message)
-                     toastr.error(data.Message);
-                 else
-                     toastr.error('@Resource.SaveFailed');
-             } else {
-                 if (data.Code == 1) {
-                     toastr.success('@Resource.UpdateSuccessful');
-                     $.magnificPopup.close();
-                     if (data.TypeSubmit == "SaveRequestNCL") {
-                         bootbox.confirm("@Resource.ConfirmRequestNCL", function (isOK) {
-                             if (isOK) {
-                                 $.ajax({
-                                     url: '@Url.Action("RequestAction")?id=' + data.LeadID + '&requestType=@LeadStatus.RequestNCL',
-                                     type: 'POST',
-                                     success: function (data) {
-                                         if (data == "") {
-                                             toastr.success("Request successful");
-                                             fixedColumn = 0;
-                                             tableLead.fnFilter('');
-                                         } else {
-                                             toastr.error(data);
-                                             fixedColumn = 0;
-                                             tableLead.fnFilter('');
-                                         }
-                                     },
-                                     error: function () {
-                                         toastr.error("Request failed");
-                                         fixedColumn = 0;
-                                         tableLead.fnFilter('');
-                                     }
-                                 });
-                             }
-                         });
-                     } else {
-                         fixedColumn = 0;
-                         tableLead.fnFilter('');
-                     }
-                 }
-                 //if (data) {
-                 //    $(".leadcontent").html(data);
-                 //}
-
-             }
-         }
-         $(document).on('click', '#endcall_save', function (e) {
-             e.preventDefault();
-             $(".typeSubmit").val("SaveExist");
-             $(this).parents("form").submit();
-         });
-         $(document).on('click', '#endcall_book', function (e) {
-             e.preventDefault();
-             $(".typeSubmit").val("SaveBook");
-             $(this).parents("form").submit();
-         });
-         $(document).on('click', '#endcall_requestncl', function (e) {
-             e.preventDefault();
-             $(".typeSubmit").val("SaveRequestNCL");
-             $(this).parents("form").submit();
-         });
-    </script>)
-
-@Html.Script(
-    @<script>
-
          $(document).on('click', '#request_close', function (e) {
              e.preventDefault();
              $.magnificPopup.close();
@@ -820,37 +662,6 @@
          }
     </script>)
 
-@Html.Script(
-    @<script>
-         function precisionRound(number, precision) {
-             var factor = Math.pow(10, precision);
-             return Math.round(number * factor) / factor;
-         }
-
-         var tickStarted = false;
-         var startTime = new Date();
-         function tickTime() {
-             var seconds = precisionRound((new Date() - startTime) / 1000, 0);
-             var m = Math.floor(seconds / 60);
-             var s = seconds - m * 60;
-             m = checkTime(m);
-             s = checkTime(s);
-             $('#call-tick').html(m + ":" + s);
-             setTimeout(tickTime, 500);
-         }
-         function checkTime(i) {
-             if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
-             return i;
-         }
-
-         function StartTick() {
-             startTime = new Date();
-             $('.phoneCallStartTime').val(moment(startTime).format("DD/MM/YYYY HH:mm:ss"));
-             tickTime();
-             tickStarted = true;
-         }
-    </script>
-    )
 @Html.Script(
     @<script>
          function LoadTotalNCLSummary() {

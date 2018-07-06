@@ -92,7 +92,7 @@
                 {
                     if (CurrentUser.HasPermission("Lead", "Edit"))
                     {
-                        @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { leadId = Model.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
+                        @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
                     }
                 }
                 @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord == LeadStatus.Initial ||

@@ -97,13 +97,13 @@ namespace PQT.Web
             {
             }
 
-            if (Request.IsLocal)
-                MiniProfiler.Start();
+            //if (Request.IsLocal)
+            //    MiniProfiler.Start();
         }
 
         protected void Application_EndRequest()
         {
-            MiniProfiler.Stop();
+            //MiniProfiler.Stop();
         }
 
         private void UpdateCookie(string cookieName, string cookieValue)

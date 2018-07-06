@@ -220,7 +220,7 @@
     @Scripts.Render("~/content/js/min")
 
 
-    <script src="/signalr/hubs"></script>
+    <script src="~/signalr/hubs"></script>
 
 
     <script>
@@ -465,18 +465,9 @@
     </script>
 
     <script>
-
-    ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 // notification
 ///////////////////////////////////////////////////////////////////////////
-
-        $.connection.hub.start();
-
-        $.connection.hub.disconnected(function () {
-            setTimeout(function () {
-                $.connection.hub.start();
-            }, 5000); // Restart connection after 5 seconds.you can set the time based your requirement
-        });
 
         var notificator = $.connection.notificationHub,
             $triggerNotify = $('#notify-trigger'),
@@ -543,8 +534,8 @@
                             '\
                         <small class="timestamp" title="' +
                             this.notifyData.Timestamp +
-                            '">' +
-                            this.notifyData.TimeAgo +
+                        '" data-time="' + this.notifyData.TimeToString +'">' +
+                        moment(this.notifyData.TimeToString, "DDMMYYYYhhmmss").fromNow() +
                             '</small>\
                     </div>\
                     </a>\
@@ -572,8 +563,8 @@
                         '\
                     <br/><span class="timestamp" title="' +
                         this.notifyData.Timestamp +
-                        '">' +
-                        this.notifyData.TimeAgo +
+                        '" data-time="' + this.notifyData.TimeToString +'">' +
+                        moment(this.notifyData.TimeToString, "DDMMYYYYhhmmss").fromNow() +
                         '</span>\
                     </a>\
                     </div>';
@@ -678,39 +669,62 @@
                 });
             });
 
+
+        function UpdateSeenNotify(entryId, type) {
+            $.ajax({
+                global: false,
+                url: '@Url.Action("UpdateSeenNotify","Home")?entryId=' + entryId + '&type=' + type,
+                type: 'POST',
+                success: function (count) {
+                    var currentNotifyCount = parseInt($notifyCounter.text());
+                    if (count > 0 && currentNotifyCount > 0) {
+                        currentNotifyCount = currentNotifyCount - count;
+                        if (currentNotifyCount > 0) {
+                            $notifyCounter.html(currentNotifyCount);
+                            documentTitle = documentTitle.substring(documentTitle.lastIndexOf(")") + 1,
+                                documentTitle.length);
+                            document.title = '(' + currentNotifyCount + ') ' + documentTitle;
+                        } else {
+                            $notifyCounter.addClass('hide');
+                            $notifyCounter.html('0');
+                            document.title = documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
+                        }
+                    }
+                },
+                error: function () {
+                }
+            });
+        }
+
+
+        $.connection.hub.start();
+        $.connection.hub.qs = "UserID=@(currentUser!=null?currentUser.ID.ToString():"")";
+        $.connection.hub.disconnected(function () {
+            setTimeout(function () {
+                $.connection.hub.start();
+            }, 5000); // Restart connection after 5 seconds.you can set the time based your requirement
+        });
+
     </script>
 
     <script>
-        $(window).bind('storage', function () {
-            var updateInfo = JSON.parse(localStorage.getItem('updateInfo'));
-            if (updateInfo.action == 'removeNotification')
-                removeNotification(updateInfo.notificationId);
-            else if (updateInfo.action == 'setNotification')
-                setNotification(updateInfo.notification);
-        });
-        function removeNotification(id) {
-            // Check if signalR is connected. If so, I am the tab that will update
-            // the other tabs.
-            if ($.connection.hub.state === 1) {
-                var updateInfo = {
-                    action: 'removeNotification',
-                    notificationId: id
-                };
-                localStorage.setItem('updateInfo', JSON.stringify(updateInfo));
-            }
-            // brevity brevity
+        //Update all .timestamp
+        function UpdateTimestamp() {
+            var $timestamp = $(".timestamp");
+            $timestamp.each(function (index, item) {
+                var time = $(item).data('time');
+                if (time && time != "") {
+                    $(item).html(moment(time, "DDMMYYYYhhmmss").fromNow());
+                }
+            });
+            setTimeout(function () {
+                UpdateTimestamp();
+            }, 60000);
+            console.log("Update all .timestamp length=" + $timestamp.length);
         }
-        function setNotification(notification) {
-            if ($.connection.hub.state === 1) {
-                var updateInfo = {
-                    action: 'setNotification',
-                    notification: notification
-                };
-                localStorage.setItem('updateInfo', JSON.stringify(updateInfo));
-            }
-            // brevity brevity
-        }
-
+        setTimeout(function () {
+            UpdateTimestamp();
+        }, 60000);
     </script>
 
 

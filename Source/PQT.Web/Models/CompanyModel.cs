@@ -18,6 +18,7 @@ namespace PQT.Web.Models
         {
             UsersSelected = new List<int>();
             Users = new List<User>();
+            Company = new Company();
         }
         public void Prepare(int id)
         {

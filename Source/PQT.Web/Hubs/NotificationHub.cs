@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Web.Helpers;
 using AutoMapper;
 using PQT.Domain.Abstract;
@@ -24,18 +25,24 @@ namespace PQT.Web.Hubs
 
         public override Task OnConnected()
         {
-            AddConnectionIntoGroups();
+            var userID = Context.QueryString["UserID"];
+            if (!string.IsNullOrEmpty(userID))
+                AddConnectionIntoGroups(userID);
             return base.OnConnected();
         }
 
         public override Task OnDisconnected()
         {
-            RemoveConnectionFromGroups();
+            var userID = Context.QueryString["UserID"];
+            if (!string.IsNullOrEmpty(userID))
+                RemoveConnectionFromGroups(userID);
             return base.OnDisconnected();
         }
         public override Task OnReconnected()
         {
-            AddConnectionIntoGroups();
+            var userID = Context.QueryString["UserID"];
+            if (!string.IsNullOrEmpty(userID))
+                AddConnectionIntoGroups(userID);
             return base.OnReconnected();
         }
 
@@ -43,39 +50,43 @@ namespace PQT.Web.Hubs
 
         #region Connection manipulation
 
-        public static string GetRoleGroupName(Role role)
+
+        public static string GetUserGroupName(string userId)
         {
-            return "role_" + role.ID;
+            return "user_" + userId;
         }
 
-        public static string GetUserGroupName(User user)
+        private void AddConnectionIntoGroups(string userId)
         {
-            return "user_" + user.ID;
-        }
-
-        private void AddConnectionIntoGroups()
-        {
-            User user = MembershipService.GetUserByEmail(Context.User.Identity.Name);
-            if (user != null)
+            try
             {
-                // add connection to group by role
-                foreach (Role role in user.Roles)
-                    Groups.Add(Context.ConnectionId, GetRoleGroupName(role));
 
-                // add connection to group by user
-                Groups.Add(Context.ConnectionId, GetUserGroupName(user));
+                Groups.Add(Context.ConnectionId, GetUserGroupName(userId));
+                //User user = MembershipService.GetUserByEmail(Context.User.Identity.Name);
+                //if (user != null)
+                //{
+                //    // add connection to group by user
+                //    Groups.Add(Context.ConnectionId, GetUserGroupName(user));
+                //}
+            }
+            catch (Exception e)
+            {
             }
         }
 
-        private void RemoveConnectionFromGroups()
+        private void RemoveConnectionFromGroups(string userId)
         {
-            User user = MembershipService.GetUserByEmail(Context.User.Identity.Name);
-            if (user != null)
+            try
             {
-                foreach (Role role in user.Roles)
-                    Groups.Remove(Context.ConnectionId, GetRoleGroupName(role));
-
-                Groups.Remove(Context.ConnectionId, GetUserGroupName(user));
+                Groups.Remove(Context.ConnectionId, GetUserGroupName(userId));
+                //User user = MembershipService.GetUserByEmail(Context.User.Identity.Name);
+                //if (user != null)
+                //{
+                //    Groups.Remove(Context.ConnectionId, GetUserGroupName(user));
+                //}
+            }
+            catch (Exception e)
+            {
             }
         }
 
@@ -89,15 +100,10 @@ namespace PQT.Web.Hubs
             context.Clients.All.notify(message, dataType);
         }
 
-        public static void NotifyUser(User user,string message, string dataType)
+        public static void NotifyUser(User user, string message, string dataType)
         {
             IHubContext context = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
-            context.Clients.Group(GetUserGroupName(user)).notify(message, dataType);
-        }
-        public static void NotifyRole(Role role,string message, string dataType)
-        {
-            IHubContext context = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
-            context.Clients.Group(GetRoleGroupName(role)).notify(message, dataType);
+            context.Clients.Group(GetUserGroupName(user.ID.ToString())).notify(message, dataType);
         }
 
         public static void Notify(Lead lead)
@@ -110,11 +116,7 @@ namespace PQT.Web.Hubs
         }
         public static void NotifyUser(User user, UserNotification notify)
         {
-            NotifyUser(user,Json.Encode(notify), GetEntityName(notify));
-        }
-        public static void NotifyRole(Role role, UserNotification notify)
-        {
-            NotifyRole(role,Json.Encode(notify), GetEntityName(notify));
+            NotifyUser(user, Json.Encode(notify), GetEntityName(notify));
         }
 
 

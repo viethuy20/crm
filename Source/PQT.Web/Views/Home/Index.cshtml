@@ -7,9 +7,45 @@
     //ViewBag.MenuBarColl = true;
     ViewBag.Title = "Dashboard";
     ViewBag.MenuBarColl = true;
+    ViewBag.StartSocket = true;
 }
 
 <style>
+    .event-panel {
+        min-height: 1px;
+        padding-left: 12px;
+    }
+
+        .event-panel .card {
+            width: 280px;
+            margin-bottom: 12px;
+        }
+
+    .event-header {
+        position: relative;
+        color: #fff;
+        padding: 10px;
+    }
+
+    .event-footer {
+        position: relative;
+        background: #eeeeee;
+        padding: 5px;
+    }
+
+    .link-event {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+    }
+
+    .notify_panel {
+        height: calc(100vh - 250px);
+        overflow-y: auto;
+    }
+
     .notify_item {
         padding: 10px;
         border-bottom: 1px solid #cecece;
@@ -28,6 +64,24 @@
             font-style: italic;
             color: #a3a3a3;
         }
+
+    .tier3, .tier1, .tier2 {
+        font-style: italic;
+    }
+
+    .col-tier3, .col-tier1, .col-tier2, .total-booked {
+        font-weight: bold;
+    }
+    .text-italic {
+        font-style: italic;
+    } 
+    .col-tier1 {
+        color: #a94442;
+    }
+
+    .col-tier2 {
+        color: #31708f;
+    }
 </style>
 <section style="padding: 5px;">
     <div class="section-body" style="margin-top: 12px;margin-right: 12px;">
@@ -35,34 +89,41 @@
             @foreach (var item in Model.Events)
             {
         <!-- BEGIN ALERT - REVENUE -->
-                <div style="min-height: 1px;padding-left: 12px;">
-                    <div class="card" style="width: 280px;margin-bottom: 12px;">
+                <div class="event-panel" id="event_panel_@item.ID" data-id="@item.ID">
+                    <div class="card">
                         <div class="card-body no-padding">
-                            <div class="alert no-margin" style="position: relative;background: @item.BackgroundColor ; color: #fff;padding: 10px;">
+                            <div class="alert no-margin event-header" style="background: @item.BackgroundColor;">
                                 @*<strong class="pull-right text-success text-lg">0,38% <i class="md md-trending-up"></i></strong>*@
                                 <strong class="text-xl">@item.EventName</strong><br />
-                                Date: @item.StartDate.ToString("dd MMM yyyy") - @item.EndDate.ToString("dd MMM yyyy")
+                                Sales Date: @item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
                                 @if (CurrentUser.HasRole("Finance"))
                                 {
-                                    <a href="@Url.Action("Index", "Booking", new {id = item.ID})" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
+                                    <a href="@Url.Action("Index", "Booking", new {id = item.ID})" class="link-event">
                                     </a>
                                 }
                                 else if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
                                 {
-                                    <a href="@Url.Action("NCLForManager", "Lead", new {id = item.ID})" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
+                                    <a href="@Url.Action("NCLForManager", "Lead", new {id = item.ID})" class="link-event">
                                     </a>
                                 }
                                 else
                                 {
-                                    <a href="@Url.Action("Index", "Lead", new {id = item.ID})" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
+                                    <a href="@Url.Action("Index", "Lead", new {id = item.ID})" class="link-event">
                                     </a>
                                 }
                             </div>
-                            <div style="height: calc(100vh - 210px);overflow-y: auto;">
+                            <div class="notify_panel">
                                 <div id="dashboard_notify_@item.ID" style="display: none"></div>
-                                <div class="event_items" data-id="@item.ID">
+                                <div class="notify_items">
                                     <div class="notify_item text-center"><img src="~/Content/img/ajax_loader.gif" /></div>
                                 </div>
+                            </div>
+                            <div class="row no-margin event-footer">
+                                <div class="col-sm-6"><span class="text-italic">Total booked:</span> <span class="total-booked">N.A</span></div>
+                                <div class="col-sm-6"><span class="text-italic">Companies called:</span></div>
+                                <div class="col-sm-4  text-center col-tier1">Tier 1<br/><span class="tier1">N.A</span>/<span class="total-tier1">N.A</span></div>
+                                <div class="col-sm-4  text-center col-tier2">Tier 2<br/><span class="tier2">N.A</span>/<span class="total-tier2">N.A</span></div>
+                                <div class="col-sm-4  text-center col-tier3">Tier 3<br/><span class="tier3">N.A</span>/<span class="total-tier3">N.A</span></div>
                             </div>
                         </div><!--end .card-body -->
                     </div><!--end .card -->
@@ -75,9 +136,8 @@
 
 @Html.Script(
     @<script>
-        var eventItems = $(document).find(".event_items");
-        function loadEventNotify(elementEvent) {
-            var eventId = $(elementEvent).data('id');
+        var eventItems = $(document).find(".event-panel");
+        function loadEventNotify(eventId) {
             if (eventId == 0)
                 return;
             $.ajax({
@@ -88,7 +148,7 @@
                     var htmlItems = '';
                     for (var i = 0; i < notifications.length; i++) {
                         var notify = notifications[i];
-                        
+
                         var url = '@Url.Action("Detail", "Lead")?id=' +
                             notify.EntryId +
                             '&eventId=' +
@@ -107,23 +167,49 @@
                                 : '<b>' + notify.Description + ' - ' + notify.Title + '</b>') +
                             '<br /><span class="timestamp" title="' +
                             notify.Timestamp +
-                            '">' +
-                            notify.TimeAgo +
+                            '" data-time="' + notify.TimeToString +'">' +
+                            moment(notify.TimeToString, "DDMMYYYYhhmmss").fromNow() +
                             '</span></a></div>';
                     }
                     if (htmlItems=='') {
                         htmlItems = '<div class="notify_item text-center"><span class="timestamp">Notify not found</span></div>';
                     }
-                    $(elementEvent).html(htmlItems);
+                    $("#event_panel_" + eventId).find(".notify_items").html(htmlItems);
                 },
                 error: function () {
-                    $(elementEvent).html('<div class="notify_item text-center"><span class="timestamp" >Get Notify Error</span></div>');
+                    $("#event_panel_" + eventId).find(".notify_items").html('<div class="notify_item text-center"><span class="timestamp" >Get Notify Error</span></div>');
                 }
             });
         }
+
+        function LoadTotalCalledSummaryForDashboard(eventId) {
+            if (eventId == 0)
+                return;
+            $.ajax({
+                global: false,
+                url: '@Url.Action("AjaxGetTotalCallSummary", "Lead")?eventId=' + eventId,
+                type: 'POST',
+                success: function (data) {
+                    var $eventFooter = $("#event_panel_" + eventId).find(".event-footer");
+                    if ($eventFooter) {
+                        $eventFooter.find(".tier3").html(data.Tier3);
+                        $eventFooter.find(".total-tier3").html(data.TotalTier3);
+                        $eventFooter.find(".tier1").html(data.Tier1);
+                        $eventFooter.find(".total-tier1").html(data.TotalTier1);
+                        $eventFooter.find(".tier2").html(data.Tier2);
+                        $eventFooter.find(".total-tier2").html(data.TotalTier2);
+                        $eventFooter.find(".total-booked").html(data.TotalBooked);
+                    }
+                },
+                error: function () {
+                }
+            });
+        }
+
         eventItems.each(function (index, item) {
-            loadEventNotify($(item));
+            loadEventNotify($(item).data('id'));
+            LoadTotalCalledSummaryForDashboard($(item).data('id'));
         });
 
-     </script>
+    </script>
     )

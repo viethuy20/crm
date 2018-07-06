@@ -29,5 +29,10 @@ namespace PQT.Domain.Abstract
         bool UpdateCompanyResource(CompanyResource resource);
         bool DeleteCompanyResource(int resourceID);
         #endregion Company Resource
+
+
+        EventCompany GetEventCompany(int eventId, int companyId);
+        EventCompany GetEventCompany(int companyId);
+        bool UpdateEventCompany(EventCompany company);
     }
 }

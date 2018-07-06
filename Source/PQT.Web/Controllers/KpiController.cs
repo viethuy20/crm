@@ -174,8 +174,8 @@ namespace PQT.Web.Controllers
                     var leads = _leadService.GetAllLeads(m =>
                         (model.EventID == 0 || m.EventID == model.EventID) &&
                         !m.MarkKPI &&
-                        (m.LeadStatusRecord != LeadStatus.Reject &&
-                         m.LeadStatusRecord != LeadStatus.Initial)).OrderByDescending(m => m.CreatedTime).AsEnumerable();
+                        (m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
+                         m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value)).OrderByDescending(m => m.CreatedTime).AsEnumerable();
                     recordsTotal = leads.Count();
                     if (pageSize > recordsTotal)
                     {
@@ -327,8 +327,8 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 leads = _leadService.GetAllLeads(m =>
-                    (m.LeadStatusRecord != LeadStatus.Reject &&
-                     m.LeadStatusRecord != LeadStatus.Initial) &&
+                    (m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
+                     m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value) &&
                     (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (eventId == 0 || m.EventID == eventId) &&

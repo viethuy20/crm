@@ -1,6 +1,7 @@
 ﻿@using PQT.Domain.Enum
 @using NS
 @using PQT.Domain.Abstract
+@using PQT.Domain.Entities
 @using PQT.Web.Infrastructure
 @using Resources
 @model PQT.Web.Models.CompanyModel
@@ -78,10 +79,7 @@
                     @Html.Bootstrap().LabelFor(m => m.Company.FinancialYear).LabelText("Financial Year")
                 </div>
                 <div class="form-group col-md-6">
-                    @Html.Bootstrap().DropDownListFor(m => m.Company.Tier, new List<SelectListItem> {
-                        new SelectListItem { Selected = Model.Company.Tier == 1, Value = "1", Text = "1" },
-                        new SelectListItem {Selected = Model.Company.Tier == 2, Value = "2", Text = "2" },
-                        new SelectListItem {Selected = Model.Company.Tier == 3, Value = "3", Text = "3" } }).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().DropDownListFor(m => m.Company.Tier, EnumerationHelper.ToSelectList<TierType>()).HtmlAttributes(new { required = "required" }).OptionLabel("").Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Company.Tier).LabelText("Tier")
                 </div>
                 <div class="col-sm-6">
