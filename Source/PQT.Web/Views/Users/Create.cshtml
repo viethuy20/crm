@@ -76,6 +76,14 @@
                             @Html.Bootstrap().LabelFor(m => m.DateOfContract).LabelText("Date Of Contract")
                         </div>
                     </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Extension).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Extension).LabelText("clid")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">

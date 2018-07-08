@@ -44,7 +44,7 @@
                 @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").Id("btnBacklist").RouteValues(new { id = Model.Booking.EventID }).PrependIcon("md md-arrow-back")
             }
 
-            @if (CurrentUser.HasPermission("Booking", "Edit") && (Model.Booking.BookingStatusRecord != BookingStatus.Approved))
+            @if (CurrentUser.HasPermission("Booking", "Edit"))
             {
                 @Html.Bootstrap().ActionLinkButton("Edit Booking", "Edit").RouteValues(new { id = Model.Booking.ID }).Class(" btn-primary").PrependIcon("md md-edit")
             }

@@ -49,9 +49,12 @@ namespace PQT.Web.Controllers
             if (CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin"))
                 model.Events = _eventService.GetAllEvents();
             else
+            {
+                var userId = CurrentUser.Identity.ID;
                 model.Events = _eventService.GetAllEvents().Where(m =>
-                    m.UserID == CurrentUser.Identity.ID || m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID))
-                        .Contains(CurrentUser.Identity.ID));
+                    m.UserID == userId || m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID))
+                        .Contains(userId) || m.ManagerUsers.Select(u => u.ID).Contains(userId));
+            }
             return View(model);
         }
 

@@ -80,10 +80,10 @@ namespace PQT.Domain.Concrete
                 existBooking.EventSessions.Clear();
                 existBooking.EventSessions = GetAll<EventSession>(r => sessionIds.Contains(r.ID)).ToList();
 
-                if (existBooking.BookingStatusRecord != BookingStatus.Approved)
-                {
-                    existBooking.BookingStatusRecord = new BookingStatusRecord(info.ID, BookingStatus.Initial, userId, message);
-                }
+                //if (existBooking.BookingStatusRecord != BookingStatus.Approved)
+                //{
+                existBooking.BookingStatusRecord = new BookingStatusRecord(info.ID, BookingStatus.Initial, userId, message);
+                //}
 
                 if (info.Delegates != null && info.Delegates.Any())
                 {

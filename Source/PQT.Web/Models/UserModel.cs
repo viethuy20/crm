@@ -43,6 +43,7 @@ namespace PQT.Web.Models
         public string BusinessPhone { get; set; }
 
         public string Address { get; set; }
+        public string Extension { get; set; }
         public LevelSalesman LevelSalesman { get; set; }
         public DateTime? DateOfContract { get; set; }
         public DateTime? DateOfStarting { get; set; }
@@ -73,6 +74,7 @@ namespace PQT.Web.Models
                 DateOfStarting = user.DateOfStarting;
                 BasicSalary = user.BasicSalary;
                 UserSalaryHistories = user.UserSalaryHistories;
+                Extension = user.Extension;
             }
         }
 
@@ -104,6 +106,7 @@ namespace PQT.Web.Models
         public string BusinessPhone { get; set; }
 
 
+        public string Extension { get; set; }
         public string UserPicture { get; set; }
         public DateTime? LastAccess { get; set; }
         public string Address { get; set; }

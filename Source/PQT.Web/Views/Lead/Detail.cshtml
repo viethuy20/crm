@@ -70,7 +70,7 @@
                 @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").Id("btnBacklist").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
             }
 
-            @if (!eventClosed && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
+            @if (!eventClosed)
             {
                 if (CurrentUser.HasPermission("Lead", "Edit"))
                 {

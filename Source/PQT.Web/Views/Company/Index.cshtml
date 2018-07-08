@@ -160,11 +160,13 @@
                 data.ProductOrService,
                 data.Sector,
                 data.Industry,
+                data.Tier,
                 '<a class="simple-ajax-popup-align-top" data-action="edit" href="@Url.Action("CreateOrEdit")?id=' + data.ID + '"><i class="md md-edit text-info"></i></a>',
                     '<a data-action="delete" data-id="' + data.ID + '" href="#"><i class="md md-delete text-danger"></i></a>'
             ]);
             var row = $Table.fnGetNodes(rowIndex);
             $(row).attr('data-id', data.ID);
+            $(row).addClass("tier" + data.Tier);
         }
         function updateItem(data) {
             var tr = $($Table.fnGetNodes());
@@ -177,7 +179,13 @@
                         $(td[2]).text(data.ProductOrService);
                         $(td[3]).text(data.Sector);
                         $(td[4]).text(data.Industry);
+                        $(td[5]).text(data.Tier);
                     }
+                    
+                    $(item).removeClass("tier1");
+                    $(item).removeClass("tier2");
+                    $(item).removeClass("tier3");
+                    $(item).addClass("tier" + data.Tier);
                 }
             });
         }

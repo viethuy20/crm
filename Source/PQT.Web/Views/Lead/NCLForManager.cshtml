@@ -10,20 +10,21 @@
 
 
 <style>
-    .table th{
-       white-space: nowrap;
-    }
-     .DTFC_Cloned {
-         background: #fff;
-     }
-
-    .DTFC_Cloned td {
-        background-color: #fff;
+    .table th {
+        white-space: nowrap;
     }
 
-    .DTFC_Cloned th {
-        background-color: #f5f5f5 !important;
+    .DTFC_Cloned {
+        background: #fff;
     }
+
+        .DTFC_Cloned td {
+            background-color: #fff;
+        }
+
+        .DTFC_Cloned th {
+            background-color: #f5f5f5 !important;
+        }
 
     #tableLead td, table th {
         text-align: left;
@@ -161,8 +162,11 @@
         color: #0aa89e
     }
 
-    .ncl_new:hover {
-        color: #0aa89e
+        .ncl_new:hover {
+            color: #0aa89e
+        }
+    a {
+        text-decoration: underline;
     }
 </style>
 <section>
@@ -218,7 +222,7 @@
     </div>
 
     <div class="row">
-        <input type="hidden" value="@Model.Event.ID" id="eventIdNCList"/>
+        <input type="hidden" value="@Model.Event.ID" id="eventIdNCList" />
         <div class="col-md-12">
             <div class="card  card-underline">
                 <div class="card-head">
@@ -235,26 +239,26 @@
                 <div class="card-body">
                     <table class="table" id="tableLead">
                         <thead>
-                        <tr>
-                            <th>Time Updated</th>
-                            <th>Salesman</th>
-                            <th>Country</th>
-                            <th style="width: 150px">Company</th>
-                            <th>Client Name/Job Title</th>
-                            <th>Direct Line/Mobile number</th>
-                            <th>Salutation</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Business Phone</th>
-                            <th>Mobile Phone</th>
-                            <th>Work Email</th>
-                            <th>Work Email 1</th>
-                            <th>Personal Email</th>
-                            <th>Call Back</th>
-                            <th>Status</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
+                            <tr>
+                                <th>Time Updated</th>
+                                <th>Salesman</th>
+                                <th>Country</th>
+                                <th style="width: 150px">Company</th>
+                                <th>Job Title</th>
+                                <th>Direct Line/Mobile</th>
+                                <th>Salutation</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Business Phone</th>
+                                <th>Mobile Phone</th>
+                                <th>Work Email</th>
+                                <th>Work Email 1</th>
+                                <th>Personal Email</th>
+                                <th>Call Back</th>
+                                <th>Status</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
                         </thead>
                     </table>
                 </div><!--end .card-body -->
@@ -317,7 +321,11 @@
                  var dropdowns = "";
 
                  $(nRow).find('td:eq(15)').css("white-space","nowrap");
-
+                 if (aData["StatusCode"] == @LeadStatus.RequestBook || aData["StatusCode"] == @LeadStatus.Booked) {
+                     $(nRow).find('td:eq(15)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
+                         aData["ID"] +
+                         '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;">' + aData["StatusDisplay"]+'</span></a>');
+                 }
                  $(nRow).find('td:eq(16)').html('<a href="@Url.Action("Detail")?id=' +
                      aData["ID"] +
                      '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;"><i class="fa fa-fw fa-eye"></i> Detail</span></a>');
@@ -405,7 +413,7 @@
              });
          });
 
-     </script>
+    </script>
                          )
 
 @Html.Script(
@@ -429,7 +437,7 @@
                  toastr.error(data);
              }
          }
-     </script>)
+    </script>)
 
 @Html.Script(
     @<script>
@@ -450,4 +458,4 @@
          }
 
          LoadTotalNCLSummary();
-     </script>)
+    </script>)

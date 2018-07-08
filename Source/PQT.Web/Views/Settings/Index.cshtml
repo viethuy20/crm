@@ -42,8 +42,8 @@
                                         List<Setting> itemsGroup = Model.Where(j => j.Module == g).ToList();
                                         foreach (Setting item in itemsGroup)
                                         {
-                                            if (CurrentUser.HasSettingPermission(item.Module, item.Name))
-                                            {
+                                            //if (CurrentUser.HasSettingPermission(item.Module, item.Name))
+                                            //{
                                                 <tr>
                                                     <td>
                                                         @Html.Hidden("Id", item.ID)
@@ -75,7 +75,7 @@
                                                         @string.Format(item.Description, item.Value)
                                                     </td>
                                                 </tr>
-                                            }
+                                            //}
                                         }
                                     }
                                 </table>

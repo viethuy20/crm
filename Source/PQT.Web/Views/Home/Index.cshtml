@@ -15,6 +15,9 @@
         min-height: 1px;
         padding-left: 12px;
     }
+        .event-panel .text-xl {
+            text-transform: capitalize;
+        }
 
         .event-panel .card {
             width: 300px;
@@ -42,7 +45,7 @@
     }
 
     .notify_panel {
-        height: calc(100vh - 290px);
+        height: calc(100vh - 320px);
         overflow-y: auto;
     }
 
@@ -100,6 +103,8 @@
                                 @*<strong class="pull-right text-success text-lg">0,38% <i class="md md-trending-up"></i></strong>*@
                                 <strong class="text-xl">@item.EventName</strong><br />
                                 Sales Date: @item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
+                                <br/>
+                                DOC: @item.DateOfConfirmation.ToString("dd/MM/yyyy") - Closing Date: @item.ClosingDate.ToString("dd/MM/yyyy")
                                 @if (CurrentUser.HasRole("Finance"))
                                 {
                                     <a href="@Url.Action("Index", "Booking", new {id = item.ID})" class="link-event">

@@ -97,6 +97,9 @@
         color: #a5a100;
         background-color: #fffdb7;
     }
+    a {
+        text-decoration: underline;
+    }
 </style>
 <style>
     .delegateItem {
@@ -291,6 +294,12 @@
                      '">' +
                      aData["CreatedTime"] +
                      '</a>');
+
+                 if (aData["StatusCode"] == @LeadStatus.RequestBook || aData["StatusCode"] == @LeadStatus.Booked) {
+                     $(nRow).find('td:eq(17)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
+                         aData["ID"] +
+                         '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;">' + aData["StatusDisplay"]+'</span></a>');
+                 }
                  if ('@eventClosed' == 'False') {
                      $(nRow).find('td:eq(18)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
                          aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');

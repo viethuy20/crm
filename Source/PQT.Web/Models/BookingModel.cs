@@ -114,10 +114,10 @@ namespace PQT.Web.Models
             {
                 throw new ObjectAlreadyExistsException("Booking does not exist");
             }
-            if (!CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel) && booking.BookingStatusRecord == BookingStatus.Approved)
-            {
-                throw new ObjectAlreadyExistsException("Cannot modify... Booking has been approved. Please contact to manager");
-            }
+            //if (!CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel) && booking.BookingStatusRecord == BookingStatus.Approved)
+            //{
+            //    throw new ObjectAlreadyExistsException("Cannot modify... Booking has been approved. Please contact to manager");
+            //}
             if (AttachmentFile != null)
             {
                 string uploadPicture = FileUpload.Upload(FileUploadType.Booking, AttachmentFile);

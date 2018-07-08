@@ -14,6 +14,18 @@ using PQT.Web.Infrastructure.Utility;
 namespace PQT.Web.Hubs
 {
     // ReSharper disable once ClassNeverInstantiated.Global
+    //public class MyConnectionFactory : IConnectionIdFactory
+    //{
+    //    public string CreateConnectionId(IRequest request)
+    //    {
+    //        //if (Request.Cookies["srconnectionid"] != null)
+    //        //{
+    //        //    return Request.Cookies["srconnectionid"];
+    //        //}
+    //        return Guid.NewGuid().ToString();
+    //    }
+    //}
+
     public class NotificationHub : Hub
     {
         private static IMembershipService MembershipService

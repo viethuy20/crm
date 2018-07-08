@@ -48,10 +48,18 @@ namespace PQT.Web.Controllers
             return View(eventData);
         }
 
-        public ActionResult Detail(int id, int eventId=0)
+        public ActionResult Detail(int id = 0, int leadId = 0, int eventId = 0)
         {
             var model = new BookingModel();
-            var booking = _bookingService.GetBooking(id);
+            Booking booking = null;
+            if (id > 0)
+            {
+                booking = _bookingService.GetBooking(id);
+            }
+            else if (leadId > 0)
+            {
+                booking = _bookingService.GetBookingByLeadId(leadId);
+            }
             if (booking == null)
             {
                 TempData["error"] = "Booking not found";

@@ -172,7 +172,7 @@ namespace PQT.Web.Models
                         count,
                         totalCount
                     };
-                    ProgressHub.SendMessage(userId,Json.Encode(json));
+                    ProgressHub.SendMessage(userId, Json.Encode(json));
                 }
                 return true;
             });
@@ -191,10 +191,16 @@ namespace PQT.Web.Models
                     !string.IsNullOrEmpty(lead.WorkEmailAddress1))
                 {
 
-                    var voips = ImportVoIps.Where(m => m.clid == lead.User.Extension && m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.GeneralLine) && !string.IsNullOrEmpty(m.disposition) && m.disposition.Trim().ToUpper() == "ANSWERED");
+                    var voips = ImportVoIps.Where(m => m.clid == lead.User.Extension && (
+                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.GeneralLine) ||
+                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone) ||
+                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.DirectLine) ||
+                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.BusinessPhone)
+                    ) && !string.IsNullOrEmpty(m.disposition) && m.disposition.Trim().ToUpper() == "ANSWERED");
                     if (lead.PhoneCalls.Any(m => voips.Any(v => m.StartTime.AddSeconds(-Settings.System.VoIpBuffer()) <= v.CallDateTime && v.CallDateTime <= m.StartTime.AddSeconds(Settings.System.VoIpBuffer()))))
                     {
                         lead.MarkKPI = true;
+                        lead.KPIRemarks = "";
                     }
                     else
                     {

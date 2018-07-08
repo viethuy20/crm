@@ -414,7 +414,6 @@ namespace PQT.Web.Models
                 Lead = leadRepo.GetLead(LeadID);
                 if (Lead != null)
                 {
-                    Lead.CompanyID = (int)CompanyID;
                     Lead.GeneralLine = GeneralLine;
                     Lead.ClientName = ClientName;
                     Lead.DirectLine = DirectLine;

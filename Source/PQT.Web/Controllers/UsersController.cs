@@ -143,6 +143,7 @@ namespace PQT.Web.Controllers
             user.DateOfStarting = model.DateOfStarting;
             user.DateOfContract = model.DateOfContract;
             user.BasicSalary = model.BasicSalary;
+            user.Extension = model.Extension;
             if (!string.IsNullOrEmpty(model.Password))
             {
                 user.Password = EncryptHelper.EncryptPassword(model.Password);

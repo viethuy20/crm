@@ -60,7 +60,7 @@ namespace PQT.Web.Controllers
                         return Json(new
                         {
                             Code = 1,
-                            Model = model
+                            Model = model.Company
                         });
                     }
                     return Json(new
@@ -74,7 +74,7 @@ namespace PQT.Web.Controllers
                     return Json(new
                     {
                         Code = 3,
-                        Model = model
+                        Model = model.Company
                     });
                 }
                 return Json(new
