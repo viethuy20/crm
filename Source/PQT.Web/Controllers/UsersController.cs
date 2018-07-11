@@ -242,6 +242,7 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 Func<User, bool> predicate = m =>
+                m.Status == EntityStatus.Normal && 
                     (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID)) &&
                     ((m.DisplayName.ToLower().Contains(searchValue)) ||
                      (m.Email != null && m.Email.ToLower().Contains(searchValue)) ||
@@ -255,6 +256,7 @@ namespace PQT.Web.Controllers
             else
             {
                 Func<User, bool> predicate = m =>
+                    m.Status == EntityStatus.Normal &&
                     (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID));
                 users = _membershipService.GetUsers(predicate, sortColumnDir, sortColumn,
                     skip, pageSize);

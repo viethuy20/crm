@@ -75,7 +75,7 @@
                    dropdowns += '<li class="divider"></li><li><a href="@Url.Action("NCLForManager", "Lead")/' + aData["ID"] + '"><i class="fa fa-eye"> View NCL</i></a></li>';
                 }
                 if ('@CurrentUser.HasPermission("Booking", "Index")' == 'True') {
-                   dropdowns += '<li class="divider"></li><li><a href="@Url.Action("Index", "Booking")/' + aData["ID"] + '"><i class="fa fa-eye"> View Bookings</i></a></li>';
+                    dropdowns += '<li class="divider"></li><li><a href="/Booking/Index/' + aData["ID"] + '"><i class="fa fa-eye"> View Bookings</i></a></li>';
                 }
                 if ('@CurrentUser.HasPermission("Event", "Edit")' == 'True') {
                     dropdowns += '<li class="divider"></li><li><a href="@Url.Action("Edit")/' + aData["ID"] + '"><i class="md md-edit text-info"> Edit</i></a></li>';
