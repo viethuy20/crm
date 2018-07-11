@@ -111,26 +111,42 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-sm-12">
+                                        <div class="col-sm-6">
                                             <div class="form-group">
-                                                @Html.Bootstrap().TextBox("Destination" + item.ID).Value(item.Destination).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                <label>Destination</label>
+                                                @Html.Bootstrap().TextBox("Designation" + item.ID).Value(item.Designation).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                <label>Designation</label>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="form-group">
-                                                @Html.Bootstrap().TextBox("Tel" + item.ID).Value(item.Tel).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                <label>Tel</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-12">
+                                        <div class="col-sm-6">
                                             <div class="form-group">
                                                 @Html.Bootstrap().TextBox("Mail" + item.ID).Value(item.Mail).Disabled().Class("form-control").ShowValidationMessage(true)
                                                 <label>Mail</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                @Html.Bootstrap().TextBox("LandLine" + item.ID).Value(item.LandLine).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                <label>Land Line</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                @Html.Bootstrap().TextBox("Mobile1_" + item.ID).Value(item.Mobile1).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                <label>Mobile 1</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                @Html.Bootstrap().TextBox("Mobile2_" + item.ID).Value(item.Mobile2).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                <label>Mobile 2</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                @Html.Bootstrap().TextBox("Mobile3_" + item.ID).Value(item.Mobile3).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                <label>Mobile 3</label>
                                             </div>
                                         </div>
                                     </div>

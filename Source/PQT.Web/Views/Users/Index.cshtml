@@ -36,6 +36,7 @@
                             <th>@Resource.Email</th>
                             <th>Business Phone</th>
                             <th>Mobile Phone</th>
+                            <th>Extension</th>
                             <th>@Resource.Roles</th>
                             <th></th>
                             <th></th>
@@ -57,6 +58,7 @@
              "filter": true, // this is for disable filter (search box)
              "orderMulti": false, // for disable multiple column at once
              //"stateSave": true,
+             "fixedHeader": true,
              "ajax": {
                  "url": "@Url.Action("AjaxGetIndexView")",
                  "type": "POST",
@@ -71,6 +73,7 @@
                  { "data": "Email", "name": "Email", "orderable": true },
                  { "data": "BusinessPhone", "name": "BusinessPhone", "orderable": true },
                  { "data": "MobilePhone", "name": "MobilePhone", "orderable": true },
+                 { "data": "Extension", "name": "Extension", "orderable": true },
                  { "data": "RolesHtml", "name": "RolesHtml", "orderable": true },
                  { "data": "ID", "name": "ID", "orderable": false },
                  { "data": "ID", "name": "ID", "orderable": false },
@@ -79,13 +82,13 @@
              "iDisplayLength": 25,
              "aaSorting": [[0, "asc"]],
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 $(nRow).find('td:eq(6)').html('<a href="@Url.Action("Index", "Audit")?Username=' +
+                 $(nRow).find('td:eq(7)').html('<a href="@Url.Action("Index", "Audit")?Username=' +
                      aData["Username"] +
                      '" >@Resource.Logviewer</a>');
-                 $(nRow).find('td:eq(7)').html('<a href="@Url.Action("Edit")/' +
+                 $(nRow).find('td:eq(8)').html('<a href="@Url.Action("Edit")/' +
                      aData["ID"] +
                      '" class="active" data-toggle="class"><i class="fa fa-pencil-square-o text-violet text-active"></i></a>');
-                 $(nRow).find('td:eq(8)').html('<a data-action="delete" data-id="' +
+                 $(nRow).find('td:eq(9)').html('<a data-action="delete" data-id="' +
                      aData["ID"] +
                      '" href="#"><i class="fa fa-times text-danger "></i></a>');
              },

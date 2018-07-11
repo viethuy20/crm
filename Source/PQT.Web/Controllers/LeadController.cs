@@ -360,14 +360,15 @@ namespace PQT.Web.Controllers
                                                    m.ClientName.Contains(searchValue) ||
                                                    m.DirectLine.Contains(searchValue) ||
                                                    m.CallBackDateDisplay.Contains(searchValue) ||
-                                                   m.Salutation.Contains(searchValue) ||
-                                                   m.FirstName.Contains(searchValue) ||
-                                                   m.LastName.Contains(searchValue) ||
-                                                   m.BusinessPhone.Contains(searchValue) ||
-                                                   m.MobilePhone.Contains(searchValue) ||
-                                                   m.WorkEmailAddress.Contains(searchValue) ||
-                                                   m.WorkEmailAddress1.Contains(searchValue) ||
-                                                   m.PersonalEmailAddress.Contains(searchValue)));
+                                                   (m.Salutation != null && m.Salutation.Contains(searchValue)) ||
+                                                   (m.FirstName != null && m.FirstName.Contains(searchValue)) ||
+                                                   (m.LastName != null && m.LastName.Contains(searchValue)) ||
+                                                   (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
+                                                   (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
+                                                   (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
+                                                   (m.WorkEmail != null && m.WorkEmail.Contains(searchValue)) ||
+                                                   (m.WorkEmail1 != null && m.WorkEmail1.Contains(searchValue)) ||
+                                                   (m.PersonalEmail != null && m.PersonalEmail.Contains(searchValue))));
             }
             else
             {
@@ -407,20 +408,35 @@ namespace PQT.Web.Controllers
                     case "LastName":
                         leads = leads.OrderBy(s => s.LastName).ThenBy(s => s.ID);
                         break;
-                    case "BusinessPhone":
-                        leads = leads.OrderBy(s => s.BusinessPhone).ThenBy(s => s.ID);
+                    case "MobilePhone1":
+                        leads = leads.OrderBy(s => s.MobilePhone1).ThenBy(s => s.ID);
                         break;
-                    case "MobilePhone":
-                        leads = leads.OrderBy(s => s.MobilePhone).ThenBy(s => s.ID);
+                    case "MobilePhone2":
+                        leads = leads.OrderBy(s => s.MobilePhone2).ThenBy(s => s.ID);
                         break;
-                    case "WorkEmailAddress":
-                        leads = leads.OrderBy(s => s.WorkEmailAddress).ThenBy(s => s.ID);
+                    case "MobilePhone3":
+                        leads = leads.OrderBy(s => s.MobilePhone3).ThenBy(s => s.ID);
                         break;
-                    case "WorkEmailAddress1":
-                        leads = leads.OrderBy(s => s.WorkEmailAddress1).ThenBy(s => s.ID);
+                    case "WorkEmail":
+                        leads = leads.OrderBy(s => s.WorkEmail).ThenBy(s => s.ID);
                         break;
-                    case "PersonalEmailAddress":
-                        leads = leads.OrderBy(s => s.PersonalEmailAddress).ThenBy(s => s.ID);
+                    case "PersonalEmail":
+                        leads = leads.OrderBy(s => s.PersonalEmail).ThenBy(s => s.ID);
+                        break;
+                    case "EstimatedDelegateNumber":
+                        leads = leads.OrderBy(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
+                        break;
+                    case "BudgetMonth":
+                        leads = leads.OrderBy(s => s.BudgetMonth).ThenBy(s => s.ID);
+                        break;
+                    case "GoodTrainingMonth":
+                        leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
+                        break;
+                    case "TopicsInterested":
+                        leads = leads.OrderBy(s => s.TopicsInterested).ThenBy(s => s.ID);
+                        break;
+                    case "LocationInterested":
+                        leads = leads.OrderBy(s => s.LocationInterested).ThenBy(s => s.ID);
                         break;
                     case "StatusDisplay":
                         leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
@@ -467,20 +483,35 @@ namespace PQT.Web.Controllers
                     case "LastName":
                         leads = leads.OrderByDescending(s => s.LastName).ThenBy(s => s.ID);
                         break;
-                    case "BusinessPhone":
-                        leads = leads.OrderByDescending(s => s.BusinessPhone).ThenBy(s => s.ID);
+                    case "MobilePhone1":
+                        leads = leads.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.ID);
                         break;
-                    case "MobilePhone":
-                        leads = leads.OrderByDescending(s => s.MobilePhone).ThenBy(s => s.ID);
+                    case "MobilePhone2":
+                        leads = leads.OrderByDescending(s => s.MobilePhone2).ThenBy(s => s.ID);
                         break;
-                    case "WorkEmailAddress":
-                        leads = leads.OrderByDescending(s => s.WorkEmailAddress).ThenBy(s => s.ID);
+                    case "MobilePhone3":
+                        leads = leads.OrderByDescending(s => s.MobilePhone3).ThenBy(s => s.ID);
                         break;
-                    case "WorkEmailAddress1":
-                        leads = leads.OrderByDescending(s => s.WorkEmailAddress1).ThenBy(s => s.ID);
+                    case "WorkEmail":
+                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.ID);
                         break;
-                    case "PersonalEmailAddress":
-                        leads = leads.OrderByDescending(s => s.PersonalEmailAddress).ThenBy(s => s.ID);
+                    case "PersonalEmail":
+                        leads = leads.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.ID);
+                        break;
+                    case "EstimatedDelegateNumber":
+                        leads = leads.OrderByDescending(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
+                        break;
+                    case "BudgetMonth":
+                        leads = leads.OrderByDescending(s => s.BudgetMonth).ThenBy(s => s.ID);
+                        break;
+                    case "GoodTrainingMonth":
+                        leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
+                        break;
+                    case "TopicsInterested":
+                        leads = leads.OrderByDescending(s => s.TopicsInterested).ThenBy(s => s.ID);
+                        break;
+                    case "LocationInterested":
+                        leads = leads.OrderByDescending(s => s.LocationInterested).ThenBy(s => s.ID);
                         break;
                     case "StatusDisplay":
                         leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
@@ -518,7 +549,6 @@ namespace PQT.Web.Controllers
                     CreatedTime = m.StatusUpdateTimeStr,
                     Company = m.Company.CompanyName,
                     Country = m.Company.CountryCode,
-                    m.GeneralLine,
                     m.ClientName,
                     m.DirectLine,
                     CallBackDate = m.CallBackDate == default(DateTime) ? "" : m.CallBackDate.ToString("dd/MM/yyyy"),
@@ -528,11 +558,16 @@ namespace PQT.Web.Controllers
                     m.Salutation,
                     m.FirstName,
                     m.LastName,
-                    m.BusinessPhone,
-                    m.MobilePhone,
-                    m.WorkEmailAddress,
-                    m.WorkEmailAddress1,
-                    m.PersonalEmailAddress,
+                    m.MobilePhone1,
+                    m.MobilePhone2,
+                    m.MobilePhone3,
+                    m.PersonalEmail,
+                    m.WorkEmail,
+                    m.EstimatedDelegateNumber,
+                    m.BudgetMonth,
+                    m.GoodTrainingMonth,
+                    m.TopicsInterested,
+                    m.LocationInterested,
                     m.StatusCode,
                     m.ClassStatus,
                     m.MarkKPI,
@@ -739,14 +774,15 @@ namespace PQT.Web.Controllers
                                                    m.ClientName.Contains(searchValue) ||
                                                    m.DirectLine.Contains(searchValue) ||
                                                    m.CallBackDateDisplay.Contains(searchValue) ||
-                                                   m.Salutation.Contains(searchValue) ||
-                                                   m.FirstName.Contains(searchValue) ||
-                                                   m.LastName.Contains(searchValue) ||
-                                                   m.BusinessPhone.Contains(searchValue) ||
-                                                   m.MobilePhone.Contains(searchValue) ||
-                                                   m.WorkEmailAddress.Contains(searchValue) ||
-                                                   m.WorkEmailAddress1.Contains(searchValue) ||
-                                                   m.PersonalEmailAddress.Contains(searchValue)));
+                                                   (m.Salutation != null && m.Salutation.Contains(searchValue)) ||
+                                                   (m.FirstName != null && m.FirstName.Contains(searchValue)) ||
+                                                   (m.LastName != null && m.LastName.Contains(searchValue)) ||
+                                                   (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
+                                                   (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
+                                                   (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
+                                                   (m.WorkEmail != null && m.WorkEmail.Contains(searchValue)) ||
+                                                   (m.WorkEmail1 != null && m.WorkEmail1.Contains(searchValue)) ||
+                                                   (m.PersonalEmail != null && m.PersonalEmail.Contains(searchValue))));
             }
             else
             {
@@ -789,20 +825,35 @@ namespace PQT.Web.Controllers
                     case "LastName":
                         leads = leads.OrderBy(s => s.LastName).ThenBy(s => s.ID);
                         break;
-                    case "BusinessPhone":
-                        leads = leads.OrderBy(s => s.BusinessPhone).ThenBy(s => s.ID);
+                    case "MobilePhone1":
+                        leads = leads.OrderBy(s => s.MobilePhone1).ThenBy(s => s.ID);
                         break;
-                    case "MobilePhone":
-                        leads = leads.OrderBy(s => s.MobilePhone).ThenBy(s => s.ID);
+                    case "MobilePhone2":
+                        leads = leads.OrderBy(s => s.MobilePhone2).ThenBy(s => s.ID);
                         break;
-                    case "WorkEmailAddress":
-                        leads = leads.OrderBy(s => s.WorkEmailAddress).ThenBy(s => s.ID);
+                    case "MobilePhone3":
+                        leads = leads.OrderBy(s => s.MobilePhone3).ThenBy(s => s.ID);
                         break;
-                    case "WorkEmailAddress1":
-                        leads = leads.OrderBy(s => s.WorkEmailAddress1).ThenBy(s => s.ID);
+                    case "WorkEmail":
+                        leads = leads.OrderBy(s => s.WorkEmail).ThenBy(s => s.ID);
                         break;
-                    case "PersonalEmailAddress":
-                        leads = leads.OrderBy(s => s.PersonalEmailAddress).ThenBy(s => s.ID);
+                    case "PersonalEmail":
+                        leads = leads.OrderBy(s => s.PersonalEmail).ThenBy(s => s.ID);
+                        break;
+                    case "EstimatedDelegateNumber":
+                        leads = leads.OrderBy(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
+                        break;
+                    case "BudgetMonth":
+                        leads = leads.OrderBy(s => s.BudgetMonth).ThenBy(s => s.ID);
+                        break;
+                    case "GoodTrainingMonth":
+                        leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
+                        break;
+                    case "TopicsInterested":
+                        leads = leads.OrderBy(s => s.TopicsInterested).ThenBy(s => s.ID);
+                        break;
+                    case "LocationInterested":
+                        leads = leads.OrderBy(s => s.LocationInterested).ThenBy(s => s.ID);
                         break;
                     case "StatusDisplay":
                         leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
@@ -846,20 +897,35 @@ namespace PQT.Web.Controllers
                     case "LastName":
                         leads = leads.OrderByDescending(s => s.LastName).ThenBy(s => s.ID);
                         break;
-                    case "BusinessPhone":
-                        leads = leads.OrderByDescending(s => s.BusinessPhone).ThenBy(s => s.ID);
+                    case "MobilePhone1":
+                        leads = leads.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.ID);
                         break;
-                    case "MobilePhone":
-                        leads = leads.OrderByDescending(s => s.MobilePhone).ThenBy(s => s.ID);
+                    case "MobilePhone2":
+                        leads = leads.OrderByDescending(s => s.MobilePhone2).ThenBy(s => s.ID);
                         break;
-                    case "WorkEmailAddress":
-                        leads = leads.OrderByDescending(s => s.WorkEmailAddress).ThenBy(s => s.ID);
+                    case "MobilePhone3":
+                        leads = leads.OrderByDescending(s => s.MobilePhone3).ThenBy(s => s.ID);
                         break;
-                    case "WorkEmailAddress1":
-                        leads = leads.OrderByDescending(s => s.WorkEmailAddress1).ThenBy(s => s.ID);
+                    case "WorkEmail":
+                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.ID);
                         break;
-                    case "PersonalEmailAddress":
-                        leads = leads.OrderByDescending(s => s.PersonalEmailAddress).ThenBy(s => s.ID);
+                    case "PersonalEmail":
+                        leads = leads.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.ID);
+                        break;
+                    case "EstimatedDelegateNumber":
+                        leads = leads.OrderByDescending(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
+                        break;
+                    case "BudgetMonth":
+                        leads = leads.OrderByDescending(s => s.BudgetMonth).ThenBy(s => s.ID);
+                        break;
+                    case "GoodTrainingMonth":
+                        leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
+                        break;
+                    case "TopicsInterested":
+                        leads = leads.OrderByDescending(s => s.TopicsInterested).ThenBy(s => s.ID);
+                        break;
+                    case "LocationInterested":
+                        leads = leads.OrderByDescending(s => s.LocationInterested).ThenBy(s => s.ID);
                         break;
                     case "StatusDisplay":
                         leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
@@ -892,7 +958,6 @@ namespace PQT.Web.Controllers
                     Company = m.Company.CompanyName,
                     Country = m.Company.CountryCode,
                     Salesman = m.User.DisplayName,
-                    m.GeneralLine,
                     m.ClientName,
                     m.DirectLine,
                     CallBackDate = m.CallBackDate == default(DateTime) ? "" : m.CallBackDate.ToString("dd/MM/yyyy"),
@@ -902,11 +967,16 @@ namespace PQT.Web.Controllers
                     m.Salutation,
                     m.FirstName,
                     m.LastName,
-                    m.BusinessPhone,
-                    m.MobilePhone,
-                    m.WorkEmailAddress,
-                    m.WorkEmailAddress1,
-                    m.PersonalEmailAddress,
+                    m.MobilePhone1,
+                    m.MobilePhone2,
+                    m.MobilePhone3,
+                    m.PersonalEmail,
+                    m.WorkEmail,
+                    m.EstimatedDelegateNumber,
+                    m.BudgetMonth,
+                    m.GoodTrainingMonth,
+                    m.TopicsInterested,
+                    m.LocationInterested,
                     m.StatusCode,
                     m.ClassStatus,
                     actionBlock = m.LeadStatusRecord == LeadStatus.Blocked ? "Unblock" : "Block"
@@ -978,14 +1048,6 @@ namespace PQT.Web.Controllers
             return Json(new
             {
                 model.ID,
-                model.EstimatedDelegateNumber,
-                //model.FirstFollowUpStatus,
-                //model.FinalStatus,
-                //DateNextFollowUp = model.DateNextFollowUp != default(DateTime) ? model.DateNextFollowUp.ToString("dd/MM/yyyy") : "",
-                model.BudgetMonth,
-                model.GoodTrainingMonth,
-                model.TopicsInterested,
-                model.LocationInterested,
                 model.TrainingBudget,
                 model.Remarks,
             }, JsonRequestBehavior.AllowGet);
@@ -993,7 +1055,7 @@ namespace PQT.Web.Controllers
 
 
         [AjaxOnly]
-        public ActionResult AjaxGetAssignCompanies(int eventId = 0)
+        public ActionResult AjaxGetEventCompanies(int eventId = 0)
         {
             // ReSharper disable once AssignNullToNotNullAttribute
             var draw = Request.Form.GetValues("draw").FirstOrDefault();
@@ -1063,7 +1125,7 @@ namespace PQT.Web.Controllers
                 companies = new List<Company>();
             }
             Func<Company, bool> predicate = m =>
-            (m.Tier.ToString() == TierType.Tier3 || m.Tier.ToString() == TierType.Tier2 || (
+            (m.Tier.ToString() == TierType.Tier3 || m.Tier.ToString() == TierType.Tier2 || !m.ManagerUsers.Any() || (
             m.Tier.ToString() == TierType.Tier1 && m.ManagerUsers.Select(u => u.ID).Contains(CurrentUser.Identity.ID)
             )) &&
                 (string.IsNullOrEmpty(companyName) ||

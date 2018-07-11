@@ -36,7 +36,10 @@ namespace PQT.Web.Validation
         public DelegateValidator()
         {
             RuleFor(m => m.Name).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(u => u.Tel).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
+            RuleFor(u => u.Mobile1).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
+            RuleFor(u => u.Mobile2).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
+            RuleFor(u => u.Mobile3).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
+            RuleFor(u => u.LandLine).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
             RuleFor(u => u.Mail).EmailAddress().WithMessage(Resource.EmailIsInvalid);
 
         }

@@ -140,7 +140,7 @@
 
          var company_id_selected = $("@Html.JquerySelectorFor(m=>m.CompanyID)");
          var company_name_selected = $("@Html.JquerySelectorFor(m=>m.CompanyName)");
-         var company_dialingCode_selected = $('.dialingCode');
+         var company_dialingCode_selected = "";
          var tableCompanies = $("#grid_companies").DataTable({
              "processing": true, // for show progress bar
              "serverSide": true, // for process server side
@@ -148,7 +148,7 @@
              "orderMulti": false, // for disable multiple column at once
              "stateSave": false,
              "ajax": {
-                 "url": "@Url.Action("AjaxGetAssignCompanies")?eventId=@Model.EventID",
+                 "url": "@Url.Action("AjaxGetEventCompanies")?eventId=@Model.EventID",
                  "type": "POST",
                  "datatype": "json",
                  "data": function(d) {
@@ -236,12 +236,14 @@
              if ($this.checked) {
                  company_id_selected.val(rowId);
                  company_name_selected.val(rowCompanyName);
-                 company_dialingCode_selected.val(rowDialingCode);
+                 company_dialingCode_selected = rowDialingCode;
                  LoadCompanyResources();
                  // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
              } else if (!$this.checked) {
                  company_id_selected.val(0);
                  company_name_selected.val("");
+                 company_dialingCode_selected = "";
+                 ClearDataSelected();
              }
              if ($this.checked) {
                  $row.addClass('selected');
@@ -332,29 +334,52 @@
              $('.form-wizard-horizontal').find('.progress').css({ 'width': percentWidth });
          };
 
+        function ClearDataSelected() {
+            $("@Html.JquerySelectorFor(m => m.ClientName)").val("");
+            $("@Html.JquerySelectorFor(m => m.DirectLine)").val("");
+            $("@Html.JquerySelectorFor(m => m.Salutation)").val("");
+            $("@Html.JquerySelectorFor(m => m.FirstName)").val("");
+            $("@Html.JquerySelectorFor(m => m.LastName)").val("");
+            $("@Html.JquerySelectorFor(m => m.MobilePhone1)").val("");
+            $("@Html.JquerySelectorFor(m => m.MobilePhone2)").val("");
+            $("@Html.JquerySelectorFor(m => m.WorkEmail)").val("");
+            $("@Html.JquerySelectorFor(m => m.PersonalEmail)").val("");
 
+            //if ($("select.callingCompany").val() != "" && !tickStarted) {
+            //    StartTick();
+            //}
+            var dialingCodes = $('.dialingCode');
+            dialingCodes.each(function (index, item) {
+                if ($(item).val() == "") {
+                    $('.dialingCode').val("");
+                }
+            });
+        }
          $(document).on('click', '#crtable tbody tr', function () {
 
              $("@Html.JquerySelectorFor(m => m.ClientName)").val($(this).data("role"));
              $("@Html.JquerySelectorFor(m => m.DirectLine)").val($(this).data("mobilephone"));
-             $("@Html.JquerySelectorFor(m => m.GeneralLine)").val($(this).data("businessphone"));
+             @*$("@Html.JquerySelectorFor(m => m.GeneralLine)").val($(this).data("businessphone"));*@
              $("@Html.JquerySelectorFor(m => m.Salutation)").val($(this).data("salutation"));
              $("@Html.JquerySelectorFor(m => m.FirstName)").val($(this).data("firstname"));
              $("@Html.JquerySelectorFor(m => m.LastName)").val($(this).data("lastname"));
-             $("@Html.JquerySelectorFor(m => m.BusinessPhone)").val($(this).data("businessphone"));
-             $("@Html.JquerySelectorFor(m => m.MobilePhone)").val($(this).data("mobilephone"));
-             $("@Html.JquerySelectorFor(m => m.WorkEmailAddress)").val($(this).data("workemail"));
-             $("@Html.JquerySelectorFor(m => m.PersonalEmailAddress)").val($(this).data("personalemail"));
+             $("@Html.JquerySelectorFor(m => m.MobilePhone1)").val($(this).data("businessphone"));
+             $("@Html.JquerySelectorFor(m => m.MobilePhone2)").val($(this).data("mobilephone"));
+             $("@Html.JquerySelectorFor(m => m.WorkEmail)").val($(this).data("workemail"));
+             $("@Html.JquerySelectorFor(m => m.PersonalEmail)").val($(this).data("personalemail"));
 
              //if ($("select.callingCompany").val() != "" && !tickStarted) {
              //    StartTick();
              //}
-             //if ($('.dialingCode').val() == "") {
-             //    var dialingCode = $("select.callingCompany")[0].options[$("select.callingCompany")[0].selectedIndex].getAttribute("dialingCode");
-             //    $('.dialingCode').val(dialingCode);
-             //}
 
+             var dialingCodes = $('.dialingCode');
+             dialingCodes.each(function (index, item) {
+                 if ($(item).val() == "") {
+                     $('.dialingCode').val(company_dialingCode_selected);
+                 }
+             });
 
+             
              wizard.bootstrapWizard('next');
          });
 
@@ -378,26 +403,28 @@
         function SetEventCompanyInfo(data) {
             if (data) {
                 $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(data.ID);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.EstimatedDelegateNumber)").val(data.EstimatedDelegateNumber);
-                @*$("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val(data.FirstFollowUpStatus);
+                @*$("@Html.JquerySelectorFor(m => m.EventCompany.EstimatedDelegateNumber)").val(data.EstimatedDelegateNumber);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val(data.FirstFollowUpStatus);
                 $("@Html.JquerySelectorFor(m => m.EventCompany.FinalStatus)").val(data.FinalStatus);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val(data.DateNextFollowUp);*@
+                $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val(data.DateNextFollowUp);
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth);
                 $("@Html.JquerySelectorFor(m => m.EventCompany.GoodTrainingMonth)").val(data.GoodTrainingMonth);
                 $("@Html.JquerySelectorFor(m => m.EventCompany.TopicsInterested)").val(data.TopicsInterested);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val(data.LocationInterested);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val(data.LocationInterested);*@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val(data.TrainingBudget);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val(data.Remarks);
             } else {
                 $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(0);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.EstimatedDelegateNumber)").val(0);
-                @*$("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val('');
+                @*$("@Html.JquerySelectorFor(m => m.EventCompany.EstimatedDelegateNumber)").val(0);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val('');
                 $("@Html.JquerySelectorFor(m => m.EventCompany.FinalStatus)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val('');*@
+                $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val('');
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val('');
                 $("@Html.JquerySelectorFor(m => m.EventCompany.GoodTrainingMonth)").val('');
                 $("@Html.JquerySelectorFor(m => m.EventCompany.TopicsInterested)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val('');
+                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val('');*@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val('');
+                $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val('');
             }
         }
     </script>

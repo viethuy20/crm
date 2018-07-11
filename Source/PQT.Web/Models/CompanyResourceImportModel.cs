@@ -77,10 +77,10 @@ namespace PQT.Web.Models
                             temp.Error += "- Organisation: " + dtRow[1] + " is wrong.<br/>";
                         }
                         temp.Role = dtRow[5].ToString();
-                        temp.BusinessPhone = dtRow[6].ToString();
-                        temp.MobilePhone = dtRow[7].ToString();
-                        temp.WorkEmailAddress = dtRow[8].ToString();
-                        temp.PersonalEmailAddress = dtRow[9].ToString();
+                        temp.MobilePhone1 = dtRow[6].ToString();
+                        temp.MobilePhone2 = dtRow[7].ToString();
+                        temp.WorkEmail = dtRow[8].ToString();
+                        temp.PersonalEmail = dtRow[9].ToString();
                         temp.Number = count;
                         ImportRows.Add(temp);
                     }
@@ -113,7 +113,6 @@ namespace PQT.Web.Models
             var userId = CurrentUser.Identity.ID;
             foreach (var com in CompanyResources)
             {
-                count++;
                 var comExist = comRepo.GetCompany(com.Organisation);
                 if (comExist == null)
                 {
@@ -128,6 +127,7 @@ namespace PQT.Web.Models
                 else
                     com.CompanyID = comExist.ID;
                 comRepo.CreateCompanyResource(com);
+                count++;
                 var json = new
                 {
                     count,
@@ -148,10 +148,10 @@ namespace PQT.Web.Models
         public string LastName { get; set; }
         public string Organisation { get; set; }
         public string Role { get; set; }
-        public string BusinessPhone { get; set; }
-        public string MobilePhone { get; set; }
-        public string WorkEmailAddress { get; set; }
-        public string PersonalEmailAddress { get; set; }
+        public string MobilePhone1 { get; set; }
+        public string MobilePhone2 { get; set; }
+        public string WorkEmail { get; set; }
+        public string PersonalEmail { get; set; }
         public string Error { get; set; }
     }
 }

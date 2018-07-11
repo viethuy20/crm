@@ -47,6 +47,9 @@ namespace PQT.Domain.Concrete
                     case "MobilePhone":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
+                    case "Extension":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.Extension).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
                     case "RolesHtml":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
@@ -70,6 +73,9 @@ namespace PQT.Domain.Concrete
                         break;
                     case "MobilePhone":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "Extension":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.Extension).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "RolesHtml":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
@@ -100,6 +106,9 @@ namespace PQT.Domain.Concrete
                     case "MobilePhone":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderBy(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
+                    case "Extension":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderBy(s => s.Extension).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
                     case "RolesHtml":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderBy(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
@@ -123,6 +132,9 @@ namespace PQT.Domain.Concrete
                         break;
                     case "MobilePhone":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderByDescending(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "Extension":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderByDescending(s => s.Extension).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "RolesHtml":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).OrderByDescending(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();

@@ -1,9 +1,9 @@
 ﻿@using NS.Mvc
 @using PQT.Domain.Abstract
 @using Resources
-@model PQT.Web.Models.CompanyImportModel
+@model PQT.Web.Models.CountryImportModel
 @{
-    ViewBag.Title = "Import Companies";
+    ViewBag.Title = "Import Countries";
 }
 
 <style>
@@ -119,8 +119,8 @@
     <div class="form-group row">
         <div class="col-sm-12">
             @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
-            @Html.Bootstrap().Button().Id("btnUpload").HtmlAttributes(new {@class = "DTTT_button btn btn-info"}).Text("Import Excel File").PrependIcon("md md-cloud-upload")
-            @if (Model.Companies != null && Model.Companies.Count > 0)
+            @Html.Bootstrap().Button().Id("btnUpload").HtmlAttributes(new { @class = "DTTT_button btn btn-info" }).Text("Import Excel File").PrependIcon("md md-cloud-upload")
+            @if (Model.Countries != null && Model.Countries.Count > 0)
             {
                 @Html.Bootstrap().Button().Text("Confirm Upload").Style(ButtonStyle.Success).PrependIcon("md md-done").Id("finish")
             }
@@ -130,41 +130,27 @@
         <div class="card-body">
             <div class="table-responsive">
 
-                @if (Model.Companies != null && Model.Companies.Count > 0)
+                @if (Model.Countries != null && Model.Countries.Count > 0)
             {
                 var count = 0;
                     <table class="table">
                         <thead>
                             <tr>
                                 <th>S/No.</th>
-                                <th>Country</th>
-                                <th>Company</th>
-                                <th>Product/ Service</th>
-                                <th>Sector</th>
-                                <th>Industry</th>
-                                <th>Designation</th>
-                                <th>Ownership</th>
-                                <th>Business  Units</th>
-                                <th>Email</th>
-                                <th>Personal Contact</th>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Dialing Code</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var com in Model.Companies)
+                            @foreach (var com in Model.Countries)
                             {
                                 count++;
                                 <tr>
                                     <td>@count</td>
-                                    <td>@com.CountryCode</td>
-                                    <td>@com.CompanyName</td>
-                                    <td>@com.ProductOrService</td>
-                                    <td>@com.Sector</td>
-                                    <td>@com.Industry</td>
-                                    <td>@com.Designation</td>
-                                    <td>@com.Ownership</td>
-                                    <td>@com.BusinessUnits</td>
-                                    <td>@com.Email</td>
-                                    <td>@com.PersonalContact</td>
+                                    <td>@com.Code</td>
+                                    <td>@com.Name</td>
+                                    <td>@com.DialingCode</td>
                                 </tr>
                             }
                         </tbody>
@@ -177,16 +163,9 @@
                         <thead>
                             <tr>
                                 <th>S/No.</th>
-                                <th>Country</th>
-                                <th>Company</th>
-                                <th>Product/ Service</th>
-                                <th>Sector</th>
-                                <th>Industry</th>
-                                <th>Designation</th>
-                                <th>Ownership</th>
-                                <th>Business  Units</th>
-                                <th>Email</th>
-                                <th>Personal Contact</th>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Dialing Code</th>
                                 <th>Error</th>
                             </tr>
                         </thead>
@@ -196,16 +175,9 @@
                                 count++;
                                 <tr class="@(!string.IsNullOrEmpty(com.Error)?"highline":"")">
                                     <td class="text-center">@count</td>
-                                    <td>@com.CountryCode</td>
-                                    <td>@com.CompanyName</td>
-                                    <td>@com.ProductOrService</td>
-                                    <td>@com.Sector</td>
-                                    <td>@com.Industry</td>
-                                    <td>@com.Designation</td>
-                                    <td>@com.Ownership</td>
-                                    <td>@com.BusinessUnits</td>
-                                    <td>@com.Email</td>
-                                    <td>@com.PersonalContact</td>
+                                    <td>@com.Code</td>
+                                    <td>@com.Name</td>
+                                    <td>@com.DialingCode</td>
                                     <td style="color: red">@Html.Raw(com.Error)</td>
                                 </tr>
                             }
@@ -224,12 +196,12 @@
             <div class="card-head">
                 <header><b>Upload File</b></header>
             </div><!--end .card-head -->
-            @using (Html.BeginForm("ImportFromExcel", "Company", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("ImportFromExcel", "Country", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
                 <div class="card-body" style="padding-top: 0px;">
                     <div class="form-group">
                         <div class="col-sm-12">
-                            <a href="~/Content/SampleFiles/companies_sample.xls" class="text-primary">Download sample excel file</a>
+                            <a href="~/Content/SampleFiles/countries_sample.xlsx" class="text-primary">Download sample excel file</a>
                         </div>
                     </div>
                     <br />
@@ -287,7 +259,7 @@
                 ],
             });
         });
-        @if (Model.Companies==null || !Model.ImportRows.Any())
+        @if (Model.Countries == null || !Model.ImportRows.Any())
         {
             <text>
         $('#inputfile').val('');

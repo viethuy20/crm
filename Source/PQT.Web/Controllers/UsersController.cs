@@ -274,6 +274,7 @@ namespace PQT.Web.Controllers
                     m.Email,
                     m.MobilePhone,
                     m.BusinessPhone,
+                    m.Extension,
                     m.RolesHtml,
                     DisplayNameHtml = !string.IsNullOrEmpty(m.Picture) ? "<img src='/data/user_img/" + m.ID + "/" + m.Picture + "' class='img-rounded user-picture-small' style='max-width: 50px; max-height: 50px;' /> " + m.DisplayName : m.DisplayName,
                 })

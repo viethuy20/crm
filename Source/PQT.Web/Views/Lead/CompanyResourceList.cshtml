@@ -10,8 +10,9 @@
                 <th>Last Name</th>
                 <th>Organisation</th>
                 <th>Role</th>
-                <th>Business Phone</th>
-                <th>MobilePhone</th>
+                <th>Mobile Phone1</th>
+                <th>Mobile Phone2</th>
+                <th>Mobile Phone3</th>
                 <th>Work Email</th>
                 <th>Personal Email</th>
             </tr>
@@ -22,19 +23,23 @@
                 <tr data-id="@item.ID" data-country="@item.Country"
                     data-salutation="@item.Salutation" data-firstname="@item.FirstName"
                     data-lastname="@item.LastName" data-organisation="@item.Organisation"
-                    data-role="@item.Role" data-businessphone="@item.BusinessPhone"
-                    data-mobilephone="@item.MobilePhone" data-workemail="@item.WorkEmailAddress"
-                    data-personalemail="@item.PersonalEmailAddress">
+                    data-role="@item.Role"
+                    data-mobilephone="@item.MobilePhone1" 
+                    data-mobilephone="@item.MobilePhone2" 
+                    data-mobilephone="@item.MobilePhone3" 
+                    data-workemail="@item.WorkEmail"
+                    data-personalemail="@item.PersonalEmail">
                     <td>@item.Country</td>
                     <td>@item.Salutation</td>
                     <td>@item.FirstName</td>
                     <td>@item.LastName</td>
                     <td>@item.Organisation</td>
                     <td>@item.Role</td>
-                    <td>@item.BusinessPhone</td>
-                    <td>@item.MobilePhone</td>
-                    <td>@item.WorkEmailAddress</td>
-                    <td>@item.PersonalEmailAddress</td>
+                    <td>@item.MobilePhone1</td>
+                    <td>@item.MobilePhone2</td>
+                    <td>@item.MobilePhone3</td>
+                    <td>@item.WorkEmail</td>
+                    <td>@item.PersonalEmail</td>
                 </tr>
             }
         </tbody>

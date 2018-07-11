@@ -209,6 +209,10 @@ namespace PQT.Domain.Concrete
             }
             _db.SaveChanges();
         }
+        public bool UpdateCompany(Company company)
+        {
+            return Update(company);
+        }
         public bool UpdateCompany(Company company, IEnumerable<int> users)
         {
             if (company.ID == 0)
@@ -290,14 +294,14 @@ namespace PQT.Domain.Concrete
             var exist = Get<EventCompany>(company.ID);
             if (exist != null)
             {
-                exist.EstimatedDelegateNumber = company.EstimatedDelegateNumber;
+                //exist.EstimatedDelegateNumber = company.EstimatedDelegateNumber;
                 //exist.FirstFollowUpStatus = company.FirstFollowUpStatus;
                 //exist.FinalStatus = company.FinalStatus;
                 //exist.DateNextFollowUp = company.DateNextFollowUp;
-                exist.BudgetMonth = company.BudgetMonth;
-                exist.GoodTrainingMonth = company.GoodTrainingMonth;
-                exist.TopicsInterested = company.TopicsInterested;
-                exist.LocationInterested = company.LocationInterested;
+                //exist.BudgetMonth = company.BudgetMonth;
+                //exist.GoodTrainingMonth = company.GoodTrainingMonth;
+                //exist.TopicsInterested = company.TopicsInterested;
+                //exist.LocationInterested = company.LocationInterested;
                 exist.TrainingBudget = company.TrainingBudget;
                 exist.Remarks = company.Remarks;
                 return Update(exist);

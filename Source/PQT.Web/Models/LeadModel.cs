@@ -282,10 +282,7 @@ namespace PQT.Web.Models
     {
         public int LeadID { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
-        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
-        public string GeneralLine { get; set; }
-        [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
-        public string ClientName { get; set; }
+        public string ClientName { get; set; }//Job Title
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string DirectLine { get; set; }
@@ -302,15 +299,40 @@ namespace PQT.Web.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
-        public string BusinessPhone { get; set; }
+        public string MobilePhone1 { get; set; }
         [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
-        public string MobilePhone { get; set; }
+        public string MobilePhone2 { get; set; }
+        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
+        public string MobilePhone3 { get; set; }
         [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessage = "Email is invalid")]
-        public string WorkEmailAddress { get; set; }
+        public string WorkEmail { get; set; }
         [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessage = "Email is invalid")]
-        public string WorkEmailAddress1 { get; set; }
+        public string WorkEmail1 { get; set; }
         [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessage = "Email is invalid")]
-        public string PersonalEmailAddress { get; set; }
+        public string PersonalEmail { get; set; }
+
+        public int? EstimatedDelegateNumber { get; set; }
+        public int BudgetMonth { get; set; }
+        public int GoodTrainingMonth { get; set; }
+        public string TopicsInterested { get; set; }
+        public string LocationInterested { get; set; }
+
+        public string BudgetMonthStr
+        {
+            get
+            {
+                var monthEnum = Enumeration.FromValue<MonthStatus>(BudgetMonth.ToString());
+                return monthEnum != null ? monthEnum.ToString() : "";
+            }
+        }
+        public string GoodTrainingMonthStr
+        {
+            get
+            {
+                var monthEnum = Enumeration.FromValue<MonthStatus>(GoodTrainingMonth.ToString());
+                return monthEnum != null ? monthEnum.ToString() : "";
+            }
+        }
 
         public string TypeSubmit { get; set; }
         public PhoneCall PhoneCall { get; set; }
@@ -334,17 +356,23 @@ namespace PQT.Web.Models
                     LeadID = leadId;
                     EventID = lead.EventID;
                     Event = lead.Event;
-                    GeneralLine = lead.GeneralLine;
+                    //GeneralLine = lead.GeneralLine;
                     ClientName = lead.ClientName;
                     DirectLine = lead.DirectLine;
                     Salutation = lead.Salutation;
                     FirstName = lead.FirstName;
                     LastName = lead.LastName;
-                    BusinessPhone = lead.BusinessPhone;
-                    MobilePhone = lead.MobilePhone;
-                    WorkEmailAddress = lead.WorkEmailAddress;
-                    WorkEmailAddress1 = lead.WorkEmailAddress1;
-                    PersonalEmailAddress = lead.PersonalEmailAddress;
+                    MobilePhone1 = lead.MobilePhone1;
+                    MobilePhone2 = lead.MobilePhone2;
+                    MobilePhone3 = lead.MobilePhone3;
+                    WorkEmail = lead.WorkEmail;
+                    WorkEmail1 = lead.WorkEmail1;
+                    PersonalEmail = lead.PersonalEmail;
+                    EstimatedDelegateNumber = lead.EstimatedDelegateNumber;
+                    BudgetMonth = lead.BudgetMonth;
+                    GoodTrainingMonth = lead.GoodTrainingMonth;
+                    TopicsInterested = lead.TopicsInterested;
+                    LocationInterested = lead.LocationInterested;
                     CompanyName = lead.CompanyName;
                     Lead = lead;
                 }
@@ -364,17 +392,23 @@ namespace PQT.Web.Models
                 if (lead != null)
                 {
                     LeadID = leadId;
-                    GeneralLine = lead.GeneralLine;
+                    //GeneralLine = lead.GeneralLine;
                     ClientName = lead.ClientName;
                     DirectLine = lead.DirectLine;
                     Salutation = lead.Salutation;
                     FirstName = lead.FirstName;
                     LastName = lead.LastName;
-                    BusinessPhone = lead.BusinessPhone;
-                    MobilePhone = lead.MobilePhone;
-                    WorkEmailAddress = lead.WorkEmailAddress;
-                    WorkEmailAddress1 = lead.WorkEmailAddress1;
-                    PersonalEmailAddress = lead.PersonalEmailAddress;
+                    MobilePhone1 = lead.MobilePhone1;
+                    MobilePhone2 = lead.MobilePhone2;
+                    MobilePhone3 = lead.MobilePhone3;
+                    WorkEmail = lead.WorkEmail;
+                    WorkEmail1 = lead.WorkEmail1;
+                    PersonalEmail = lead.PersonalEmail;
+                    EstimatedDelegateNumber = lead.EstimatedDelegateNumber;
+                    BudgetMonth = lead.BudgetMonth;
+                    GoodTrainingMonth = lead.GoodTrainingMonth;
+                    TopicsInterested = lead.TopicsInterested;
+                    LocationInterested = lead.LocationInterested;
                     CompanyName = lead.CompanyName;
                     CompanyID = lead.CompanyID;
                     Lead = lead;
@@ -414,17 +448,24 @@ namespace PQT.Web.Models
                 Lead = leadRepo.GetLead(LeadID);
                 if (Lead != null)
                 {
-                    Lead.GeneralLine = GeneralLine;
+                    
+                    //GeneralLine = lead.GeneralLine;
                     Lead.ClientName = ClientName;
                     Lead.DirectLine = DirectLine;
                     Lead.Salutation = Salutation;
                     Lead.FirstName = FirstName;
                     Lead.LastName = LastName;
-                    Lead.BusinessPhone = BusinessPhone;
-                    Lead.MobilePhone = MobilePhone;
-                    Lead.WorkEmailAddress = WorkEmailAddress;
-                    Lead.WorkEmailAddress1 = WorkEmailAddress1;
-                    Lead.PersonalEmailAddress = PersonalEmailAddress;
+                    Lead.MobilePhone1 = MobilePhone1;
+                    Lead.MobilePhone2 = MobilePhone2;
+                    Lead.MobilePhone3 = MobilePhone3;
+                    Lead.WorkEmail = WorkEmail;
+                    Lead.WorkEmail1 = WorkEmail1;
+                    Lead.PersonalEmail = PersonalEmail;
+                    Lead.EstimatedDelegateNumber = EstimatedDelegateNumber;
+                    Lead.BudgetMonth = BudgetMonth;
+                    Lead.GoodTrainingMonth = GoodTrainingMonth;
+                    Lead.TopicsInterested = TopicsInterested;
+                    Lead.LocationInterested = LocationInterested;
                     leadRepo.UpdateLead(Lead);
                     return true;
                 }
@@ -442,17 +483,23 @@ namespace PQT.Web.Models
                 {
                     EventID = EventID,
                     CompanyID = (int)CompanyID,
-                    GeneralLine = GeneralLine,
+                     //GeneralLine = GeneralLine;
                     ClientName = ClientName,
                     DirectLine = DirectLine,
                     Salutation = Salutation,
                     FirstName = FirstName,
                     LastName = LastName,
-                    BusinessPhone = BusinessPhone,
-                    MobilePhone = MobilePhone,
-                    WorkEmailAddress = WorkEmailAddress,
-                    WorkEmailAddress1 = WorkEmailAddress1,
-                    PersonalEmailAddress = PersonalEmailAddress,
+                    MobilePhone1 = MobilePhone1,
+                    MobilePhone2 = MobilePhone2,
+                    MobilePhone3 = MobilePhone3,
+                    WorkEmail = WorkEmail,
+                    WorkEmail1 = WorkEmail1,
+                    PersonalEmail = PersonalEmail,
+                    EstimatedDelegateNumber = EstimatedDelegateNumber,
+                    BudgetMonth = BudgetMonth,
+                    GoodTrainingMonth = GoodTrainingMonth,
+                    TopicsInterested = TopicsInterested,
+                    LocationInterested = LocationInterested,
                     UserID = CurrentUser.Identity.ID
                 };
                 Lead = leadRepo.CreateLead(Lead);
@@ -488,17 +535,23 @@ namespace PQT.Web.Models
                 if (result != null)
                 {
                     Lead = leadRepo.GetLead(PhoneCall.LeadID);
-                    Lead.GeneralLine = GeneralLine;
+                    //GeneralLine = lead.GeneralLine;
                     Lead.ClientName = ClientName;
                     Lead.DirectLine = DirectLine;
                     Lead.Salutation = Salutation;
                     Lead.FirstName = FirstName;
                     Lead.LastName = LastName;
-                    Lead.BusinessPhone = BusinessPhone;
-                    Lead.MobilePhone = MobilePhone;
-                    Lead.WorkEmailAddress = WorkEmailAddress;
-                    Lead.WorkEmailAddress1 = WorkEmailAddress1;
-                    Lead.PersonalEmailAddress = PersonalEmailAddress;
+                    Lead.MobilePhone1 = MobilePhone1;
+                    Lead.MobilePhone2 = MobilePhone2;
+                    Lead.MobilePhone3 = MobilePhone3;
+                    Lead.WorkEmail = WorkEmail;
+                    Lead.WorkEmail1 = WorkEmail1;
+                    Lead.PersonalEmail = PersonalEmail;
+                    Lead.EstimatedDelegateNumber = EstimatedDelegateNumber;
+                    Lead.BudgetMonth = BudgetMonth;
+                    Lead.GoodTrainingMonth = GoodTrainingMonth;
+                    Lead.TopicsInterested = TopicsInterested;
+                    Lead.LocationInterested = LocationInterested;
                     leadRepo.UpdateLead(Lead);
                     comRepo.UpdateEventCompany(EventCompany);
                     return true;

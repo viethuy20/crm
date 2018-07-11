@@ -195,7 +195,7 @@ namespace PQT.Web.Controllers
             IEnumerable<Company> companies = new HashSet<Company>();
             Func<Company, bool> predicate = m =>
                 (m.Tier == type) &&
-                (type != 1 || m.ManagerUsers.Any(s => saleIds.Contains(s.ID))) &&
+                (type != 1 || !m.ManagerUsers.Any() || m.ManagerUsers.Any(s => saleIds.Contains(s.ID))) &&
                 (string.IsNullOrEmpty(companyName) ||
                  (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
                 (string.IsNullOrEmpty(productService) || (!string.IsNullOrEmpty(m.ProductOrService) &&
@@ -243,7 +243,7 @@ namespace PQT.Web.Controllers
                 count++;
                 var existResources =
                     companyResources.Where(
-                        m => m.BusinessPhone == lead.BusinessPhone && m.MobilePhone == lead.MobilePhone);
+                        m => m.MobilePhone1 == lead.MobilePhone1 && m.MobilePhone2 == lead.MobilePhone2);
                 if (existResources.Any())
                 {
                     foreach (var item in existResources)
@@ -254,10 +254,13 @@ namespace PQT.Web.Controllers
                         item.FirstName = lead.FirstName;
                         item.LastName = lead.LastName;
                         item.Organisation = lead.CompanyName;
-                        item.PersonalEmailAddress = lead.PersonalEmailAddress;
+                        item.PersonalEmail = lead.PersonalEmail;
                         item.Role = lead.ClientName;
                         item.Salutation = lead.Salutation;
-                        item.WorkEmailAddress = lead.WorkEmailAddress;
+                        item.WorkEmail = lead.WorkEmail;
+                        item.MobilePhone1 = lead.MobilePhone1;
+                        item.MobilePhone2 = lead.MobilePhone2;
+                        item.MobilePhone3 = lead.MobilePhone3;
                         _comRepo.UpdateCompanyResource(item);
                     }
                 }
@@ -265,18 +268,19 @@ namespace PQT.Web.Controllers
                 {
                     var item = new CompanyResource()
                     {
-                        BusinessPhone = lead.BusinessPhone,
+                        MobilePhone1 = lead.MobilePhone1,
                         CompanyID = lead.CompanyID,
                         CountryID = lead.Company.CountryID,
                         Country = lead.Company.CountryName,
                         FirstName = lead.FirstName,
                         LastName = lead.LastName,
-                        MobilePhone = lead.MobilePhone,
+                        MobilePhone2 = lead.MobilePhone2,
+                        MobilePhone3 = lead.MobilePhone3,
                         Organisation = lead.CompanyName,
-                        PersonalEmailAddress = lead.PersonalEmailAddress,
+                        PersonalEmail = lead.PersonalEmail,
                         Role = lead.ClientName,
                         Salutation = lead.Salutation,
-                        WorkEmailAddress = lead.WorkEmailAddress
+                        WorkEmail = lead.WorkEmail
                     };
                     _comRepo.CreateCompanyResource(item);
                 }
@@ -340,8 +344,8 @@ namespace PQT.Web.Controllers
                         m.EventName.ToLower().Contains(searchValue) ||
                         m.StartDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
                         m.EndDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
-                        m.DateOfConfirmation.ToString("dd/MM/yyyy").Contains(searchValue) ||
-                        m.ClosingDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
+                        m.DateOfConfirmationStr.Contains(searchValue) ||
+                        m.ClosingDateStr.Contains(searchValue) ||
                         (m.Sectors != null && m.Sectors.ToLower().Contains(searchValue))
                        );
             }
@@ -432,8 +436,8 @@ namespace PQT.Web.Controllers
                     m.BackgroundColor,
                     StartDate = m.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = m.EndDate.ToString("dd/MM/yyyy"),
-                    DateOfConfirmation = m.DateOfConfirmation.ToString("dd/MM/yyyy"),
-                    ClosingDate = m.ClosingDate.ToString("dd/MM/yyyy"),
+                    DateOfConfirmation = m.DateOfConfirmationStr,
+                    ClosingDate = m.ClosingDateStr,
                     m.Sectors
                 })
             };
@@ -595,6 +599,11 @@ namespace PQT.Web.Controllers
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
+        [AjaxOnly]
+        public ActionResult LoadEventSalesRules(int eventId)
+        {
+            return PartialView(_repo.GetEvent(eventId));
+        }
 
     }
 }

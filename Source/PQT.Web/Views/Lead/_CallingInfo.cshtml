@@ -5,7 +5,7 @@
 @model PQT.Web.Models.CallingModel
 
 <section>
-    <div class="col-md-7 ">
+    <div class="col-md-8">
         <div class="card card-underline form-group">
             <div class="card-head">
                 <header><b>Call Info</b></header>
@@ -19,15 +19,9 @@
                             @Html.HiddenFor(m => m.CompanyID)
                             <div class="row">
                                 <div class="form-group">
-                                    @Html.Bootstrap().TextBoxFor(m => m.CompanyName).Class("form-control").Readonly().ShowValidationMessage(true)
+                                    @Html.Bootstrap().TextAreaFor(m => m.CompanyName).Class("form-control").Readonly().ShowValidationMessage(true)
                                     @Html.Bootstrap().LabelFor(m => m.CompanyName).LabelText("COMPANY NAME")
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.GeneralLine).Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.GeneralLine).LabelText("GENERAL LINE")
                             </div>
                         </div>
                     </div>
@@ -54,7 +48,7 @@
                         </div>
                         <div class="row">
                             <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.DirectLine).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().TextBoxFor(m => m.DirectLine).Class("form-control dialingCode").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER")
                             </div>
                         </div>
@@ -83,36 +77,76 @@
                                 @Html.Bootstrap().LabelFor(m => m.LastName).LabelText("Last Name")
                             </div>
                         </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.MobilePhone1).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.MobilePhone1).LabelText("Mobile Phone 1")
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.MobilePhone2).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.MobilePhone2).LabelText("Mobile Phone 2")
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.MobilePhone3).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.MobilePhone3).LabelText("Mobile Phone 3")
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.WorkEmail).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.WorkEmail).LabelText("Work Email")
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.WorkEmail1).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.WorkEmail1).LabelText("Work Email 1")
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.PersonalEmail).LabelText("Personal Email")
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.EstimatedDelegateNumber).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.EstimatedDelegateNumber)
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Bootstrap().DropDownListFor(m => m.BudgetMonth, EnumerationHelper.ToSelectList<MonthStatus>()).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.BudgetMonth)
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                @Html.Bootstrap().DropDownListFor(m => m.GoodTrainingMonth, EnumerationHelper.ToSelectList<MonthStatus>()).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.GoodTrainingMonth)
+                            </div>
+                        </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.BusinessPhone).LabelText("Business Phone")
+                                <input type="text" name="@Html.NameFor(m=>m.TopicsInterested)" value="@Model.TopicsInterested" data-role="tagsinput" />
+                                @Html.ValidationMessageFor(m => m.TopicsInterested)
+                                @Html.Bootstrap().LabelFor(m => m.TopicsInterested)
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.MobilePhone).LabelText("Mobile Phone")
+                                @Html.Bootstrap().TextBoxFor(m => m.LocationInterested).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.LocationInterested)
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.WorkEmailAddress).Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.WorkEmailAddress).LabelText("Work Email")
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.WorkEmailAddress1).Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.WorkEmailAddress1).LabelText("Work Email 1")
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.PersonalEmailAddress).Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.PersonalEmailAddress).LabelText("Personal Email")
-                            </div>
-                        </div>
+
                         <div class="col-sm-8">
                             <div class="form-group">
                                 @Html.Bootstrap().TextBoxFor(m => m.PhoneCall.Remark).Class("form-control").ShowValidationMessage(true)
@@ -140,7 +174,7 @@
             </div><!--end .card -->
         </div><!--end .card -->
     </div>
-    <div class="col-md-5">
+    <div class="col-md-4">
         <div class="card card-underline  form-group">
             <div class="card-head">
                 <header><b>Company Info</b></header>
@@ -148,59 +182,10 @@
             <div class="form">
                 <div class="card-body">
                     @Html.HiddenFor(m => m.EventCompany.ID)
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.EventCompany.EstimatedDelegateNumber).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.EventCompany.EstimatedDelegateNumber)
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.EventCompany.TrainingBudget).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.EventCompany.TrainingBudget)
-                        </div>
-                    </div>
-                    @*<div class="col-sm-6">
-                            <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.EventCompany.FirstFollowUpStatus).Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.EventCompany.FirstFollowUpStatus)
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.EventCompany.FinalStatus).Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.EventCompany.FinalStatus)
-                            </div>
-                        </div>*@
-                    @*<div class="col-sm-6">
-                            <div class="form-group">
-                                @Html.DatePickerFor(m => m.EventCompany.DateNextFollowUp, new {@class = "form-control"})
-                                @Html.ValidationMessageFor(m => m.EventCompany.DateNextFollowUp)
-                                @Html.Bootstrap().LabelFor(m => m.EventCompany.DateNextFollowUp)
-                            </div>
-                        </div>*@
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            @Html.Bootstrap().DropDownListFor(m => m.EventCompany.BudgetMonth, EnumerationHelper.ToSelectList<MonthStatus>()).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.EventCompany.BudgetMonth)
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            @Html.Bootstrap().DropDownListFor(m => m.EventCompany.GoodTrainingMonth, EnumerationHelper.ToSelectList<MonthStatus>()).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.EventCompany.GoodTrainingMonth)
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.EventCompany.TopicsInterested).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.EventCompany.TopicsInterested)
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.EventCompany.LocationInterested).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.EventCompany.LocationInterested)
                         </div>
                     </div>
                     <div class="col-sm-12">

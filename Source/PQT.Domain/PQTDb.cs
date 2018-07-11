@@ -36,7 +36,6 @@ namespace PQT.Domain
         protected override void OnModelCreating(DbModelBuilder mb)
         {
             mb.Entity<Company>().HasMany(m => m.ManagerUsers).WithMany().Map(map => map.ToTable("Company_Users").MapLeftKey("Company_Id").MapRightKey("User_Id"));
-
             mb.Entity<User>().HasMany(u => u.Roles).WithMany().Map(map => map.ToTable("Users_Roles").MapLeftKey("User_Id").MapRightKey("Role_Id"));
             mb.Entity<Role>().HasMany(r => r.Permissions).WithMany().Map(map => map.ToTable("Roles_Permissions").MapLeftKey("Role_Id").MapRightKey("Permission_Id"));
             mb.Entity<Menu>().HasMany(m => m.Roles).WithMany().Map(map => map.ToTable("Menus_Roles").MapLeftKey("Menu_Id").MapRightKey("Role_Id"));

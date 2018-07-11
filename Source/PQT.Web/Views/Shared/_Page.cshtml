@@ -544,6 +544,7 @@
                     var notifyFlyerPanel = $notifyFlyerContent.parents(".nano-content");
                     if (notifyFlyerPanel.length > 0) {
                         notifyFlyerPanel[0].scrollTop = 0;
+                        notifyFlyerPanel.find(".notify_not_found").remove();
                     }
                     $notifyFlyerContent.addClass('hide');
 //            $notifyFlyerContent.append(row);
@@ -576,6 +577,7 @@
                     var notifyPanel = $dashboardNotify.parents(".notify_panel");
                     if (notifyPanel.length > 0) {
                         notifyPanel[0].scrollTop = 0;
+                        notifyPanel.find(".notify_not_found").remove();
                     }
                     clearTimeout(timeOut);
                     timeOut = setTimeout(function() {
@@ -728,7 +730,7 @@
             setTimeout(function () {
                 UpdateTimestamp();
             }, 60000);
-            console.log("Update all .timestamp length=" + $timestamp.length);
+            //console.log("Update all .timestamp length=" + $timestamp.length);
         }
         setTimeout(function () {
             UpdateTimestamp();

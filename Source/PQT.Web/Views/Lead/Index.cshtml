@@ -97,9 +97,12 @@
         color: #a5a100;
         background-color: #fffdb7;
     }
-    a {
+    .table a {
         text-decoration: underline;
     }
+    /*#tableLead tbody tr td {
+        min-width: 80px;
+    }*/
 </style>
 <style>
     .delegateItem {
@@ -152,9 +155,14 @@
     </div><!--end .col -->
 </div>
 <div class="row">
+    <a class="btn ink-reaction btn-floating-action btn-info simple-ajax-popup-align-top" title="Open Sales Rules"
+       href="@Url.Action("LoadEventSalesRules","Event", new {eventId = Model.Event.ID})"
+       style="position: fixed;top: 80px;right: 0;display: block;z-index: 1006;"><i class="md md-assignment"></i></a>
+
     <a class="btn ink-reaction btn-floating-action btn-primary expand_new_ncl" title="Open No Call List"
        href="#offcanvas-ncl" data-toggle="offcanvas"
-       style="position: fixed;top: 93px;right: 0;display: block;z-index: 1006;"><i class="md md-list"></i></a>
+       style="position: fixed;top: 130px;right: 0;display: block;z-index: 1006;"><i class="md md-list"></i></a>
+
 </div>
 <section>
     <input type="hidden" value="@Model.Event.ID" id="eventIdNCList" />
@@ -192,11 +200,16 @@
                                 <th>Salutation</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
-                                <th>Business Phone</th>
-                                <th>Mobile Phone</th>
+                                <th>Mobile Phone1</th>
+                                <th>Mobile Phone2</th>
+                                <th>Mobile Phone3</th>
                                 <th>Work Email</th>
-                                <th>Work Email 1</th>
                                 <th>Personal Email</th>
+                                <th>Estimated Delegate</th>
+                                <th>Budget Month</th>
+                                <th>Good Training Month</th>
+                                <th>Topics Interested</th>
+                                <th>Location Interested</th>
                                 <th>KPI</th>
                                 <th>KPI Remarks</th>
                                 <th>Call Back</th>
@@ -271,11 +284,16 @@
                  { "data": "Salutation", "name": "Salutation", "orderable": true },
                  { "data": "FirstName", "name": "FirstName", "orderable": true },
                  { "data": "LastName", "name": "LastName", "orderable": true },
-                 { "data": "BusinessPhone", "name": "BusinessPhone", "orderable": true },
-                 { "data": "MobilePhone", "name": "MobilePhone", "orderable": true },
-                 { "data": "WorkEmailAddress", "name": "WorkEmailAddress", "orderable": true },
-                 { "data": "WorkEmailAddress1", "name": "WorkEmailAddress1", "orderable": true },
-                 { "data": "PersonalEmailAddress", "name": "PersonalEmailAddress", "orderable": true },
+                 { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
+                 { "data": "MobilePhone2", "name": "MobilePhone2", "orderable": true },
+                 { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
+                 { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
+                 { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
+                 { "data": "EstimatedDelegateNumber", "name": "EstimatedDelegateNumber", "orderable": true },
+                 { "data": "BudgetMonth", "name": "BudgetMonth", "orderable": true },
+                 { "data": "GoodTrainingMonth", "name": "GoodTrainingMonth", "orderable": true },
+                 { "data": "TopicsInterested", "name": "TopicsInterested", "orderable": true },
+                 { "data": "LocationInterested", "name": "LocationInterested", "orderable": true },
                  { "data": "MarkKPI", "name": "MarkKPI", "orderable": true },
                  { "data": "KPIRemarks", "name": "KPIRemarks", "orderable": true },
                  { "data": "CallBackDate", "name": "CallBackDate", "orderable": true },
@@ -296,12 +314,12 @@
                      '</a>');
 
                  if (aData["StatusCode"] == @LeadStatus.RequestBook || aData["StatusCode"] == @LeadStatus.Booked) {
-                     $(nRow).find('td:eq(17)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
+                     $(nRow).find('td:eq(22)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
                          aData["ID"] +
                          '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;">' + aData["StatusDisplay"]+'</span></a>');
                  }
                  if ('@eventClosed' == 'False') {
-                     $(nRow).find('td:eq(18)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
+                     $(nRow).find('td:eq(23)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
                          aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');
                  }
                  $(nRow).addClass(aData["ClassStatus"]);

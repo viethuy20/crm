@@ -8,6 +8,7 @@ using NS;
 using NS.Mvc;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
+using PQT.Web.Hubs;
 using PQT.Web.Infrastructure.Helpers;
 using PQT.Web.Infrastructure.Utility;
 
@@ -75,6 +76,19 @@ namespace PQT.Web.Models
                         temp.BusinessUnits = dtRow[7].ToString();
                         temp.Email = dtRow[8].ToString();
                         temp.PersonalContact = dtRow[9].ToString();
+                        try
+                        {
+                            temp.TierStr = dtRow[10].ToString();
+                            temp.Tier = Convert.ToInt32(!string.IsNullOrEmpty(temp.TierStr) ? temp.TierStr : TierType.Tier3);
+                            if (temp.Tier < 1 || temp.Tier > 3)
+                            {
+                                temp.Error += "- Tier Only: 1,2,3 <br/>";
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            temp.Error += "- Tier: " + dtRow[1] + " is wrong.<br/>";
+                        }
                         ImportRows.Add(temp);
                     }
                 }
@@ -90,10 +104,11 @@ namespace PQT.Web.Models
             if (ImportRows != null && ImportRows.Count > 0)
             {
                 Companies = new List<Company>();
-                Company com = null;
                 foreach (var row in ImportRows)
                 {
-                    Companies.Add(Mapper.Map<Company>(row));
+                    var com = Mapper.Map<Company>(row);
+
+                    Companies.Add(com);
                 }
             }
         }
@@ -101,9 +116,19 @@ namespace PQT.Web.Models
         public void ConfirmImport()
         {
             var comRepo = DependencyHelper.GetService<ICompanyRepository>();
+            var count = 0;
+            var totalCount = Companies.Count();
+            var userId = CurrentUser.Identity.ID;
             foreach (var com in Companies)
             {
                 comRepo.CreateCompany(com, new List<int>());
+                count++;
+                var json = new
+                {
+                    count,
+                    totalCount
+                };
+                ProgressHub.SendMessage(userId, System.Web.Helpers.Json.Encode(json));
             }
         }
     }
@@ -121,6 +146,8 @@ namespace PQT.Web.Models
         public string Designation { get; set; }
         public string Email { get; set; }
         public string PersonalContact { get; set; }
+        public string TierStr { get; set; }
+        public int Tier { get; set; }
         public string Error { get; set; }
     }
 

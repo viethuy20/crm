@@ -24,6 +24,8 @@ namespace PQT.Web
             Mapper.CreateMap<CompanyJson, Company>();
             Mapper.CreateMap<CompanyResource, CompanyResourceJson>();
             Mapper.CreateMap<CompanyResourceJson, CompanyResource>();
+            Mapper.CreateMap<Country, CountryJson>();
+            Mapper.CreateMap<CountryJson, Country>();
         }
     }
 }

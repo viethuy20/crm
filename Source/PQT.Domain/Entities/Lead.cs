@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Web.Compilation;
+using NS;
 using PQT.Domain.Enum;
 using PQT.Domain.Helpers;
 
@@ -16,18 +17,18 @@ namespace PQT.Domain.Entities
         {
             PhoneCalls = new HashSet<PhoneCall>();
         }
-        public string GeneralLine { get; set; }
         public string DirectLine { get; set; } //Direct Line/Mobile number
         public string ClientName { get; set; } //Client Name/Job Title
         public string Remark { get; set; }
         public string Salutation { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string BusinessPhone { get; set; }
-        public string MobilePhone { get; set; }
-        public string WorkEmailAddress { get; set; }
-        public string WorkEmailAddress1 { get; set; }
-        public string PersonalEmailAddress { get; set; }
+        public string MobilePhone1 { get; set; }
+        public string MobilePhone2 { get; set; }
+        public string MobilePhone3 { get; set; }
+        public string WorkEmail { get; set; }
+        public string WorkEmail1 { get; set; }
+        public string PersonalEmail { get; set; }
         public int? LeadStatusID { get; set; }
         [ForeignKey("LeadStatusID")]
         public virtual LeadStatusRecord LeadStatusRecord { get; set; }
@@ -46,6 +47,29 @@ namespace PQT.Domain.Entities
         public bool MarkKPI { get; set; }
         public string FileNameImportKPI { get; set; }
         public string KPIRemarks { get; set; }
+
+        public int? EstimatedDelegateNumber { get; set; }
+        public int BudgetMonth { get; set; }
+        public int GoodTrainingMonth { get; set; }
+        public string TopicsInterested { get; set; }
+        public string LocationInterested { get; set; }
+
+        public string BudgetMonthStr
+        {
+            get
+            {
+                var monthEnum = Enumeration.FromValue<MonthStatus>(BudgetMonth.ToString());
+                return monthEnum != null ? monthEnum.ToString() : "";
+            }
+        }
+        public string GoodTrainingMonthStr
+        {
+            get
+            {
+                var monthEnum = Enumeration.FromValue<MonthStatus>(GoodTrainingMonth.ToString());
+                return monthEnum != null ? monthEnum.ToString() : "";
+            }
+        }
 
         public string SalesmanName
         {

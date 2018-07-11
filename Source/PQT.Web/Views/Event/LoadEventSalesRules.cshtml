@@ -1,0 +1,11 @@
+﻿@model PQT.Domain.Entities.Event
+
+<div class="card card-underline" style="background: white; margin: auto; max-width: 800px; position: relative;">
+    <div class="card-head">
+        <header><b>Sales Rules For @Model.EventName (@Model.EventCode)</b></header>
+    </div><!--end .card-head -->
+
+    <div class="card-body">
+        @Html.Raw(Model.SalesRules)
+    </div>
+</div>

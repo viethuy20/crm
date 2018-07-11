@@ -7,6 +7,8 @@ using System.Web.Mvc;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Web.Infrastructure.Filters;
+using PQT.Web.Infrastructure.Helpers;
+using PQT.Web.Models;
 
 namespace PQT.Web.Controllers
 {
@@ -73,6 +75,57 @@ namespace PQT.Web.Controllers
             {
                 Code = 5
             });
+        }
+
+        [DisplayName(@"Import From Excel")]
+        public ActionResult ImportFromExcel()
+        {
+            return View(new CountryImportModel());
+        }
+
+        [HttpPost]
+        [DisplayName(@"Import From Excel")]
+        public ActionResult ImportFromExcel(CountryImportModel model)
+        {
+            if (model.FileImport == null)
+                return View(new CountryImportModel());
+            if (model.FileImport.FileName.Substring(model.FileImport.FileName.LastIndexOf('.')).ToLower().Contains("xls"))
+            {
+                model.FilePath = ExcelUploadHelper.SaveFile(model.FileImport, FolderUpload.Companies);
+                try
+                {
+                    model.check_data();
+                }
+                catch (Exception)
+                {
+                    TempData["error"] = "Import failed... Format file is wrong";
+                    return View(model);
+                }
+                if (model.ImportRows.Any(m => !string.IsNullOrEmpty(m.Error)))
+                {
+                    return View(model);
+                }
+                model.ParseValue();
+                model.SessionName = "SessionConImport" + Guid.NewGuid();
+                Session[model.SessionName] = model;
+                return View(model);
+            }
+            return View(model);
+        }
+
+        [AjaxOnly]
+        public ActionResult ComfirmImport(string sessionName)
+        {
+            if (string.IsNullOrEmpty(sessionName) || Session[sessionName] == null)
+            {
+                return Json("Session is not exists or expired.", JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                var model = (CountryImportModel)Session[sessionName];
+                model.ConfirmImport();
+                return Json("", JsonRequestBehavior.AllowGet);
+            }
         }
 
         public ActionResult Delete(int id)

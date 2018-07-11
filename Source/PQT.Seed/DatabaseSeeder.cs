@@ -24,13 +24,13 @@ namespace PQT.Seed
                 db.Database.Delete();
                 db.Database.Create();
 
-                Insert_roles_and_users(db);
-                Insert_Countries(db);
-                //Insert_Companies(db);
-                Insert_Trainers(db);
-                Insert_Events(db);
-                Insert_menu(db);
-                Insert_settings(db);
+                //Insert_roles_and_users(db);
+                //Insert_Countries(db);
+                ////Insert_Companies(db);
+                //Insert_Trainers(db);
+                //Insert_Events(db);
+                //Insert_menu(db);
+                //Insert_settings(db);
                 db.SaveChanges();
             }
         }

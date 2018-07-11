@@ -104,7 +104,7 @@
                                 <strong class="text-xl">@item.EventName</strong><br />
                                 Sales Date: @item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
                                 <br/>
-                                DOC: @item.DateOfConfirmation.ToString("dd/MM/yyyy") - Closing Date: @item.ClosingDate.ToString("dd/MM/yyyy")
+                                DOC: @item.DateOfConfirmationStr - Closing Date: @item.ClosingDateStr
                                 @if (CurrentUser.HasRole("Finance"))
                                 {
                                     <a href="@Url.Action("Index", "Booking", new {id = item.ID})" class="link-event">
@@ -181,12 +181,12 @@
                             '</span></a></div>';
                     }
                     if (htmlItems=='') {
-                        htmlItems = '<div class="notify_item text-center"><span class="timestamp">Notify not found</span></div>';
+                        htmlItems = '<div class="notify_item text-center notify_not_found"><span class="timestamp">Notify not found</span></div>';
                     }
                     $("#event_panel_" + eventId).find(".notify_items").html(htmlItems);
                 },
                 error: function () {
-                    $("#event_panel_" + eventId).find(".notify_items").html('<div class="notify_item text-center"><span class="timestamp" >Get Notify Error</span></div>');
+                    $("#event_panel_" + eventId).find(".notify_items").html('<div class="notify_item text-center notify_not_found"><span class="timestamp" >Get Notify Error</span></div>');
                 }
             });
         }

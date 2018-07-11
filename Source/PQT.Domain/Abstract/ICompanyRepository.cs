@@ -16,6 +16,7 @@ namespace PQT.Domain.Abstract
         Company GetCompany(string name);
         Company CreateCompany(Company company, IEnumerable<int> users);
         void CreateCompanies(List<Company> companies);
+        bool UpdateCompany(Company company);
         bool UpdateCompany(Company company, IEnumerable<int> users);
         bool DeleteCompany(int companyID);
         #endregion Company

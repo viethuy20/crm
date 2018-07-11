@@ -186,16 +186,16 @@ namespace PQT.Web.Models
                 : new List<string>();
             if (!eventKeyworks.Any() || eventKeyworks.Any(m => m.Contains(jobTitle)) || eventKeyworks.Any(m => jobTitle.Contains(m)))
             {
-                if (!string.IsNullOrEmpty(lead.PersonalEmailAddress) ||
-                    !string.IsNullOrEmpty(lead.WorkEmailAddress) ||
-                    !string.IsNullOrEmpty(lead.WorkEmailAddress1))
+                if (!string.IsNullOrEmpty(lead.PersonalEmail) ||
+                    !string.IsNullOrEmpty(lead.WorkEmail) ||
+                    !string.IsNullOrEmpty(lead.WorkEmail1))
                 {
 
                     var voips = ImportVoIps.Where(m => m.clid == lead.User.Extension && (
-                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.GeneralLine) ||
-                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone) ||
-                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.DirectLine) ||
-                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.BusinessPhone)
+                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone1) ||
+                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone2) ||
+                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone3) ||
+                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.DirectLine)
                     ) && !string.IsNullOrEmpty(m.disposition) && m.disposition.Trim().ToUpper() == "ANSWERED");
                     if (lead.PhoneCalls.Any(m => voips.Any(v => m.StartTime.AddSeconds(-Settings.System.VoIpBuffer()) <= v.CallDateTime && v.CallDateTime <= m.StartTime.AddSeconds(Settings.System.VoIpBuffer()))))
                     {

@@ -55,8 +55,8 @@ namespace PQT.Web.Models
                 DiscountPercent = Convert.ToInt32(discountSetting.Value),
                 SenderName = lead.ClientName,
                 SenderDestination = "",
-                SenderMail = lead.PersonalEmailAddress,
-                SenderTel = lead.MobilePhone
+                SenderMail = lead.PersonalEmail,
+                SenderTel = lead.MobilePhone1
             };
         }
 
@@ -78,8 +78,8 @@ namespace PQT.Web.Models
                 Booking.DiscountPercent = Convert.ToInt32(discountSetting.Value);
                 Booking.SenderName = lead.ClientName;
                 Booking.SenderDestination = "";
-                Booking.SenderMail = lead.PersonalEmailAddress;
-                Booking.SenderTel = lead.MobilePhone;
+                Booking.SenderMail = lead.PersonalEmail;
+                Booking.SenderTel = lead.MobilePhone1;
                 SessionIds = booking.EventSessions.Select(m => m.ID).ToList();
             }
         }
@@ -130,6 +130,7 @@ namespace PQT.Web.Models
         {
             var bookingService = DependencyHelper.GetService<IBookingService>();
             var leadService = DependencyHelper.GetService<ILeadService>();
+            var comService = DependencyHelper.GetService<ICompanyRepository>();
             Booking = bookingService.GetBooking(id);
             if (Booking == null)
             {
@@ -157,6 +158,12 @@ namespace PQT.Web.Models
                     BookingNotificator.NotifyUser(new List<User> { Booking.Lead.User }, Booking.ID, titleNotify, true);
                     LeadNotificator.NotifyUpdateNCL(Booking.Lead.ID);
                     BookingNotificator.NotifyUpdateBooking(Booking.ID, false);
+                    var com = comService.GetCompany(Booking.CompanyID);
+                    if (com.Tier.ToString() != TierType.Tier1)//Update company => Tier = 1 after booked;
+                    {
+                        com.Tier = Convert.ToInt32(TierType.Tier1);
+                        comService.UpdateCompany(com);
+                    }
                     return true;
                 }
                 return false;

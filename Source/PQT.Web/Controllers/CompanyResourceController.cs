@@ -122,10 +122,10 @@ namespace PQT.Web.Controllers
                             m.LastName,
                             m.Organisation,
                             m.Role,
-                            m.BusinessPhone,
-                            m.MobilePhone,
-                            m.PersonalEmailAddress,
-                            m.WorkEmailAddress,
+                            m.MobilePhone1,
+                            m.MobilePhone2,
+                            m.PersonalEmail,
+                            m.WorkEmail,
                             m.Error,
                         })
                     };
@@ -147,10 +147,10 @@ namespace PQT.Web.Controllers
                     m.LastName,
                     m.Organisation,
                     m.Role,
-                    m.BusinessPhone,
-                    m.MobilePhone,
-                    m.PersonalEmailAddress,
-                    m.WorkEmailAddress,
+                    m.MobilePhone1,
+                    m.MobilePhone2,
+                    m.PersonalEmail,
+                    m.WorkEmail,
                     m.Error,
                 })
             };
@@ -162,13 +162,13 @@ namespace PQT.Web.Controllers
         {
             if (string.IsNullOrEmpty(sessionName) || Session[sessionName] == null)
             {
-                return Json("Session is not exists or expired.",JsonRequestBehavior.AllowGet);
+                return Json("Session is not exists or expired.", JsonRequestBehavior.AllowGet);
             }
             else
             {
                 var model = (CompanyResourceImportModel)Session[sessionName];
                 model.ConfirmImport();
-                return Json("",JsonRequestBehavior.AllowGet);
+                return Json("", JsonRequestBehavior.AllowGet);
             }
         }
         [AjaxOnly]
@@ -207,17 +207,18 @@ namespace PQT.Web.Controllers
                         m.LastName.ToLower().Contains(searchValue) ||
                         m.FirstName.ToLower().Contains(searchValue) ||
                         m.Role.ToLower().Contains(searchValue) ||
-                        m.BusinessPhone.ToLower().Contains(searchValue) ||
-                        m.MobilePhone.ToLower().Contains(searchValue) ||
-                        m.WorkEmailAddress.ToLower().Contains(searchValue) ||
-                        m.PersonalEmailAddress.ToLower().Contains(searchValue)
-                       );
+                        (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
+                        (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
+                        (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
+                        (m.WorkEmail != null && m.WorkEmail.Contains(searchValue)) ||
+                        (m.PersonalEmail != null && m.PersonalEmail.Contains(searchValue))
+                    );
             }
             else
             {
                 audits = _comRepo.GetAllCompanyResources();
             }
-            
+
             if (sortColumnDir == "asc")
             {
                 switch (sortColumn)
@@ -234,17 +235,20 @@ namespace PQT.Web.Controllers
                     case "Role":
                         audits = audits.OrderBy(s => s.Role).ThenBy(s => s.Organisation);
                         break;
-                    case "BusinessPhone":
-                        audits = audits.OrderBy(s => s.BusinessPhone).ThenBy(s => s.Organisation);
+                    case "MobilePhone1":
+                        audits = audits.OrderBy(s => s.MobilePhone1).ThenBy(s => s.Organisation);
                         break;
-                    case "MobilePhone":
-                        audits = audits.OrderBy(s => s.MobilePhone).ThenBy(s => s.Organisation);
+                    case "MobilePhone2":
+                        audits = audits.OrderBy(s => s.MobilePhone2).ThenBy(s => s.Organisation);
                         break;
-                    case "WorkEmailAddress":
-                        audits = audits.OrderBy(s => s.WorkEmailAddress).ThenBy(s => s.Organisation);
+                    case "MobilePhone3":
+                        audits = audits.OrderBy(s => s.MobilePhone3).ThenBy(s => s.Organisation);
                         break;
-                    case "PersonalEmailAddress":
-                        audits = audits.OrderBy(s => s.PersonalEmailAddress).ThenBy(s => s.Organisation);
+                    case "WorkEmail":
+                        audits = audits.OrderBy(s => s.WorkEmail).ThenBy(s => s.Organisation);
+                        break;
+                    case "PersonalEmail":
+                        audits = audits.OrderBy(s => s.PersonalEmail).ThenBy(s => s.Organisation);
                         break;
                     default:
                         audits = audits.OrderBy(s => s.Organisation);
@@ -267,17 +271,20 @@ namespace PQT.Web.Controllers
                     case "Role":
                         audits = audits.OrderByDescending(s => s.Role).ThenBy(s => s.Organisation);
                         break;
-                    case "BusinessPhone":
-                        audits = audits.OrderByDescending(s => s.BusinessPhone).ThenBy(s => s.Organisation);
+                    case "MobilePhone1":
+                        audits = audits.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.Organisation);
                         break;
-                    case "MobilePhone":
-                        audits = audits.OrderByDescending(s => s.MobilePhone).ThenBy(s => s.Organisation);
+                    case "MobilePhone2":
+                        audits = audits.OrderByDescending(s => s.MobilePhone2).ThenBy(s => s.Organisation);
                         break;
-                    case "WorkEmailAddress":
-                        audits = audits.OrderByDescending(s => s.WorkEmailAddress).ThenBy(s => s.Organisation);
+                    case "MobilePhone3":
+                        audits = audits.OrderByDescending(s => s.MobilePhone3).ThenBy(s => s.Organisation);
                         break;
-                    case "PersonalEmailAddress":
-                        audits = audits.OrderByDescending(s => s.PersonalEmailAddress).ThenBy(s => s.Organisation);
+                    case "WorkEmail":
+                        audits = audits.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.Organisation);
+                        break;
+                    case "PersonalEmail":
+                        audits = audits.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.Organisation);
                         break;
                     default:
                         audits = audits.OrderByDescending(s => s.Organisation);
@@ -307,10 +314,11 @@ namespace PQT.Web.Controllers
                     m.LastName,
                     m.Organisation,
                     m.Role,
-                    m.BusinessPhone,
-                    m.MobilePhone,
-                    m.PersonalEmailAddress,
-                    m.WorkEmailAddress,
+                    m.MobilePhone1,
+                    m.MobilePhone2,
+                    m.MobilePhone3,
+                    m.PersonalEmail,
+                    m.WorkEmail,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

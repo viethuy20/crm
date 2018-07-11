@@ -36,6 +36,7 @@ namespace PQT.Web
                 , "~/Content/css/theme-default/libs/morris/morris.core.css"
                 , "~/Content/css/theme-default/libs/toastr/toastr.min.css"
                 , "~/Content/css/theme-default/libs/wizard/wizard.css"
+                , "~/Content/css/theme-default/libs/summernote/summernote.css"
                 , "~/Content/css/theme-default/materialadmin.css"
                 ));
             bundles.Add(new JsBundle("~/content/js/min").Include(
@@ -75,6 +76,11 @@ namespace PQT.Web
                 , "~/Content/js/libs/d3/d3.v3.js"
                 , "~/Content/js/libs/rickshaw/rickshaw.min.js"
                 , "~/Content/js/libs/toastr/toastr.min.js"
+                //, "~/Content/js/libs/ckeditor/ckeditor.js"
+                //, "~/Content/js/libs/ckeditor/adapters/jquery.js"
+                , "~/Content/js/libs/summernote/summernote.min.js"
+
+
                 , "~/Content/js/core/source/App.js"
                 , "~/Content/js/core/source/AppNavigation.js"
                 , "~/Content/js/core/source/AppOffcanvas.js"
@@ -86,7 +92,7 @@ namespace PQT.Web
                 , "~/Content/js/core/demo/DemoFormComponents.js"
                 , "~/Content/js/core/demo/DemoTableDynamic.js"
 
-                
+
                 , "~/Content/js/magnific-popup/jquery.magnific-popup.js"
                 , "~/Content/js/ultilities/LINQ_JS.js"
                 , "~/Content/js/ultilities/string.js"

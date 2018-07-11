@@ -382,6 +382,7 @@
     <Compile Include="Infrastructure\Utility\FileUpload.cs" />
     <Compile Include="Models\AjaxResult.cs" />
     <Compile Include="Models\BookingModel.cs" />
+    <Compile Include="Models\CountryImportModel.cs" />
     <Compile Include="Models\CompanyImportModel.cs" />
     <Compile Include="Models\CompanyModel.cs" />
     <Compile Include="Models\CompanyResourceImportModel.cs" />
@@ -2471,6 +2472,7 @@
     <Content Include="Content\EmailTemplates\Booking\AlertRejectedBooking.html.cshtml" />
     <Content Include="Content\SampleFiles\VoIP_sample.xlsx" />
     <Content Include="Content\SampleFiles\company_resources_sample.xlsx" />
+    <Content Include="Content\SampleFiles\countries_sample.xlsx" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -2563,6 +2565,8 @@
     <Content Include="Views\Kpi\Update.cshtml" />
     <Content Include="Views\Event\AssignCompany.cshtml" />
     <Content Include="Views\Lead\_CallingInfo.cshtml" />
+    <Content Include="Views\Country\ImportFromExcel.cshtml" />
+    <Content Include="Views\Event\LoadEventSalesRules.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

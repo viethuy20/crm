@@ -30,10 +30,16 @@
                         @Html.Bootstrap().LabelFor(m => m.Lead.Company.CompanyName).LabelText("COMPANY NAME")
                     </div>
                 </div>
-                <div class="col-sm-12">
+                <div class="col-sm-6">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.GeneralLine).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.GeneralLine).LabelText("GENERAL LINE")
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.ClientName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.ClientName).LabelText("CLIENT NAME/ JOB TITLE")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.DirectLine).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER")
                     </div>
                 </div>
                 <div class="col-sm-12">

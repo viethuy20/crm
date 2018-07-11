@@ -98,12 +98,6 @@
                         @Html.Bootstrap().LabelFor(m => m.Event.VenueOfEvent).LabelText("Venue Of Event")
                     </div>
                 </div>
-                <div class="col-sm-12">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextAreaFor(m => m.Event.SalesRules).Rows(7).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Event.SalesRules).LabelText("Sales Rules")
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -201,8 +195,7 @@
             </div>
         </div><!--end .card-body -->
     </div>
-    
-    
+
     <div class="card card-underline">
         <div class="card-head">
             <header>Companies</header>
@@ -224,6 +217,21 @@
             </div>
         </div><!--end .card-body -->
     </div>
+    
+
+    <div class="section-body">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="text-primary">Sales Rules</h2>
+            </div><!--end .col -->
+        </div><!--end .row -->
+        <div class="card">
+            <div class="card-body">
+                @Html.Raw(Model.Event.SalesRules)
+            </div><!--end .card-body -->
+        </div><!--end .card -->
+    </div>
+
 </section>
 
 @Html.Script(

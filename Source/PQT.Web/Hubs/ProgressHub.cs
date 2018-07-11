@@ -18,23 +18,28 @@ namespace PQT.Web.Hubs
 
         #region Override
 
-        //public override Task OnConnected()
-        //{
-        //    AddConnectionIntoGroups();
-        //    return base.OnConnected();
-        //}
+        public override Task OnConnected()
+        {
+            var userID = Context.QueryString["UserID"];
+            if (!string.IsNullOrEmpty(userID))
+                AddConnectionIntoGroups(userID);
+            return base.OnConnected();
+        }
 
-        //public override Task OnDisconnected()
-        //{
-        //    RemoveConnectionFromGroups();
-        //    return base.OnDisconnected();
-        //}
-
-        //public override Task OnReconnected()
-        //{
-        //    AddConnectionIntoGroups();
-        //    return base.OnReconnected();
-        //}
+        public override Task OnDisconnected()
+        {
+            var userID = Context.QueryString["UserID"];
+            if (!string.IsNullOrEmpty(userID))
+                RemoveConnectionFromGroups(userID);
+            return base.OnDisconnected();
+        }
+        public override Task OnReconnected()
+        {
+            var userID = Context.QueryString["UserID"];
+            if (!string.IsNullOrEmpty(userID))
+                AddConnectionIntoGroups(userID);
+            return base.OnReconnected();
+        }
 
         #endregion
 
@@ -45,36 +50,28 @@ namespace PQT.Web.Hubs
             return "user_" + userId;
         }
 
-        //private void AddConnectionIntoGroups()
-        //{
-        //    try
-        //    {
-        //        User user = MembershipService.GetUserByEmail(Context.User.Identity.Name);
-        //        if (user != null)
-        //        {
-        //            // add connection to group by user
-        //            Groups.Add(Context.ConnectionId, GetUserGroupName(user.ID));
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //    }
-        //}
+        private void AddConnectionIntoGroups(string userId)
+        {
+            try
+            {
 
-        //private void RemoveConnectionFromGroups()
-        //{
-        //    try
-        //    {
-        //        User user = MembershipService.GetUserByEmail(Context.User.Identity.Name);
-        //        if (user != null)
-        //        {
-        //            Groups.Remove(Context.ConnectionId, GetUserGroupName(user.ID));
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //    }
-        //}
+                Groups.Add(Context.ConnectionId, GetUserGroupName(userId));
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        private void RemoveConnectionFromGroups(string userId)
+        {
+            try
+            {
+                Groups.Remove(Context.ConnectionId, GetUserGroupName(userId));
+            }
+            catch (Exception e)
+            {
+            }
+        }
 
         #endregion
         public static void SendMessage(int userId, string msg)

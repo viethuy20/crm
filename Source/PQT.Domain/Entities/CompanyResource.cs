@@ -14,10 +14,11 @@ namespace PQT.Domain.Entities
         public string LastName { get; set; }
         public string Organisation { get; set; } //company name
         public string Role { get; set; }
-        public string BusinessPhone { get; set; }
-        public string MobilePhone { get; set; }
-        public string WorkEmailAddress { get; set; }
-        public string PersonalEmailAddress { get; set; }
+        public string MobilePhone1 { get; set; }
+        public string MobilePhone2 { get; set; }
+        public string MobilePhone3 { get; set; }
+        public string WorkEmail { get; set; }
+        public string PersonalEmail{ get; set; }
         public int? CompanyID { get; set; }
         //[ForeignKey("CompanyID")]
         //public virtual Company Company { get; set; }

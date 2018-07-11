@@ -43,7 +43,7 @@ namespace PQT.Web.Models
         public string BusinessPhone { get; set; }
 
         public string Address { get; set; }
-        public string Extension { get; set; }
+        public string Extension { get; set; }//clid
         public LevelSalesman LevelSalesman { get; set; }
         public DateTime? DateOfContract { get; set; }
         public DateTime? DateOfStarting { get; set; }

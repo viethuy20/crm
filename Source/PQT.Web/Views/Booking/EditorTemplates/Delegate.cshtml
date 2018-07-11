@@ -14,26 +14,42 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-sm-6">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Destination).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Destination)
+                        @Html.Bootstrap().TextBoxFor(m => m.Designation).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Designation)
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Tel).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Tel).ShowRequiredStar(true)
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
+                <div class="col-sm-6">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Mail).Class("form-control").ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Mail)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.LandLine).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.LandLine)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Mobile1).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Mobile1)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Mobile2).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Mobile2)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Mobile3).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Mobile3)
                     </div>
                 </div>
             </div>

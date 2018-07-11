@@ -138,15 +138,13 @@ namespace PQT.Web.Controllers
         {
             if (string.IsNullOrEmpty(sessionName) || Session[sessionName] == null)
             {
-                TempData["error"] = "Session does not exist or expired";
-                return RedirectToAction("ImportFromExcel");
+                return Json("Session is not exists or expired.", JsonRequestBehavior.AllowGet);
             }
             else
             {
                 var model = (CompanyImportModel)Session[sessionName];
                 model.ConfirmImport();
-                TempData["message"] = "Import completed";
-                return RedirectToAction("Index");
+                return Json("", JsonRequestBehavior.AllowGet);
             }
         }
 
