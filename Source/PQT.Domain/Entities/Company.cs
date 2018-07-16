@@ -23,9 +23,9 @@ namespace PQT.Domain.Entities
         public string Industry { get; set; }
         public string Ownership { get; set; }
         public string BusinessUnits { get; set; }
-        public string Designation { get; set; }
-        public string Email { get; set; }
-        public string PersonalContact { get; set; }
+        //public string Designation { get; set; }
+        //public string Email { get; set; }
+        //public string PersonalContact { get; set; }
         public decimal BudgetPerHead { get; set; }
         public int FinancialYear { get; set; }
         public int Tier { get; set; }//tier: 1-red 2-blue -0-black

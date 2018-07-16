@@ -7,7 +7,7 @@
 <div class="card">
     <div class="card-body">
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-3">
                 <div class="form-group ">
                     @Html.Bootstrap().TextBoxFor(m => m.Event.EventCode).Class("form-control code").HtmlAttributes(new { required = "required", maxlength = "10" }).ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Event.EventCode).ShowRequiredStar(true)
@@ -19,76 +19,103 @@
                     @Html.Bootstrap().LabelFor(m => m.Event.EventName).ShowRequiredStar(true)
                 </div>
             </div>
+            <div class="col-sm-3" style="width:150px">
+                <div class="form-group" style="padding-top: 20px;">
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.BackgroundColor).HtmlAttributes(new { @style = "color:#fff;background:" + Model.Event.BackgroundColor }).Class("form-control").Id("cp3").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.BackgroundColor).LabelText("Event Color")
+                </div>
+            </div>
             <div class="col-sm-6">
                 <div class="form-group">
                     <div class="input-daterange input-group">
                         <div class="input-group-content">
                             @Html.DatePickerRangeFor(m => m.Event.StartDate, new { @class = "form-control", required = "required" })
                             @Html.ValidationMessageFor(m => m.Event.StartDate)
-                            @Html.Bootstrap().LabelFor(m => m.Event.StartDate).ShowRequiredStar(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.StartDate).LabelText("Event First Day").ShowRequiredStar(true)
                         </div>
                         <span class="input-group-addon">to</span>
                         <div class="input-group-content">
                             @Html.DatePickerRangeFor(m => m.Event.EndDate, new { @class = "form-control", required = "required" })
                             @Html.ValidationMessageFor(m => m.Event.EndDate)
-                            @Html.Bootstrap().LabelFor(m => m.Event.EndDate).ShowRequiredStar(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.EndDate).LabelText("Event Last Day").ShowRequiredStar(true)
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-3">
                 <div class="form-group">
-                    @Html.DatePickerFor(m => m.Event.DateOfConfirmation, new { @class = "form-control"})
+                    @Html.DatePickerFor(m => m.Event.DateOfConfirmation, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.Event.DateOfConfirmation)
                     @Html.Bootstrap().LabelFor(m => m.Event.DateOfConfirmation)
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-3">
                 <div class="form-group">
-                    @Html.DatePickerFor(m => m.Event.ClosingDate, new { @class = "form-control"})
+                    @Html.DatePickerFor(m => m.Event.ClosingDate, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.Event.ClosingDate)
-                    @Html.Bootstrap().LabelFor(m => m.Event.ClosingDate)
+                    @Html.Bootstrap().LabelFor(m => m.Event.ClosingDate).LabelText("Date of Closing Sales")
                 </div>
             </div>
-            <div class="col-sm-6">
-                <div class="form-group">
-                    <select multiple class="form-control" name="@Html.NameFor(m=>m.GroupsSelected)">
-                        @foreach (var com in Model.SalesGroups.OrderBy(m => m.GroupName))
-                        {
-                            <option value="@com.ID" selected="@(Model.GroupsSelected.Contains(com.ID))">@com.GroupName</option>
-                        }
-                    </select>
-                    <label>Sales Group</label>
+
+            <div class="col-sm-12">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <select multiple class="form-control" name="@Html.NameFor(m=>m.GroupsSelected)">
+                            @foreach (var com in Model.SalesGroups.OrderBy(m => m.GroupName))
+                            {
+                                <option value="@com.ID" selected="@(Model.GroupsSelected.Contains(com.ID))">@com.GroupName</option>
+                            }
+                        </select>
+                        <label>Sales Group</label>
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="form-group">
-                    <select multiple class="form-control " name="@Html.NameFor(m=>m.UsersSelected)">
-                        @foreach (var com in Model.Users.OrderBy(m => m.DisplayName))
-                        {
-                            <option value="@com.ID" selected="@(Model.UsersSelected.Contains(com.ID))">@com.DisplayName</option>
-                        }
-                    </select>
-                    <label>Account Manager</label>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <select multiple class="form-control " name="@Html.NameFor(m=>m.UsersSelected)">
+                            @foreach (var com in Model.Users.OrderBy(m => m.DisplayName))
+                            {
+                                <option value="@com.ID" selected="@(Model.UsersSelected.Contains(com.ID))">@com.DisplayName</option>
+                            }
+                        </select>
+                        <label>Account Manager</label>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="form-group ">
-                    <input type="text" name="@Html.NameFor(m=>m.Event.CallFilterKeywords)" value="@Model.Event.CallFilterKeywords" data-role="tagsinput" />
-                    @Html.ValidationMessageFor(m => m.Event.CallFilterKeywords)
-                    @Html.Bootstrap().LabelFor(m => m.Event.CallFilterKeywords)
+                    <input type="text" name="@Html.NameFor(m=>m.Event.PrimaryJobtitleKeywords)" value="@Model.Event.PrimaryJobtitleKeywords" data-role="tagsinput" />
+                    @Html.ValidationMessageFor(m => m.Event.PrimaryJobtitleKeywords)
+                    @Html.Bootstrap().LabelFor(m => m.Event.PrimaryJobtitleKeywords)
                 </div>
             </div>
-            <div class="col-sm-6" style="width:150px">
-                <div class="form-group" style="padding-top: 20px;">
-                    @Html.Bootstrap().TextBoxFor(m => m.Event.BackgroundColor).HtmlAttributes(new { @style = "color:#fff;background:" + Model.Event.BackgroundColor }).Class("form-control").Id("cp3").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Event.BackgroundColor)
+            <div class="col-sm-6">
+                <div class="form-group ">
+                    <input type="text" name="@Html.NameFor(m=>m.Event.SecondaryJobtitleKeywords)" value="@Model.Event.SecondaryJobtitleKeywords" data-role="tagsinput" />
+                    @Html.ValidationMessageFor(m => m.Event.SecondaryJobtitleKeywords)
+                    @Html.Bootstrap().LabelFor(m => m.Event.SecondaryJobtitleKeywords)
                 </div>
             </div>
+            <div class="col-sm-6">
+                <div class="form-group ">
+                    @Html.Bootstrap().TextAreaFor(m => m.Event.HotelVenue).Rows(3).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.HotelVenue)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group ">
+                    @Html.Bootstrap().TextAreaFor(m => m.Event.Location).Rows(3).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.Location)
+                </div>
+            </div>
+            @Html.HiddenFor(m => m.Event.Brochure)
             <div class="col-sm-12">
                 <div class="form-group ">
-                    @Html.Bootstrap().TextAreaFor(m => m.Event.VenueOfEvent).Rows(3).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Event.VenueOfEvent)
+                    @if (!string.IsNullOrEmpty(Model.Event.Brochure))
+                    {
+                        <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)" target="_blank">@Model.Event.Brochure</a>
+                    }
+                    @Html.Bootstrap().FileFor(m => m.Picture).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Picture).LabelText("Brochure")
                 </div>
             </div>
         </div>
@@ -141,7 +168,7 @@
 
             _addNew: function (templateID) {
                 $(templateID).tmpl({ index: this._generateGuid() }).appendTo('#lines-table');
-                
+
                 $('.form-horizontal .form-control').each(function () {
                     $(this).after('<div class="form-control-line"></div>');
                 });
@@ -163,6 +190,6 @@
             }
         };
 
-        
+
         $('.summernote').summernote();
     </script>)

@@ -25,19 +25,22 @@ namespace PQT.Domain.Entities
         public string EventCode { get; set; }
         public string EventName { get; set; }
         public string BackgroundColor { get; set; }
-        public string VenueOfEvent { get; set; }//venue of event
+        public string HotelVenue { get; set; }//venue of event
         public string SalesRules { get; set; }//Sales Rules
         public string Sectors { get; set; }//our sector
-        public string CallFilterKeywords { get; set; }
+        public string PrimaryJobtitleKeywords { get; set; }
+        public string SecondaryJobtitleKeywords { get; set; }
+        public string Location { get; set; }
         public string Remark { get; set; }
+        public string Brochure { get; set; }
         [DataType(DataType.Date)]
         public DateTime? DateOfConfirmation { get; set; }
         [DataType(DataType.Date)]
-        public DateTime? ClosingDate { get; set; }
+        public DateTime? ClosingDate { get; set; }//Date of Closing Sales
         [DataType(DataType.Date)]
-        public DateTime StartDate { get; set; }//Sales start
+        public DateTime StartDate { get; set; }//Sales start - Event First Day
         [DataType(DataType.Date)]
-        public DateTime EndDate { get; set; }//Sales end
+        public DateTime EndDate { get; set; }//Sales end - Event Last Day
         public bool IsEventEnd { get; set; }
         public int UserID { get; set; }
         [ForeignKey("UserID")]

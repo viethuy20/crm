@@ -77,7 +77,9 @@ namespace PQT.Web.Controllers
                 BusinessPhone = model.BusinessPhone,
                 MobilePhone = model.MobilePhone,
                 Address = model.Address,
-                LevelSalesman = model.LevelSalesman,
+                BusinessDevelopmentUnit = model.BusinessDevelopmentUnit,
+                SalesSupervision = model.SalesSupervision,
+                SalesManagementUnit = model.SalesManagementUnit,
                 DateOfContract = model.DateOfContract,
                 DateOfStarting = model.DateOfStarting,
                 BasicSalary = model.BasicSalary,
@@ -128,7 +130,9 @@ namespace PQT.Web.Controllers
             {
                 user.UserSalaryHistories.Add(new UserSalaryHistory
                 {
-                    LevelSalesman = user.LevelSalesman,
+                    BusinessDevelopmentUnit = user.BusinessDevelopmentUnit,
+                    SalesManagementUnit = user.SalesManagementUnit,
+                    SalesSupervision = user.SalesSupervision,
                     DateOfStarting = user.DateOfStarting,
                     DateOfContract = user.DateOfContract,
                     BasicSalary = Convert.ToDecimal(user.BasicSalary)
@@ -139,7 +143,9 @@ namespace PQT.Web.Controllers
             user.Email = model.Email;
             user.BusinessPhone = model.BusinessPhone;
             user.MobilePhone = model.MobilePhone;
-            user.LevelSalesman = model.LevelSalesman;
+            user.BusinessDevelopmentUnit = model.BusinessDevelopmentUnit;
+            user.SalesManagementUnit = model.SalesManagementUnit;
+            user.SalesSupervision = model.SalesSupervision;
             user.DateOfStarting = model.DateOfStarting;
             user.DateOfContract = model.DateOfContract;
             user.BasicSalary = model.BasicSalary;

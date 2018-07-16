@@ -57,18 +57,18 @@ namespace PQT.Web.Models
             var maxBlock = Settings.Lead.MaxBlockeds();
             if (leads.Count(m => m.UserID == CurrentUser.Identity.ID && m.LeadStatusRecord == LeadStatus.Blocked) >= maxBlock)
                 return "Limit blocked is not exceed " + maxBlock;
+            var daysExpired = Settings.Lead.NumberDaysExpired();
             if (leads.Any(m => m.UserID != CurrentUser.Identity.ID &&
                                m.CompanyID == lead.CompanyID &&
-                               m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
-                               (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
-                                DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))))
+                               m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject && !m.CheckNCLExpired(daysExpired)))
                 return "Cannot block this company... Company is requesting to NCL or exists in NCL";
 
             if (lead.LeadStatusRecord == LeadStatus.Blocked) return "Block failed";
             lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Blocked, CurrentUser.Identity.ID);
             if (!leadRepo.UpdateLead(lead)) return "Block failed";
-            var users = new List<User>();
-            users.AddRange(lead.Event.SalesGroups.SelectMany(m => m.Users));
+            //var users = new List<User>();
+            //users.AddRange(lead.Event.SalesGroups.SelectMany(m => m.Users));
+            //users.AddRange(lead.Event.SalesGroups.SelectMany(m => m.Users));
             //users.Add(lead.Event.User);//notify for manager
             //LeadNotificator.NotifyUser(users, lead);
             LeadNotificator.NotifyUpdateNCL(lead.ID);
@@ -109,12 +109,12 @@ namespace PQT.Web.Models
 
             //if (lead.LeadStatusRecord != LeadStatus.Initial && lead.LeadStatusRecord != LeadStatus.Reject) return "Submit failed";
 
+            var daysExpired = Settings.Lead.NumberDaysExpired();
             var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
             if (leads.Any(m => m.UserID != CurrentUser.Identity.ID &&
                                m.CompanyID == lead.CompanyID &&
-                               m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
-                               (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
-                                DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))))
+                               m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
+                && !m.CheckNCLExpired(daysExpired)))
                 return "Cannot block this company... Company is requesting to NCL or exists in NCL by another";
 
             string fileName = null;
@@ -178,11 +178,11 @@ namespace PQT.Web.Models
                 return "Approval failed";
 
             var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
+            var daysExpired = Settings.Lead.NumberDaysExpired();
             if (leads.Any(m => m.UserID != lead.UserID &&
                                m.CompanyID == lead.CompanyID &&
-                               m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
-                               (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked || m.LeadStatusRecord.UpdatedTime.Date >=
-                                DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))))
+                               m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
+                               && !m.CheckNCLExpired(daysExpired)))
                 return "Cannot approve this company... Company is requesting to NCL or exists in NCL";
 
 
@@ -239,13 +239,12 @@ namespace PQT.Web.Models
             var eventLead = eventRepo.GetEvent(eventId);
             if (eventLead != null)
             {
+                var daysExpired = Settings.Lead.NumberDaysExpired();
                 var leadRepo = DependencyHelper.GetService<ILeadService>();
                 var companyIds = leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
                     m.UserID != CurrentUser.Identity.ID &&
-                    m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject &&
-                    (m.LeadStatusRecord == LeadStatus.Blocked || m.LeadStatusRecord == LeadStatus.Booked ||
-                     m.LeadStatusRecord.UpdatedTime.Date >=
-                     DateTime.Today.AddDays(-Settings.Lead.NumberDaysExpired()))).Select(m => m.CompanyID).Distinct();// get list company blocked
+                    m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
+                    && !m.CheckNCLExpired(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
                 Companies = eventLead.EventCompanies.Where(m => !companyIds.Contains(m.CompanyID)).Select(m => m.Company);
             }
             else
@@ -282,13 +281,14 @@ namespace PQT.Web.Models
     {
         public int LeadID { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
-        public string ClientName { get; set; }//Job Title
+        public string JobTitle { get; set; }//Job Title
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string DirectLine { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string CompanyName { get; set; }
 
+        public string LineExtension { get; set; }
         public int EventID { get; set; }
         public Event Event { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
@@ -304,6 +304,7 @@ namespace PQT.Web.Models
         public string MobilePhone2 { get; set; }
         [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
         public string MobilePhone3 { get; set; }
+        [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessage = "Email is invalid")]
         public string WorkEmail { get; set; }
         [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessage = "Email is invalid")]
@@ -314,6 +315,8 @@ namespace PQT.Web.Models
         public int? EstimatedDelegateNumber { get; set; }
         public int BudgetMonth { get; set; }
         public int GoodTrainingMonth { get; set; }
+        public FollowUpStatus FirstFollowUpStatus { get; set; }
+        public FinalStatus FinalStatus { get; set; }
         public string TopicsInterested { get; set; }
         public string LocationInterested { get; set; }
 
@@ -342,9 +345,14 @@ namespace PQT.Web.Models
         {
             PhoneCall = new PhoneCall();
             EventCompany = new EventCompany();
+            FirstFollowUpStatus = FollowUpStatus.Pending;
+            FinalStatus = FinalStatus.Pending;
         }
         public CallingModel(int leadId)
         {
+            EventCompany = new EventCompany();
+            FirstFollowUpStatus = FollowUpStatus.Pending;
+            FinalStatus = FinalStatus.Pending;
             LeadID = leadId;
             if (leadId > 0)
             {
@@ -357,7 +365,8 @@ namespace PQT.Web.Models
                     EventID = lead.EventID;
                     Event = lead.Event;
                     //GeneralLine = lead.GeneralLine;
-                    ClientName = lead.ClientName;
+                    JobTitle = lead.JobTitle;
+                    LineExtension = lead.LineExtension;
                     DirectLine = lead.DirectLine;
                     Salutation = lead.Salutation;
                     FirstName = lead.FirstName;
@@ -373,6 +382,8 @@ namespace PQT.Web.Models
                     GoodTrainingMonth = lead.GoodTrainingMonth;
                     TopicsInterested = lead.TopicsInterested;
                     LocationInterested = lead.LocationInterested;
+                    FinalStatus = lead.FinalStatus;
+                    FirstFollowUpStatus = lead.FirstFollowUpStatus;
                     CompanyName = lead.CompanyName;
                     Lead = lead;
                 }
@@ -382,6 +393,10 @@ namespace PQT.Web.Models
         {
             EventID = eventId;
             LeadID = leadId;
+            EventCompany = new EventCompany();
+            FirstFollowUpStatus = FollowUpStatus.Pending;
+            FinalStatus = FinalStatus.Pending;
+            PhoneCall = new PhoneCall();
             var evetnRepo = DependencyHelper.GetService<IEventService>();
             Event = evetnRepo.GetEvent(eventId);
             if (leadId > 0)
@@ -393,7 +408,8 @@ namespace PQT.Web.Models
                 {
                     LeadID = leadId;
                     //GeneralLine = lead.GeneralLine;
-                    ClientName = lead.ClientName;
+                    JobTitle = lead.JobTitle;
+                    LineExtension = lead.LineExtension;
                     DirectLine = lead.DirectLine;
                     Salutation = lead.Salutation;
                     FirstName = lead.FirstName;
@@ -409,14 +425,12 @@ namespace PQT.Web.Models
                     GoodTrainingMonth = lead.GoodTrainingMonth;
                     TopicsInterested = lead.TopicsInterested;
                     LocationInterested = lead.LocationInterested;
+                    FinalStatus = lead.FinalStatus;
+                    FirstFollowUpStatus = lead.FirstFollowUpStatus;
                     CompanyName = lead.CompanyName;
                     CompanyID = lead.CompanyID;
                     Lead = lead;
                 }
-            }
-            else
-            {
-                PhoneCall = new PhoneCall();
             }
         }
 
@@ -448,9 +462,10 @@ namespace PQT.Web.Models
                 Lead = leadRepo.GetLead(LeadID);
                 if (Lead != null)
                 {
-                    
+
                     //GeneralLine = lead.GeneralLine;
-                    Lead.ClientName = ClientName;
+                    Lead.JobTitle = JobTitle;
+                    Lead.LineExtension = LineExtension;
                     Lead.DirectLine = DirectLine;
                     Lead.Salutation = Salutation;
                     Lead.FirstName = FirstName;
@@ -466,6 +481,8 @@ namespace PQT.Web.Models
                     Lead.GoodTrainingMonth = GoodTrainingMonth;
                     Lead.TopicsInterested = TopicsInterested;
                     Lead.LocationInterested = LocationInterested;
+                    Lead.FinalStatus = FinalStatus;
+                    Lead.FirstFollowUpStatus = FirstFollowUpStatus;
                     leadRepo.UpdateLead(Lead);
                     return true;
                 }
@@ -483,8 +500,9 @@ namespace PQT.Web.Models
                 {
                     EventID = EventID,
                     CompanyID = (int)CompanyID,
-                     //GeneralLine = GeneralLine;
-                    ClientName = ClientName,
+                    //GeneralLine = GeneralLine;
+                    JobTitle = JobTitle,
+                    LineExtension = LineExtension,
                     DirectLine = DirectLine,
                     Salutation = Salutation,
                     FirstName = FirstName,
@@ -500,6 +518,8 @@ namespace PQT.Web.Models
                     GoodTrainingMonth = GoodTrainingMonth,
                     TopicsInterested = TopicsInterested,
                     LocationInterested = LocationInterested,
+                    FinalStatus = FinalStatus,
+                    FirstFollowUpStatus = FirstFollowUpStatus,
                     UserID = CurrentUser.Identity.ID
                 };
                 Lead = leadRepo.CreateLead(Lead);
@@ -536,7 +556,8 @@ namespace PQT.Web.Models
                 {
                     Lead = leadRepo.GetLead(PhoneCall.LeadID);
                     //GeneralLine = lead.GeneralLine;
-                    Lead.ClientName = ClientName;
+                    Lead.JobTitle = JobTitle;
+                    Lead.LineExtension = LineExtension;
                     Lead.DirectLine = DirectLine;
                     Lead.Salutation = Salutation;
                     Lead.FirstName = FirstName;
@@ -552,6 +573,8 @@ namespace PQT.Web.Models
                     Lead.GoodTrainingMonth = GoodTrainingMonth;
                     Lead.TopicsInterested = TopicsInterested;
                     Lead.LocationInterested = LocationInterested;
+                    Lead.FirstFollowUpStatus = FirstFollowUpStatus;
+                    Lead.FinalStatus = FinalStatus;
                     leadRepo.UpdateLead(Lead);
                     comRepo.UpdateEventCompany(EventCompany);
                     return true;

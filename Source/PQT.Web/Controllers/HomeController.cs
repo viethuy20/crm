@@ -46,14 +46,15 @@ namespace PQT.Web.Controllers
         public ActionResult Index()
         {
             var model = new HomeModel();
-            if (CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin"))
+            if (CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("Manager"))
                 model.Events = _eventService.GetAllEvents();
             else
             {
                 var userId = CurrentUser.Identity.ID;
                 model.Events = _eventService.GetAllEvents().Where(m =>
-                    m.UserID == userId || m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID))
-                        .Contains(userId) || m.ManagerUsers.Select(u => u.ID).Contains(userId));
+                    m.UserID == userId ||
+                    m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) ||
+                        m.ManagerUsers.Select(u => u.ID).Contains(userId) || (m.EndDate < DateTime.Today && DateTime.Today <= m.ClosingDate));
             }
             return View(model);
         }

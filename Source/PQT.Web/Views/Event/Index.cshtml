@@ -22,11 +22,12 @@
                             <th>@Resource.Code</th>
                             <th>@Resource.Name</th>
                             <th>Color</th>
-                            <th>Sales Start Date</th>
-                            <th>Sales End Date</th>
+                            <th>Event First Day</th>
+                            <th>Event Last Day</th>
                             <th>Date Of Confirmation</th>
-                            <th>Closing Date</th>
+                            <th>Date Of Closing Sales</th>
                             <th>Sectors</th>
+                            <th>Location</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -61,6 +62,7 @@
                 { "data": "DateOfConfirmation", "name": "DateOfConfirmation", "orderable": true },
                 { "data": "ClosingDate", "name": "ClosingDate", "orderable": true },
                 { "data": "Sectors", "name": "Sectors", "orderable": true },
+                { "data": "Location", "name": "Location", "orderable": true },
                 { "data": "ID", "name": "ID", "orderable": false },
             ],
             "iDisplayLength": 50,
@@ -92,7 +94,7 @@
                 if ('@CurrentUser.HasPermission("Kpi", "ImportVoIp")' == 'True') {
                     dropdowns += '<li class="divider"></li><li><a href="@Url.Action("ImportVoIp", "Kpi")/' + aData["ID"] + '"><i class="fa fa-upload text-primary"> Import VoIP & Check KPI</i></a></li>';
                 }
-                $(nRow).find('td:eq(8)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
+                $(nRow).find('td:eq(9)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
                     dropdowns +
                     '</ul></div>');
                 $(nRow).attr("data-id", ["ID"]);

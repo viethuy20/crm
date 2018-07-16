@@ -56,12 +56,22 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().DropDownListFor(m => m.LevelSalesman, EnumerationHelper.ToSelectList<LevelSalesman>()).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.LevelSalesman).LabelText("Level Salary")
+                            @Html.Bootstrap().DropDownListFor(m => m.BusinessDevelopmentUnit, EnumerationHelper.ToSelectList<BusinessDevelopmentUnit>()).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.BusinessDevelopmentUnit)
                         </div>
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.BasicSalary).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.BasicSalary).LabelText("Basic Salary")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().DropDownListFor(m => m.SalesManagementUnit, EnumerationHelper.ToSelectList<SalesManagementUnit>()).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.SalesManagementUnit)
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().DropDownListFor(m => m.SalesSupervision, EnumerationHelper.ToSelectList<SalesSupervision>()).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.SalesSupervision).LabelText("Sales Supervision & Planning Unit")
                         </div>
                     </div>
                     <div class="col-sm-6">

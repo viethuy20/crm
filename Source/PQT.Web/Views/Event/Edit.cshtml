@@ -32,17 +32,7 @@
             bootbox.confirm('@Resource.ConfirmSave', function (isOK) {
                 if (isOK) {
                     
-                    var form = $('#submitbutton').parents("form");
-                    // Iterate over all selected checkboxes
-                    $.each(companies_selected, function (index, rowId) {
-                        // Create a hidden element
-                        $(form).append(
-                            $('<input>')
-                            .attr('type', 'hidden')
-                            .attr('name', 'CompaniesSelected')
-                            .val(rowId)
-                        );
-                    });
+                    var form = $('.submitbutton').parents("form");
                     form.submit();
                 }
             });

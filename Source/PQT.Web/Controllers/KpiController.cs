@@ -196,7 +196,7 @@ namespace PQT.Web.Controllers
                             UserName = m.User.DisplayName,
                             m.CompanyName,
                             m.DirectLine,
-                            m.ClientName,
+                            m.JobTitle,
                             m.Salutation,
                             m.FirstName,
                             m.LastName,
@@ -230,7 +230,7 @@ namespace PQT.Web.Controllers
                     UserName = m.User.DisplayName,
                     m.CompanyName,
                     m.DirectLine,
-                    m.ClientName,
+                    m.JobTitle,
                     m.Salutation,
                     m.FirstName,
                     m.LastName,
@@ -353,7 +353,7 @@ namespace PQT.Web.Controllers
                         m.StatusDisplay.Contains(searchValue) ||
                         m.CompanyName.Contains(searchValue) ||
                         m.CountryCode.Contains(searchValue) ||
-                        m.ClientName.Contains(searchValue) ||
+                        m.JobTitle.Contains(searchValue) ||
                         m.DirectLine.Contains(searchValue) ||
                         m.CallBackDateDisplay.Contains(searchValue) ||
                         (m.Salutation != null && m.Salutation.Contains(searchValue)) ||
@@ -400,8 +400,8 @@ namespace PQT.Web.Controllers
                     case "Country":
                         leads = leads.OrderBy(s => s.Company.CountryCode).ThenBy(s => s.ID);
                         break;
-                    case "ClientName":
-                        leads = leads.OrderBy(s => s.ClientName).ThenBy(s => s.ID);
+                    case "JobTitle":
+                        leads = leads.OrderBy(s => s.JobTitle).ThenBy(s => s.ID);
                         break;
                     case "DirectLine":
                         leads = leads.OrderBy(s => s.DirectLine).ThenBy(s => s.ID);
@@ -469,8 +469,8 @@ namespace PQT.Web.Controllers
                     case "Country":
                         leads = leads.OrderByDescending(s => s.Company.CountryCode).ThenBy(s => s.ID);
                         break;
-                    case "ClientName":
-                        leads = leads.OrderByDescending(s => s.ClientName).ThenBy(s => s.ID);
+                    case "JobTitle":
+                        leads = leads.OrderByDescending(s => s.JobTitle).ThenBy(s => s.ID);
                         break;
                     case "DirectLine":
                         leads = leads.OrderByDescending(s => s.DirectLine).ThenBy(s => s.ID);
@@ -546,7 +546,7 @@ namespace PQT.Web.Controllers
                     UserName = m.User.DisplayName,
                     m.CompanyName,
                     m.DirectLine,
-                    m.ClientName,
+                    m.JobTitle,
                     m.Salutation,
                     m.FirstName,
                     m.LastName,

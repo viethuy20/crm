@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
+using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 
@@ -21,9 +22,9 @@ namespace PQT.Domain.Concrete
         {
             if (predicate != null)
             {
-                return _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(predicate).Count();
+                return _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).Count();
             }
-            return _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Count();
+            return _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Count();
         }
 
         public IEnumerable<Company> GetAllCompanies(string sortColumnDir, string sortColumn, int page, int pageSize)
@@ -34,30 +35,30 @@ namespace PQT.Domain.Concrete
                 switch (sortColumn)
                 {
                     case "CountryName":
-                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m=>m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderBy(s => s.Country.Name).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
                             .AsEnumerable();
                         break;
                     case "ProductOrService":
-                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderBy(s => s.ProductOrService).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
                             .AsEnumerable();
                         break;
                     case "Sector":
-                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderBy(s => s.Sector).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "Industry":
-                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderBy(s => s.Industry).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
                             .AsEnumerable();
                         break;
                     case "Tier":
-                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderBy(s => s.Tier).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     default:
-                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderBy(s => s.CompanyName).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                 }
@@ -67,32 +68,32 @@ namespace PQT.Domain.Concrete
                 switch (sortColumn)
                 {
                     case "CountryName":
-                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderByDescending(s => s.Country.Name).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
                             .AsEnumerable();
                         break;
                     case "ProductOrService":
-                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderByDescending(s => s.ProductOrService).ThenBy(s => s.CompanyName).Skip(page)
                             .Take(pageSize).AsEnumerable();
                         break;
                     case "Sector":
-                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderByDescending(s => s.Sector).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
                             .AsEnumerable();
                         break;
                     case "Industry":
-                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderByDescending(s => s.Industry).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
                             .AsEnumerable();
                         break;
                     case "Tier":
-                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderByDescending(s => s.Tier).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
                             .AsEnumerable();
                         break;
                     default:
-                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderByDescending(s => s.CompanyName).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                 }
@@ -110,32 +111,32 @@ namespace PQT.Domain.Concrete
                 {
                     case "CountryName":
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
-                            .AsEnumerable().Where(predicate).OrderBy(s => s.CountryName).ThenBy(s => s.CompanyName).Skip(page)
+                            .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderBy(s => s.CountryName).ThenBy(s => s.CompanyName).Skip(page)
                             .Take(pageSize).AsEnumerable();
                         break;
                     case "ProductOrService":
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
-                            .AsEnumerable().Where(predicate).OrderBy(s => s.ProductOrService).ThenBy(s => s.CompanyName).Skip(page)
+                            .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderBy(s => s.ProductOrService).ThenBy(s => s.CompanyName).Skip(page)
                             .Take(pageSize).AsEnumerable();
                         break;
                     case "Sector":
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
-                            .AsEnumerable().Where(predicate).OrderBy(s => s.Sector).ThenBy(s => s.CompanyName).Skip(page)
+                            .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderBy(s => s.Sector).ThenBy(s => s.CompanyName).Skip(page)
                             .Take(pageSize).AsEnumerable();
                         break;
                     case "Industry":
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
-                            .AsEnumerable().Where(predicate).OrderBy(s => s.Industry).ThenBy(s => s.CompanyName).Skip(page)
+                            .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderBy(s => s.Industry).ThenBy(s => s.CompanyName).Skip(page)
                             .Take(pageSize).AsEnumerable();
                         break;
                     case "Tier":
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
-                            .AsEnumerable().Where(predicate).OrderBy(s => s.Tier).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
+                            .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderBy(s => s.Tier).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
                             .AsEnumerable();
                         break;
                     default:
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
-                            .AsEnumerable().Where(predicate).OrderBy(s => s.CompanyName).Skip(page).Take(pageSize).AsEnumerable();
+                            .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderBy(s => s.CompanyName).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                 }
             }
@@ -146,33 +147,33 @@ namespace PQT.Domain.Concrete
                     case "CountryName":
                         companies = _db.Set<Company>()
                             .Include(m => m.Country)
-                            .Include(m => m.ManagerUsers).AsEnumerable().Where(predicate)
+                            .Include(m => m.ManagerUsers).AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate)
                             .OrderByDescending(s => s.CountryName).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
                             .AsEnumerable();
                         break;
                     case "ProductOrService":
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
-                            .AsEnumerable().Where(predicate).OrderByDescending(s => s.ProductOrService)
+                            .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderByDescending(s => s.ProductOrService)
                             .ThenBy(s => s.CompanyName).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "Sector":
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
-                            .AsEnumerable().Where(predicate).OrderByDescending(s => s.Sector).ThenBy(s => s.CompanyName)
+                            .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderByDescending(s => s.Sector).ThenBy(s => s.CompanyName)
                             .Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "Industry":
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
-                            .AsEnumerable().Where(predicate).OrderByDescending(s => s.Industry)
+                            .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderByDescending(s => s.Industry)
                             .ThenBy(s => s.CompanyName).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "Tier":
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
-                            .AsEnumerable().Where(predicate).OrderByDescending(s => s.Tier).ThenBy(s => s.CompanyName)
+                            .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderByDescending(s => s.Tier).ThenBy(s => s.CompanyName)
                             .Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     default:
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
-                            .AsEnumerable().Where(predicate).OrderByDescending(s => s.CompanyName).Skip(page)
+                            .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderByDescending(s => s.CompanyName).Skip(page)
                             .Take(pageSize).AsEnumerable();
                         break;
                 }

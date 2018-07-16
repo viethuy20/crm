@@ -304,6 +304,14 @@
                      $(".next").addClass("hide");
                      $(".finish").removeClass("hide");
                      LoadEventCompanyInfo();
+
+                     var dialingCodes = $('.dialingCode');
+                     dialingCodes.each(function (index, item) {
+                         if ($(item).val() == "") {
+                             $('.dialingCode').val(company_dialingCode_selected);
+                         }
+                     });
+
                      StartTick();
                  } else {
                      $(".next").removeClass("hide");
@@ -335,7 +343,8 @@
          };
 
         function ClearDataSelected() {
-            $("@Html.JquerySelectorFor(m => m.ClientName)").val("");
+            $("@Html.JquerySelectorFor(m => m.JobTitle)").val("");
+            $("@Html.JquerySelectorFor(m => m.LineExtension)").val("");
             $("@Html.JquerySelectorFor(m => m.DirectLine)").val("");
             $("@Html.JquerySelectorFor(m => m.Salutation)").val("");
             $("@Html.JquerySelectorFor(m => m.FirstName)").val("");
@@ -357,7 +366,7 @@
         }
          $(document).on('click', '#crtable tbody tr', function () {
 
-             $("@Html.JquerySelectorFor(m => m.ClientName)").val($(this).data("role"));
+             $("@Html.JquerySelectorFor(m => m.JobTitle)").val($(this).data("role"));
              $("@Html.JquerySelectorFor(m => m.DirectLine)").val($(this).data("mobilephone"));
              @*$("@Html.JquerySelectorFor(m => m.GeneralLine)").val($(this).data("businessphone"));*@
              $("@Html.JquerySelectorFor(m => m.Salutation)").val($(this).data("salutation"));

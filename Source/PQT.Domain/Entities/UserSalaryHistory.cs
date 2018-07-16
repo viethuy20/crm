@@ -12,7 +12,9 @@ namespace PQT.Domain.Entities
         {
             CreatedAt = DateTime.Now;
         }
-        public LevelSalesman LevelSalesman { get; set; }
+        public BusinessDevelopmentUnit BusinessDevelopmentUnit { get; set; }
+        public SalesManagementUnit SalesManagementUnit { get; set; }
+        public SalesSupervision SalesSupervision { get; set; }
         public DateTime? DateOfContract { get; set; }
         public DateTime? DateOfStarting { get; set; }
         public decimal BasicSalary { get; set; }

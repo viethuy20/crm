@@ -15,7 +15,7 @@ namespace PQT.Web.Validation
             RuleFor(m => m.CountryID).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.CountryID).GreaterThan(0).WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.CompanyName).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(u => u.Email).EmailAddress().WithMessage(Resource.EmailIsInvalid);
+            //RuleFor(u => u.Email).EmailAddress().WithMessage(Resource.EmailIsInvalid);
             RuleFor(u => u.Tel).Matches(new Regex(@"^[0-9\-\+\ \(\)]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
             RuleFor(u => u.Fax).Matches(new Regex(@"^[0-9\-\+\ \(\)]*$")).WithMessage(Resource.FaxNumberIsInvalid);
         }

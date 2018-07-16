@@ -99,14 +99,14 @@ namespace PQT.Web.Controllers
             {
                 ModelState.AddModelError("OldPassword", Resource.TheFieldShouldNotBeEmpty);
             }
-            else
-            {
-                var oldPassword = EncryptHelper.EncryptPassword(model.OldPassword);
-                if (oldPassword != CurrentUser.Identity.Password)
-                {
-                    ModelState.AddModelError("OldPassword", Resource.TheOldPasswordDoNotMatch);
-                }
-            }
+            //else
+            //{
+            //    var oldPassword = EncryptHelper.EncryptPassword(model.OldPassword);
+            //    if (oldPassword != CurrentUser.Identity.Password)
+            //    {
+            //        ModelState.AddModelError("OldPassword", Resource.TheOldPasswordDoNotMatch);
+            //    }
+            //}
             if (ModelState.IsValid)
             {
                 // Update user profile picture
@@ -120,10 +120,10 @@ namespace PQT.Web.Controllers
                 CurrentUser.Identity.DisplayName = model.Username;
                 CurrentUser.Identity.BusinessPhone = model.BusinessPhone;
                 CurrentUser.Identity.MobilePhone = model.MobilePhone;
-                if (!string.IsNullOrEmpty(model.Password))
-                {
-                    CurrentUser.Identity.Password = EncryptHelper.EncryptPassword(model.Password);
-                }
+                //if (!string.IsNullOrEmpty(model.Password))
+                //{
+                //    CurrentUser.Identity.Password = EncryptHelper.EncryptPassword(model.Password);
+                //}
 
                 if (_membership.UpdateUser(CurrentUser.Identity))
                 {

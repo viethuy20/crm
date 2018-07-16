@@ -53,7 +53,7 @@ namespace PQT.Web.Models
                 LeadID = leadId,
                 SalesmanID = CurrentUser.Identity.ID,
                 DiscountPercent = Convert.ToInt32(discountSetting.Value),
-                SenderName = lead.ClientName,
+                SenderName = lead.JobTitle,
                 SenderDestination = "",
                 SenderMail = lead.PersonalEmail,
                 SenderTel = lead.MobilePhone1
@@ -76,7 +76,7 @@ namespace PQT.Web.Models
                 Booking.CompanyID = lead.CompanyID;
                 Booking.Company = lead.Company;
                 Booking.DiscountPercent = Convert.ToInt32(discountSetting.Value);
-                Booking.SenderName = lead.ClientName;
+                Booking.SenderName = lead.JobTitle;
                 Booking.SenderDestination = "";
                 Booking.SenderMail = lead.PersonalEmail;
                 Booking.SenderTel = lead.MobilePhone1;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
 using System.Web.Mvc;
+using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Web.Infrastructure.Filters;
@@ -181,11 +182,12 @@ namespace PQT.Web.Controllers
             {
 
                 Func<Company, bool> predicate = m =>
-                    (m.Country != null && m.Country.Name.ToLower().Contains(searchValue)) ||
-                    (m.CompanyName != null && m.CompanyName.ToLower().Contains(searchValue)) ||
-                    (m.ProductOrService != null && m.ProductOrService.ToLower().Contains(searchValue)) ||
-                    (m.Sector != null && m.Sector.ToLower().Contains(searchValue)) ||
-                    (m.Industry != null && m.Industry.ToLower().Contains(searchValue));
+                   (
+                        (m.Country != null && m.Country.Name.ToLower().Contains(searchValue)) ||
+                        (m.CompanyName != null && m.CompanyName.ToLower().Contains(searchValue)) ||
+                        (m.ProductOrService != null && m.ProductOrService.ToLower().Contains(searchValue)) ||
+                        (m.Sector != null && m.Sector.ToLower().Contains(searchValue)) ||
+                        (m.Industry != null && m.Industry.ToLower().Contains(searchValue)));
                 companies = _comRepo.GetAllCompanies(predicate, sortColumnDir, sortColumn,
                     page, pageSize);
                 recordsTotal = _comRepo.GetCountCompanies(predicate);

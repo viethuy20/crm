@@ -20,7 +20,7 @@ namespace PQT.Web.Models
         public List<int> CompaniesSelected { get; set; }
         public IEnumerable<SalesGroup> SalesGroups { get; set; }
         public IEnumerable<User> Users { get; set; }
-
+        public HttpPostedFileBase Picture { get; set; }
         public EventModel()
         {
             GroupsSelected = new List<int>();
@@ -66,6 +66,14 @@ namespace PQT.Web.Models
         public bool Create()
         {
             var repo = DependencyHelper.GetService<IEventService>();
+            if (Picture != null)
+            {
+                string uploadPicture = FileUpload.Upload(FileUploadType.Event, Picture);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    Event.Brochure = uploadPicture;
+                }
+            }
             Event = repo.CreateEvent(Event, GroupsSelected, UsersSelected);
             if (Event != null)
             {
@@ -76,6 +84,14 @@ namespace PQT.Web.Models
         public bool Update()
         {
             var repo = DependencyHelper.GetService<IEventService>();
+            if (Picture != null)
+            {
+                string uploadPicture = FileUpload.Upload(FileUploadType.Event, Picture);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    Event.Brochure = uploadPicture;
+                }
+            }
             if (repo.UpdateEventIncludeUpdateCollection(Event, GroupsSelected, UsersSelected))
             {
                 return true;

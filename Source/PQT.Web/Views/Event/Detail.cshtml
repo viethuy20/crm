@@ -52,7 +52,7 @@
     <div class="card">
         <div class="card-body form">
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Event.EventCode).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Event.EventCode).LabelText("EVENT CODE")
@@ -64,38 +64,75 @@
                         @Html.Bootstrap().LabelFor(m => m.Event.EventName).LabelText("EVENT NAME")
                     </div>
                 </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.StartDate)">
-                            @Model.Event.StartDate.ToString("dd MMM yyyy")
-                        </div>
-                        @Html.Bootstrap().LabelFor(m => m.Event.StartDate).LabelText("Sales Start Date")
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.EndDate)">
-                            @Model.Event.EndDate.ToString("dd MMM yyyy")
-                        </div>
-                        @Html.Bootstrap().LabelFor(m => m.Event.EndDate).LabelText("Sales End Date")
-                    </div>
-                </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Event.BackgroundColor).HtmlAttributes(new { @style = "color:#fff;background:" + Model.Event.BackgroundColor }).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Event.BackgroundColor).LabelText("EVENT COLOR")
                     </div>
                 </div>
-                <div class="col-sm-12">
+                <div class="col-sm-3">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Event.CallFilterKeywords).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Event.CallFilterKeywords).LabelText("CALL KEYWORDS")
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.StartDate)">
+                            @Model.Event.StartDate.ToString("dd MMM yyyy")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.StartDate).LabelText("Event First Day")
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.EndDate)">
+                            @Model.Event.EndDate.ToString("dd MMM yyyy")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.EndDate).LabelText("Event Last Day")
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.DateOfConfirmation)">
+                            @(Model.Event.DateOfConfirmation!=null?Convert.ToDateTime(Model.Event.DateOfConfirmation).ToString("dd MMM yyyy"):"")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.DateOfConfirmation)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.ClosingDate)">
+                            @(Model.Event.ClosingDate != null?Convert.ToDateTime(Model.Event.ClosingDate).ToString("dd MMM yyyy"):"")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.ClosingDate).LabelText("Date of Closing Sales")
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="form-group">
-                        @Html.Bootstrap().TextAreaFor(m => m.Event.VenueOfEvent).Rows(4).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Event.VenueOfEvent).LabelText("Venue Of Event")
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.PrimaryJobtitleKeywords).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.PrimaryJobtitleKeywords)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.SecondaryJobtitleKeywords).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.SecondaryJobtitleKeywords)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextAreaFor(m => m.Event.HotelVenue).Rows(3).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.HotelVenue)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextAreaFor(m => m.Event.Location).Rows(3).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.Location)
+                    </div>
+                </div>
+                <div class=" col-sm-12">
+                    <div class="form-group">
+                        @if (!string.IsNullOrEmpty(Model.Event.Brochure))
+                        {
+                            @Html.Bootstrap().Link(Model.Event.Brochure, FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                        }
+                        @Html.Bootstrap().LabelFor(m => m.Event.Brochure)
                     </div>
                 </div>
             </div>

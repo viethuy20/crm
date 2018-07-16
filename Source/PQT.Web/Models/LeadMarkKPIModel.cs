@@ -180,9 +180,9 @@ namespace PQT.Web.Models
 
         private void CheckKPI(Lead lead)
         {
-            var jobTitle = lead.ClientName.ToLower().Trim();
-            var eventKeyworks = lead.Event.CallFilterKeywords != null
-                ? lead.Event.CallFilterKeywords.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim())
+            var jobTitle = lead.JobTitle.ToLower().Trim();
+            var eventKeyworks = lead.Event.PrimaryJobtitleKeywords != null
+                ? lead.Event.PrimaryJobtitleKeywords.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim())
                 : new List<string>();
             if (!eventKeyworks.Any() || eventKeyworks.Any(m => m.Contains(jobTitle)) || eventKeyworks.Any(m => jobTitle.Contains(m)))
             {

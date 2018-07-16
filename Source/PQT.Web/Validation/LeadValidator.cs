@@ -12,8 +12,11 @@ namespace PQT.Web.Validation
         {
             RuleFor(m => m.CompanyID).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.CompanyID).GreaterThan(0).WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(m => m.ClientName).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
+            RuleFor(m => m.JobTitle).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.DirectLine).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
+            RuleFor(m => m.WorkEmail).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
+            RuleFor(m => m.BudgetMonth).GreaterThan(0).WithMessage(Resource.TheFieldShouldNotBeEmpty);
+            RuleFor(m => m.GoodTrainingMonth).GreaterThan(0).WithMessage(Resource.TheFieldShouldNotBeEmpty);
         }
     }
     public class PhoneCallValidator : AbstractValidator<PhoneCall>

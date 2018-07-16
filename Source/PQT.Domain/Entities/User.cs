@@ -15,6 +15,10 @@ namespace PQT.Domain.Entities
             Roles = new HashSet<Role>();
             Status = EntityStatus.Normal;
             UserSalaryHistories= new HashSet<UserSalaryHistory>();
+
+            BusinessDevelopmentUnit = BusinessDevelopmentUnit.None;
+            SalesManagementUnit = SalesManagementUnit.None;
+            SalesSupervision = SalesSupervision.None;
         }
 
         #region Primitive
@@ -34,7 +38,9 @@ namespace PQT.Domain.Entities
         public virtual User TransferUser { get; set; }
 
         public int NotifyNumber { get; set; }
-        public LevelSalesman LevelSalesman { get; set; }
+        public BusinessDevelopmentUnit BusinessDevelopmentUnit { get; set; }
+        public SalesManagementUnit SalesManagementUnit { get; set; }
+        public SalesSupervision SalesSupervision { get; set; }
         public DateTime? DateOfContract { get; set; }
         public DateTime? DateOfStarting { get; set; }
         public decimal? BasicSalary { get; set; }

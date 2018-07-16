@@ -16,9 +16,12 @@ namespace PQT.Domain.Entities
         public Lead()
         {
             PhoneCalls = new HashSet<PhoneCall>();
+            FirstFollowUpStatus = FollowUpStatus.Pending;
+            FinalStatus = FinalStatus.Pending;
         }
         public string DirectLine { get; set; } //Direct Line/Mobile number
-        public string ClientName { get; set; } //Client Name/Job Title
+        public string JobTitle { get; set; } //Client Name/Job Title
+        public string LineExtension { get; set; } //Client Name/Job Title
         public string Remark { get; set; }
         public string Salutation { get; set; }
         public string FirstName { get; set; }
@@ -29,6 +32,8 @@ namespace PQT.Domain.Entities
         public string WorkEmail { get; set; }
         public string WorkEmail1 { get; set; }
         public string PersonalEmail { get; set; }
+        public FollowUpStatus FirstFollowUpStatus { get; set; }
+        public FinalStatus FinalStatus { get; set; }
         public int? LeadStatusID { get; set; }
         [ForeignKey("LeadStatusID")]
         public virtual LeadStatusRecord LeadStatusRecord { get; set; }
@@ -251,6 +256,12 @@ namespace PQT.Domain.Entities
                 }
                 return KPIStatus.NoCheck;
             }
+        }
+
+        public bool CheckNCLExpired(int daysExpired)
+        {
+            return LeadStatusRecord != null && (LeadStatusRecord == LeadStatus.Live || LeadStatusRecord == LeadStatus.LOI) &&
+                    LeadStatusRecord.UpdatedTime.Date < DateTime.Today.AddDays(-daysExpired);
         }
         public string ClassKPIStatus
         {

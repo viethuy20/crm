@@ -71,14 +71,36 @@ namespace PQT.Web.Models
                         temp.ProductOrService = dtRow[2].ToString();
                         temp.Sector = dtRow[3].ToString();
                         temp.Industry = dtRow[4].ToString();
-                        temp.Designation = dtRow[5].ToString();
-                        temp.Ownership = dtRow[6].ToString();
-                        temp.BusinessUnits = dtRow[7].ToString();
-                        temp.Email = dtRow[8].ToString();
-                        temp.PersonalContact = dtRow[9].ToString();
+                        temp.Ownership = dtRow[5].ToString();
+                        temp.BusinessUnits = dtRow[6].ToString();
                         try
                         {
-                            temp.TierStr = dtRow[10].ToString();
+                            temp.BudgetPerHeadStr = dtRow[7].ToString();
+                            if (!string.IsNullOrEmpty(temp.BudgetPerHeadStr))
+                            {
+                                temp.BudgetPerHead = Convert.ToDecimal(temp.BudgetPerHeadStr);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            temp.Error += "- Budget Per Head: " + dtRow[7] + " is wrong.<br/>";
+                        }
+                        try
+                        {
+                            temp.FinancialYearStr = dtRow[8].ToString();
+                            if (!string.IsNullOrEmpty(temp.FinancialYearStr))
+                            {
+                                temp.FinancialYear = Convert.ToInt32(temp.FinancialYearStr);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            temp.Error += "- Financial Year: " + dtRow[8] + " is wrong.<br/>";
+                        }
+
+                        try
+                        {
+                            temp.TierStr = dtRow[9].ToString();
                             temp.Tier = Convert.ToInt32(!string.IsNullOrEmpty(temp.TierStr) ? temp.TierStr : TierType.Tier3);
                             if (temp.Tier < 1 || temp.Tier > 3)
                             {
@@ -143,9 +165,10 @@ namespace PQT.Web.Models
         public string Industry { get; set; }
         public string Ownership { get; set; }
         public string BusinessUnits { get; set; }
-        public string Designation { get; set; }
-        public string Email { get; set; }
-        public string PersonalContact { get; set; }
+        public string BudgetPerHeadStr { get; set; }
+        public string FinancialYearStr { get; set; }
+        public decimal BudgetPerHead { get; set; }
+        public int FinancialYear { get; set; }
         public string TierStr { get; set; }
         public int Tier { get; set; }
         public string Error { get; set; }

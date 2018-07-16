@@ -27,19 +27,19 @@
                 <div class="col-sm-12">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Lead.Company.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.Company.CompanyName).LabelText("COMPANY NAME")
+                        @Html.Bootstrap().LabelFor(m => m.Lead.Company.CompanyName)
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.ClientName).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.ClientName).LabelText("CLIENT NAME/ JOB TITLE")
+                        @Html.Bootstrap().TextBoxFor(m => m.Lead.JobTitle).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Lead.JobTitle)
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Lead.DirectLine).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.DirectLine).LabelText("DIRECT LINE/ MOBILE NUMBER")
+                        @Html.Bootstrap().LabelFor(m => m.Lead.DirectLine)
                     </div>
                 </div>
                 <div class="col-sm-12">

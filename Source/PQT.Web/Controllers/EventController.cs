@@ -255,7 +255,7 @@ namespace PQT.Web.Controllers
                         item.LastName = lead.LastName;
                         item.Organisation = lead.CompanyName;
                         item.PersonalEmail = lead.PersonalEmail;
-                        item.Role = lead.ClientName;
+                        item.Role = lead.JobTitle;
                         item.Salutation = lead.Salutation;
                         item.WorkEmail = lead.WorkEmail;
                         item.MobilePhone1 = lead.MobilePhone1;
@@ -278,7 +278,7 @@ namespace PQT.Web.Controllers
                         MobilePhone3 = lead.MobilePhone3,
                         Organisation = lead.CompanyName,
                         PersonalEmail = lead.PersonalEmail,
-                        Role = lead.ClientName,
+                        Role = lead.JobTitle,
                         Salutation = lead.Salutation,
                         WorkEmail = lead.WorkEmail
                     };
@@ -305,8 +305,6 @@ namespace PQT.Web.Controllers
                 (m.EventCode != null && m.EventCode.ToLower().Contains(q.ToLower())));
             return Json(bookings.Select(m => new { id = m.ID, text = m.EventCode + " - " + m.EventName }), JsonRequestBehavior.AllowGet);
         }
-
-
 
 
         [AjaxOnly]
@@ -379,6 +377,9 @@ namespace PQT.Web.Controllers
                     case "Sectors":
                         events = events.OrderBy(s => s.Sectors).ThenBy(s => s.ID);
                         break;
+                    case "Location":
+                        events = events.OrderBy(s => s.Location).ThenBy(s => s.ID);
+                        break;
                     default:
                         events = events.OrderBy(s => s.ID);
                         break;
@@ -409,6 +410,9 @@ namespace PQT.Web.Controllers
                     case "Sectors":
                         events = events.OrderByDescending(s => s.Sectors).ThenBy(s => s.ID);
                         break;
+                    case "Location":
+                        events = events.OrderByDescending(s => s.Location).ThenBy(s => s.ID);
+                        break;
                     default:
                         events = events.OrderByDescending(s => s.ID);
                         break;
@@ -434,6 +438,7 @@ namespace PQT.Web.Controllers
                     m.EventCode,
                     m.EventName,
                     m.BackgroundColor,
+                    m.Location,
                     StartDate = m.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = m.EndDate.ToString("dd/MM/yyyy"),
                     DateOfConfirmation = m.DateOfConfirmationStr,

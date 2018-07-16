@@ -16,30 +16,13 @@ namespace PQT.Web.Infrastructure.Utility
             {
                 if (file.ContentLength > 0)
                 {
-                    var guid = Guid.NewGuid().ToString("N");
-                    string fileName = guid + Path.GetExtension(file.FileName);
-                    //if (fileName.ToLower().Contains(".jpg") ||
-                    //    fileName.ToLower().Contains(".jpeg") ||
-                    //    fileName.ToLower().Contains(".png"))
-                    //{
-                    //    var thumbWidth = ImageHelper.MaxWidthThumbnailUpload;
-                    //    var thumbHeigth = ImageHelper.MaxHeightThumbnailUpload;
-                    //    string thumbName = guid + "_" + thumbWidth + "x" + thumbHeigth + Path.GetExtension(file.FileName);
-                    //    string filePath = GetImagePath(type, fileName);
-                    //    string directory = Path.GetDirectoryName(filePath);
-                    //    if (directory != null) Directory.CreateDirectory(directory);
-                    //    file.SaveAs(filePath);
-                    //    ImageHelper.CreateImageHighQuality(GetfolderPath(type), GetfolderPath(type), fileName, thumbName, thumbHeigth, thumbWidth);
-                    //    return thumbName;
-                    //}
-                    //else
-                    //{
+                    var guid = "_" + DateTime.Now.ToString("yyyyMMddHHmmss");
+                    string fileName = Path.GetFileNameWithoutExtension(file.FileName) + guid + Path.GetExtension(file.FileName);
                     string filePath = GetImagePath(type, fileName);
-                        string directory = Path.GetDirectoryName(filePath);
-                        if (directory != null) Directory.CreateDirectory(directory);
-                        file.SaveAs(filePath);
-                        return fileName;
-                    //}
+                    string directory = Path.GetDirectoryName(filePath);
+                    if (directory != null) Directory.CreateDirectory(directory);
+                    file.SaveAs(filePath);
+                    return fileName;
                 }
             }
             catch (Exception ex)
@@ -85,6 +68,7 @@ namespace PQT.Web.Infrastructure.Utility
 
     public class FileUploadType : Enumeration
     {
+        public static readonly FileUploadType Event = New<FileUploadType>("Event", "Event");
         public static readonly FileUploadType Trainer = New<FileUploadType>("Trainer", "Trainer");
         public static readonly FileUploadType Lead = New<FileUploadType>("Lead", "Lead");
         public static readonly FileUploadType Booking = New<FileUploadType>("Booking", "Booking");

@@ -15,6 +15,9 @@ namespace PQT.Web.Models
     {
         public CreateUserModel()
         {
+            BusinessDevelopmentUnit = BusinessDevelopmentUnit.None;
+            SalesManagementUnit = SalesManagementUnit.None;
+            SalesSupervision = SalesSupervision.None;
         }
         public List<int> UserRoles { get; set; }
         public IEnumerable<Role> Roles { get; set; }
@@ -44,7 +47,9 @@ namespace PQT.Web.Models
 
         public string Address { get; set; }
         public string Extension { get; set; }//clid
-        public LevelSalesman LevelSalesman { get; set; }
+        public BusinessDevelopmentUnit BusinessDevelopmentUnit { get; set; }
+        public SalesManagementUnit SalesManagementUnit { get; set; }
+        public SalesSupervision SalesSupervision { get; set; }
         public DateTime? DateOfContract { get; set; }
         public DateTime? DateOfStarting { get; set; }
         public decimal? BasicSalary { get; set; }
@@ -69,7 +74,9 @@ namespace PQT.Web.Models
                 UserPicture = user.Picture;
                 LastAccess = user.LastAccess;
                 Address = user.Address;
-                LevelSalesman = user.LevelSalesman;
+                BusinessDevelopmentUnit = user.BusinessDevelopmentUnit;
+                SalesManagementUnit = user.SalesManagementUnit;
+                SalesSupervision = user.SalesSupervision;
                 DateOfContract = user.DateOfContract;
                 DateOfStarting = user.DateOfStarting;
                 BasicSalary = user.BasicSalary;
@@ -111,7 +118,9 @@ namespace PQT.Web.Models
         public DateTime? LastAccess { get; set; }
         public string Address { get; set; }
 
-        public LevelSalesman LevelSalesman { get; set; }
+        public BusinessDevelopmentUnit BusinessDevelopmentUnit { get; set; }
+        public SalesManagementUnit SalesManagementUnit { get; set; }
+        public SalesSupervision SalesSupervision { get; set; }
         public DateTime? DateOfContract { get; set; }
         public DateTime? DateOfStarting { get; set; }
         public decimal? BasicSalary { get; set; }
@@ -136,7 +145,10 @@ namespace PQT.Web.Models
             Email = user.Email;
             MobilePhone = user.MobilePhone;
             BusinessPhone = user.BusinessPhone;
-            LevelSalesman = user.LevelSalesman.DisplayName;
+            BusinessDevelopmentUnit = user.BusinessDevelopmentUnit.DisplayName;
+            SalesManagementUnit = user.SalesManagementUnit.DisplayName;
+            SalesSupervision = user.SalesSupervision.DisplayName;
+
             DateOfContract = user.DateOfContract != null ? Convert.ToDateTime(user.DateOfContract).ToString("dd-MMM-yyyy") : "";
             DateOfStarting = user.DateOfStarting != null ? Convert.ToDateTime(user.DateOfStarting).ToString("dd-MMM-yyyy") : "";
             BasicSalary = user.BasicSalary != null ? Convert.ToDecimal(user.BasicSalary).ToString("N") : "";
@@ -148,11 +160,11 @@ namespace PQT.Web.Models
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string OldPassword { get; set; }
 
-        [MinLength(6, ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldPasswordMustBeaMinimumLengthOf6")]
-        public string Password { get; set; }
+        //[MinLength(6, ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldPasswordMustBeaMinimumLengthOf6")]
+        //public string Password { get; set; }
 
-        [Compare("Password", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "ConfirmPasswordAndPasswordDoNotMatch")]
-        public string ConfirmPassword { get; set; }
+        //[Compare("Password", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "ConfirmPasswordAndPasswordDoNotMatch")]
+        //public string ConfirmPassword { get; set; }
 
         //[Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         //[RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "EmailIsInvalid")]
@@ -167,7 +179,9 @@ namespace PQT.Web.Models
 
         //public HttpPostedFileBase Picture { get; set; }
         public string PictureBase64 { get; set; }
-        public string LevelSalesman { get; set; }
+        public string BusinessDevelopmentUnit { get; set; }
+        public string SalesManagementUnit { get; set; }
+        public string SalesSupervision { get; set; }
         public string DateOfContract { get; set; }
         public string DateOfStarting { get; set; }
         public string BasicSalary { get; set; }
