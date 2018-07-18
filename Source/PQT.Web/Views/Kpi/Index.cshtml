@@ -79,16 +79,14 @@
                                     <th>Created Time</th>
                                     <th>Company Name</th>
                                     <th>Salesman</th>
-                                    @*<th>General Line</th>
-                                        <th>DirectLine</th>
-                                        <th>Client Name</th>*@
+                                    <th>Direct Line</th>
+                                    <th>Job Title</th>
                                     <th>Salutation</th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
-                                    <th>Business Phone</th>
-                                    <th>Mobile Phone</th>
-                                    <th>Personal Email</th>
+                                    <th>Mobile Phone 1</th>
                                     <th>Work Email</th>
+                                    <th>Personal Email</th>
                                     <th>Mark KPI</th>
                                     <th>KPI Remarks</th>
                                     <th></th>
@@ -130,13 +128,14 @@
                  { "data": "CreatedTime", "name": "CreatedTime", "orderable": true },
                  { "data": "CompanyName", "name": "CompanyName", "orderable": true },
                  { "data": "UserName", "name": "UserName", "orderable": true },
+                 { "data": "DirectLine", "name": "DirectLine", "orderable": true },
+                 { "data": "JobTitle", "name": "JobTitle", "orderable": true },
                  { "data": "Salutation", "name": "Salutation", "orderable": true },
                  { "data": "FirstName", "name": "FirstName", "orderable": true },
                  { "data": "LastName", "name": "LastName", "orderable": true },
-                 { "data": "BusinessPhone", "name": "BusinessPhone", "orderable": true },
-                 { "data": "MobilePhone", "name": "MobilePhone", "orderable": true },
-                 { "data": "PersonalEmailAddress", "name": "PersonalEmailAddress", "orderable": true },
-                 { "data": "WorkEmailAddress", "name": "WorkEmailAddress", "orderable": true },
+                 { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
+                 { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
+                 { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
                  { "data": "MarkKPI", "name": "MarkKPI", "orderable": true },
                  { "data": "KPIRemarks", "name": "KPIRemarks", "orderable": true },
                  { "data": "ID", "name": "ID", "orderable": false },
@@ -147,12 +146,12 @@
                  $(nRow).addClass(aData["ClassKPIStatus"]);
                  $(nRow).attr("data-id", aData["ID"]);
                  if ('@CurrentUser.HasPermission("KPI","Update")' == 'True') {
-                     $(nRow).find('td:eq(13)').html(
+                     $(nRow).find('td:eq(14)').html(
                          '<a class="simple-ajax-popup-align-top" href="@Url.Action("Update")?id=' +
                          aData["ID"] +
                          '" ><span class=" text-info" style="white-space: nowrap;"><i class="md fa-fw md-edit"></i> Update<span></a>');
                  } else {
-                     $(nRow).find('td:eq(13)').html('');
+                     $(nRow).find('td:eq(14)').html('');
                  }
              },
              initComplete: function () {
