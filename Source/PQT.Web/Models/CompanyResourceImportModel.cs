@@ -79,8 +79,9 @@ namespace PQT.Web.Models
                         temp.Role = dtRow[5].ToString();
                         temp.MobilePhone1 = dtRow[6].ToString();
                         temp.MobilePhone2 = dtRow[7].ToString();
-                        temp.WorkEmail = dtRow[8].ToString();
-                        temp.PersonalEmail = dtRow[9].ToString();
+                        temp.MobilePhone3 = dtRow[8].ToString();
+                        temp.WorkEmail = dtRow[9].ToString();
+                        temp.PersonalEmail = dtRow[10].ToString();
                         temp.Number = count;
                         ImportRows.Add(temp);
                     }
@@ -150,6 +151,7 @@ namespace PQT.Web.Models
         public string Role { get; set; }
         public string MobilePhone1 { get; set; }
         public string MobilePhone2 { get; set; }
+        public string MobilePhone3 { get; set; }
         public string WorkEmail { get; set; }
         public string PersonalEmail { get; set; }
         public string Error { get; set; }
