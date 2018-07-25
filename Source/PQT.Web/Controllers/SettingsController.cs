@@ -35,7 +35,7 @@ namespace PQT.Web.Controllers
                 foreach (var id in lstId)
                 {
                     var item = _settingRepo.GetSetting(Convert.ToInt32(id));
-                    item.Value = Request[item.Name].Split(',')[0];
+                    item.Value = Request[item.Name];
                     _settingRepo.UpdateSetting(item);
                 }
             }

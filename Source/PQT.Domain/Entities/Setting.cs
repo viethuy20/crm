@@ -43,11 +43,13 @@ namespace PQT.Domain.Entities
         {
             System,
             Lead,
+            KPI
         }
 
         public enum TypeOfValue
         {
             Textbox,
+            InputTags,
             Checkbox
         }
 
@@ -68,8 +70,12 @@ namespace PQT.Domain.Entities
 
             public enum System
             {
-                NotificationNumber,
-                VoIpBuffer
+                NotificationNumber
+            }
+            public enum KPI
+            {
+                VoIpBuffer,
+                ExceptCode
             }
         }
 

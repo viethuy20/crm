@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
@@ -86,9 +87,17 @@ namespace PQT.Web.Infrastructure.Utility
             {
                 return Convert.ToInt32(GetSetting(Setting.ModuleType.System, Setting.ModuleKey.System.NotificationNumber, typeof(int)));
             }
+        }
+        public class KPI
+        {
             public static int VoIpBuffer()
             {
-                return Convert.ToInt32(GetSetting(Setting.ModuleType.System, Setting.ModuleKey.System.VoIpBuffer, typeof(int)));
+                return Convert.ToInt32(GetSetting(Setting.ModuleType.KPI, Setting.ModuleKey.KPI.VoIpBuffer, typeof(int)));
+            }
+            public static string[] ExceptCodes()
+            {
+                var value = Convert.ToString(GetSetting(Setting.ModuleType.KPI, Setting.ModuleKey.KPI.ExceptCode, typeof(string)));
+                return !string.IsNullOrEmpty(value) ? value.Split(",", StringSplitOptions.RemoveEmptyEntries) : new List<string>().ToArray();
             }
         }
         #endregion

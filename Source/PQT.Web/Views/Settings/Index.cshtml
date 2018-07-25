@@ -54,6 +54,10 @@
                                                         {
                                                             <input type="text" id="input-sortable" name="@item.Name" class="input-sortable demo-default" value="@item.Value">
                                                         }
+                                                        else if (item.Type == "InputTags")
+                                                        {
+                                                            <input type="text" name="@item.Name" value="@item.Value" data-role="tagsinput" />
+                                                        }
                                                         else if (item.Type == "Checkbox")
                                                         {
                                                             <div class="i-checks">

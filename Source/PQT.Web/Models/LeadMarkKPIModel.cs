@@ -138,9 +138,11 @@ namespace PQT.Web.Models
         }
         public IEnumerable<Lead> MarkKPI(IEnumerable<Lead> leads)
         {
+            var voipBuffer = Settings.KPI.VoIpBuffer();
+            var exceptCodes = Settings.KPI.ExceptCodes();
             foreach (var lead in leads)
             {
-                CheckKPI(lead);
+                CheckKPI(lead, voipBuffer, exceptCodes);
             }
             return leads;
         }
@@ -161,10 +163,12 @@ namespace PQT.Web.Models
                 var count = 0;
                 var totalCount = leads.Count();
                 var userId = CurrentUser.Identity.ID;
+                var voipBuffer = Settings.KPI.VoIpBuffer();
+                var exceptCodes = Settings.KPI.ExceptCodes();
                 foreach (var lead in leads)
                 {
                     count += 1;
-                    CheckKPI(lead);
+                    CheckKPI(lead, voipBuffer, exceptCodes);
                     lead.FileNameImportKPI = Path.GetFileName(FilePath);
                     leadRepo.UpdateLead(lead);
                     var json = new
@@ -178,7 +182,7 @@ namespace PQT.Web.Models
             });
         }
 
-        private void CheckKPI(Lead lead)
+        private void CheckKPI(Lead lead, int voipBuffer, string[] exceptCodes)
         {
             var jobTitle = lead.JobTitle.ToLower().Trim();
             var eventKeyworks = lead.Event.PrimaryJobtitleKeywords != null
@@ -190,14 +194,28 @@ namespace PQT.Web.Models
                     !string.IsNullOrEmpty(lead.WorkEmail) ||
                     !string.IsNullOrEmpty(lead.WorkEmail1))
                 {
-
+                    var mobilePhone1 = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone1);
+                    var mobilePhone2 = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone2);
+                    var mobilePhone3 = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone3);
+                    var directLine = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.DirectLine);
+                    foreach (var exceptCode in exceptCodes)
+                    {
+                        if (mobilePhone1.Substring(0, exceptCode.Length) == exceptCode)
+                            mobilePhone1 = mobilePhone1.Substring(exceptCode.Length);
+                        if (mobilePhone2.Substring(0, exceptCode.Length) == exceptCode)
+                            mobilePhone2 = mobilePhone2.Substring(exceptCode.Length);
+                        if (mobilePhone3.Substring(0, exceptCode.Length) == exceptCode)
+                            mobilePhone3 = mobilePhone3.Substring(exceptCode.Length);
+                        if (directLine.Substring(0, exceptCode.Length) == exceptCode)
+                            directLine = directLine.Substring(exceptCode.Length);
+                    }
                     var voips = ImportVoIps.Where(m => m.clid == lead.User.Extension && (
-                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone1) ||
-                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone2) ||
-                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone3) ||
-                    m.dst == PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.DirectLine)
+                    m.dst == mobilePhone1 ||
+                    m.dst == mobilePhone2 ||
+                    m.dst == mobilePhone3 ||
+                    m.dst == directLine
                     ) && !string.IsNullOrEmpty(m.disposition) && m.disposition.Trim().ToUpper() == "ANSWERED");
-                    if (lead.PhoneCalls.Any(m => voips.Any(v => m.StartTime.AddSeconds(-Settings.System.VoIpBuffer()) <= v.CallDateTime && v.CallDateTime <= m.StartTime.AddSeconds(Settings.System.VoIpBuffer()))))
+                    if (lead.PhoneCalls.Any(m => voips.Any(v => m.StartTime.AddSeconds(-voipBuffer) <= v.CallDateTime && v.CallDateTime <= m.StartTime.AddSeconds(voipBuffer))))
                     {
                         lead.MarkKPI = true;
                         lead.KPIRemarks = "";

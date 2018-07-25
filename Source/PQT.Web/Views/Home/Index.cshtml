@@ -90,7 +90,7 @@
         color: #31708f;
     }
 </style>
-<section style="@(CurrentUser.Identity.Background != null?"background: url("+CurrentUser.Identity.BackgroundUrl+ ") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;" : "")">
+<section style="height: calc(100vh - 64px);@(CurrentUser.Identity.Background != null?"background: url("+CurrentUser.Identity.BackgroundUrl+ ") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;" : "")">
     <div class="section-body" style="margin-top: 12px;margin-right: 12px;">
         <div style="display: flex;overflow-x:auto">
             @foreach (var item in Model.Events)
