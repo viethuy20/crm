@@ -119,7 +119,7 @@ namespace PQT.Web.Controllers
                     var leadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.RequestBook, CurrentUser.Identity.ID);
                     lead.LeadStatusRecord = leadStatusRecord;
                     _leadService.UpdateLead(lead);
-                    var notiUsers = _membershipService.GetUsersInRole(new string[] { "Manager", "Finance" });
+                    var notiUsers = _membershipService.GetUsersInRole(new string[] { "Manager", "Finance", "QC" });
                     var titleNotify = "Request for booking";
                     BookingNotificator.NotifyUser(notiUsers, model.Booking.ID, titleNotify, true);
                     BookingNotificator.NotifyUpdateBooking(model.Booking.ID);
@@ -171,7 +171,7 @@ namespace PQT.Web.Controllers
                             var leadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.RequestBook, CurrentUser.Identity.ID);
                             lead.LeadStatusRecord = leadStatusRecord;
                             _leadService.UpdateLead(lead);
-                            var notiUsers = _membershipService.GetUsersInRole(new string[] { "Manager", "Finance" });
+                            var notiUsers = _membershipService.GetUsersInRole(new string[] { "Manager", "Finance", "QC" });
                             var titleNotify = "Request for booking";
                             BookingNotificator.NotifyUser(notiUsers, model.Booking.ID, titleNotify, true);
                             BookingNotificator.NotifyUpdateBooking(model.Booking.ID);

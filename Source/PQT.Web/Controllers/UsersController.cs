@@ -116,8 +116,8 @@ namespace PQT.Web.Controllers
         public ActionResult Edit(EditUserModel model)
         {
             User user = _membershipService.GetUserByEmail(model.Email);
-            if (string.IsNullOrEmpty(model.Password) && model.Password != model.ConfirmPassword)
-                ModelState.AddModelError("User.Password", Resource.PasswordMismatch);
+            //if (string.IsNullOrEmpty(model.Password) && model.Password != model.ConfirmPassword)
+            //    ModelState.AddModelError("User.Password", Resource.PasswordMismatch);
 
             IEnumerable<int> userRoles = StringHelper.Ensure(Request.Form["SelectedRoles"])
                                                      .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)

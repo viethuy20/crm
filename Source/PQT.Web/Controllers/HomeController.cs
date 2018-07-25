@@ -46,7 +46,7 @@ namespace PQT.Web.Controllers
         public ActionResult Index()
         {
             var model = new HomeModel();
-            if (CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("Manager"))
+            if (CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("QC")|| CurrentUser.HasRole("Manager"))
                 model.Events = _eventService.GetAllEvents();
             else
             {

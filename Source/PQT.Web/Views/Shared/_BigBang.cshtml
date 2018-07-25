@@ -129,6 +129,19 @@
                 }).magnificPopup('open');
             });
         });
+
+        $(document).on('change', 'input[type="file"],input[type="File"]', function () {
+            var upload = $(this);
+            if (window.FileReader) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    if (upload[0].files[0].size > 5120000) {
+                        toastr.error('Your file is too large (maximum 5MB), please choose another file', '');
+                    }
+                };
+                reader.readAsDataURL(upload[0].files[0]);
+            }
+        });
     </script>
     @MiniProfiler.RenderIncludes()
 </body>
