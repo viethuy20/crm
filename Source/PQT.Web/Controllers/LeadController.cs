@@ -90,7 +90,8 @@ namespace PQT.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            var model = new CallingModel(id);
+            var model = new CallingModel();
+            model.PrepareCalling(id);
             if (model.Lead == null)
             {
                 TempData["error"] = "Data not found";
@@ -195,9 +196,10 @@ namespace PQT.Web.Controllers
         //}
 
         [DisplayName(@"Start Call Form")]
-        public ActionResult StartCallForm(int id = 0)
+        public ActionResult StartCallForm(int id = 0, int resourceId = 0)
         {
-            var model = new CallingModel(id, 0);
+            var model = new CallingModel();
+            model.PrepareCall(id, resourceId);
             if (model.Event == null)
             {
                 TempData["error"] = "Event not found";
@@ -269,7 +271,8 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Call Back Form")]
         public ActionResult CallingForm(int id = 0)
         {
-            var model = new CallingModel(id);
+            var model = new CallingModel();
+            model.PrepareCalling(id);
             return View(model);
         }
 
@@ -361,6 +364,31 @@ namespace PQT.Web.Controllers
                 lead.Booking = _bookingService.GetBookingByLeadId(leadId);
             }
             return PartialView(lead);
+        }
+
+        [DisplayName(@"Edit Call Record")]
+        public ActionResult EditCallRecord(int id = 0)
+        {
+            var call = _repo.GetPhoneCall(id);
+            return PartialView(call);
+        }
+
+        [DisplayName(@"Edit Call Record")]
+        [HttpPost]
+        public ActionResult EditCallRecord(PhoneCall model)
+        {
+            if (_repo.UpdatePhoneCall(model))
+            {
+                return Json(new
+                {
+                    Code = 1,
+                    Model = model
+                });
+            }
+            return Json(new
+            {
+                Code = 0
+            });
         }
 
         [AjaxOnly]
@@ -468,8 +496,8 @@ namespace PQT.Web.Controllers
                     case "EstimatedDelegateNumber":
                         leads = leads.OrderBy(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
                         break;
-                    case "BudgetMonth":
-                        leads = leads.OrderBy(s => s.BudgetMonth).ThenBy(s => s.ID);
+                    case "TrainingBudgetPerHead":
+                        leads = leads.OrderBy(s => s.TrainingBudgetPerHead).ThenBy(s => s.ID);
                         break;
                     case "GoodTrainingMonth":
                         leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
@@ -543,8 +571,8 @@ namespace PQT.Web.Controllers
                     case "EstimatedDelegateNumber":
                         leads = leads.OrderByDescending(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
                         break;
-                    case "BudgetMonth":
-                        leads = leads.OrderByDescending(s => s.BudgetMonth).ThenBy(s => s.ID);
+                    case "TrainingBudgetPerHead":
+                        leads = leads.OrderByDescending(s => s.TrainingBudgetPerHead).ThenBy(s => s.ID);
                         break;
                     case "GoodTrainingMonth":
                         leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
@@ -606,7 +634,7 @@ namespace PQT.Web.Controllers
                     m.PersonalEmail,
                     m.WorkEmail,
                     m.EstimatedDelegateNumber,
-                    m.BudgetMonth,
+                    TrainingBudgetPerHead = m.TrainingBudgetPerHead != null ? Convert.ToDecimal(m.TrainingBudgetPerHead).ToString("N2") : "",
                     m.GoodTrainingMonth,
                     m.TopicsInterested,
                     m.LocationInterested,
@@ -885,8 +913,8 @@ namespace PQT.Web.Controllers
                     case "EstimatedDelegateNumber":
                         leads = leads.OrderBy(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
                         break;
-                    case "BudgetMonth":
-                        leads = leads.OrderBy(s => s.BudgetMonth).ThenBy(s => s.ID);
+                    case "TrainingBudgetPerHead":
+                        leads = leads.OrderBy(s => s.TrainingBudgetPerHead).ThenBy(s => s.ID);
                         break;
                     case "GoodTrainingMonth":
                         leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
@@ -957,8 +985,8 @@ namespace PQT.Web.Controllers
                     case "EstimatedDelegateNumber":
                         leads = leads.OrderByDescending(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
                         break;
-                    case "BudgetMonth":
-                        leads = leads.OrderByDescending(s => s.BudgetMonth).ThenBy(s => s.ID);
+                    case "TrainingBudgetPerHead":
+                        leads = leads.OrderByDescending(s => s.TrainingBudgetPerHead).ThenBy(s => s.ID);
                         break;
                     case "GoodTrainingMonth":
                         leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
@@ -1015,7 +1043,7 @@ namespace PQT.Web.Controllers
                     m.PersonalEmail,
                     m.WorkEmail,
                     m.EstimatedDelegateNumber,
-                    m.BudgetMonth,
+                    TrainingBudgetPerHead = m.TrainingBudgetPerHead != null ? Convert.ToDecimal(m.TrainingBudgetPerHead).ToString("N2") : "",
                     m.GoodTrainingMonth,
                     m.TopicsInterested,
                     m.LocationInterested,
@@ -1070,14 +1098,6 @@ namespace PQT.Web.Controllers
         }
 
 
-        [DisplayName(@"Get List Of Company Resource")]
-        [AjaxOnly]
-        public ActionResult CompanyResourceList(int companyID)
-        {
-            var model =
-                _companyRepo.GetAllCompanyResources(m => m.CompanyID == companyID);
-            return PartialView(model);
-        }
         [AjaxOnly]
         public ActionResult EventCompanyInfo(int eventId, int companyId)
         {
@@ -1093,7 +1113,7 @@ namespace PQT.Web.Controllers
             return Json(new
             {
                 model.ID,
-                model.TrainingBudget,
+                model.BudgetMonth,
                 model.Remarks,
             }, JsonRequestBehavior.AllowGet);
         }

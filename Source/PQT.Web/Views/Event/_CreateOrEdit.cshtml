@@ -1,5 +1,6 @@
 ﻿@using PQT.Domain.Enum
 @using NS
+@using PQT.Domain.Entities
 @using Resources
 @model PQT.Web.Models.EventModel
 
@@ -7,22 +8,28 @@
 <div class="card">
     <div class="card-body">
         <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-6">
                 <div class="form-group ">
                     @Html.Bootstrap().TextBoxFor(m => m.Event.EventCode).Class("form-control code").HtmlAttributes(new { required = "required", maxlength = "10" }).ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Event.EventCode).ShowRequiredStar(true)
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-3">
                 <div class="form-group ">
-                    @Html.Bootstrap().TextBoxFor(m => m.Event.EventName).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Event.EventName).ShowRequiredStar(true)
+                    @Html.Bootstrap().DropDownListFor(m => m.Event.EventStatus, EnumerationHelper.ToSelectList<EventStatus>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.EventStatus).ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-3" style="width:150px">
                 <div class="form-group" style="padding-top: 20px;">
                     @Html.Bootstrap().TextBoxFor(m => m.Event.BackgroundColor).HtmlAttributes(new { @style = "color:#fff;background:" + Model.Event.BackgroundColor }).Class("form-control").Id("cp3").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Event.BackgroundColor).LabelText("Event Color")
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group ">
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.EventName).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.EventName).ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-6">
@@ -56,7 +63,6 @@
                     @Html.Bootstrap().LabelFor(m => m.Event.ClosingDate).LabelText("Date of Closing Sales")
                 </div>
             </div>
-
             <div class="col-sm-12">
                 <div class="col-sm-6">
                     <div class="form-group">
@@ -107,15 +113,50 @@
                     @Html.Bootstrap().LabelFor(m => m.Event.Location)
                 </div>
             </div>
-            @Html.HiddenFor(m => m.Event.Brochure)
-            <div class="col-sm-12">
+            <div class="col-sm-6">
+                <div class="form-group ">
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.FinanceEmail).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.FinanceEmail).LabelText("Finance")
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group ">
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.OperationEmail).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.OperationEmail).LabelText("Operation")
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group ">
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.ProductionEmail).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.ProductionEmail).LabelText("Production")
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group ">
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.SalesEmail).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.SalesEmail).LabelText("Sales")
+                </div>
+            </div>
+            <div class="col-sm-6">
+                @Html.HiddenFor(m => m.Event.Brochure)
                 <div class="form-group ">
                     @if (!string.IsNullOrEmpty(Model.Event.Brochure))
                     {
                         <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)" target="_blank">@Model.Event.Brochure</a>
                     }
-                    @Html.Bootstrap().FileFor(m => m.Picture).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Picture).LabelText("Brochure")
+                    @Html.Bootstrap().FileFor(m => m.BrochureFile).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.BrochureFile).LabelText("Brochure")
+                </div>
+            </div>
+            <div class="col-sm-6">
+                @Html.HiddenFor(m => m.Event.RegContract)
+                <div class="form-group ">
+                    @if (!string.IsNullOrEmpty(Model.Event.RegContract))
+                    {
+                        <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.RegContract)" target="_blank">@Model.Event.RegContract</a>
+                    }
+                    @Html.Bootstrap().FileFor(m => m.RegContractFile).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.RegContractFile).LabelText("Reg Contract")
                 </div>
             </div>
         </div>

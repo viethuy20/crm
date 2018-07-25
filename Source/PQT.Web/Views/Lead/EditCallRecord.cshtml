@@ -1,0 +1,40 @@
+﻿@using Resources
+@model PQT.Domain.Entities.PhoneCall
+<div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
+    <div class="card-head">
+        <header>Edit call record</header>
+    </div><!--end .card-head -->
+
+    @using (Ajax.BeginForm("EditCallRecord", "routeValues", new AjaxOptions { OnFailure = "onEditCallRecordFail", OnSuccess = "onEditCallRecordSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
+    {
+        <div class="card-body">
+            <div class="success hide">
+                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Success).Closeable()))
+                {
+                    @Html.Bootstrap().Label("success").HtmlAttributes(new { @class = "textsuccess" }).LabelText(Resource.SaveSuccessful)
+                }
+            </div>
+            <div class="error hide alert-danger">
+                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Error).Closeable()))
+                {
+                    @Html.Bootstrap().Label("error").HtmlAttributes(new { @class = "texterror" }).LabelText(Resource.SaveFailed)
+                }
+            </div>
+            @Html.HiddenFor(m => m.ID)
+            <div class="form-group">
+                @Html.Bootstrap().TextAreaFor(m => m.Remark).Rows(5).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Remark).LabelText("Call Remarks")
+            </div>
+            <div class="form-group">
+                @Html.DatePickerFor(m => m.CallBackDate, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.CallBackDate)
+                @Html.Bootstrap().LabelFor(m => m.CallBackDate).LabelText("Call Back Date")
+            </div>
+            <div class="form-group">
+                <div class="pull-right">
+                    @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("submitbutton").PrependIcon("md md-done").Style(ButtonStyle.Success)
+                </div>
+            </div>
+        </div><!--end .card-body -->
+    }
+</div><!--end .card -->

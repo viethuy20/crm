@@ -12,7 +12,7 @@ namespace PQT.Domain.Entities
         public Company()
         {
             ManagerUsers = new HashSet<User>();
-            Tier = 0;
+            Tier = 3;
         }
         public int? CountryID { get; set; }
         [ForeignKey("CountryID")]

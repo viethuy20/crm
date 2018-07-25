@@ -293,6 +293,41 @@ namespace PQT.Domain.Concrete
             return GetAll<Holiday>(m => m.Date.Month == month && m.Date.Year == year);
         }
 
+
+        #endregion
+
+        #region Office Location
+
+
+        public IEnumerable<OfficeLocation> GetAllOfficeLocations()
+        {
+            return GetAll<OfficeLocation>().AsEnumerable();
+        }
+
+        public OfficeLocation GetOfficeLocation(int id)
+        {
+            return Get<OfficeLocation>(id);
+        }
+        public OfficeLocation GetOfficeLocation(string name)
+        {
+            return Get<OfficeLocation>(m=>m.Name.ToLower().Trim() == name.ToLower().Trim());
+        }
+
+        public OfficeLocation CreateOfficeLocation(OfficeLocation info)
+        {
+            return Create(info);
+        }
+
+        public bool UpdateOfficeLocation(OfficeLocation holiday)
+        {
+            return Update(holiday);
+        }
+
+        public bool DeleteOfficeLocation(int id)
+        {
+            return Delete<OfficeLocation>(id);
+        }
+
         #endregion
     }
 }

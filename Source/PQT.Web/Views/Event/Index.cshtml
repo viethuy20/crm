@@ -1,4 +1,5 @@
-﻿@using Resources
+﻿@using PQT.Domain.Entities
+@using Resources
 @model System.Collections.Generic.IEnumerable<PQT.Domain.Entities.Event>
 
 @{
@@ -16,22 +17,22 @@
     </div>
     <div class="card" style="margin-bottom: 350px">
         <div class="card-body">
-                <table class="table" id="table">
-                    <thead>
-                        <tr>
-                            <th>@Resource.Code</th>
-                            <th>@Resource.Name</th>
-                            <th>Color</th>
-                            <th>Event First Day</th>
-                            <th>Event Last Day</th>
-                            <th>Date Of Confirmation</th>
-                            <th>Date Of Closing Sales</th>
-                            <th>Sectors</th>
-                            <th>Location</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                </table>
+            <table class="table" id="table">
+                <thead>
+                    <tr>
+                        <th>@Resource.Code</th>
+                        <th>Status</th>
+                        <th>@Resource.Name</th>
+                        <th>Color</th>
+                        <th>Event First Day</th>
+                        <th>Event Last Day</th>
+                        <th>Date Of Confirmation</th>
+                        <th>Date Of Closing Sales</th>
+                        <th>Location</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
         </div>
     </div>
 </section>
@@ -55,13 +56,13 @@
             },
             "columns": [
                 { "data": "EventCode", "name": "EventCode", "orderable": true },
+                { "data": "EventStatusDisplay", "name": "EventStatusDisplay", "orderable": true },
                 { "data": "EventName", "name": "EventName", "orderable": true },
                 { "data": "ID", "name": "ID", "orderable": false },
                 { "data": "StartDate", "name": "StartDate", "orderable": true },
                 { "data": "EndDate", "name": "EndDate", "orderable": true },
                 { "data": "DateOfConfirmation", "name": "DateOfConfirmation", "orderable": true },
                 { "data": "ClosingDate", "name": "ClosingDate", "orderable": true },
-                { "data": "Sectors", "name": "Sectors", "orderable": true },
                 { "data": "Location", "name": "Location", "orderable": true },
                 { "data": "ID", "name": "ID", "orderable": false },
             ],
@@ -70,7 +71,7 @@
             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' + aData["ID"] + '">' + aData["EventCode"] + '</a>');
-                $(nRow).find('td:eq(2)').html('<span class="EventColor" style="cursor: default;display: inline-block;width: 30px;height: 30px;background:' + aData["BackgroundColor"] + ';border:1px solid #c3c3c3;border-radius: 50%;">&nbsp;</span>');
+                $(nRow).find('td:eq(3)').html('<span class="EventColor" style="cursor: default;display: inline-block;width: 30px;height: 30px;background:' + aData["BackgroundColor"] + ';border:1px solid #c3c3c3;border-radius: 50%;">&nbsp;</span>');
 
                 var dropdowns = '<li><a href="@Url.Action("Detail")/' + aData["ID"] + '"><i class="fa fa-eye"> Detail</i></a></li>';
                 if ('@CurrentUser.HasPermission("Lead", "NCLForManager")' == 'True') {
@@ -89,7 +90,7 @@
                     dropdowns += '<li class="divider"></li><li><a href="#"  data-action="delete" data-id="' + aData["ID"] + '"><i class="md md-delete text-danger"> Delete</i></a></li>';
                 }
                 if ('@CurrentUser.HasPermission("Event", "EndEvent")' == 'True') {
-                    dropdowns += '<li class="divider"></li><li><a href="#"  data-action="delete" data-id="' + aData["ID"] + '"><i class="md md-alarm text-info"> End Event</i></a></li>';
+                    dropdowns += '<li class="divider"></li><li><a class="simple-ajax-popup-align-top" href="@Url.Action("EndEvent")/' + aData["ID"] + '"><i class="md md-alarm text-info"> End Event</i></a></li>';
                 }
                 if ('@CurrentUser.HasPermission("Kpi", "ImportVoIp")' == 'True') {
                     dropdowns += '<li class="divider"></li><li><a href="@Url.Action("ImportVoIp", "Kpi")/' + aData["ID"] + '"><i class="fa fa-upload text-primary"> Import VoIP & Check KPI</i></a></li>';
@@ -134,28 +135,31 @@
             });
         });
 
-        $Table.on('click', '[data-action="endevent"]', function (e) {
+        $(document).on('click', '#submitEndEventBtn', function (e) {
             e.preventDefault();
-            var selftr = $(this);
-            bootbox.confirm("Do you want to end this event<br/>and copy all data to company resources?", function (isOK) {
+            var msg = "Do you want to change status this event?";
+            if ($(".endStatus").val() == '@EventStatus.Completed') {
+                msg = "Do you want to end this event<br/>and copy all data to company resources?";
+            }
+            bootbox.confirm(msg, function (isOK) {
                 if (isOK) {
-                    $.ajax({
-                        url: '@Url.Action("EndEvent")/' + selftr.data('id'),
-                        type: 'POST',
-                        success: function (data) {
-                            if (data == true) {
-                                bootbox.alert("@Resource.Successful");
-                            } else {
-                                bootbox.alert("Failed");
-                            }
-                        },
-                        error: function () {
-                            bootbox.alert("Failed");
-                        }
-                    });
+                    var form = $('#submitEndEventBtn').parents("form");
+                    form.submit();
                 }
             });
         });
+
+        function onEndEventFail() {
+            bootbox.alert("@Resource.Error");
+        }
+        function onEndEventSuccess(data) {
+            if (data) {
+                $Table.fnFilter('');
+                $.magnificPopup.close();
+            } else {
+                bootbox.alert("@Resource.SaveFailed");
+            }
+        }
 
         StartConnectProgressHub();
     </script>)

@@ -59,319 +59,365 @@
         <h2 class="text-primary col-sm-3">@ViewBag.Title</h2>
 
     </div>
-    <div class="row">
-        <div class="col-sm-12" style="padding-right: 24px;padding-bottom: 12px">
-            @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-12" style="padding-right: 24px;padding-bottom: 12px">
+                @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
             {
-                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "NCLForManager").Id("btnBacklist").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
-            }
-            else
-            {
-                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").Id("btnBacklist").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
-            }
+                    @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "NCLForManager").Id("btnBacklist").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
+                }
+                else
+                {
+                    @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").Id("btnBacklist").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
+                }
 
-            @if (!eventClosed)
+                @if (!eventClosed)
             {
                 if (CurrentUser.HasPermission("Lead", "Edit"))
                 {
-                    @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
+                        @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
+                    }
                 }
-            }
-            @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
-                                                                        Model.Lead.LeadStatusRecord == LeadStatus.Reject))
-            {
-                @Html.Bootstrap().ActionLinkButton("Request To NCL", "RequestAction").Id("request_ncl").Class("btn-info").PrependIcon("md md-phone-locked")
-            }
+                @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
+                                                                                Model.Lead.LeadStatusRecord == LeadStatus.Reject))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Request To NCL", "RequestAction").Id("request_ncl").Class("btn-info").PrependIcon("md md-phone-locked")
+                }
 
-            @if (!eventClosed && CurrentUser.HasPermission("Lead", "ApprovalAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
-                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
-                                                                         Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
-            {
-                @Html.Bootstrap().ActionLinkButton("Approve " + Model.Lead.StatusDisplay, "ApprovalAction").Id("approve_action").Class("btn-success").PrependIcon("md md-done")
-            }
+                @if (!eventClosed && CurrentUser.HasPermission("Lead", "ApprovalAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
+                                                                                 Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
+                                                                                 Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Approve " + Model.Lead.StatusDisplay, "ApprovalAction").Id("approve_action").Class("btn-success").PrependIcon("md md-done")
+                }
 
-            @if (!eventClosed && CurrentUser.HasPermission("Lead", "RejectAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
-                                                                       Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
-                                                                       Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
-            {
-                @Html.Bootstrap().ActionLinkButton("Reject " + Model.Lead.StatusDisplay, "RejectAction").RouteValues(new { id = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
-            }
+                @if (!eventClosed && CurrentUser.HasPermission("Lead", "RejectAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
+                                                                               Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
+                                                                               Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Reject " + Model.Lead.StatusDisplay, "RejectAction").RouteValues(new { id = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
+                }
 
 
-            @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
-                                                                        Model.Lead.LeadStatusRecord == LeadStatus.Reject ||
-                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
-                                                                        Model.Lead.LeadStatusRecord == LeadStatus.Live))
-            {
-                @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
-            }
-            @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord != LeadStatus.RequestBook &&
-                                                                        Model.Lead.LeadStatusRecord != LeadStatus.Booked))
-            {
-                @Html.Bootstrap().ActionLinkButton("Request To Book", "Create", "Booking").RouteValues(new { id = Model.Lead.ID }).Class("btn-success").PrependIcon("md md-my-library-books")
-            }
-            @if (!eventClosed && CurrentUser.HasPermission("Lead", "CancelRequest") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
-                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI ||
-                                                                        Model.Lead.LeadStatusRecord == LeadStatus.RequestBook))
-            {
-                @Html.Bootstrap().ActionLinkButton("Cancel " + Model.Lead.StatusDisplay, "CancelRequest").Id("cancel_request").Class("btn-warning").PrependIcon("md md-cancel")
-            }
-            @if (!eventClosed && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
+                @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
+                                                                                Model.Lead.LeadStatusRecord == LeadStatus.Reject ||
+                                                                                Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
+                                                                                Model.Lead.LeadStatusRecord == LeadStatus.Live))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
+                }
+                @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord != LeadStatus.RequestBook &&
+                                                                                Model.Lead.LeadStatusRecord != LeadStatus.Booked))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Request To Book", "Create", "Booking").RouteValues(new { id = Model.Lead.ID }).Class("btn-success").PrependIcon("md md-my-library-books")
+                }
+                @if (!eventClosed && CurrentUser.HasPermission("Lead", "CancelRequest") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
+                                                                                Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI ||
+                                                                                Model.Lead.LeadStatusRecord == LeadStatus.RequestBook))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Cancel " + Model.Lead.StatusDisplay, "CancelRequest").Id("cancel_request").Class("btn-warning").PrependIcon("md md-cancel")
+                }
+                @if (!eventClosed && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
             {
                 if (Model.Lead.LeadStatusRecord != LeadStatus.Blocked)
                 {
                     if (CurrentUser.HasPermission("Lead", "BlockLead"))
                     {
-                        @Html.Bootstrap().ActionLinkButton("Block ", "BlockLead").Id("lead_block").Class("btn-warning").PrependIcon("md md-lock-outline")
+                            @Html.Bootstrap().ActionLinkButton("Block ", "BlockLead").Id("lead_block").Class("btn-warning").PrependIcon("md md-lock-outline")
+                        }
                     }
-                }
-                else
-                {
-                    if (CurrentUser.HasPermission("Lead", "UnblockLead"))
+                    else
                     {
-                        @Html.Bootstrap().ActionLinkButton("Unblock ", "UnblockLead").Id("lead_unblock").Class("btn-warning").PrependIcon("md md-lock-open")
+                        if (CurrentUser.HasPermission("Lead", "UnblockLead"))
+                        {
+                            @Html.Bootstrap().ActionLinkButton("Unblock ", "UnblockLead").Id("lead_unblock").Class("btn-warning").PrependIcon("md md-lock-open")
+                        }
                     }
                 }
-            }
-            @if (!eventClosed && (Model.Lead.LeadStatusRecord == LeadStatus.Initial || Model.Lead.LeadStatusRecord == LeadStatus.Reject))
+                @if (!eventClosed && (Model.Lead.LeadStatusRecord == LeadStatus.Initial || Model.Lead.LeadStatusRecord == LeadStatus.Reject))
             {
                 if (CurrentUser.HasPermission("Lead", "Delete"))
                 {
-                    @Html.Bootstrap().ActionLinkButton("Delete ", "Delete").Id("lead_delete").Class("btn-danger").PrependIcon("md md-delete")
+                        @Html.Bootstrap().ActionLinkButton("Delete ", "Delete").Id("lead_delete").Class("btn-danger").PrependIcon("md md-delete")
+                    }
                 }
-            }
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body @Model.Lead.ClassStatus form">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.StatusDisplay).LabelText("CALL STATUS")
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.StatusUser).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.StatusUser).LabelText("CHANGE BY")
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.StatusUpdateTimeStr).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.StatusUpdateTimeStr).LabelText("UPDATE TIME")
-                    </div>
-                </div>
-                @if (!string.IsNullOrEmpty(Model.Lead.LeadStatusRecord.Attachment))
-                {
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <div class="form-control" readonly name="@Html.NameFor(m=>m.Lead.LeadStatusRecord.Attachment)">
-                                <a href="@Model.Lead.LeadStatusRecord.AttachmentUrl" target="_blank">@Model.Lead.LeadStatusRecord.Attachment</a>
-                            </div>
-                            @Html.Bootstrap().LabelFor(m => m.Lead.LeadStatusRecord.Attachment).LabelText("ATTACHMENT")
-                        </div>
-                    </div>
-                }
-                @if (Model.Lead.LeadStatusRecord == LeadStatus.Reject)
-                {
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Lead.LeadStatusRecord.Message).Class("form-control").HtmlAttributes(new { @style = "color:#f44336" }).Disabled().ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Lead.LeadStatusRecord.Message).LabelText("REASON OF REJECT")
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body form">
-            <div class="row">
-                @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
-            {
-                    <div class="col-sm-12">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Lead.Event.PrimaryJobtitleKeywords).Class("form-control").Disabled().ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Lead.Event.PrimaryJobtitleKeywords)
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Lead.Event.SecondaryJobtitleKeywords).Class("form-control").Disabled().ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Lead.Event.SecondaryJobtitleKeywords)
-                        </div>
-                    </div>
-                }
-                <div class="col-sm-2">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.Event.EventCode).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.Event.EventCode)
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.Event.EventName).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.Event.EventName)
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.Event.Location).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.Event.Location).LabelText("Event Location")
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.CompanyName)
-                    </div>
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.LineExtension).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.LineExtension)
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.JobTitle).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.JobTitle)
-                    </div>
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.DirectLine).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.DirectLine)
-                    </div>
-                </div>
-                <div class="col-sm-2">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.Salutation).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.Salutation)
-                    </div>
-                </div>
-                <div class="col-sm-5">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.FirstName).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.FirstName)
-                    </div>
-                </div>
-                <div class="col-sm-5">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.LastName).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.LastName)
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.MobilePhone1).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.MobilePhone1)
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.MobilePhone2).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.MobilePhone2)
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.MobilePhone3).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.MobilePhone3)
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.WorkEmail).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.WorkEmail)
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.WorkEmail1).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.WorkEmail1)
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.PersonalEmail).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.PersonalEmail)
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.EstimatedDelegateNumber).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.EstimatedDelegateNumber)
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.BudgetMonthStr).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.BudgetMonthStr).LabelText("Budget Month")
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.GoodTrainingMonthStr).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.GoodTrainingMonthStr).LabelText("Good Training Month")
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.TopicsInterested).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.TopicsInterested).LabelText("Topics Interested")
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Lead.LocationInterested).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Lead.LocationInterested).LabelText("Location Interested")
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="card card-underline">
-        <div class="card-head">
-            <header>Call Sessions</header>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <table class="table no-margin">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Time</th>
-                            <th>Call Remarks</th>
-                            <th>Call Back Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var phonecall in Model.Lead.PhoneCalls)
-                        {
-                            <tr>
-                                <td>@phonecall.StartTime.ToString("dd-MMM-yy HH:mm:ss")</td>
-                                <td>@((phonecall.EndTime - phonecall.StartTime))</td>
-                                <td>@Html.Raw(phonecall.Remark != null ? phonecall.Remark.Replace("\n", "</br>") : "")</td>
-                                <td>@(phonecall.CallBackDate != null ? Convert.ToDateTime(phonecall.CallBackDate).ToString("dd/MM/yyyy") : "")</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div><!--end .card-body -->
-        <div class="card-actionbar">
-            <div class="card-actionbar-row">
                 @if (CurrentUser.HasPermission("Lead", "CallingForm") && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
                 {
-                    <a class="btn btn-success pull-left " href="@Url.Action("CallingForm")/@Model.Lead.ID"><i class="md md-phone"></i> Start Call Back</a>
+                    <a class="btn btn-success" href="@Url.Action("CallingForm")/@Model.Lead.ID"><i class="md md-phone"></i> Call Back</a>
                 }
+            </div>
+            @if (CurrentUser.HasPermission("Lead", "CallingForm") && (Model.Lead.Event.ClosingDate == null || Model.Lead.Event.ClosingDate >= DateTime.Today))
+            {
+                <a class="btn ink-reaction btn-floating-action btn-primary" title="Start New Call"
+                   href="#offcanvas-comResource" data-toggle="offcanvas"
+                   style="position: fixed; top: 130px; right: 0; display: block; z-index: 1006;"><i class="fa fa-phone"></i></a>
+            }
+        </div>
+
+        <div class="card">
+            <div class="card-body @Model.Lead.ClassStatus form">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.StatusDisplay).LabelText("CALL STATUS")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.StatusUser).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.StatusUser).LabelText("CHANGE BY")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.StatusUpdateTimeStr).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.StatusUpdateTimeStr).LabelText("UPDATE TIME")
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.Lead.LeadStatusRecord.Attachment))
+            {
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="form-control" readonly name="@Html.NameFor(m=>m.Lead.LeadStatusRecord.Attachment)">
+                                    <a href="@Model.Lead.LeadStatusRecord.AttachmentUrl" target="_blank">@Model.Lead.LeadStatusRecord.Attachment</a>
+                                </div>
+                                @Html.Bootstrap().LabelFor(m => m.Lead.LeadStatusRecord.Attachment).LabelText("ATTACHMENT")
+                            </div>
+                        </div>
+                    }
+                    @if (Model.Lead.LeadStatusRecord == LeadStatus.Reject)
+            {
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.Lead.LeadStatusRecord.Message).Class("form-control").HtmlAttributes(new { @style = "color:#f44336" }).Disabled().ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.Lead.LeadStatusRecord.Message).LabelText("REASON OF REJECT")
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body form">
+                <div class="row">
+                    @if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
+            {
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.Lead.Event.PrimaryJobtitleKeywords).Class("form-control").Disabled().ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.Lead.Event.PrimaryJobtitleKeywords)
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.Lead.Event.SecondaryJobtitleKeywords).Class("form-control").Disabled().ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.Lead.Event.SecondaryJobtitleKeywords)
+                            </div>
+                        </div>
+                    }
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.Event.EventCode).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.Event.EventCode)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.Event.EventName).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.Event.EventName)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.Event.Location).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.Event.Location).LabelText("Event Location")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.CompanyName)
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.LineExtension).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.LineExtension)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.JobTitle).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.JobTitle)
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.DirectLine).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.DirectLine)
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.Salutation).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.Salutation)
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.FirstName).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.FirstName)
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.LastName).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.LastName)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.MobilePhone1).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.MobilePhone1)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.MobilePhone2).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.MobilePhone2)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.MobilePhone3).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.MobilePhone3)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.WorkEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.WorkEmail)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.WorkEmail1).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.WorkEmail1)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.PersonalEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.PersonalEmail)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.EstimatedDelegateNumber).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.EstimatedDelegateNumber)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.TrainingBudgetPerHead).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.TrainingBudgetPerHead)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.GoodTrainingMonthStr).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.GoodTrainingMonthStr).LabelText("Good Training Month")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.TopicsInterested).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.TopicsInterested).LabelText("Topics Interested")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Lead.LocationInterested).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Lead.LocationInterested).LabelText("Location Interested")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card card-underline">
+            <div class="card-head">
+                <header>Call Records</header>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <table class="table no-margin">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Time</th>
+                                <th>Call Remarks</th>
+                                <th>Call Back Date</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var phonecall in Model.Lead.PhoneCalls)
+                            {
+                                <tr id="phoneCall_@phonecall.ID">
+                                    <td>@phonecall.StartTime.ToString("dd-MMM-yy HH:mm:ss")</td>
+                                    <td>@((phonecall.EndTime - phonecall.StartTime))</td>
+                                    <td>@Html.Raw(phonecall.RemarkHtml)</td>
+                                    <td>@(phonecall.CallBackDate != null ? Convert.ToDateTime(phonecall.CallBackDate).ToString("dd/MM/yyyy") : "")</td>
+                                    <td><a href="@Url.Action("EditCallRecord")?id=@phonecall.ID" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div><!--end .card-body -->
+            <div class="card-actionbar">
+                <div class="card-actionbar-row">
+                    @if (CurrentUser.HasPermission("Lead", "CallingForm") && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
+            {
+                        <a class="btn btn-success pull-left " href="@Url.Action("CallingForm")/@Model.Lead.ID"><i class="md md-phone"></i> Call Back</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="offcanvas">
+        <div id="offcanvas-comResource" class="offcanvas-pane width-12" style="">
+            <div class="offcanvas-head">
+                <header>Company Resources</header>
+                <div class="offcanvas-tools" style="left:initial">
+                    <a class="btn btn-icon-toggle btn-default-light pull-right" data-dismiss="offcanvas">
+                        <i class="md md-close"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="offcanvas-body">
+                @Html.Partial("_CompanyResourceList", Model.Lead.EventID)
             </div>
         </div>
     </div>
 </section>
 @Html.Script(
     @<script>
+        function updateCanvas() {
+            var windowW = $(window).width();
+            var wCavas = (windowW / 2).toFixed(0);
+            if (wCavas < 480) {
+                $('#offcanvas-comResource').css('width', '480px');
+            } else {
+                $('#offcanvas-comResource').css('width', wCavas+ 'px');
+            }
+        }
+
+        updateCanvas();
+        window.onresize = function (event) {
+            updateCanvas();
+        };
+
+
          UpdateSeenNotify(@Model.Lead.ID, @NotifyType.Lead.Value);
          $(document).on('click', '#lead_delete', function (e) {
              e.preventDefault();
@@ -638,4 +684,37 @@
          //            location.href = $(this).href;
          //        }
          //    });
+
+
+         function onEditCallRecordFail() {
+             $(".error").removeClass('hide');
+             $(".success").addClass('hide');
+             $(".texterror").text("@Resource.Error");
+         }
+         function onEditCallRecordSuccess(data) {
+             $(".error").addClass('hide');
+             $(".success").addClass('hide');
+
+             if (data.Code == 1) {
+                 $(".success").removeClass('hide');
+                 $("textsuccess").data('@Resource.SaveSuccessful');
+                 updateItem(data.Model);
+                 $.magnificPopup.close();
+             } else {
+                 $(".texterror").text('@Resource.SaveError');
+                 $(".error").removeClass('hide');
+             }
+         }
+
+         function updateItem(data) {
+             var tr = $("#phoneCall_" + data.ID);
+             if (tr) {
+                 $(tr).find('td:eq(2)').html(data.RemarkHtml);
+                 $(tr).find('td:eq(3)').html(data.CallBackDateStr);
+             }
+         }
+
+         $(document).on('click', '#crtable tbody tr', function () {
+             location.href = '@Url.Action("StartCallForm",new{id=Model.Lead.EventID})?resourceId=' + $(this).data("id");
+         });
     </script>)

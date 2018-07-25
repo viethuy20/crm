@@ -129,8 +129,8 @@
                         
                         <div class="col-sm-4">
                             <div class="form-group">
-                                @Html.Bootstrap().DropDownListFor(m => m.BudgetMonth, EnumerationHelper.ToSelectList<MonthStatus>()).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.BudgetMonth)
+                                @Html.Bootstrap().TextBoxFor(m => m.TrainingBudgetPerHead).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.TrainingBudgetPerHead)
                             </div>
                         </div>
                         <div class="col-sm-4">
@@ -202,8 +202,8 @@
                     @Html.HiddenFor(m => m.EventCompany.ID)
                     <div class="col-sm-12">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.EventCompany.TrainingBudget).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.EventCompany.TrainingBudget)
+                            @Html.Bootstrap().DropDownListFor(m => m.EventCompany.BudgetMonth, EnumerationHelper.ToSelectList<MonthStatus>()).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.EventCompany.BudgetMonth)
                         </div>
                     </div>
                     <div class="col-sm-12">

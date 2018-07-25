@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using PQT.Domain.Enum;
 using PQT.Domain.Helpers;
 
 namespace PQT.Domain.Entities
@@ -13,6 +14,7 @@ namespace PQT.Domain.Entities
         {
             Delegates = new HashSet<Delegate>();
             EventSessions = new HashSet<EventSession>();
+            PaymentStatus = PaymentStatus.Initial;
         }
         public string Address { get; set; }
         public string Tel { get; set; }
@@ -21,7 +23,7 @@ namespace PQT.Domain.Entities
         public decimal FeePerDelegate { get; set; }
         public double DiscountPercent { get; set; }// load default from setting
         public string Remarks { get; set; }
-        public decimal RevenueAmount { get; set; }
+        public decimal TotalWrittenRevenue { get; set; }//Total Written Revenue
         public decimal TotalPaidRevenue { get; set; }
 
         public bool SameAsSender { get; set; }
@@ -36,6 +38,9 @@ namespace PQT.Domain.Entities
         public string SenderMail { get; set; }
 
         public string Attachment { get; set; }
+        public PaymentStatus PaymentStatus { get; set; }
+        public string ProofOfPayment { get; set; }
+        public string LetterOfUnderstaking { get; set; }
 
         public int? BookingStatusID { get; set; }
         [ForeignKey("BookingStatusID")]
@@ -90,6 +95,18 @@ namespace PQT.Domain.Entities
                 if (BookingStatusRecord != null)
                 {
                     return BookingStatusRecord.Status.DisplayName;
+                }
+                return "";
+            }
+        }
+
+        public string PaymentStatusDisplay
+        {
+            get
+            {
+                if (PaymentStatus != null)
+                {
+                    return PaymentStatus.DisplayName;
                 }
                 return "";
             }

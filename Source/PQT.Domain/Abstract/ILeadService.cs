@@ -17,5 +17,7 @@ namespace PQT.Domain.Abstract
 
 
         PhoneCall CreatePhoneCall(PhoneCall info);
+        bool UpdatePhoneCall(PhoneCall info);
+        PhoneCall GetPhoneCall(int id);
     }
 }

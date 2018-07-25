@@ -34,8 +34,14 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-group floating-label">
-                    @Html.Bootstrap().TextBoxFor(m => m.Trainer.Fields).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Trainer.Fields)
+                    @Html.Bootstrap().TextBoxFor(m => m.Trainer.NearestInternationalAirport).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Trainer.NearestInternationalAirport)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group floating-label">
+                    @Html.Bootstrap().TextBoxFor(m => m.Trainer.AirportIATACode).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Trainer.AirportIATACode).LabelText("AirportIATACode")
                 </div>
             </div>
             <div class="col-sm-6">

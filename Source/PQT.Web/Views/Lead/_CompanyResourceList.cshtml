@@ -1,0 +1,115 @@
+﻿@model int
+<style>
+    .nowrap {
+        white-space: nowrap;
+    }
+    #crtable tbody tr {
+        cursor: pointer;
+    }
+
+    #crtable tbody tr:hover {
+        background-color: #f2f2f2;
+    }
+
+</style>
+<div class="table-responsive">
+    <table class="table" id="crtable">
+        <thead>
+            <tr>
+                <th style="min-width:100px">Country</th>
+                <th>Salutation</th>
+                <th class="nowrap">First Name</th>
+                <th class="nowrap">Last Name</th>
+                <th style="min-width:200px">Organisation</th>
+                <th style="min-width:200px">Role</th>
+                <th class="nowrap">Mobile Phone1</th>
+                <th class="nowrap">Mobile Phone2</th>
+                <th class="nowrap">Mobile Phone3</th>
+                <th class="nowrap">Work Email</th>
+                <th class="nowrap">Personal Email</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@Html.Script(
+    @<script>
+        comResourceTable = $("#crtable");
+        comResourceTable.dataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "url": "@Url.Action("AjaxGetCompanyResourceForCall","CompanyResource")?eventId=@Model",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function(d) {
+                     d.ComId = company_id_selected_val;
+                     d.Country = $('#crtable_filter').find('input[name="search_country"]').val();
+                     d.Organisation = $('#crtable_filter').find('input[name="search_organisation"]').val();
+                     d.Role = $('#crtable_filter').find('input[name="search_role"]').val();
+                 }
+             },
+             "columns": [
+                 { "data": "Country", "name": "Country", "orderable": true },
+                 { "data": "Salutation", "name": "Salutation", "orderable": true },
+                 { "data": "FirstName", "name": "FirstName", "orderable": true },
+                 { "data": "LastName", "name": "LastName", "orderable": true },
+                 { "data": "Organisation", "name": "Organisation", "orderable": true },
+                 { "data": "Role", "name": "Role", "orderable": true },
+                 { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
+                 { "data": "MobilePhone2", "name": "MobilePhone2", "orderable": true },
+                 { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
+                 { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
+                 { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
+             ],
+             "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
+             "iDisplayLength": 25,
+             "aaSorting": [[0, "asc"]],
+             "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 $(nRow).attr('data-id', aData["ID"]);
+                 $(nRow).attr('data-country', aData["Country"]);
+                 $(nRow).attr('data-salutation', aData["Salutation"]);
+                 $(nRow).attr('data-firstname', aData["FirstName"]);
+                 $(nRow).attr('data-lastname', aData["LastName"]);
+                 $(nRow).attr('data-organisation', aData["Organisation"]);
+                 $(nRow).attr('data-role', aData["Role"]);
+                 $(nRow).attr('data-mobilephone1', aData["MobilePhone1"]);
+                 $(nRow).attr('data-mobilephone2', aData["MobilePhone2"]);
+                 $(nRow).attr('data-mobilephone3', aData["MobilePhone3"]);
+                 $(nRow).attr('data-workemail', aData["WorkEmail"]);
+                 $(nRow).attr('data-personalemail', aData["PersonalEmail"]);
+                 $(nRow).find('td:eq(2)').addClass('nowrap');
+                 $(nRow).find('td:eq(3)').addClass('nowrap');
+                 $(nRow).find('td:eq(6)').addClass('nowrap');
+                 $(nRow).find('td:eq(7)').addClass('nowrap');
+                 $(nRow).find('td:eq(8)').addClass('nowrap');
+                 $(nRow).find('td:eq(9)').addClass('nowrap');
+                 $(nRow).find('td:eq(10)').addClass('nowrap');
+             },
+             initComplete: function() {
+                 var _table = this;
+                 var filter_box = _table.parent().find("#crtable_filter");
+                 var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
+                 htmlFilter += '<label>Organisation:<input type="search" name="search_organisation" /></label>';
+                 htmlFilter += '<label>Role:<input type="search" name="search_role" /></label>';
+                 filter_box.html(htmlFilter);
+                 searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
+             },
+        });
+        function searchBindingKeyUp(elementSearch, tableElement) {
+            elementSearch.unbind();
+            var timeOutTyping;
+            elementSearch.bind('keyup',
+                function (e) {
+                    clearTimeout(timeOutTyping);
+                    timeOutTyping = setTimeout(function () {
+                        tableElement.fnFilter(elementSearch.eq(0).val());
+                    },
+                        600);
+                });
+        }
+    </script>
+)

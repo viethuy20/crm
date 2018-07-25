@@ -27,12 +27,17 @@ namespace PQT.Domain.Entities
         public string BackgroundColor { get; set; }
         public string HotelVenue { get; set; }//venue of event
         public string SalesRules { get; set; }//Sales Rules
-        public string Sectors { get; set; }//our sector
         public string PrimaryJobtitleKeywords { get; set; }
         public string SecondaryJobtitleKeywords { get; set; }
         public string Location { get; set; }
         public string Remark { get; set; }
         public string Brochure { get; set; }
+        public string FinanceEmail { get; set; }
+        public string OperationEmail { get; set; }
+        public string ProductionEmail { get; set; }
+        public string SalesEmail { get; set; }
+        public string RegContract { get; set; }
+        public EventStatus EventStatus { get; set; }
         [DataType(DataType.Date)]
         public DateTime? DateOfConfirmation { get; set; }
         [DataType(DataType.Date)]
@@ -76,6 +81,25 @@ namespace PQT.Domain.Entities
             }
         }
 
+        public string EventStatusDisplay
+        {
+            get
+            {
+                if (EventStatus != null)
+                {
+                    return EventStatus.DisplayName;
+                }
+                return "";
+            }
+        }
+
+    }
+    public class EventStatus : Enumeration
+    {
+        public static readonly EventStatus Initial = New<EventStatus>("", "Initial");
+        public static readonly EventStatus Confirmed = New<EventStatus>(1, "Confirmed");
+        public static readonly EventStatus Completed = New<EventStatus>(2, "Completed");
+        public static readonly EventStatus Cancelled = New<EventStatus>(3, "Cancelled");
     }
     public class MonthStatus : Enumeration
     {

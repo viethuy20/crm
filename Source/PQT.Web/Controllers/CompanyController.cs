@@ -89,6 +89,7 @@ namespace PQT.Web.Controllers
             });
         }
 
+        [HttpPost]
         public ActionResult Delete(int id)
         {
             if (_comRepo.DeleteCompany(id))

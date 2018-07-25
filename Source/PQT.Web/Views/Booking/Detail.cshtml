@@ -44,7 +44,7 @@
                 @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").Id("btnBacklist").RouteValues(new { id = Model.Booking.EventID }).PrependIcon("md md-arrow-back")
             }
 
-            @if (CurrentUser.HasPermission("Booking", "Edit"))
+            @if (CurrentUser.HasPermission("Booking", "Edit") && (Model.Booking.BookingStatusRecord != BookingStatus.Approved || CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("Manager")))
             {
                 @Html.Bootstrap().ActionLinkButton("Edit Booking", "Edit").RouteValues(new { id = Model.Booking.ID }).Class(" btn-primary").PrependIcon("md md-edit")
             }
@@ -270,6 +270,13 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        @if (!string.IsNullOrEmpty(Model.Booking.Attachment))
+                        {
+                            @Html.Bootstrap().Link(Model.Booking.Attachment, FileUpload.GetImageUrl(FileUploadType.Booking, Model.Booking.Attachment)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                        }
+                        @Html.Bootstrap().LabelFor(m => m.Booking.Attachment)
+                    </div>
                 </div>
                 <div class=" col-sm-6">
                     <div class="card card-underline">
@@ -286,28 +293,36 @@
                                 @Html.Bootstrap().LabelFor(m => m.Booking.DiscountPercent)
                             </div>
                             <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.Booking.RevenueAmount).Disabled().Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.Booking.RevenueAmount)
+                                @Html.Bootstrap().TextBoxFor(m => m.Booking.TotalWrittenRevenue).Disabled().Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.Booking.TotalWrittenRevenue)
                             </div>
                             <div class="form-group">
                                 @Html.Bootstrap().TextBoxFor(m => m.Booking.TotalPaidRevenue).Disabled().Class("form-control").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.Booking.TotalPaidRevenue)
                             </div>
                             <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.Booking.PaymentStatusDisplay).Disabled().Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.Booking.PaymentStatus)
+                            </div>
+                            <div class="form-group">
+                                @if (!string.IsNullOrEmpty(Model.Booking.ProofOfPayment))
+                                {
+                                    @Html.Bootstrap().Link(Model.Booking.ProofOfPayment, FileUpload.GetImageUrl(FileUploadType.Booking, Model.Booking.ProofOfPayment)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                                }
+                                @Html.Bootstrap().LabelFor(m => m.Booking.ProofOfPayment)
+                            </div>
+                            <div class="form-group">
+                                @if (!string.IsNullOrEmpty(Model.Booking.LetterOfUnderstaking))
+                                {
+                                    @Html.Bootstrap().Link(Model.Booking.LetterOfUnderstaking, FileUpload.GetImageUrl(FileUploadType.Booking, Model.Booking.LetterOfUnderstaking)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                                }
+                                @Html.Bootstrap().LabelFor(m => m.Booking.LetterOfUnderstaking)
+                            </div>
+                            <div class="form-group">
                                 @Html.Bootstrap().TextAreaFor(m => m.Booking.Remarks).Disabled().Class("form-control").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.Booking.Remarks)
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <div class=" col-sm-12">
-                    <div class="form-group">
-                        @if (!string.IsNullOrEmpty(Model.Booking.Attachment))
-            {
-                            @Html.Bootstrap().Link(Model.Booking.Attachment, FileUpload.GetImageUrl(FileUploadType.Booking, Model.Booking.Attachment)).Class("form-control").HtmlAttributes(new { target = "_blank" })
-                        }
-                        @Html.Bootstrap().LabelFor(m => m.Booking.Attachment)
                     </div>
                 </div>
             </div><!--end .card-body -->

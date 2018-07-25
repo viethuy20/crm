@@ -250,9 +250,9 @@ namespace PQT.Domain.Concrete
             return GetAll(predicate).AsEnumerable();
         }
 
-        public CompanyResource GetCompanyResource(int companyID)
+        public CompanyResource GetCompanyResource(int resourceId)
         {
-            return Get<CompanyResource>(companyID);
+            return Get<CompanyResource>(resourceId);
         }
 
         public CompanyResource CreateCompanyResource(CompanyResource resource)
@@ -299,11 +299,11 @@ namespace PQT.Domain.Concrete
                 //exist.FirstFollowUpStatus = company.FirstFollowUpStatus;
                 //exist.FinalStatus = company.FinalStatus;
                 //exist.DateNextFollowUp = company.DateNextFollowUp;
-                //exist.BudgetMonth = company.BudgetMonth;
+                exist.BudgetMonth = company.BudgetMonth;
                 //exist.GoodTrainingMonth = company.GoodTrainingMonth;
                 //exist.TopicsInterested = company.TopicsInterested;
                 //exist.LocationInterested = company.LocationInterested;
-                exist.TrainingBudget = company.TrainingBudget;
+                //exist.TrainingBudget = company.TrainingBudget;
                 exist.Remarks = company.Remarks;
                 return Update(exist);
             }

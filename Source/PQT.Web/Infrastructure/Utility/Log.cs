@@ -32,26 +32,9 @@ namespace PQT.Web.Infrastructure.Utility
             int actionId = routeData.Values["id"] != null ? Convert.ToInt32(routeData.Values["id"]) : 0;
             //if (routeData.Values["id"] != null && int.TryParse(routeData.Values["id"].ToString(), out actionId))
             //    Info(message, controllerName, actionId);
-            if ((controllerName == "NewBooking" && action == "AddedConfirm") ||
-                (controllerName == "Booking" && action == "AddedConfirm") ||
-                (HttpContext.Current.Request.HttpMethod == "POST" &&
-                controllerName != "Account" &&
-                controllerName != "Report" &&
-                controllerName != "NewReport" &&
+            if (HttpContext.Current.Request.HttpMethod == "POST" &&
                 !action.ToLower().Contains("ajax") &&
-                !action.ToLower().Contains("get") &&
-                (!HttpContext.Current.Request.IsAjaxRequest() ||
-                action.ToLower().Contains("create") ||
-                action.ToLower().Contains("add") ||
-                action.ToLower().Contains("edit") ||
-                action.ToLower().Contains("modify") ||
-                action.ToLower().Contains("delete") ||
-                action.ToLower().Contains("cancel") ||
-                action.ToLower().Contains("submit") ||
-                action.ToLower().Contains("approve") ||
-                action.ToLower().Contains("approval") ||
-                action.ToLower().Contains("verify") ||
-                action.ToLower().Contains("reject"))))
+                !action.ToLower().Contains("get"))
             {
                 Info(message, controllerName, actionId);
             }
@@ -79,6 +62,21 @@ namespace PQT.Web.Infrastructure.Utility
 
             string[] keys = request.Form.AllKeys;
             List<string> dataForm = keys.Select(t => t + ": " + request.Form[t]).ToList();
+            var data = "";
+            try
+            {
+                data = Json.Encode(new
+                {
+                    request.Cookies,
+                    request.Headers,
+                    request.Files,
+                    dataForm,
+                    request.QueryString
+                });
+            }
+            catch (Exception e)
+            {
+            }
             var record = new Audit
             {
                 Username = username,
@@ -87,7 +85,7 @@ namespace PQT.Web.Infrastructure.Utility
                 UrlAccessed = request.RawUrl,
                 TimeAccessed = DateTime.Now,
                 SessionId = HttpContext.Current.Session.SessionID,
-                Data = Json.Encode(new { request.Cookies, request.Headers, request.Files, dataForm, request.QueryString }),
+                Data = data,
                 Message = message,
                 Type = (int)AuditType.Manual,
                 Controller = controllerName,

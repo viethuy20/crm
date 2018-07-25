@@ -51,5 +51,14 @@ namespace PQT.Domain.Abstract
         IEnumerable<Holiday> GetAllHolidaysbyMonthAndYear(int month, int year);
         #endregion Holiday
 
+        #region OfficeLocation
+        IEnumerable<OfficeLocation> GetAllOfficeLocations();
+        OfficeLocation GetOfficeLocation(int id);
+        OfficeLocation GetOfficeLocation(string name);
+        OfficeLocation CreateOfficeLocation(OfficeLocation info);
+        bool UpdateOfficeLocation(OfficeLocation holiday);
+        bool DeleteOfficeLocation(int id);
+        #endregion OfficeLocation
+
     }
 }

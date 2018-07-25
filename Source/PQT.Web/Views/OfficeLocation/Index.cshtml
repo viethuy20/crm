@@ -1,7 +1,7 @@
 ﻿@using Resources
-@model IEnumerable<PQT.Domain.Entities.Country>
+@model IEnumerable<PQT.Domain.Entities.OfficeLocation>
 @{
-    ViewBag.Title = Resource.Country;
+    ViewBag.Title = "Office Location";
 }
 
 <section>
@@ -11,13 +11,9 @@
     <div class="form-group row">
         <div class="col-sm-6">
 
-            @if (CurrentUser.HasPermission("Country", "CreateOrEdit"))
+            @if (CurrentUser.HasPermission("OfficeLocation", "CreateOrEdit"))
             {
                 @Html.Bootstrap().ActionLinkButton(Resource.AddNew, "CreateOrEdit").RouteValues(new { id = 0 }).PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary simple-ajax-popup-align-top" })
-            }
-            @if (CurrentUser.HasPermission("Country", "ImportFromExcel"))
-            {
-                @Html.Bootstrap().ActionLinkButton(Resource.ImportFromExcel, "ImportFromExcel").PrependIcon("md md-cloud-upload").HtmlAttributes(new { @class = "btn btn-info " })
             }
         </div>
     </div>
@@ -27,9 +23,8 @@
             <table class="table" id="table">
                 <thead>
                     <tr>
-                        <th>@Resource.Code</th>
                         <th>@Resource.Name</th>
-                        <th>Dialing Code</th>
+                        <th>Address</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -37,9 +32,8 @@
                     @foreach (var item in Model)
                     {
                         <tr data-id="@item.ID">
-                            <td>@item.Code</td>
                             <td>@item.Name</td>
-                            <td>@item.DialingCode</td>
+                            <td>@item.Address</td>
                             <td>
                                 <a href="@Url.Action("CreateOrEdit", new {id = item.ID})" data-action="edit" class="simple-ajax-popup-align-top">
                                     <i class="md md-edit text-info"></i>
@@ -120,11 +114,10 @@
 
         function addNewLineItem(data) {
             var rowIndex = $Table.fnAddData([
-                data.Code,
                 data.Name,
-                data.DialingCode,
-                '<a class="simple-ajax-popup-align-top" data-action="edit" href="@Url.Action("CreateOrEdit")?id=' + data.ID + '"><i class="md md-edit text-info"></i></a>',
-                    '<a data-action="delete" data-id="' + data.ID + '" href="#"><i class="md md-delete text-danger"></i></a>'
+                data.Address,
+                '<a class="simple-ajax-popup-align-top" data-action="edit" href="@Url.Action("CreateOrEdit")?id=' + data.ID + '"><i class="md md-edit text-info"></i></a> | ' +
+                '<a data-action="delete" data-id="' + data.ID + '" href="#"><i class="md md-delete text-danger"></i></a>'
             ]);
             var row = $Table.fnGetNodes(rowIndex);
             $(row).attr('data-id', data.ID);
@@ -135,9 +128,8 @@
                 if ($(item).data('id') == data.ID) {
                     var td = $(item).find("td");
                     if (td.length > 0) {
-                        $(td[0]).text(data.Code);
-                        $(td[1]).text(data.Name);
-                        $(td[2]).text(data.DialingCode);
+                        $(td[0]).text(data.Name);
+                        $(td[1]).text(data.Address);
                     }
                 }
             });

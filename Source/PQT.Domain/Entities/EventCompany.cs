@@ -22,12 +22,20 @@ namespace PQT.Domain.Entities
         public int? EventID { get; set; }
         [ForeignKey("EventID")]
         public virtual Event Event { get; set; }
-        public decimal? TrainingBudget { get; set; }//USD
+        public int BudgetMonth { get; set; }
         public string Remarks { get; set; }
         public int CompanyID { get; set; }
         [ForeignKey("CompanyID")]
         public virtual Company Company { get; set; }
 
+        public string BudgetMonthStr
+        {
+            get
+            {
+                var monthEnum = Enumeration.FromValue<MonthStatus>(BudgetMonth.ToString());
+                return monthEnum != null ? monthEnum.ToString() : "";
+            }
+        }
         public string CompanyName
         {
             get

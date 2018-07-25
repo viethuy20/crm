@@ -25,7 +25,7 @@
         <div class="col-md-12">
             <div class="card  card-underline">
                 <div class="card-head">
-                    <header><i class="fa fa-file-text"></i> @ViewBag.Title - <span style="font-size: 18px;"><b>@Model.EventName</b> - <b>@Model.EventCode</b> - Date: <b>@Model.StartDate.ToString("dd MMM yyyy")</b> - <b>@Model.EndDate.ToString("dd MMM yyyy")</b></span></header>
+                    <header><i class="fa fa-file-text"></i> @ViewBag.Title - <span style="font-size: 18px;"><b>@Model.EventName</b> - <b>@Model.EventCode</b> - Event Dates: <b>@Model.StartDate.ToString("dd MMM yyyy")</b> - <b>@Model.EndDate.ToString("dd MMM yyyy")</b></span></header>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -34,7 +34,7 @@
                                 <tr>
                                     <th>Event</th>
                                     <th>Date Created</th>
-                                    <th>Company</th>
+                                    <th style="width: 150px">Company</th>
                                     <th>Address</th>
                                     <th>Tel</th>
                                     <th>Fax</th>
@@ -93,7 +93,7 @@
                  { "data": "Salesman", "name": "Salesman", "orderable": true },
                  { "data": "FeePerDelegate", "name": "FeePerDelegate", "orderable": true },
                  { "data": "Discount", "name": "Discount", "orderable": true },
-                 { "data": "RevenueAmount", "name": "RevenueAmount", "orderable": true },
+                 { "data": "TotalWrittenRevenue", "name": "TotalWrittenRevenue", "orderable": true },
                  { "data": "TotalPaidRevenue", "name": "TotalPaidRevenue", "orderable": true },
                  { "data": "Status", "name": "Status", "orderable": true },
                  { "data": "ID", "name": "ID", "orderable": false },

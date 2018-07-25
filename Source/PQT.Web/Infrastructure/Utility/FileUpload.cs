@@ -16,8 +16,8 @@ namespace PQT.Web.Infrastructure.Utility
             {
                 if (file.ContentLength > 0)
                 {
-                    var guid = "_" + DateTime.Now.ToString("yyyyMMddHHmmss");
-                    string fileName = Path.GetFileNameWithoutExtension(file.FileName) + guid + Path.GetExtension(file.FileName);
+                    var guid = DateTime.Now.ToString("yyyyMMddHHmmss") + "_";
+                    string fileName = guid + Domain.Helpers.StringHelper.RemoveSpecialCharacters(Path.GetFileNameWithoutExtension(file.FileName)) + Path.GetExtension(file.FileName);
                     string filePath = GetImagePath(type, fileName);
                     string directory = Path.GetDirectoryName(filePath);
                     if (directory != null) Directory.CreateDirectory(directory);

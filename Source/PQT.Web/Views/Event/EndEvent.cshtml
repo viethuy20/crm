@@ -1,0 +1,36 @@
+﻿@using PQT.Domain.Entities
+@using Resources
+@model PQT.Domain.Entities.Event
+
+
+<div class="card card-underline" style="background: white; margin: auto; max-width: 600px; position: relative;">
+    <div>
+        <div class="card-head">
+            <header><b>End Event</b></header>
+        </div><!--end .card-head -->
+        @using (Ajax.BeginForm("EndEvent", "routeValues", new AjaxOptions { OnFailure = "onEndEventFail", OnSuccess = "onEndEventSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
+        {
+            <div class="card-body">
+                @Html.HiddenFor(m => m.ID)
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EventName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EventName)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group ">
+                        @Html.Bootstrap().DropDownListFor(m => m.EventStatus, EnumerationHelper.ToSelectList<EventStatus>()).Class("form-control endStatus").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EventStatus).ShowRequiredStar(true)
+                    </div>
+                </div>
+            </div><!--end .card-body -->
+            <div class="card-actionbar">
+                <div class="card-actionbar-row">
+                    @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                    @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("submitEndEventBtn").PrependIcon("md md-done").Style(ButtonStyle.Success)
+                </div>
+            </div>
+        }
+    </div>
+</div><!--end .card -->

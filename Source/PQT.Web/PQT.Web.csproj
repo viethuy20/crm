@@ -358,6 +358,7 @@
     <Compile Include="Controllers\BookingController.cs" />
     <Compile Include="Controllers\CompanyResourceController.cs" />
     <Compile Include="Controllers\CounterController.cs" />
+    <Compile Include="Controllers\OfficeLocationController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -468,6 +469,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Validation\BookingValidator.cs" />
+    <Compile Include="Validation\OfficeLocationValidator.cs" />
     <Compile Include="Validation\LeadValidator.cs" />
     <Compile Include="Validation\TrainerValidator.cs" />
     <Compile Include="Validation\EventValidator.cs" />
@@ -572,6 +574,7 @@
     <Content Include="Content\EmailTemplates\Web.config" />
     <Content Include="Content\fonts\LICENSE.txt" />
     <Content Include="Content\fonts\Material-Design-Iconic-Font.svg" />
+    <Content Include="Content\img\no-image.png" />
     <Content Include="Content\img\ajax-loading.svg" />
     <Content Include="Content\img\ajax_loader.gif" />
     <Content Include="Content\img\attachment.png" />
@@ -1929,6 +1932,7 @@
     <Content Include="Content\js\libs\jquery-validation\test\qunit\qunit.js" />
     <Content Include="Content\js\libs\jquery-validation\test\rules.js" />
     <Content Include="Content\js\libs\jquery-validation\test\test.js" />
+    <Content Include="Content\js\libs\jquery.inputFileText\jquery-input-file-text.js" />
     <Content Include="Content\js\libs\jquery\jquery-1.11.2.js" />
     <Content Include="Content\js\libs\jquery\jquery-1.11.2.min.js" />
     <Content Include="Content\js\libs\jquery\jquery-migrate-1.2.1.min.js" />
@@ -2550,7 +2554,7 @@
     <Content Include="Views\CompanyResource\Index.cshtml" />
     <Content Include="Views\CompanyResource\ImportFromExcel.cshtml" />
     <Content Include="Views\Kpi\ImportVoIp.cshtml" />
-    <Content Include="Views\Lead\CompanyResourceList.cshtml" />
+    <Content Include="Views\Lead\_CompanyResourceList.cshtml" />
     <Content Include="Views\Booking\Index.cshtml" />
     <Content Include="Views\Booking\Action.cshtml" />
     <Content Include="Views\Booking\Edit.cshtml" />
@@ -2569,6 +2573,10 @@
     <Content Include="Views\Lead\_CallingInfo.cshtml" />
     <Content Include="Views\Country\ImportFromExcel.cshtml" />
     <Content Include="Views\Event\LoadEventSalesRules.cshtml" />
+    <Content Include="Views\OfficeLocation\CreateOrEdit.cshtml" />
+    <Content Include="Views\OfficeLocation\Index.cshtml" />
+    <Content Include="Views\Event\EndEvent.cshtml" />
+    <Content Include="Views\Lead\EditCallRecord.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

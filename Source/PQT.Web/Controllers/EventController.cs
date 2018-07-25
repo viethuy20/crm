@@ -232,68 +232,91 @@ namespace PQT.Web.Controllers
         [DisplayName(@"End Event")]
         public ActionResult EndEvent(int id)
         {
-            var ev = _repo.GetEvent(id);
-            var leads = _leadService.GetAllLeads(m => m.EventID == id);
-            var companyResources = _comRepo.GetAllCompanyResources(m => m.CompanyID != null && ev.EventCompanies.Select(n => n.CompanyID).Contains(Convert.ToInt32(m.CompanyID))).ToList();
-            var count = 0;
-            var totalCount = leads.Count();
-            var userId = CurrentUser.Identity.ID;
-            foreach (var lead in leads)
+            var eve = _repo.GetEvent(id);
+            return PartialView(eve);
+        }
+        [HttpPost]
+        [DisplayName(@"End Event")]
+        public ActionResult EndEvent(int ID, EventStatus EventStatus)
+        {
+            var ev = _repo.GetEvent(ID);
+            if (ev == null)
             {
-                count++;
-                var existResources =
-                    companyResources.Where(
-                        m => m.MobilePhone1 == lead.MobilePhone1 && m.MobilePhone2 == lead.MobilePhone2);
-                if (existResources.Any())
-                {
-                    foreach (var item in existResources)
-                    {
-                        item.CompanyID = lead.CompanyID;
-                        item.CountryID = lead.Company.CountryID;
-                        item.Country = lead.Company.CountryName;
-                        item.FirstName = lead.FirstName;
-                        item.LastName = lead.LastName;
-                        item.Organisation = lead.CompanyName;
-                        item.PersonalEmail = lead.PersonalEmail;
-                        item.Role = lead.JobTitle;
-                        item.Salutation = lead.Salutation;
-                        item.WorkEmail = lead.WorkEmail;
-                        item.MobilePhone1 = lead.MobilePhone1;
-                        item.MobilePhone2 = lead.MobilePhone2;
-                        item.MobilePhone3 = lead.MobilePhone3;
-                        _comRepo.UpdateCompanyResource(item);
-                    }
-                }
-                else
-                {
-                    var item = new CompanyResource()
-                    {
-                        MobilePhone1 = lead.MobilePhone1,
-                        CompanyID = lead.CompanyID,
-                        CountryID = lead.Company.CountryID,
-                        Country = lead.Company.CountryName,
-                        FirstName = lead.FirstName,
-                        LastName = lead.LastName,
-                        MobilePhone2 = lead.MobilePhone2,
-                        MobilePhone3 = lead.MobilePhone3,
-                        Organisation = lead.CompanyName,
-                        PersonalEmail = lead.PersonalEmail,
-                        Role = lead.JobTitle,
-                        Salutation = lead.Salutation,
-                        WorkEmail = lead.WorkEmail
-                    };
-                    _comRepo.CreateCompanyResource(item);
-                }
-                var json = new
-                {
-                    count,
-                    totalCount
-                };
-                ProgressHub.SendMessage(userId, System.Web.Helpers.Json.Encode(json));
+                return Json(false);
             }
+            ev.EventStatus = EventStatus;
+            if (_repo.UpdateEvent(ev))
+            {
+                if (EventStatus != EventStatus.Completed)
+                {
+                    return Json(true);
+                }
+                var leads = _leadService.GetAllLeads(m => m.EventID == ID);
+                var companyResources = _comRepo.GetAllCompanyResources(m => m.CompanyID != null &&
+                ev.EventCompanies.Select(n => n.CompanyID).Contains(Convert.ToInt32(m.CompanyID))).ToList();
+                var count = 0;
+                var totalCount = leads.Count();
+                var userId = CurrentUser.Identity.ID;
+                foreach (var lead in leads)
+                {
+                    count++;
+                    var existResources =
+                        companyResources.Where(
+                            m => m.WorkEmail == lead.WorkEmail &&
+                                 m.MobilePhone1 == lead.MobilePhone1 &&
+                                 m.MobilePhone2 == lead.MobilePhone2 &&
+                                 m.MobilePhone3 == lead.MobilePhone3);
+                    if (existResources.Any())
+                    {
+                        foreach (var item in existResources)
+                        {
+                            item.CompanyID = lead.CompanyID;
+                            item.CountryID = lead.Company.CountryID;
+                            item.Country = lead.Company.CountryName;
+                            item.FirstName = lead.FirstName;
+                            item.LastName = lead.LastName;
+                            item.Organisation = lead.CompanyName;
+                            item.PersonalEmail = lead.PersonalEmail;
+                            item.Role = lead.JobTitle;
+                            item.Salutation = lead.Salutation;
+                            item.WorkEmail = lead.WorkEmail;
+                            item.MobilePhone1 = lead.MobilePhone1;
+                            item.MobilePhone2 = lead.MobilePhone2;
+                            item.MobilePhone3 = lead.MobilePhone3;
+                            _comRepo.UpdateCompanyResource(item);
+                        }
+                    }
+                    else
+                    {
+                        var item = new CompanyResource()
+                        {
+                            CompanyID = lead.CompanyID,
+                            CountryID = lead.Company.CountryID,
+                            Country = lead.Company.CountryName,
+                            FirstName = lead.FirstName,
+                            LastName = lead.LastName,
+                            MobilePhone1 = lead.MobilePhone1,
+                            MobilePhone2 = lead.MobilePhone2,
+                            MobilePhone3 = lead.MobilePhone3,
+                            Organisation = lead.CompanyName,
+                            PersonalEmail = lead.PersonalEmail,
+                            Role = lead.JobTitle,
+                            Salutation = lead.Salutation,
+                            WorkEmail = lead.WorkEmail
+                        };
+                        _comRepo.CreateCompanyResource(item);
+                    }
+                    var json = new
+                    {
+                        count,
+                        totalCount
+                    };
+                    ProgressHub.SendMessage(userId, System.Web.Helpers.Json.Encode(json));
+                }
 
-
-            return Json(true);
+                return Json(true);
+            }
+            return Json(false);
         }
 
 
@@ -344,7 +367,7 @@ namespace PQT.Web.Controllers
                         m.EndDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
                         m.DateOfConfirmationStr.Contains(searchValue) ||
                         m.ClosingDateStr.Contains(searchValue) ||
-                        (m.Sectors != null && m.Sectors.ToLower().Contains(searchValue))
+                        m.EventStatusDisplay.Contains(searchValue)
                        );
             }
             else
@@ -362,6 +385,9 @@ namespace PQT.Web.Controllers
                     case "EventName":
                         events = events.OrderBy(s => s.EventName).ThenBy(s => s.ID);
                         break;
+                    case "EventStatusDisplay":
+                        events = events.OrderBy(s => s.EventStatusDisplay).ThenBy(s => s.ID);
+                        break;
                     case "StartDate":
                         events = events.OrderBy(s => s.StartDate).ThenBy(s => s.ID);
                         break;
@@ -373,9 +399,6 @@ namespace PQT.Web.Controllers
                         break;
                     case "ClosingDate":
                         events = events.OrderBy(s => s.ClosingDate).ThenBy(s => s.ID);
-                        break;
-                    case "Sectors":
-                        events = events.OrderBy(s => s.Sectors).ThenBy(s => s.ID);
                         break;
                     case "Location":
                         events = events.OrderBy(s => s.Location).ThenBy(s => s.ID);
@@ -395,6 +418,9 @@ namespace PQT.Web.Controllers
                     case "EventName":
                         events = events.OrderByDescending(s => s.EventName).ThenBy(s => s.ID);
                         break;
+                    case "EventStatusDisplay":
+                        events = events.OrderByDescending(s => s.EventStatusDisplay).ThenBy(s => s.ID);
+                        break;
                     case "StartDate":
                         events = events.OrderByDescending(s => s.StartDate).ThenBy(s => s.ID);
                         break;
@@ -406,9 +432,6 @@ namespace PQT.Web.Controllers
                         break;
                     case "ClosingDate":
                         events = events.OrderByDescending(s => s.ClosingDate).ThenBy(s => s.ID);
-                        break;
-                    case "Sectors":
-                        events = events.OrderByDescending(s => s.Sectors).ThenBy(s => s.ID);
                         break;
                     case "Location":
                         events = events.OrderByDescending(s => s.Location).ThenBy(s => s.ID);
@@ -437,13 +460,13 @@ namespace PQT.Web.Controllers
                     m.ID,
                     m.EventCode,
                     m.EventName,
+                    m.EventStatusDisplay,
                     m.BackgroundColor,
                     m.Location,
                     StartDate = m.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = m.EndDate.ToString("dd/MM/yyyy"),
                     DateOfConfirmation = m.DateOfConfirmationStr,
-                    ClosingDate = m.ClosingDateStr,
-                    m.Sectors
+                    ClosingDate = m.ClosingDateStr
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

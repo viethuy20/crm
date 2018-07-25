@@ -54,19 +54,12 @@ namespace PQT.Domain.Entities
         public string KPIRemarks { get; set; }
 
         public int? EstimatedDelegateNumber { get; set; }
-        public int BudgetMonth { get; set; }
         public int GoodTrainingMonth { get; set; }
         public string TopicsInterested { get; set; }
         public string LocationInterested { get; set; }
 
-        public string BudgetMonthStr
-        {
-            get
-            {
-                var monthEnum = Enumeration.FromValue<MonthStatus>(BudgetMonth.ToString());
-                return monthEnum != null ? monthEnum.ToString() : "";
-            }
-        }
+        public decimal? TrainingBudgetPerHead { get; set; }//USD
+
         public string GoodTrainingMonthStr
         {
             get

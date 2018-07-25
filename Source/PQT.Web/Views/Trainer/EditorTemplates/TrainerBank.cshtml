@@ -25,7 +25,7 @@
         <div class="col-sm-2">
             <div class="form-group">
                 @Html.Bootstrap().TextBoxFor(m => m.BankAccountNumber).Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.BankAccountNumber)
+                @Html.Bootstrap().LabelFor(m => m.BankAccountNumber).LabelText("Bank Account Number/ IBAN")
             </div>
         </div>
         <div class="col-sm-2">

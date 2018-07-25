@@ -69,10 +69,18 @@
             </div>
             <div class="form-group row">
                 <div class="col-sm-6">
-                    <label class="col-sm-3 control-label">Fields</label>
+                    <label class="col-sm-3 control-label">Nearest International Airport</label>
                     <div class="col-sm-9">
                         <div class="form-control" readonly="readonly">
-                            @Model.Fields
+                            @Model.NearestInternationalAirport
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-3 control-label">Airport IATA Code</label>
+                    <div class="col-sm-9">
+                        <div class="form-control" readonly="readonly">
+                            @Model.AirportIATACode
                         </div>
                     </div>
                 </div>
@@ -85,7 +93,7 @@
                     <th>Bank Name</th>
                     <th>Bank Account Holder Name</th>
                     <th>Bank Account Holder Address</th>
-                    <th>Bank Account Number</th>
+                    <th>Bank Account Number/ IBAN</th>
                     <th>Branch</th>
                     <th>Swift Code</th>
                 </tr>

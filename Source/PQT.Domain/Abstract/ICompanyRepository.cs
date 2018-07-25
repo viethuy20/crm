@@ -24,7 +24,7 @@ namespace PQT.Domain.Abstract
         #region Company Resource
         IEnumerable<CompanyResource> GetAllCompanyResources();
         IEnumerable<CompanyResource> GetAllCompanyResources(Func<CompanyResource, bool> predicate);
-        CompanyResource GetCompanyResource(int companyID);
+        CompanyResource GetCompanyResource(int resourceId);
         CompanyResource CreateCompanyResource(CompanyResource resource);
         //void CreateCompanyResources(List<CompanyResource> companies);
         bool UpdateCompanyResource(CompanyResource resource);

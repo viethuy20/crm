@@ -192,6 +192,7 @@
     <Compile Include="Entities\Holiday.cs" />
     <Compile Include="Entities\Lead.cs" />
     <Compile Include="Entities\LeadStatusRecord.cs" />
+    <Compile Include="Entities\OfficeLocation.cs" />
     <Compile Include="Entities\PhoneCall.cs" />
     <Compile Include="Entities\EventSession.cs" />
     <Compile Include="Entities\Menu.cs">
@@ -225,17 +226,19 @@
     </Compile>
     <Compile Include="EntityBase.cs" />
     <Compile Include="Enum\BookingStatus.cs" />
+    <Compile Include="Enum\PaymentStatus.cs" />
+    <Compile Include="Enum\SalaryCurrency.cs" />
     <Compile Include="Enum\EmailType.cs" />
     <Compile Include="Enum\KPIStatus.cs" />
     <Compile Include="Enum\LeadStatus.cs" />
     <Compile Include="Enum\LevelSalesman.cs" />
     <Compile Include="Enum\NameTitle.cs" />
     <Compile Include="Enum\NotifyType.cs" />
-    <Compile Include="Enum\ReservationStatus.cs" />
     <Compile Include="Enum\RoleLevel.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Enum\Transmission.cs" />
+    <Compile Include="Enum\UserStatus.cs" />
     <Compile Include="Helpers\ConfigHelper.cs" />
     <Compile Include="Helpers\ConvertHelper.cs" />
     <Compile Include="Helpers\DefaultHelper.cs" />

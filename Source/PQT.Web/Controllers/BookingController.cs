@@ -309,7 +309,7 @@ namespace PQT.Web.Controllers
                                                    (m.Salesman != null && m.Salesman.DisplayName.Contains(searchValue)) ||
                                                    m.FeePerDelegate.ToString().Contains(searchValue) ||
                                                    m.DiscountPercent.ToString().Contains(searchValue) ||
-                                                   m.RevenueAmount.ToString().Contains(searchValue) ||
+                                                   m.TotalWrittenRevenue.ToString().Contains(searchValue) ||
                                                    m.TotalPaidRevenue.ToString().Contains(searchValue) ||
                                                    (m.BookingStatusRecord != null && m.BookingStatusRecord.Status.DisplayName.Contains(searchValue))));
             }
@@ -357,8 +357,8 @@ namespace PQT.Web.Controllers
                     case "Discount":
                         bookings = bookings.OrderBy(s => s.DiscountPercent).ThenBy(s => s.ID);
                         break;
-                    case "RevenueAmount":
-                        bookings = bookings.OrderBy(s => s.RevenueAmount).ThenBy(s => s.ID);
+                    case "TotalWrittenRevenue":
+                        bookings = bookings.OrderBy(s => s.TotalWrittenRevenue).ThenBy(s => s.ID);
                         break;
                     case "TotalPaidRevenue":
                         bookings = bookings.OrderBy(s => s.TotalPaidRevenue).ThenBy(s => s.ID);
@@ -408,8 +408,8 @@ namespace PQT.Web.Controllers
                     case "Discount":
                         bookings = bookings.OrderByDescending(s => s.DiscountPercent).ThenBy(s => s.ID);
                         break;
-                    case "RevenueAmount":
-                        bookings = bookings.OrderByDescending(s => s.RevenueAmount).ThenBy(s => s.ID);
+                    case "TotalWrittenRevenue":
+                        bookings = bookings.OrderByDescending(s => s.TotalWrittenRevenue).ThenBy(s => s.ID);
                         break;
                     case "TotalPaidRevenue":
                         bookings = bookings.OrderByDescending(s => s.TotalPaidRevenue).ThenBy(s => s.ID);
@@ -451,7 +451,7 @@ namespace PQT.Web.Controllers
                     Salesman = m.Salesman != null ? m.Salesman.DisplayName : "",
                     m.FeePerDelegate,
                     Discount = m.DiscountPercent,
-                    m.RevenueAmount,
+                    m.TotalWrittenRevenue,
                     m.TotalPaidRevenue,
                     Status = m.BookingStatusRecord != null ? m.BookingStatusRecord.Status.DisplayName : "",
                     ClassStatus = m.ClassStatus

@@ -52,22 +52,28 @@
     <div class="card">
         <div class="card-body form">
             <div class="row">
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Event.EventCode).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Event.EventCode).LabelText("EVENT CODE")
-                    </div>
-                </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Event.EventName).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Event.EventName).LabelText("EVENT NAME")
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.EventCode).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.EventCode)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.EventStatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.EventStatus)
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Event.BackgroundColor).HtmlAttributes(new { @style = "color:#fff;background:" + Model.Event.BackgroundColor }).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Event.BackgroundColor).LabelText("EVENT COLOR")
+                        @Html.Bootstrap().LabelFor(m => m.Event.BackgroundColor).LabelText("Event Color")
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.EventName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.EventName)
                     </div>
                 </div>
                 <div class="col-sm-3">
@@ -102,6 +108,30 @@
                         @Html.Bootstrap().LabelFor(m => m.Event.ClosingDate).LabelText("Date of Closing Sales")
                     </div>
                 </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.FinanceEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.FinanceEmail).LabelText("Finance")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.OperationEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.OperationEmail).LabelText("Operation")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.ProductionEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.ProductionEmail).LabelText("Production")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.SalesEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.SalesEmail).LabelText("Sales")
+                    </div>
+                </div>
                 <div class="col-sm-12">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Event.PrimaryJobtitleKeywords).Class("form-control").Disabled().ShowValidationMessage(true)
@@ -126,13 +156,22 @@
                         @Html.Bootstrap().LabelFor(m => m.Event.Location)
                     </div>
                 </div>
-                <div class=" col-sm-12">
+                <div class=" col-sm-6">
                     <div class="form-group">
                         @if (!string.IsNullOrEmpty(Model.Event.Brochure))
                         {
                             @Html.Bootstrap().Link(Model.Event.Brochure, FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)).Class("form-control").HtmlAttributes(new { target = "_blank" })
                         }
                         @Html.Bootstrap().LabelFor(m => m.Event.Brochure)
+                    </div>
+                </div>
+                <div class=" col-sm-6">
+                    <div class="form-group">
+                        @if (!string.IsNullOrEmpty(Model.Event.RegContract))
+                        {
+                            @Html.Bootstrap().Link(Model.Event.RegContract, FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.RegContract)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                        }
+                        @Html.Bootstrap().LabelFor(m => m.Event.RegContract)
                     </div>
                 </div>
             </div>

@@ -80,9 +80,18 @@ namespace PQT.Web.Controllers
                 BusinessDevelopmentUnit = model.BusinessDevelopmentUnit,
                 SalesSupervision = model.SalesSupervision,
                 SalesManagementUnit = model.SalesManagementUnit,
-                DateOfContract = model.DateOfContract,
-                DateOfStarting = model.DateOfStarting,
+                EmploymentEndDate = model.EmploymentEndDate,
+                EmploymentDate = model.EmploymentDate,
                 BasicSalary = model.BasicSalary,
+                PersonalEmail = model.PersonalEmail,
+                PassportID = model.PassportID,
+                Nationality = model.Nationality,
+                DateOfBirth = model.DateOfBirth,
+                UserStatus = model.UserStatus,
+                SalaryCurrency = model.SalaryCurrency,
+                FirstEvaluationDate = model.FirstEvaluationDate,
+                DirectSupervisorID = model.DirectSupervisorID,
+                OfficeLocationID = model.OfficeLocationID,
             };
 
             user = _membershipService.CreateUser(user);
@@ -133,8 +142,11 @@ namespace PQT.Web.Controllers
                     BusinessDevelopmentUnit = user.BusinessDevelopmentUnit,
                     SalesManagementUnit = user.SalesManagementUnit,
                     SalesSupervision = user.SalesSupervision,
-                    DateOfStarting = user.DateOfStarting,
-                    DateOfContract = user.DateOfContract,
+                    EmploymentEndDate = model.EmploymentEndDate,
+                    EmploymentDate = model.EmploymentDate,
+                    UserStatus = model.UserStatus,
+                    SalaryCurrency = model.SalaryCurrency,
+                    FirstEvaluationDate = model.FirstEvaluationDate,
                     BasicSalary = Convert.ToDecimal(user.BasicSalary)
                 });
             }
@@ -146,10 +158,19 @@ namespace PQT.Web.Controllers
             user.BusinessDevelopmentUnit = model.BusinessDevelopmentUnit;
             user.SalesManagementUnit = model.SalesManagementUnit;
             user.SalesSupervision = model.SalesSupervision;
-            user.DateOfStarting = model.DateOfStarting;
-            user.DateOfContract = model.DateOfContract;
+            user.EmploymentEndDate = model.EmploymentEndDate;
+            user.EmploymentDate = model.EmploymentDate;
+            user.PersonalEmail = model.PersonalEmail;
+            user.PassportID = model.PassportID;
+            user.Nationality = model.Nationality;
+            user.DateOfBirth = model.DateOfBirth;
+            user.UserStatus = model.UserStatus;
+            user.SalaryCurrency = model.SalaryCurrency;
+            user.FirstEvaluationDate = model.FirstEvaluationDate;
+            user.DirectSupervisorID = model.DirectSupervisorID;
             user.BasicSalary = model.BasicSalary;
             user.Extension = model.Extension;
+            user.OfficeLocationID = model.OfficeLocationID;
             if (!string.IsNullOrEmpty(model.Password))
             {
                 user.Password = EncryptHelper.EncryptPassword(model.Password);
@@ -163,7 +184,7 @@ namespace PQT.Web.Controllers
             if (success)
             {
                 TempData["message"] = Resource.SaveSuccessful;
-                return RedirectToAction("Edit", new { id = model.ID });
+                return RedirectToAction("Index");
             }
             ViewBag.Success = true;
             TempData["error"] = Resource.SaveFailed;
@@ -195,8 +216,6 @@ namespace PQT.Web.Controllers
             return RedirectToAction("ListDeletedUsers");
         }
 
-
-
         [AjaxOnly]
         public ActionResult GetPossibleSalesman(string q)
         {
@@ -206,7 +225,6 @@ namespace PQT.Web.Controllers
                                         (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
             return Json(bookings.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
         }
-
 
         [AjaxOnly]
         public ActionResult AjaxGetIndexView()

@@ -95,10 +95,10 @@ namespace PQT.Web.Controllers
         [DisplayName("Edit Profile")]
         public ActionResult EditProfile(AccountModel model)
         {
-            if (string.IsNullOrEmpty(model.OldPassword))
-            {
-                ModelState.AddModelError("OldPassword", Resource.TheFieldShouldNotBeEmpty);
-            }
+            //if (string.IsNullOrEmpty(model.OldPassword))
+            //{
+            //    ModelState.AddModelError("OldPassword", Resource.TheFieldShouldNotBeEmpty);
+            //}
             //else
             //{
             //    var oldPassword = EncryptHelper.EncryptPassword(model.OldPassword);
@@ -116,10 +116,18 @@ namespace PQT.Web.Controllers
                     string pictureFileName = UserPicture.Upload(CurrentUser.Identity.ID, model.PictureBase64);
                     CurrentUser.Identity.Picture = pictureFileName;
                 }
+                if (!string.IsNullOrEmpty(model.BackgroundBase64))
+                {
+                    UserPicture.Delete(CurrentUser.Identity.ID, CurrentUser.Identity.Background);
+                    string pictureFileName = UserPicture.UploadBackground(CurrentUser.Identity.ID, model.BackgroundBase64);
+                    CurrentUser.Identity.Background = pictureFileName;
+                }
 
                 CurrentUser.Identity.DisplayName = model.Username;
                 CurrentUser.Identity.BusinessPhone = model.BusinessPhone;
                 CurrentUser.Identity.MobilePhone = model.MobilePhone;
+                CurrentUser.Identity.PersonalEmail = model.PersonalEmail;
+                CurrentUser.Identity.PassportID = model.PassportID;
                 //if (!string.IsNullOrEmpty(model.Password))
                 //{
                 //    CurrentUser.Identity.Password = EncryptHelper.EncryptPassword(model.Password);

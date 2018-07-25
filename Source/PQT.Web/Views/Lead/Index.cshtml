@@ -201,7 +201,7 @@
                         </div>
                     </div>
                     <header>
-                        <span class="text-primary"><i class="fa fa-fw fa-phone"></i> @ViewBag.Title</span> - <span style="font-size: 18px;"><b>@Model.Event.EventName (@Model.Event.EventCode)</b> - Sales Date: <b>@Model.Event.StartDate.ToString("dd/MM/yy")</b> - <b>@Model.Event.EndDate.ToString("dd/MM/yy")</b></span>
+                        <span class="text-primary"><i class="fa fa-fw fa-phone"></i> @ViewBag.Title</span> - <span style="font-size: 18px;"><b>@Model.Event.EventName (@Model.Event.EventCode)</b> - Event Dates: <b>@Model.Event.StartDate.ToString("dd/MM/yy")</b> - <b>@Model.Event.EndDate.ToString("dd/MM/yy")</b></span>
                         @if (!string.IsNullOrEmpty(Model.Event.Brochure))
                         {
                             @: - <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)" target="_blank" style="font-size: 16px;margin-left: 5px;" title="Download Brochure"><i class="fa fa-download"></i> Brochure</a>
@@ -216,7 +216,7 @@
                                 <th>Time Updated</th>
                                 <th>Country</th>
                                 <th style="width: 150px">Company</th>
-                                <th>Client Name/Job Title</th>
+                                <th style="width: 150px">Client Name/Job Title</th>
                                 <th>Direct Line/Mobile number</th>
                                 <th>Salutation</th>
                                 <th>First Name</th>
@@ -280,7 +280,21 @@
          var windowH = $(window).height();
          var fixedColumn = 0;
          var sizeLenght = 50;
+    
+         function updateCanvas() {
+             var windowW = $(window).width();
+             var wCavas = (windowW / 2).toFixed(0);
+             if (wCavas < 480) {
+                 $('#offcanvas-ncl').css('width', '480px');
+             } else {
+                 $('#offcanvas-ncl').css('width', wCavas+ 'px');
+             }
+         }
 
+         updateCanvas();
+         window.onresize = function (event) {
+             updateCanvas();
+         };
 
          var tableLead = $("#tableLead");
          tableLead.dataTable({
@@ -313,7 +327,7 @@
                  { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
                  { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
                  { "data": "EstimatedDelegateNumber", "name": "EstimatedDelegateNumber", "orderable": true },
-                 { "data": "BudgetMonth", "name": "BudgetMonth", "orderable": true },
+                 { "data": "TrainingBudgetPerHead", "name": "TrainingBudgetPerHead", "orderable": true },
                  { "data": "GoodTrainingMonth", "name": "GoodTrainingMonth", "orderable": true },
                  { "data": "TopicsInterested", "name": "TopicsInterested", "orderable": true },
                  { "data": "LocationInterested", "name": "LocationInterested", "orderable": true },

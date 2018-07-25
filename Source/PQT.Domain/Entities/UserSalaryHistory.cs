@@ -15,9 +15,12 @@ namespace PQT.Domain.Entities
         public BusinessDevelopmentUnit BusinessDevelopmentUnit { get; set; }
         public SalesManagementUnit SalesManagementUnit { get; set; }
         public SalesSupervision SalesSupervision { get; set; }
-        public DateTime? DateOfContract { get; set; }
-        public DateTime? DateOfStarting { get; set; }
+        public DateTime? EmploymentEndDate { get; set; }
+        public DateTime? EmploymentDate { get; set; }
+        public DateTime? FirstEvaluationDate { get; set; }
         public decimal BasicSalary { get; set; }
+        public UserStatus UserStatus { get; set; }
+        public SalaryCurrency SalaryCurrency { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

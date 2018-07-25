@@ -12,6 +12,8 @@ namespace PQT.Web.Infrastructure.Helpers
         public const int MaxHeightThumbnailUpload = 300;
         public const int MaxWidthUserAvatar = 200;
         public const int MaxHeightUserAvatar = 200;
+        public const int MaxWidthUserBackground = 1920;
+        public const int MaxHeightUserBackground = 1080;
         public static bool CreateImageHighQuality(string sOriginalPath, string sPhysicalPath, string sOrgFileName, string sTargetFileName, int maxHeight, int maxWidth)
         {
             try

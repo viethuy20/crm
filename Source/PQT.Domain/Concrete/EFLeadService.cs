@@ -55,5 +55,22 @@ namespace PQT.Domain.Concrete
         {
             return Create(info);
         }
+
+        public bool UpdatePhoneCall(PhoneCall info)
+        {
+            var exist = Get<PhoneCall>(info.ID);
+            if (exist != null)
+            {
+                exist.Remark = info.Remark;
+                exist.CallBackDate = info.CallBackDate;
+                return Update(exist);
+            }
+            return false;
+        }
+
+        public PhoneCall GetPhoneCall(int id)
+        {
+            return Get<PhoneCall>(id);
+        }
     }
 }

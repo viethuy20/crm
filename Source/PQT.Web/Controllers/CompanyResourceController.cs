@@ -6,8 +6,10 @@ using System.Web;
 using System.Web.Mvc;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
+using PQT.Domain.Enum;
 using PQT.Web.Infrastructure.Filters;
 using PQT.Web.Infrastructure.Helpers;
+using PQT.Web.Infrastructure.Utility;
 using PQT.Web.Models;
 
 namespace PQT.Web.Controllers
@@ -17,9 +19,11 @@ namespace PQT.Web.Controllers
         //
         // GET: /CompanyResource/
         private readonly ICompanyRepository _comRepo;
-        public CompanyResourceController(ICompanyRepository comRepo)
+        private readonly ILeadService _leadRepo;
+        public CompanyResourceController(ICompanyRepository comRepo, ILeadService leadRepo)
         {
             _comRepo = comRepo;
+            _leadRepo = leadRepo;
         }
         public ActionResult Index()
         {
@@ -159,6 +163,16 @@ namespace PQT.Web.Controllers
             return Json(json1, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public ActionResult Delete(int id)
+        {
+            if (_comRepo.DeleteCompanyResource(id))
+            {
+                return Json(true);
+            }
+            return Json(false);
+        }
+
         [AjaxOnly]
         public ActionResult ComfirmImport(string sessionName)
         {
@@ -204,7 +218,7 @@ namespace PQT.Web.Controllers
             {
                 if (!string.IsNullOrEmpty(searchValue))
                     audits = _comRepo.GetAllCompanyResources(m =>
-                        m.Country.ToLower().Contains(searchValue) ||
+                        (m.Country != null && m.Country.ToLower().Contains(searchValue)) ||
                         m.Organisation.ToLower().Contains(searchValue) ||
                         m.LastName.ToLower().Contains(searchValue) ||
                         m.FirstName.ToLower().Contains(searchValue) ||
@@ -325,5 +339,195 @@ namespace PQT.Web.Controllers
             };
             return Json(json, JsonRequestBehavior.AllowGet);
         }
+
+
+        [AjaxOnly]
+        public ActionResult AjaxGetCompanyResourceForCall(int eventId = 0)
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+
+            var comId = 0;
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("ComId") != null && !string.IsNullOrEmpty(Request.Form.GetValues("ComId").FirstOrDefault()))
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                comId = Convert.ToInt32(Request.Form.GetValues("ComId").FirstOrDefault());
+            }
+            var country = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Country") != null && !string.IsNullOrEmpty(Request.Form.GetValues("Country").FirstOrDefault()))
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                country = Request.Form.GetValues("Country").FirstOrDefault().Trim().ToLower();
+            }
+            var organisation = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Organisation") != null && Request.Form.GetValues("Organisation").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                organisation = Request.Form.GetValues("Organisation").FirstOrDefault().Trim().ToLower();
+            }
+            var role = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Role") != null && Request.Form.GetValues("Role").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                role = Request.Form.GetValues("Role").FirstOrDefault().Trim().ToLower();
+            }
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int page = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+
+            IEnumerable<CompanyResource> companyResources = new HashSet<CompanyResource>();
+            if (eventId > 0 && comId == 0)
+            {
+                var daysExpired = Settings.Lead.NumberDaysExpired();
+                var companiesInNcl = _leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
+                    m.UserID != CurrentUser.Identity.ID &&
+                    m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
+                    && !m.CheckNCLExpired(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
+                companyResources = _comRepo.GetAllCompanyResources().Where(m => m.CompanyID != null && !companiesInNcl.Contains((int)m.CompanyID));
+            }
+            else if (comId > 0)
+                companyResources = _comRepo.GetAllCompanyResources(m => m.CompanyID == comId);
+
+            Func<CompanyResource, bool> predicate = m =>
+                (string.IsNullOrEmpty(country) ||
+                 (!string.IsNullOrEmpty(m.Country) && m.Country.ToLower().Contains(country))) &&
+                (string.IsNullOrEmpty(organisation) ||
+                 (!string.IsNullOrEmpty(m.Organisation) && m.Organisation.ToLower().Contains(organisation))) &&
+                (string.IsNullOrEmpty(role) ||
+                 (!string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(role)));
+            companyResources = companyResources.Where(predicate);
+
+            #region sort
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "Country":
+                        companyResources = companyResources.OrderBy(s => s.Country).ThenBy(s => s.Organisation);
+                        break;
+                    case "Salutation":
+                        companyResources = companyResources.OrderBy(s => s.Salutation).ThenBy(s => s.Organisation);
+                        break;
+                    case "FirstName":
+                        companyResources = companyResources.OrderBy(s => s.FirstName).ThenBy(s => s.Organisation);
+                        break;
+                    case "LastName":
+                        companyResources = companyResources.OrderBy(s => s.LastName).ThenBy(s => s.Organisation);
+                        break;
+                    case "Organisation":
+                        companyResources = companyResources.OrderBy(s => s.Organisation).ThenBy(s => s.Organisation);
+                        break;
+                    case "Role":
+                        companyResources = companyResources.OrderBy(s => s.Role).ThenBy(s => s.Organisation);
+                        break;
+                    case "MobilePhone1":
+                        companyResources = companyResources.OrderBy(s => s.MobilePhone1).ThenBy(s => s.Organisation);
+                        break;
+                    case "MobilePhone2":
+                        companyResources = companyResources.OrderBy(s => s.MobilePhone2).ThenBy(s => s.Organisation);
+                        break;
+                    case "MobilePhone3":
+                        companyResources = companyResources.OrderBy(s => s.MobilePhone3).ThenBy(s => s.Organisation);
+                        break;
+                    case "WorkEmail":
+                        companyResources = companyResources.OrderBy(s => s.WorkEmail).ThenBy(s => s.Organisation);
+                        break;
+                    case "PersonalEmail":
+                        companyResources = companyResources.OrderBy(s => s.PersonalEmail).ThenBy(s => s.Organisation);
+                        break;
+                    default:
+                        companyResources = companyResources.OrderBy(s => s.ID).ThenBy(s => s.Organisation);
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "Country":
+                        companyResources = companyResources.OrderByDescending(s => s.Country).ThenBy(s => s.Organisation);
+                        break;
+                    case "Salutation":
+                        companyResources = companyResources.OrderByDescending(s => s.Salutation).ThenBy(s => s.Organisation);
+                        break;
+                    case "FirstName":
+                        companyResources = companyResources.OrderByDescending(s => s.FirstName).ThenBy(s => s.Organisation);
+                        break;
+                    case "LastName":
+                        companyResources = companyResources.OrderByDescending(s => s.LastName).ThenBy(s => s.Organisation);
+                        break;
+                    case "Organisation":
+                        companyResources = companyResources.OrderByDescending(s => s.Organisation).ThenBy(s => s.Organisation);
+                        break;
+                    case "Role":
+                        companyResources = companyResources.OrderByDescending(s => s.Role).ThenBy(s => s.Organisation);
+                        break;
+                    case "MobilePhone1":
+                        companyResources = companyResources.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.Organisation);
+                        break;
+                    case "MobilePhone2":
+                        companyResources = companyResources.OrderByDescending(s => s.MobilePhone2).ThenBy(s => s.Organisation);
+                        break;
+                    case "MobilePhone3":
+                        companyResources = companyResources.OrderByDescending(s => s.MobilePhone3).ThenBy(s => s.Organisation);
+                        break;
+                    case "WorkEmail":
+                        companyResources = companyResources.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.Organisation);
+                        break;
+                    case "PersonalEmail":
+                        companyResources = companyResources.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.Organisation);
+                        break;
+                    default:
+                        companyResources = companyResources.OrderByDescending(s => s.ID).ThenBy(s => s.Organisation);
+                        break;
+                }
+            }
+
+            #endregion sort
+
+            recordsTotal = companyResources.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            var data = companyResources.Skip(page).Take(pageSize).ToList();
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    m.ID,
+                    m.Country,
+                    m.Salutation,
+                    m.FirstName,
+                    m.LastName,
+                    m.Organisation,
+                    m.Role,
+                    m.MobilePhone1,
+                    m.MobilePhone2,
+                    m.MobilePhone3,
+                    m.WorkEmail,
+                    m.PersonalEmail,
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

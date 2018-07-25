@@ -19,5 +19,14 @@ namespace PQT.Domain.Entities
         public int LeadID { get; set; }
         [ForeignKey("LeadID")]
         public Lead Lead { get; set; }
+
+        public string RemarkHtml
+        {
+            get { return Remark != null ? Remark.Replace("\n", "</br>") : ""; }
+        }
+        public string CallBackDateStr
+        {
+            get { return CallBackDate != null ? Convert.ToDateTime(CallBackDate).ToString("dd/MM/yyyy") : ""; }
+        }
     }
 }

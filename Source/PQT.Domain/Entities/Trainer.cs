@@ -18,7 +18,8 @@ namespace PQT.Domain.Entities
         public string BusinessPhone { get; set; }
         public string MobilePhone { get; set; }
         public string Address { get; set; }
-        public string Fields { get; set; }
+        public string NearestInternationalAirport { get; set; }
+        public string AirportIATACode { get; set; }
         public string Picture { get; set; }
         public virtual ICollection<TrainerBank> TrainerBanks { get; set; }
     }

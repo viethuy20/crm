@@ -7,6 +7,7 @@ using System.Web;
 using NS;
 using PQT.Domain;
 using PQT.Domain.Abstract;
+using PQT.Domain.Concrete;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
 using PQT.Web.Infrastructure;
@@ -313,21 +314,13 @@ namespace PQT.Web.Models
         public string PersonalEmail { get; set; }
 
         public int? EstimatedDelegateNumber { get; set; }
-        public int BudgetMonth { get; set; }
+        public decimal? TrainingBudgetPerHead { get; set; }//USD
         public int GoodTrainingMonth { get; set; }
         public FollowUpStatus FirstFollowUpStatus { get; set; }
         public FinalStatus FinalStatus { get; set; }
         public string TopicsInterested { get; set; }
         public string LocationInterested { get; set; }
 
-        public string BudgetMonthStr
-        {
-            get
-            {
-                var monthEnum = Enumeration.FromValue<MonthStatus>(BudgetMonth.ToString());
-                return monthEnum != null ? monthEnum.ToString() : "";
-            }
-        }
         public string GoodTrainingMonthStr
         {
             get
@@ -336,7 +329,7 @@ namespace PQT.Web.Models
                 return monthEnum != null ? monthEnum.ToString() : "";
             }
         }
-
+        public string DialingCode { get; set; }
         public string TypeSubmit { get; set; }
         public PhoneCall PhoneCall { get; set; }
         public Lead Lead { get; set; }
@@ -348,8 +341,47 @@ namespace PQT.Web.Models
             FirstFollowUpStatus = FollowUpStatus.Pending;
             FinalStatus = FinalStatus.Pending;
         }
-        public CallingModel(int leadId)
+        public void PrepareCall(int eventId, int resourceId)
         {
+            EventID = eventId;
+            EventCompany = new EventCompany();
+            FirstFollowUpStatus = FollowUpStatus.Pending;
+            FinalStatus = FinalStatus.Pending;
+            PhoneCall = new PhoneCall();
+            var evetnRepo = DependencyHelper.GetService<IEventService>();
+            Event = evetnRepo.GetEvent(eventId);
+            if (resourceId > 0)
+            {
+                var comRepo = DependencyHelper.GetService<ICompanyRepository>();
+                var unitRepo = DependencyHelper.GetService<IUnitRepository>();
+                var resource = comRepo.GetCompanyResource(resourceId);
+                if (resource != null)
+                {
+                    JobTitle = resource.Role;
+                    CompanyName = resource.Organisation;
+                    Salutation = resource.Salutation;
+                    FirstName = resource.FirstName;
+                    LastName = resource.LastName;
+                    MobilePhone1 = resource.MobilePhone1;
+                    MobilePhone2 = resource.MobilePhone2;
+                    MobilePhone3 = resource.MobilePhone3;
+                    WorkEmail = resource.WorkEmail;
+                    PersonalEmail = resource.PersonalEmail;
+                    CompanyID = resource.CompanyID;
+                    if (resource.CountryID > 0)
+                    {
+                        var country = unitRepo.GetCountry((int)resource.CountryID);
+                        if (country != null)
+                        {
+                            DialingCode = country.DialingCode;
+                        }
+                    }
+                }
+            }
+        }
+        public void PrepareCalling(int leadId)
+        {
+
             EventCompany = new EventCompany();
             FirstFollowUpStatus = FollowUpStatus.Pending;
             FinalStatus = FinalStatus.Pending;
@@ -378,7 +410,7 @@ namespace PQT.Web.Models
                     WorkEmail1 = lead.WorkEmail1;
                     PersonalEmail = lead.PersonalEmail;
                     EstimatedDelegateNumber = lead.EstimatedDelegateNumber;
-                    BudgetMonth = lead.BudgetMonth;
+                    TrainingBudgetPerHead = lead.TrainingBudgetPerHead;
                     GoodTrainingMonth = lead.GoodTrainingMonth;
                     TopicsInterested = lead.TopicsInterested;
                     LocationInterested = lead.LocationInterested;
@@ -389,51 +421,6 @@ namespace PQT.Web.Models
                 }
             }
         }
-        public CallingModel(int eventId, int leadId)
-        {
-            EventID = eventId;
-            LeadID = leadId;
-            EventCompany = new EventCompany();
-            FirstFollowUpStatus = FollowUpStatus.Pending;
-            FinalStatus = FinalStatus.Pending;
-            PhoneCall = new PhoneCall();
-            var evetnRepo = DependencyHelper.GetService<IEventService>();
-            Event = evetnRepo.GetEvent(eventId);
-            if (leadId > 0)
-            {
-                var leadRepo = DependencyHelper.GetService<ILeadService>();
-                var lead = leadRepo.GetLead(leadId);
-                PhoneCall = new PhoneCall { LeadID = leadId };
-                if (lead != null)
-                {
-                    LeadID = leadId;
-                    //GeneralLine = lead.GeneralLine;
-                    JobTitle = lead.JobTitle;
-                    LineExtension = lead.LineExtension;
-                    DirectLine = lead.DirectLine;
-                    Salutation = lead.Salutation;
-                    FirstName = lead.FirstName;
-                    LastName = lead.LastName;
-                    MobilePhone1 = lead.MobilePhone1;
-                    MobilePhone2 = lead.MobilePhone2;
-                    MobilePhone3 = lead.MobilePhone3;
-                    WorkEmail = lead.WorkEmail;
-                    WorkEmail1 = lead.WorkEmail1;
-                    PersonalEmail = lead.PersonalEmail;
-                    EstimatedDelegateNumber = lead.EstimatedDelegateNumber;
-                    BudgetMonth = lead.BudgetMonth;
-                    GoodTrainingMonth = lead.GoodTrainingMonth;
-                    TopicsInterested = lead.TopicsInterested;
-                    LocationInterested = lead.LocationInterested;
-                    FinalStatus = lead.FinalStatus;
-                    FirstFollowUpStatus = lead.FirstFollowUpStatus;
-                    CompanyName = lead.CompanyName;
-                    CompanyID = lead.CompanyID;
-                    Lead = lead;
-                }
-            }
-        }
-
         //public void LoadCompanies(int eventId)
         //{
         //    var eventRepo = DependencyHelper.GetService<IEventService>();
@@ -477,7 +464,7 @@ namespace PQT.Web.Models
                     Lead.WorkEmail1 = WorkEmail1;
                     Lead.PersonalEmail = PersonalEmail;
                     Lead.EstimatedDelegateNumber = EstimatedDelegateNumber;
-                    Lead.BudgetMonth = BudgetMonth;
+                    Lead.TrainingBudgetPerHead = TrainingBudgetPerHead;
                     Lead.GoodTrainingMonth = GoodTrainingMonth;
                     Lead.TopicsInterested = TopicsInterested;
                     Lead.LocationInterested = LocationInterested;
@@ -514,7 +501,7 @@ namespace PQT.Web.Models
                     WorkEmail1 = WorkEmail1,
                     PersonalEmail = PersonalEmail,
                     EstimatedDelegateNumber = EstimatedDelegateNumber,
-                    BudgetMonth = BudgetMonth,
+                    TrainingBudgetPerHead = TrainingBudgetPerHead,
                     GoodTrainingMonth = GoodTrainingMonth,
                     TopicsInterested = TopicsInterested,
                     LocationInterested = LocationInterested,
@@ -569,7 +556,7 @@ namespace PQT.Web.Models
                     Lead.WorkEmail1 = WorkEmail1;
                     Lead.PersonalEmail = PersonalEmail;
                     Lead.EstimatedDelegateNumber = EstimatedDelegateNumber;
-                    Lead.BudgetMonth = BudgetMonth;
+                    Lead.TrainingBudgetPerHead = TrainingBudgetPerHead;
                     Lead.GoodTrainingMonth = GoodTrainingMonth;
                     Lead.TopicsInterested = TopicsInterested;
                     Lead.LocationInterested = LocationInterested;

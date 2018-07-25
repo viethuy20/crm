@@ -1,10 +1,16 @@
-﻿@using PQT.Domain.Entities
+﻿@using System.Globalization
+@using NS.Mvc
+@using PQT.Domain.Abstract
+@using PQT.Domain.Entities
 @using PQT.Domain.Enum
 @using PQT.Web.Models
 @using Resources
 @model PQT.Web.Models.CreateUserModel
 @{
     ViewBag.Title = Resource.CreateUser;
+    var unitService = DependencyHelper.GetService<IUnitRepository>();
+    var officeLocations = unitService.GetAllOfficeLocations();
+    var countries = Model.GetAllCountries();
 }
 
 <section>
@@ -30,69 +36,109 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().PasswordFor(m => m.Password).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.Password).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Password).LabelText("Password").ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().PasswordFor(m => m.ConfirmPassword).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.ConfirmPassword).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.ConfirmPassword).LabelText("Retype password").ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.BusinessPhone).LabelText("Business Phone")
+                            @Html.Bootstrap().LabelFor(m => m.BusinessPhone)
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.MobilePhone).LabelText("Mobile Phone")
+                            @Html.Bootstrap().LabelFor(m => m.MobilePhone)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.PersonalEmail)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.PassportID).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.PassportID).LabelText("Passport/ID")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.DatePickerFor(m => m.DateOfBirth, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.DateOfBirth)
+                            @Html.Bootstrap().LabelFor(m => m.DateOfBirth)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().DropDownListFor(m => m.Nationality, countries.ToSelectList(m => m, m => m)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Nationality)
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().DropDownListFor(m => m.BusinessDevelopmentUnit, EnumerationHelper.ToSelectList<BusinessDevelopmentUnit>()).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().DropDownListFor(m => m.BusinessDevelopmentUnit, EnumerationHelper.ToSelectList<BusinessDevelopmentUnit>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.BusinessDevelopmentUnit)
                         </div>
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.BasicSalary).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.BasicSalary).LabelText("Basic Salary")
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            @Html.Bootstrap().DropDownListFor(m => m.SalesManagementUnit, EnumerationHelper.ToSelectList<SalesManagementUnit>()).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.SalesManagementUnit)
-                        </div>
-                        <div class="form-group">
-                            @Html.Bootstrap().DropDownListFor(m => m.SalesSupervision, EnumerationHelper.ToSelectList<SalesSupervision>()).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().DropDownListFor(m => m.SalesSupervision, EnumerationHelper.ToSelectList<SalesSupervision>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.SalesSupervision).LabelText("Sales Supervision & Planning Unit")
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.DatePickerFor(m => m.DateOfStarting, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.DateOfStarting)
-                            @Html.Bootstrap().LabelFor(m => m.DateOfStarting).LabelText("Date Of Starting")
+                            @Html.Bootstrap().DropDownListFor(m => m.SalesManagementUnit, EnumerationHelper.ToSelectList<SalesManagementUnit>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.SalesManagementUnit)
                         </div>
                         <div class="form-group">
-                            @Html.DatePickerFor(m => m.DateOfContract, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.DateOfContract)
-                            @Html.Bootstrap().LabelFor(m => m.DateOfContract).LabelText("Date Of Contract")
+                            @Html.Bootstrap().TextBoxFor(m => m.BasicSalary).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.BasicSalary)
                         </div>
                     </div>
                     <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.DatePickerFor(m => m.EmploymentDate, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.EmploymentDate)
+                            @Html.Bootstrap().LabelFor(m => m.EmploymentDate)
+                        </div>
+                        <div class="form-group">
+                            @Html.DatePickerFor(m => m.EmploymentEndDate, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.EmploymentEndDate)
+                            @Html.Bootstrap().LabelFor(m => m.EmploymentEndDate)
+                        </div>
+                        <div class="form-group">
+                            @Html.DatePickerFor(m => m.FirstEvaluationDate, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.FirstEvaluationDate)
+                            @Html.Bootstrap().LabelFor(m => m.FirstEvaluationDate)
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().DropDownListFor(m => m.OfficeLocationID, officeLocations.ToSelectList(m => m.ID, m => m.Name)).Class("form-control").OptionLabel("").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.OfficeLocationID).LabelText("Office Location")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().DropDownListFor(m => m.SalaryCurrency, EnumerationHelper.ToSelectList<SalaryCurrency>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.SalaryCurrency)
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().DropDownListFor(m => m.UserStatus, EnumerationHelper.ToSelectList<UserStatus>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.UserStatus)
+                        </div>
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Extension).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Extension).LabelText("Extension")
                         </div>
-                    </div>
-                    <div class="col-sm-6">
                     </div>
                 </div>
                 <div class="row">

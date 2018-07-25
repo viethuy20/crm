@@ -206,7 +206,7 @@ namespace PQT.Web.Controllers
                             m.PersonalEmail,
                             m.WorkEmail,
                             m.EstimatedDelegateNumber,
-                            m.BudgetMonth,
+                            m.TrainingBudgetPerHead,
                             m.GoodTrainingMonth,
                             m.TopicsInterested,
                             m.LocationInterested,
@@ -240,7 +240,7 @@ namespace PQT.Web.Controllers
                     m.PersonalEmail,
                     m.WorkEmail,
                     m.EstimatedDelegateNumber,
-                    m.BudgetMonth,
+                    m.TrainingBudgetPerHead,
                     m.GoodTrainingMonth,
                     m.TopicsInterested,
                     m.LocationInterested,
@@ -433,8 +433,8 @@ namespace PQT.Web.Controllers
                     case "EstimatedDelegateNumber":
                         leads = leads.OrderBy(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
                         break;
-                    case "BudgetMonth":
-                        leads = leads.OrderBy(s => s.BudgetMonth).ThenBy(s => s.ID);
+                    case "TrainingBudgetPerHead":
+                        leads = leads.OrderBy(s => s.TrainingBudgetPerHead).ThenBy(s => s.ID);
                         break;
                     case "GoodTrainingMonth":
                         leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
@@ -502,8 +502,8 @@ namespace PQT.Web.Controllers
                     case "EstimatedDelegateNumber":
                         leads = leads.OrderByDescending(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
                         break;
-                    case "BudgetMonth":
-                        leads = leads.OrderByDescending(s => s.BudgetMonth).ThenBy(s => s.ID);
+                    case "TrainingBudgetPerHead":
+                        leads = leads.OrderByDescending(s => s.TrainingBudgetPerHead).ThenBy(s => s.ID);
                         break;
                     case "GoodTrainingMonth":
                         leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
@@ -556,7 +556,7 @@ namespace PQT.Web.Controllers
                     m.PersonalEmail,
                     m.WorkEmail,
                     m.EstimatedDelegateNumber,
-                    m.BudgetMonth,
+                    m.TrainingBudgetPerHead,
                     m.GoodTrainingMonth,
                     m.TopicsInterested,
                     m.LocationInterested,

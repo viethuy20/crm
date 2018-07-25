@@ -15,7 +15,6 @@ namespace PQT.Web.Validation
             RuleFor(m => m.JobTitle).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.DirectLine).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.WorkEmail).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(m => m.BudgetMonth).GreaterThan(0).WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.GoodTrainingMonth).GreaterThan(0).WithMessage(Resource.TheFieldShouldNotBeEmpty);
         }
     }

@@ -22,6 +22,8 @@ namespace PQT.Web.Models
         public List<int> SessionIds { get; set; }
         //public IEnumerable<Company> Companies { get; set; }
         public HttpPostedFileBase AttachmentFile { get; set; }
+        public HttpPostedFileBase ProofOfPaymentFile { get; set; }
+        public HttpPostedFileBase LetterOfUnderstakingFile { get; set; }
 
         public int EventID { get; set; }
         public int BookingID { get; set; }
@@ -102,6 +104,16 @@ namespace PQT.Web.Models
                 string uploadPicture = FileUpload.Upload(FileUploadType.Booking, AttachmentFile);
                 Booking.Attachment = uploadPicture;
             }
+            if (ProofOfPaymentFile != null)
+            {
+                string uploadPicture = FileUpload.Upload(FileUploadType.Booking, ProofOfPaymentFile);
+                Booking.ProofOfPayment = uploadPicture;
+            }
+            if (LetterOfUnderstakingFile != null)
+            {
+                string uploadPicture = FileUpload.Upload(FileUploadType.Booking, LetterOfUnderstakingFile);
+                Booking.LetterOfUnderstaking = uploadPicture;
+            }
             Booking = bookingService.CreateBooking(Booking, SessionIds, CurrentUser.Identity.ID);
             return Booking;
         }
@@ -114,14 +126,24 @@ namespace PQT.Web.Models
             {
                 throw new ObjectAlreadyExistsException("Booking does not exist");
             }
-            //if (!CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel) && booking.BookingStatusRecord == BookingStatus.Approved)
-            //{
-            //    throw new ObjectAlreadyExistsException("Cannot modify... Booking has been approved. Please contact to manager");
-            //}
+            if (!CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel) && booking.BookingStatusRecord == BookingStatus.Approved)
+            {
+                throw new ObjectAlreadyExistsException("Cannot modify... Booking has been approved. Please contact to manager");
+            }
             if (AttachmentFile != null)
             {
                 string uploadPicture = FileUpload.Upload(FileUploadType.Booking, AttachmentFile);
                 Booking.Attachment = uploadPicture;
+            }
+            if (ProofOfPaymentFile != null)
+            {
+                string uploadPicture = FileUpload.Upload(FileUploadType.Booking, ProofOfPaymentFile);
+                Booking.ProofOfPayment = uploadPicture;
+            }
+            if (LetterOfUnderstakingFile != null)
+            {
+                string uploadPicture = FileUpload.Upload(FileUploadType.Booking, LetterOfUnderstakingFile);
+                Booking.LetterOfUnderstaking = uploadPicture;
             }
             return bookingService.UpdateBooking(Booking, SessionIds, CurrentUser.Identity.ID);
         }

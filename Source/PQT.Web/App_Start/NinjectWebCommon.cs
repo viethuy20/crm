@@ -115,6 +115,7 @@ namespace PQT.Web
             kernel.Bind<IValidator<Lead>>().To<LeadValidator>();
             kernel.Bind<IValidator<PhoneCall>>().To<PhoneCallValidator>();
             kernel.Bind<IValidator<Booking>>().To<BookingValidator>();
+            kernel.Bind<IValidator<OfficeLocation>>().To<OfficeLocationValidator>();
             kernel.Bind<IValidator<Domain.Entities.Delegate>>().To<DelegateValidator>();
             // cache configurations.
             kernel.Bind<ICacheStorageLocation>().To<RequestCacheSolution>().Named("InRequest");

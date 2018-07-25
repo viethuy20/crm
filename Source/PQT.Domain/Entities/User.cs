@@ -14,7 +14,8 @@ namespace PQT.Domain.Entities
         {
             Roles = new HashSet<Role>();
             Status = EntityStatus.Normal;
-            UserSalaryHistories= new HashSet<UserSalaryHistory>();
+            UserStatus = UserStatus.Live;
+            UserSalaryHistories = new HashSet<UserSalaryHistory>();
 
             BusinessDevelopmentUnit = BusinessDevelopmentUnit.None;
             SalesManagementUnit = SalesManagementUnit.None;
@@ -28,26 +29,44 @@ namespace PQT.Domain.Entities
         public string Email { get; set; }
         public string BusinessPhone { get; set; }
         public string MobilePhone { get; set; }
+        public string PersonalEmail { get; set; }
+        public string PassportID { get; set; }//Passport or ID
         public string Picture { get; set; }
+        public string Background { get; set; }
+        public DateTime? DateOfBirth { get; set; }
         public DateTime? LastAccess { get; set; }
         public string Address { get; set; }
+        public string Nationality { get; set; }
         public EntityStatus Status { get; set; }
-
+        public UserStatus UserStatus { get; set; }
+        public SalaryCurrency SalaryCurrency { get; set; }
         public int? TransferUserID { get; set; }
-        [ForeignKey("TransferUserID")]
-        public virtual User TransferUser { get; set; }
+        //[ForeignKey("TransferUserID")]
+        //public User TransferUser { get; set; }
 
         public int NotifyNumber { get; set; }
         public BusinessDevelopmentUnit BusinessDevelopmentUnit { get; set; }
         public SalesManagementUnit SalesManagementUnit { get; set; }
         public SalesSupervision SalesSupervision { get; set; }
-        public DateTime? DateOfContract { get; set; }
-        public DateTime? DateOfStarting { get; set; }
+        public DateTime? EmploymentEndDate { get; set; }
+        public DateTime? EmploymentDate { get; set; }
+        public DateTime? FirstEvaluationDate { get; set; } //First Evaluation Date tu dong tinh la last day of 03 months from Employment Date
         public decimal? BasicSalary { get; set; }
         public ICollection<UserSalaryHistory> UserSalaryHistories { get; set; }
 
         public string Ip { get; set; }
         public string Extension { get; set; }//private number for employees
+
+        public int? DirectSupervisorID { get; set; }
+        //[ForeignKey("DirectSupervisorID")]
+        //public User DirectSupervisor { get; set; }
+
+        public int? OfficeLocationID { get; set; }
+        [ForeignKey("OfficeLocationID")]
+        public OfficeLocation OfficeLocation { get; set; }
+
+
+
         #endregion
 
         #region Navigation properties
@@ -71,6 +90,17 @@ namespace PQT.Domain.Entities
                     return "/content/img/profile.png";
                 }
                 return "/data/user_img/" + ID + "/" + Picture;
+            }
+        }
+        public string BackgroundUrl
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Background))
+                {
+                    return "/content/img/no-image.png";
+                }
+                return "/data/user_img/" + ID + "/" + Background;
             }
         }
         #endregion

@@ -89,74 +89,6 @@
                     </div>
                 </div>
             </div>
-            <div class=" col-sm-12">
-                <div class="card card-underline">
-                    <div class="card-head">
-                        <header>Delegates</header>
-                    </div>
-                    <div class="card-body text-default-light" id="delegateContain">
-                        @{
-                            var current = 1;
-                        }
-                        @foreach (var item in Model.Booking.Delegates)
-                        {
-                            <div class="delegateItem col-sm-6">
-                                <div style="border: 1px solid #e1e1e1;padding: 20px;margin-bottom: 10px;">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="form-group">
-                                                @Html.Bootstrap().TextBox("Delegate" + item.ID).Value(item.Name).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                <label>Delegate @current</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                @Html.Bootstrap().TextBox("Designation" + item.ID).Value(item.Designation).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                <label>Designation</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                @Html.Bootstrap().TextBox("Mail" + item.ID).Value(item.Mail).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                <label>Mail</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                @Html.Bootstrap().TextBox("LandLine" + item.ID).Value(item.LandLine).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                <label>Land Line</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                @Html.Bootstrap().TextBox("Mobile1_" + item.ID).Value(item.Mobile1).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                <label>Mobile 1</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                @Html.Bootstrap().TextBox("Mobile2_" + item.ID).Value(item.Mobile2).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                <label>Mobile 2</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                @Html.Bootstrap().TextBox("Mobile3_" + item.ID).Value(item.Mobile3).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                <label>Mobile 3</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            current++;
-                        }
-                    </div>
-                </div>
-            </div>
             <div class=" col-sm-6">
                 <div class="card card-underline">
                     <div class="card-head">
@@ -197,8 +129,8 @@
                             @Html.Bootstrap().LabelFor(m => m.Booking.DiscountPercent)
                         </div>
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Booking.RevenueAmount).Disabled().Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Booking.RevenueAmount)
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.TotalWrittenRevenue).Disabled().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.TotalWrittenRevenue)
                         </div>
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Booking.TotalPaidRevenue).Disabled().Class("form-control").ShowValidationMessage(true)
@@ -224,6 +156,7 @@
         </div><!--end .card-body -->
         <div class="card-actionbar">
             <div class="card-actionbar-row">
+                <a href="@Url.Action("Detail", new { id = @Model.Booking.ID, leadId = @Model.Booking.LeadID, eventId = @Model.Booking.EventID })" class="btn btn-default"><i class="fa fa-eye"></i> Detail</a>
                 @if (Model.Booking.BookingStatusRecord.Status != BookingStatus.Deleted)
                 {
                     if (CurrentUser.HasPermission("Booking", "Edit"))

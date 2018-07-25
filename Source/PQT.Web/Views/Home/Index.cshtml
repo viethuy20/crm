@@ -45,7 +45,7 @@
     }
 
     .notify_panel {
-        height: calc(100vh - 320px);
+        height: calc(100vh - 351px);
         overflow-y: auto;
     }
 
@@ -90,7 +90,7 @@
         color: #31708f;
     }
 </style>
-<section style="padding: 5px;">
+<section style="@(CurrentUser.Identity.Background != null?"background: url("+CurrentUser.Identity.BackgroundUrl+ ") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;" : "")">
     <div class="section-body" style="margin-top: 12px;margin-right: 12px;">
         <div style="display: flex;overflow-x:auto">
             @foreach (var item in Model.Events)
@@ -102,7 +102,7 @@
                             <div class="alert no-margin event-header" style="background: @item.BackgroundColor;">
                                 @*<strong class="pull-right text-success text-lg">0,38% <i class="md md-trending-up"></i></strong>*@
                                 <strong class="text-xl">@item.EventName</strong><br />
-                                Sales Date: @item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
+                                Event Dates: @item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
                                 <br/>
                                 DOC: @item.DateOfConfirmationStr - Closing Date: @item.ClosingDateStr
                                 @if (CurrentUser.HasRole("Finance"))

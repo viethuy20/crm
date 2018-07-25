@@ -7,14 +7,7 @@
     ViewBag.Title = "Start Call";
 }
 <style>
-    #crtable tbody tr {
-        cursor: pointer;
-    }
-
-        #crtable tbody tr:hover {
-            background-color: #f2f2f2;
-        }
-
+    
 
     #grid_companies tbody tr {
         cursor: pointer;
@@ -55,7 +48,7 @@
         <div class="col-md-12">
             <div class="card  card-underline">
                 <div class="card-head">
-                    <header><span class="text-primary"><i class="fa fa-fw fa-phone"></i> @ViewBag.Title</span> - <span style="font-size: 18px;"><b>@Model.Event.EventName (@Model.Event.EventCode)</b> - Sales Date: <b>@Model.Event.StartDate.ToString("dd/MM/yy")</b> - <b>@Model.Event.EndDate.ToString("dd/MM/yy")</b></span></header>
+                    <header><span class="text-primary"><i class="fa fa-fw fa-phone"></i> @ViewBag.Title</span> - <span style="font-size: 18px;"><b>@Model.Event.EventName (@Model.Event.EventCode)</b> - Event Dates: <b>@Model.Event.StartDate.ToString("dd/MM/yy")</b> - <b>@Model.Event.EndDate.ToString("dd/MM/yy")</b></span></header>
                 </div><!--end .card-head -->
                 <div class="card-body">
                     <div id="rootwizard2" class="form-wizard form-wizard-horizontal">
@@ -80,17 +73,17 @@
                                                 </header>
                                             </div>
                                             <div class="card-body">
-                                                <div class="row">
+                                                <div class="row table-responsive">
                                                     <table class="table no-margin" id="grid_companies">
                                                         <thead>
-                                                        <tr>
-                                                            <th></th>
-                                                            <th>Country</th>
-                                                            <th>Company</th>
-                                                            <th>Product/Service</th>
-                                                            <th>Sector</th>
-                                                            <th>Industry</th>
-                                                        </tr>
+                                                            <tr>
+                                                                <th></th>
+                                                                <th>Country</th>
+                                                                <th>Company</th>
+                                                                <th>Product/Service</th>
+                                                                <th>Sector</th>
+                                                                <th>Industry</th>
+                                                            </tr>
                                                         </thead>
                                                     </table>
                                                 </div>
@@ -103,8 +96,8 @@
                                                 <header><b>Company Resources</b></header>
                                             </div><!--end .card-head -->
                                             <div class="form">
-                                                <div class="card-body companies_resources_content">
-
+                                                <div class="card-body ">
+                                                    @Html.Partial("_CompanyResourceList", 0)
                                                 </div>
                                             </div>
                                         </div><!--end .card -->
@@ -130,7 +123,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12" >
+        <div class="col-md-12">
             @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").RouteValues(new { id = Model.EventID }).PrependIcon("md md-arrow-back")
         </div>
     </div>
@@ -138,9 +131,10 @@
 @Html.Script(
     @<script>
 
-         var company_id_selected = $("@Html.JquerySelectorFor(m=>m.CompanyID)");
+            var company_id_selected = $("@Html.JquerySelectorFor(m=>m.CompanyID)");
+            company_id_selected_val = company_id_selected.val();
          var company_name_selected = $("@Html.JquerySelectorFor(m=>m.CompanyName)");
-         var company_dialingCode_selected = "";
+         var company_dialingCode_selected = '@Model.DialingCode';
          var tableCompanies = $("#grid_companies").DataTable({
              "processing": true, // for show progress bar
              "serverSide": true, // for process server side
@@ -187,6 +181,10 @@
                  $(nRow).find('input[type="checkbox"]').val(rowId);
                  $(nRow).attr('data-id', rowId);
                  $(nRow).addClass('Tier' + aData["Tier"]);
+                 if (company_id_selected_val == rowId) {
+                     $(nRow).find('input[type="checkbox"]').prop('checked', true);
+                     $(nRow).addClass('selected');
+                 }
              },
              initComplete: function() {
                  var _table = this;
@@ -222,7 +220,7 @@
              var data = $table.row($row).data();
 
              var allRowSelected = $("#grid_companies tr.selected");
-             allRowSelected.each(function (index, item) {
+             allRowSelected.each(function(index, item) {
                  $(item).find('input[type="checkbox"]').trigger('click');
              });
 
@@ -235,12 +233,14 @@
              // If checkbox is checked and row ID is not in list of selected row IDs
              if ($this.checked) {
                  company_id_selected.val(rowId);
+                 company_id_selected_val = rowId;
                  company_name_selected.val(rowCompanyName);
                  company_dialingCode_selected = rowDialingCode;
                  LoadCompanyResources();
                  // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
              } else if (!$this.checked) {
                  company_id_selected.val(0);
+                 company_id_selected_val = 0;
                  company_name_selected.val("");
                  company_dialingCode_selected = "";
                  ClearDataSelected();
@@ -272,7 +272,10 @@
 
 
          function LoadCompanyResources() {
-             if (company_id_selected.val() > 0) {
+             if (company_id_selected_val >= 0) {
+                 comResourceTable.fnFilter('');
+             }
+             @*if (company_id_selected.val() > 0) {
                  $.ajax({
                      url: '@Url.Action("CompanyResourceList")?companyID=' + company_id_selected.val(),
                      type: 'POST',
@@ -289,7 +292,7 @@
                  });
              } else {
                  $(".companies_resources_content").html("");
-             }
+             }*@
          }
     </script>)
 
@@ -305,12 +308,6 @@
                      $(".finish").removeClass("hide");
                      LoadEventCompanyInfo();
 
-                     var dialingCodes = $('.dialingCode');
-                     dialingCodes.each(function (index, item) {
-                         if ($(item).val() == "") {
-                             $('.dialingCode').val(company_dialingCode_selected);
-                         }
-                     });
 
                      StartTick();
                  } else {
@@ -347,7 +344,7 @@
             $("@Html.JquerySelectorFor(m => m.JobTitle)").val("");
             $("@Html.JquerySelectorFor(m => m.LineExtension)").val("");
             $("@Html.JquerySelectorFor(m => m.DirectLine)").val("");
-            $("@Html.JquerySelectorFor(m => m.Salutation)").val("");
+            $("@Html.JquerySelectorFor(m => m.Salutation)").val("").trigger("change");
             $("@Html.JquerySelectorFor(m => m.FirstName)").val("");
             $("@Html.JquerySelectorFor(m => m.LastName)").val("");
             $("@Html.JquerySelectorFor(m => m.MobilePhone1)").val("");
@@ -368,13 +365,14 @@
          $(document).on('click', '#crtable tbody tr', function () {
 
              $("@Html.JquerySelectorFor(m => m.JobTitle)").val($(this).data("role"));
-             $("@Html.JquerySelectorFor(m => m.DirectLine)").val($(this).data("mobilephone"));
-             @*$("@Html.JquerySelectorFor(m => m.GeneralLine)").val($(this).data("businessphone"));*@
-             $("@Html.JquerySelectorFor(m => m.Salutation)").val($(this).data("salutation"));
+             @*$("@Html.JquerySelectorFor(m => m.DirectLine)").val($(this).data("mobilephone1"));
+             $("@Html.JquerySelectorFor(m => m.GeneralLine)").val($(this).data("businessphone"));*@
+             $("@Html.JquerySelectorFor(m => m.Salutation)").val($(this).data("salutation").toUpperCase()).trigger("change");
              $("@Html.JquerySelectorFor(m => m.FirstName)").val($(this).data("firstname"));
              $("@Html.JquerySelectorFor(m => m.LastName)").val($(this).data("lastname"));
-             $("@Html.JquerySelectorFor(m => m.MobilePhone1)").val($(this).data("businessphone"));
-             $("@Html.JquerySelectorFor(m => m.MobilePhone2)").val($(this).data("mobilephone"));
+             $("@Html.JquerySelectorFor(m => m.MobilePhone1)").val($(this).data("mobilephone1"));
+             $("@Html.JquerySelectorFor(m => m.MobilePhone2)").val($(this).data("mobilephone2"));
+             $("@Html.JquerySelectorFor(m => m.MobilePhone3)").val($(this).data("mobilephone3"));
              $("@Html.JquerySelectorFor(m => m.WorkEmail)").val($(this).data("workemail"));
              $("@Html.JquerySelectorFor(m => m.PersonalEmail)").val($(this).data("personalemail"));
 
@@ -382,21 +380,26 @@
              //    StartTick();
              //}
 
+             addDialingCode();
+
+             wizard.bootstrapWizard('next');
+         });
+
+         addDialingCode();
+         function addDialingCode() {
+             if (company_dialingCode_selected == "") return;
              var dialingCodes = $('.dialingCode');
              dialingCodes.each(function (index, item) {
                  if ($(item).val() == "") {
                      $('.dialingCode').val(company_dialingCode_selected);
                  }
              });
-
-             
-             wizard.bootstrapWizard('next');
-         });
+         }
 
          function LoadEventCompanyInfo() {
-             if (company_id_selected.val() > 0) {
+             if (company_id_selected_val > 0) {
                  $.ajax({
-                     url: '@Url.Action("EventCompanyInfo")?eventId=@Model.EventID&companyID=' + company_id_selected.val(),
+                     url: '@Url.Action("EventCompanyInfo")?eventId=@Model.EventID&companyID=' + company_id_selected_val,
                      type: 'POST',
                      success: function (data) {
                          SetEventCompanyInfo(data);
@@ -417,11 +420,12 @@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val(data.FirstFollowUpStatus);
                 $("@Html.JquerySelectorFor(m => m.EventCompany.FinalStatus)").val(data.FinalStatus);
                 $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val(data.DateNextFollowUp);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
                 $("@Html.JquerySelectorFor(m => m.EventCompany.GoodTrainingMonth)").val(data.GoodTrainingMonth);
                 $("@Html.JquerySelectorFor(m => m.EventCompany.TopicsInterested)").val(data.TopicsInterested);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val(data.LocationInterested);*@
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val(data.TrainingBudget);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val(data.LocationInterested);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val(data.TrainingBudget);*@
+                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
                 $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val(data.Remarks);
             } else {
                 $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(0);
@@ -429,13 +433,19 @@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val('');
                 $("@Html.JquerySelectorFor(m => m.EventCompany.FinalStatus)").val('');
                 $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val('');
+                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val('').trigger("change");
                 $("@Html.JquerySelectorFor(m => m.EventCompany.GoodTrainingMonth)").val('');
                 $("@Html.JquerySelectorFor(m => m.EventCompany.TopicsInterested)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val('');*@
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val('');
+                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val('');
+                $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val('');*@
+                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val('').trigger("change");
                 $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val('');
             }
+         }
+
+
+        if (company_id_selected_val > 0) {
+            wizard.bootstrapWizard('next');
         }
     </script>
         )
