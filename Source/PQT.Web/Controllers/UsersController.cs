@@ -51,6 +51,7 @@ namespace PQT.Web.Controllers
             {
                 UserRoles = new List<int>(),
                 Roles = _roleService.GetAllRoles(),
+                Supervisors = _membershipService.GetUsersInRoleLevel(RoleLevel.ManagerLevel)
             };
             return View(model);
         }
@@ -67,6 +68,7 @@ namespace PQT.Web.Controllers
             {
                 model.UserRoles = userRoles.ToList();
                 model.Roles = _roleService.GetAllRoles();
+                model.Supervisors = _membershipService.GetUsersInRoleLevel(RoleLevel.ManagerLevel);
                 return View(model);
             }
             var user = new User
@@ -108,6 +110,7 @@ namespace PQT.Web.Controllers
             var model = new EditUserModel(user)
             {
                 Roles = _roleService.GetAllRoles(),
+                Supervisors = _membershipService.GetUsersInRoleLevel(RoleLevel.ManagerLevel)
             };
             return View(model);
         }
@@ -130,6 +133,7 @@ namespace PQT.Web.Controllers
                 //var oldUser = _membershipService.GetUser(model.ID);
                 model.UserRoles = _roleService.GetAllRoles().Where(m => userRoles.Contains(m.ID));
                 model.Roles = _roleService.GetAllRoles();
+                model.Supervisors = _membershipService.GetUsersInRoleLevel(RoleLevel.ManagerLevel);
                 return View(model);
             }
 
@@ -266,7 +270,7 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 Func<User, bool> predicate = m =>
-                m.Status == EntityStatus.Normal && 
+                m.Status == EntityStatus.Normal &&
                     (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID)) &&
                     ((m.DisplayName.ToLower().Contains(searchValue)) ||
                      (m.Email != null && m.Email.ToLower().Contains(searchValue)) ||

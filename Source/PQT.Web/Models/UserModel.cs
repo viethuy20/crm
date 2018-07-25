@@ -22,6 +22,7 @@ namespace PQT.Web.Models
         }
         public List<int> UserRoles { get; set; }
         public IEnumerable<Role> Roles { get; set; }
+        public IEnumerable<User> Supervisors { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string DisplayName { get; set; }
@@ -132,6 +133,7 @@ namespace PQT.Web.Models
             }
         }
 
+        public IEnumerable<User> Supervisors { get; set; }
         public IEnumerable<Role> UserRoles { get; set; }
         public IEnumerable<Role> Roles { get; set; }
         public List<int> SelectedRoles { get; set; }

@@ -152,6 +152,12 @@
                             @Html.Bootstrap().LabelFor(m => m.Extension).LabelText("Extension")
                         </div>
                     </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().DropDownListFor(m => m.DirectSupervisorID, Model.Supervisors.ToSelectList(m => m.ID, m => m.DisplayName)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.DirectSupervisorID).LabelText("Direct Supervisor")
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">

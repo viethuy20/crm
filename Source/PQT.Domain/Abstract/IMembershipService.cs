@@ -20,6 +20,7 @@ namespace PQT.Domain.Abstract
         bool UpdateUser(User userInfo);
         bool DeleteUser(int id);
         IEnumerable<User> GetUsersInRole(params string[] roleName);
+        IEnumerable<User> GetUsersInRoleLevel(params string[] roleName);
         EmailSetting GetEmailTemplate(string type, string nameTemplate);
 
         bool ReActiveUser(int id);

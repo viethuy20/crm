@@ -231,6 +231,17 @@ namespace PQT.Domain.Concrete
                     Roles = u.Roles.Select(r => r.Permissions),
                 }).AsEnumerable();
         }
+        public IEnumerable<User> GetUsersInRoleLevel(params string[] roleName)
+        {
+            return GetAll<User>(u => u.Roles
+                    .Select(r => r.RoleLevel.Value)
+                    .Intersect(roleName.Select(r1 => r1.ToUpper()))
+                    .Any(),
+                u => new
+                {
+                    Roles = u.Roles.Select(r => r.Permissions),
+                }).AsEnumerable();
+        }
 
         #endregion
 
