@@ -206,6 +206,10 @@
                         {
                             @: - <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)" target="_blank" style="font-size: 16px;margin-left: 5px;" title="Download Brochure"><i class="fa fa-download"></i> Brochure</a>
                         }
+                        @if (!string.IsNullOrEmpty(Model.Event.RegContract))
+                        {
+                            @: - <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.RegContract)" target="_blank" style="font-size: 16px;margin-left: 5px;" title="Download Reg Contract"><i class="fa fa-download"></i> Reg Contract</a>
+                        }
                     </header>
                 </div><!--end .card-head -->
                 <div class="card-body">

@@ -51,7 +51,7 @@ namespace PQT.Web.Controllers
             {
                 UserRoles = new List<int>(),
                 Roles = _roleService.GetAllRoles(),
-                Supervisors = _membershipService.GetUsersInRoleLevel(RoleLevel.ManagerLevel)
+                Supervisors = _membershipService.GetUsers(m => m.SalesManagementUnit != SalesManagementUnit.None)
             };
             return View(model);
         }
@@ -68,7 +68,7 @@ namespace PQT.Web.Controllers
             {
                 model.UserRoles = userRoles.ToList();
                 model.Roles = _roleService.GetAllRoles();
-                model.Supervisors = _membershipService.GetUsersInRoleLevel(RoleLevel.ManagerLevel);
+                model.Supervisors = _membershipService.GetUsers(m => m.SalesManagementUnit != SalesManagementUnit.None);
                 return View(model);
             }
             var user = new User
@@ -110,7 +110,7 @@ namespace PQT.Web.Controllers
             var model = new EditUserModel(user)
             {
                 Roles = _roleService.GetAllRoles(),
-                Supervisors = _membershipService.GetUsersInRoleLevel(RoleLevel.ManagerLevel)
+                Supervisors = _membershipService.GetUsers(m=>m.SalesManagementUnit != SalesManagementUnit.None)
             };
             return View(model);
         }
@@ -133,7 +133,7 @@ namespace PQT.Web.Controllers
                 //var oldUser = _membershipService.GetUser(model.ID);
                 model.UserRoles = _roleService.GetAllRoles().Where(m => userRoles.Contains(m.ID));
                 model.Roles = _roleService.GetAllRoles();
-                model.Supervisors = _membershipService.GetUsersInRoleLevel(RoleLevel.ManagerLevel);
+                model.Supervisors = _membershipService.GetUsers(m => m.SalesManagementUnit != SalesManagementUnit.None);
                 return View(model);
             }
 
@@ -175,10 +175,10 @@ namespace PQT.Web.Controllers
             user.BasicSalary = model.BasicSalary;
             user.Extension = model.Extension;
             user.OfficeLocationID = model.OfficeLocationID;
-            if (!string.IsNullOrEmpty(model.Password))
-            {
-                user.Password = EncryptHelper.EncryptPassword(model.Password);
-            }
+            //if (!string.IsNullOrEmpty(model.Password))
+            //{
+            //    user.Password = EncryptHelper.EncryptPassword(model.Password);
+            //}
             //user.LastAccess = model.LastAccess;
             var success = _membershipService.UpdateUser(user);
 

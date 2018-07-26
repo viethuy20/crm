@@ -2,9 +2,11 @@
 using System.ComponentModel;
 using System.Web.Mvc;
 using System.Web.Security;
+using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Concrete;
 using PQT.Domain.Entities;
+using PQT.Domain.Enum;
 using PQT.Domain.Helpers;
 using PQT.Web.Models;
 using PQT.Web.Infrastructure.Filters;
@@ -59,7 +61,27 @@ namespace PQT.Web.Controllers
 
                     if (!CurrentUser.Login(model.Email, model.Password, model.RememberMe))
                     {
-                        ModelState.AddModelError("", Resource.InvalidEmailOrPassword);
+                        var user = _membership.GetUserByEmail(model.Email);
+                        if (user == null)
+                        {
+                            ModelState.AddModelError("", @"Invalid email");
+                        }
+                        else if (user.Status == EntityStatus.Deleted)
+                        {
+                            ModelState.AddModelError("", @"Account has been deleted");
+                        }
+                        else if (user.UserStatus == UserStatus.Resigned)
+                        {
+                            ModelState.AddModelError("", @"Account has been resigned");
+                        }
+                        else if (user.UserStatus == UserStatus.Terminated)
+                        {
+                            ModelState.AddModelError("", @"Account has been terminated");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", @"Invalid password");
+                        }
                     }
                     else
                     {

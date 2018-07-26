@@ -56,16 +56,17 @@ namespace PQT.Web.Models
                 return "Cannot process ... This item has been booked";
             var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
             var maxBlock = Settings.Lead.MaxBlockeds();
-            if (leads.Count(m => m.UserID == CurrentUser.Identity.ID && m.LeadStatusRecord == LeadStatus.Blocked) >= maxBlock)
+            var currentUser = CurrentUser.Identity;
+            if (leads.Count(m => (m.User.TransferUserID == currentUser.ID || m.UserID == currentUser.ID) && m.LeadStatusRecord == LeadStatus.Blocked) >= maxBlock)
                 return "Limit blocked is not exceed " + maxBlock;
             var daysExpired = Settings.Lead.NumberDaysExpired();
-            if (leads.Any(m => m.UserID != CurrentUser.Identity.ID &&
+            if (leads.Any(m => m.User.TransferUserID != currentUser.ID && m.UserID != currentUser.ID &&
                                m.CompanyID == lead.CompanyID &&
                                m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject && !m.CheckNCLExpired(daysExpired)))
                 return "Cannot block this company... Company is requesting to NCL or exists in NCL";
 
             if (lead.LeadStatusRecord == LeadStatus.Blocked) return "Block failed";
-            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Blocked, CurrentUser.Identity.ID);
+            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Blocked, currentUser.ID);
             if (!leadRepo.UpdateLead(lead)) return "Block failed";
             //var users = new List<User>();
             //users.AddRange(lead.Event.SalesGroups.SelectMany(m => m.Users));
@@ -112,7 +113,8 @@ namespace PQT.Web.Models
 
             var daysExpired = Settings.Lead.NumberDaysExpired();
             var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
-            if (leads.Any(m => m.UserID != CurrentUser.Identity.ID &&
+            var currentUser = CurrentUser.Identity;
+            if (leads.Any(m => m.User.TransferUserID != currentUser.ID && m.UserID != currentUser.ID &&
                                m.CompanyID == lead.CompanyID &&
                                m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
                 && !m.CheckNCLExpired(daysExpired)))
@@ -127,7 +129,7 @@ namespace PQT.Web.Models
                     fileName = uploadPicture;
                 }
             }
-            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, Enumeration.FromValue<LeadStatus>(requestType), CurrentUser.Identity.ID, fileName, "");
+            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, Enumeration.FromValue<LeadStatus>(requestType), currentUser.ID, fileName, "");
             if (!leadRepo.UpdateLead(lead)) return "Submit failed";
 
             var membershipService = DependencyHelper.GetService<IMembershipService>();
@@ -161,8 +163,9 @@ namespace PQT.Web.Models
                     bookingRepo.DeleteBooking(booking.ID);
                 }
             }
+            var currentUser = CurrentUser.Identity;
             var titleNotify = lead.LeadStatusRecord.Status.DisplayName + " cancelled";
-            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Initial, CurrentUser.Identity.ID);
+            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Initial, currentUser.ID);
             if (!leadRepo.UpdateLead(lead))
                 return "Cancel failed";
 
@@ -186,7 +189,7 @@ namespace PQT.Web.Models
 
             var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
             var daysExpired = Settings.Lead.NumberDaysExpired();
-            if (leads.Any(m => m.UserID != lead.UserID &&
+            if (leads.Any(m => m.UserID != lead.UserID && m.User.TransferUserID != lead.UserID &&
                                m.CompanyID == lead.CompanyID &&
                                m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
                                && !m.CheckNCLExpired(daysExpired)))
@@ -207,7 +210,8 @@ namespace PQT.Web.Models
                 lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Booked, CurrentUser.Identity.ID);
             }
             if (!leadRepo.UpdateLead(lead)) return "Approval failed";
-            LeadNotificator.NotifyUser(new List<User> { lead.User }, lead.ID, titleNotify); // notify for manager
+            var membershipService = DependencyHelper.GetService<IMembershipService>();
+            LeadNotificator.NotifyUser(new List<User> { lead.User.TransferUserID > 0 ? membershipService.GetUser((int)lead.User.TransferUserID) : lead.User }, lead.ID, titleNotify); // notify for manager
             LeadNotificator.NotifyUpdateNCL(lead.ID);
             return "";
         }
@@ -225,7 +229,8 @@ namespace PQT.Web.Models
             var titleNotify = lead.LeadStatusRecord.Status.DisplayName + " rejected";
             lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Reject, CurrentUser.Identity.ID, Reason);
             if (!leadRepo.UpdateLead(lead)) return "Reject failed";
-            LeadNotificator.NotifyUser(new List<User> { lead.User }, lead.ID, titleNotify); // notify for manager
+            var membershipService = DependencyHelper.GetService<IMembershipService>();
+            LeadNotificator.NotifyUser(new List<User> { lead.User.TransferUserID > 0 ? membershipService.GetUser((int)lead.User.TransferUserID) : lead.User }, lead.ID, titleNotify); // notify for manager
             LeadNotificator.NotifyUpdateNCL(lead.ID);
             return "";
         }

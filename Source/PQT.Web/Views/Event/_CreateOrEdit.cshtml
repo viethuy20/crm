@@ -26,7 +26,7 @@
                     @Html.Bootstrap().LabelFor(m => m.Event.BackgroundColor).LabelText("Event Color")
                 </div>
             </div>
-            <div class="col-sm-12">
+            <div class="col-sm-6">
                 <div class="form-group ">
                     @Html.Bootstrap().TextBoxFor(m => m.Event.EventName).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Event.EventName).ShowRequiredStar(true)
@@ -49,18 +49,25 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <div class="form-group">
                     @Html.DatePickerFor(m => m.Event.DateOfConfirmation, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.Event.DateOfConfirmation)
                     @Html.Bootstrap().LabelFor(m => m.Event.DateOfConfirmation)
                 </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <div class="form-group">
                     @Html.DatePickerFor(m => m.Event.ClosingDate, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.Event.ClosingDate)
                     @Html.Bootstrap().LabelFor(m => m.Event.ClosingDate).LabelText("Date of Closing Sales")
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DatePickerFor(m => m.Event.DateOfOpen, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Event.DateOfOpen)
+                    @Html.Bootstrap().LabelFor(m => m.Event.DateOfOpen).LabelText("Date Of Open (Cross Sell)")
                 </div>
             </div>
             <div class="col-sm-12">

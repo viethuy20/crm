@@ -342,7 +342,7 @@ namespace PQT.Web.Controllers
                     (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (eventId == 0 || m.EventID == eventId) &&
-                    (userId == 0 || m.UserID == userId) &&
+                    (userId == 0 || m.UserID == userId || (m.User!=null && m.User.TransferUserID == userId)) &&
                     (string.IsNullOrEmpty(statusCode) || (statusCode == KPIStatus.KPI && m.MarkKPI)
                      || (statusCode == KPIStatus.NoKPI && !m.MarkKPI && !string.IsNullOrEmpty(m.FileNameImportKPI))
                      || (statusCode == KPIStatus.NoCheck && string.IsNullOrEmpty(m.FileNameImportKPI)))
@@ -375,7 +375,7 @@ namespace PQT.Web.Controllers
                     (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (eventId == 0 || m.EventID == eventId) &&
-                    (userId == 0 || m.UserID == userId) &&
+                    (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
                     (string.IsNullOrEmpty(statusCode) || (statusCode == KPIStatus.KPI && m.MarkKPI)
                      || (statusCode == KPIStatus.NoKPI && !m.MarkKPI && !string.IsNullOrEmpty(m.FileNameImportKPI))
                      || (statusCode == KPIStatus.NoCheck && string.IsNullOrEmpty(m.FileNameImportKPI)))
@@ -642,7 +642,7 @@ namespace PQT.Web.Controllers
                     (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (eventId == 0 || m.EventID == eventId) &&
-                    (userId == 0 || m.UserID == userId) &&
+                    (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
                     ((m.User != null && m.User.Email.Contains(searchValue)) ||
                         m.SalesmanName.Contains(searchValue))
                 );
@@ -655,7 +655,7 @@ namespace PQT.Web.Controllers
                     (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (eventId == 0 || m.EventID == eventId) &&
-                    (userId == 0 || m.UserID == userId)
+                    (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
                 );
             }
             // ReSharper disable once AssignNullToNotNullAttribute

@@ -177,7 +177,11 @@ namespace PQT.Web.Models
                 if (bookingService.UpdateBooking(Booking, BookingStatus.Approved, CurrentUser.Identity.ID))
                 {
                     var titleNotify = "Request for booking has been approved";
-                    BookingNotificator.NotifyUser(new List<User> { Booking.Lead.User }, Booking.ID, titleNotify, true);
+                    var membershipService = DependencyHelper.GetService<IMembershipService>();
+                    var leadUser = Booking.Lead.User.TransferUserID > 0
+                        ? membershipService.GetUser((int)Booking.Lead.User.TransferUserID)
+                        : Booking.Lead.User;
+                    BookingNotificator.NotifyUser(new List<User> { leadUser }, Booking.ID, titleNotify, true);
                     LeadNotificator.NotifyUpdateNCL(Booking.Lead.ID);
                     BookingNotificator.NotifyUpdateBooking(Booking.ID, false);
                     var com = comService.GetCompany(Booking.CompanyID);
@@ -217,7 +221,11 @@ namespace PQT.Web.Models
                 if (bookingService.UpdateBooking(Booking, BookingStatus.Rejected, CurrentUser.Identity.ID, Message))
                 {
                     var titleNotify = "Request for booking has been rejected";
-                    BookingNotificator.NotifyUser(new List<User> { Booking.Lead.User }, Booking.ID, titleNotify, true);
+                    var membershipService = DependencyHelper.GetService<IMembershipService>();
+                    var leadUser = Booking.Lead.User.TransferUserID > 0
+                        ? membershipService.GetUser((int) Booking.Lead.User.TransferUserID)
+                        : Booking.Lead.User;
+                    BookingNotificator.NotifyUser(new List<User> { leadUser }, Booking.ID, titleNotify, true);
                     BookingNotificator.NotifyUpdateBooking(Booking.ID);
                     return true;
                 }

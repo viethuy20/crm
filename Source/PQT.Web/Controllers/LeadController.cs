@@ -92,11 +92,12 @@ namespace PQT.Web.Controllers
         {
             var model = new CallingModel();
             model.PrepareCalling(id);
+            var currentUser = CurrentUser.Identity;
             if (model.Lead == null)
             {
                 TempData["error"] = "Data not found";
             }
-            else if (model.Lead.UserID != CurrentUser.Identity.ID)
+            else if (model.Lead.UserID != currentUser.ID && model.Lead.User.TransferUserID != currentUser.ID)
             {
                 TempData["error"] = "Don't have permission";
             }
@@ -131,7 +132,9 @@ namespace PQT.Web.Controllers
                 }
 
             }
-            if (model.Lead.UserID != CurrentUser.Identity.ID && !CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
+
+            var currentUser = CurrentUser.Identity;
+            if (model.Lead.UserID != currentUser.ID && model.Lead.User.TransferUserID != currentUser.ID && !CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
             {
                 TempData["error"] = "Don't have permission";
                 if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
@@ -228,9 +231,11 @@ namespace PQT.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var currentUser = CurrentUser.Identity;
                 var daysExpired = Settings.Lead.NumberDaysExpired();
                 var leadExists = _repo.GetAllLeads(m =>
-                    m.EventID == model.EventID && m.UserID != CurrentUser.Identity.ID &&
+                    m.EventID == model.EventID && m.UserID != currentUser.ID &&
+                    m.User.TransferUserID != currentUser.ID &&
                     m.CompanyID == model.CompanyID && !m.CheckNCLExpired(daysExpired) &&
                     (m.LeadStatusRecord == LeadStatus.Blocked ||
                      m.LeadStatusRecord == LeadStatus.Live ||
@@ -242,15 +247,16 @@ namespace PQT.Web.Controllers
                     return RedirectToAction("Index", new { id = model.EventID });
                 }
                 var callExists = _repo.GetAllLeads(m =>
-                    m.EventID == model.EventID && m.UserID == CurrentUser.Identity.ID &&
-                    m.WorkEmail == model.WorkEmail ||
-                    m.MobilePhone1 == model.MobilePhone1 ||
-                    m.MobilePhone2 == model.MobilePhone2 ||
-                    m.MobilePhone3 == model.MobilePhone3);
+                    m.EventID == model.EventID && (m.UserID == currentUser.ID ||
+                    m.User.TransferUserID == currentUser.ID) &&
+                    (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail == model.WorkEmail) ||
+                    (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1 == model.MobilePhone1) ||
+                    (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2 == model.MobilePhone2) ||
+                    (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3 == model.MobilePhone3));
                 if (callExists.Any())
                 {
                     TempData["error"] = "Client contact exists in your called list";
-                    return RedirectToAction("Index", new { id = model.EventID });
+                    return RedirectToAction("StartCallForm", new { id = model.EventID });
                 }
 
                 if (model.Create())
@@ -653,6 +659,7 @@ namespace PQT.Web.Controllers
         [AjaxOnly]
         public ActionResult AjaxGetNCList(int eventId)
         {
+            var currentUser = CurrentUser.Identity;
             if (Request.Form != null && Request.Form.Count == 0)
             {
                 var data1 = new List<Lead>();
@@ -670,8 +677,9 @@ namespace PQT.Web.Controllers
                         m.CountryCode,
                         m.JobTitle,
                         m.ClassStatus,
-                        ClassHighlight = m.LeadStatusRecord == LeadStatus.Booked ? "booked" : (m.UserID == CurrentUser.Identity.ID ? "lead_owner" : ""),
-                        ClassNewHighlight = m.UserID != CurrentUser.Identity.ID && m.UpdatedTime >= DateTime.Now.AddMinutes(-1) ? "ncl_new" : "",
+                        ClassHighlight = m.LeadStatusRecord == LeadStatus.Booked ? "booked" : (
+                            m.User.TransferUserID == currentUser.ID || m.UserID == currentUser.ID ? "lead_owner" : ""),
+                        ClassNewHighlight = (m.User.TransferUserID != currentUser.ID && m.UserID != currentUser.ID) && m.UpdatedTime >= DateTime.Now.AddMinutes(-1) ? "ncl_new" : "",
                         m.StatusDisplay,
                     })
                 }, JsonRequestBehavior.AllowGet);
@@ -798,8 +806,8 @@ namespace PQT.Web.Controllers
                     m.CountryCode,
                     m.JobTitle,
                     m.ClassStatus,
-                    ClassHighlight = m.LeadStatusRecord == LeadStatus.Booked ? "booked" : (m.UserID == CurrentUser.Identity.ID ? "lead_owner" : ""),
-                    ClassNewHighlight = m.UserID != CurrentUser.Identity.ID && m.UpdatedTime >= DateTime.Now.AddMinutes(-1) ? "ncl_new" : "",
+                    ClassHighlight = m.LeadStatusRecord == LeadStatus.Booked ? "booked" : (m.User.TransferUserID == currentUser.ID || m.UserID == currentUser.ID ? "lead_owner" : ""),
+                    ClassNewHighlight = m.User.TransferUserID != currentUser.ID && m.UserID != currentUser.ID && m.UpdatedTime >= DateTime.Now.AddMinutes(-1) ? "ncl_new" : "",
                     m.StatusDisplay,
                 })
             };
@@ -1173,13 +1181,14 @@ namespace PQT.Web.Controllers
             int page = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
 
+            var currentUser = CurrentUser.Identity;
             IEnumerable<Company> companies = new HashSet<Company>();
             var eventLead = _eventService.GetEvent(eventId);
             if (eventLead != null)
             {
                 var daysExpired = Settings.Lead.NumberDaysExpired();
                 var companiesInNcl = _repo.GetAllLeads(m => m.EventID == eventId).Where(m =>
-                    m.UserID != CurrentUser.Identity.ID &&
+                    m.UserID != currentUser.ID && m.User.TransferUserID != currentUser.ID &&
                     m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
                                      && !m.CheckNCLExpired(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
                 companies = eventLead.EventCompanies.Where(m => !companiesInNcl.Contains(m.CompanyID)).Select(m => m.Company);
@@ -1190,7 +1199,7 @@ namespace PQT.Web.Controllers
             }
             Func<Company, bool> predicate = m =>
             (m.Tier.ToString() == TierType.Tier3 || m.Tier.ToString() == TierType.Tier2 || !m.ManagerUsers.Any() || (
-            m.Tier.ToString() == TierType.Tier1 && m.ManagerUsers.Select(u => u.ID).Contains(CurrentUser.Identity.ID)
+            m.Tier.ToString() == TierType.Tier1 && m.ManagerUsers.Select(u => u.ID).Contains(currentUser.ID)
             )) &&
                 (string.IsNullOrEmpty(companyName) ||
                  (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&

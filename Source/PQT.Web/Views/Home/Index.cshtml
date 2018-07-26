@@ -17,6 +17,7 @@
     }
         .event-panel .text-xl {
             text-transform: capitalize;
+            font-size: 20px;
         }
 
         .event-panel .card {
@@ -105,6 +106,8 @@
                                 Event Dates: @item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
                                 <br/>
                                 DOC: @item.DateOfConfirmationStr - Closing Date: @item.ClosingDateStr
+                                <br />
+                                Location: @item.Location
                                 @if (CurrentUser.HasRole("Finance"))
                                 {
                                     <a href="@Url.Action("Index", "Booking", new {id = item.ID})" class="link-event">

@@ -20,7 +20,7 @@ namespace PQT.Web.Models
                 {
                     User = user
                 };
-                item.Prepare(leads.Where(m => m.UserID == user.ID));
+                item.Prepare(leads.Where(m => m.User.TransferUserID == user.ID || m.UserID == user.ID));
                 ConsolidateKpis.Add(item);
             }
         }

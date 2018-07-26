@@ -39,6 +39,8 @@ namespace PQT.Domain.Entities
         public string RegContract { get; set; }
         public EventStatus EventStatus { get; set; }
         [DataType(DataType.Date)]
+        public DateTime? DateOfOpen { get; set; }//Lack Date of Open (Cross Sell)
+        [DataType(DataType.Date)]
         public DateTime? DateOfConfirmation { get; set; }
         [DataType(DataType.Date)]
         public DateTime? ClosingDate { get; set; }//Date of Closing Sales
@@ -97,9 +99,10 @@ namespace PQT.Domain.Entities
     public class EventStatus : Enumeration
     {
         public static readonly EventStatus Initial = New<EventStatus>("", "Initial");
-        public static readonly EventStatus Confirmed = New<EventStatus>(1, "Confirmed");
-        public static readonly EventStatus Completed = New<EventStatus>(2, "Completed");
-        public static readonly EventStatus Cancelled = New<EventStatus>(3, "Cancelled");
+        public static readonly EventStatus Live = New<EventStatus>(1, "Live");
+        public static readonly EventStatus Confirmed = New<EventStatus>(2, "Confirmed");
+        public static readonly EventStatus Completed = New<EventStatus>(3, "Completed");
+        public static readonly EventStatus Cancelled = New<EventStatus>(4, "Cancelled");
     }
     public class MonthStatus : Enumeration
     {

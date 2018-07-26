@@ -26,7 +26,7 @@ namespace PQT.Domain.Concrete
             {
                 return _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).Count();
             }
-            return _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m=>m.Status == EntityStatus.Normal).Count();
+            return _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).Count();
         }
         public IEnumerable<User> GetUsers(Func<User, bool> predicate, string sortColumnDir, string sortColumn, int page, int pageSize)
         {
@@ -193,17 +193,18 @@ namespace PQT.Domain.Concrete
         }
         public User ValidateLogin(string email, string password)
         {
-            password = EncryptHelper.EncryptPassword(password);
+            //password = EncryptHelper.EncryptPassword(password);
             return Get<User>(u => u.Email != null &&
                                   u.Email.Trim().ToLower() == email.Trim().ToLower() &&
                                   u.Password == password &&
+                                  u.UserStatus == UserStatus.Live &&
                                   u.Status == EntityStatus.Normal);
         }
 
         public User CreateUser(User user)
         {
             user.Email = user.Email.Trim();
-            user.Password = EncryptHelper.EncryptPassword(user.Password);
+            //user.Password = EncryptHelper.EncryptPassword(user.Password);
             return Create(user);
         }
 

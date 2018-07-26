@@ -2577,6 +2577,7 @@
     <Content Include="Views\OfficeLocation\Index.cshtml" />
     <Content Include="Views\Event\EndEvent.cshtml" />
     <Content Include="Views\Lead\EditCallRecord.cshtml" />
+    <Content Include="Views\Lead\_CompanyResourceList2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

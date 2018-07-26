@@ -387,13 +387,13 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int page = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
-
+            var currentUser = CurrentUser.Identity;
             IEnumerable<CompanyResource> companyResources = new HashSet<CompanyResource>();
             if (eventId > 0 && comId == 0)
             {
                 var daysExpired = Settings.Lead.NumberDaysExpired();
                 var companiesInNcl = _leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
-                    m.UserID != CurrentUser.Identity.ID &&
+                    m.UserID != currentUser.ID && m.User.TransferUserID != currentUser.ID &&
                     m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
                     && !m.CheckNCLExpired(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
                 companyResources = _comRepo.GetAllCompanyResources().Where(m => m.CompanyID != null && !companiesInNcl.Contains((int)m.CompanyID));

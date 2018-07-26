@@ -214,6 +214,7 @@
     <Compile Include="Entities\StatusRecord.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\Template.cs" />
     <Compile Include="Entities\Trainer.cs" />
     <Compile Include="Entities\TrainerBank.cs" />
     <Compile Include="Entities\User.cs">
