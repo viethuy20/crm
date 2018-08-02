@@ -193,7 +193,7 @@
                 <div class="card-head">
                     <div class="tools">
                         <div class="btn-group" style="margin-right: 15px;">
-                            @if (CurrentUser.HasPermission("Lead", "CallingForm") && (Model.Event.ClosingDate == null || Model.Event.ClosingDate >= DateTime.Today))
+                            @if (CurrentUser.HasPermission("Lead", "StartCallForm") && (Model.Event.ClosingDate == null || Model.Event.ClosingDate >= DateTime.Today))
                             {
                                 @*<a href="@Url.Action("CallingForm", new {eventId = Model.Event.ID, leadId = 0})" class="btn ink-reaction btn-floating-action btn-success simple-ajax-popup-align-top-custom" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Start New Call"><i class="fa fa-phone fa-2x"></i></a>*@
                                 <a href="@Url.Action("StartCallForm", new {id = Model.Event.ID})" class="btn ink-reaction btn-floating-action btn-success" title="Start New Call"><i class="fa fa-phone fa-2x"></i></a>

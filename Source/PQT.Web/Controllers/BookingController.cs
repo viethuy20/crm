@@ -668,5 +668,186 @@ namespace PQT.Web.Controllers
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
+        [AjaxOnly]
+        public ActionResult GetMyCallResourceList(string typeFill)
+        {
+            return PartialView("GetMyCallResourceList", typeFill);
+        }
+
+        [AjaxOnly]
+        public ActionResult AjaxGetMyCallList()
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+
+            var name = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Name") != null && !string.IsNullOrEmpty(Request.Form.GetValues("Name").FirstOrDefault()))
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                name = Request.Form.GetValues("Name").FirstOrDefault().Trim().ToLower();
+            }
+            var designation = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Designation") != null && Request.Form.GetValues("Designation").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                designation = Request.Form.GetValues("Designation").FirstOrDefault().Trim().ToLower();
+            }
+            var email = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Email") != null && Request.Form.GetValues("Email").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                email = Request.Form.GetValues("Email").FirstOrDefault().Trim().ToLower();
+            }
+
+            var phone = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Mobile") != null && Request.Form.GetValues("Mobile").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                phone = Request.Form.GetValues("Mobile").FirstOrDefault().Trim().ToLower();
+            }
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int page = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+            var currentUser = CurrentUser.Identity;
+            IEnumerable<Lead> leads = new HashSet<Lead>();
+
+            Func<Lead, bool> predicate = m =>
+            m.UserID == currentUser.ID &&
+                (string.IsNullOrEmpty(name) ||
+                 (!string.IsNullOrEmpty(m.Name) && m.Name.ToLower().Contains(name))) &&
+                (string.IsNullOrEmpty(designation) ||
+                 (!string.IsNullOrEmpty(m.JobTitle) && m.JobTitle.ToLower().Contains(designation))) &&
+                (string.IsNullOrEmpty(email) ||
+                 (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email)) ||
+                 (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1.ToLower().Contains(email)) ||
+                 (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(email))) &&
+                (string.IsNullOrEmpty(phone) ||
+                 (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(phone)) ||
+                 (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(phone)) ||
+                 (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(phone)) ||
+                 (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(phone)));
+            leads = _leadService.GetAllLeads(predicate);
+
+            #region sort
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "FullName":
+                        leads = leads.OrderBy(s => s.Name).ThenBy(s => s.ID);
+                        break;
+                    case "Designation":
+                        leads = leads.OrderBy(s => s.JobTitle).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmail":
+                        leads = leads.OrderBy(s => s.WorkEmail).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone1":
+                        leads = leads.OrderBy(s => s.MobilePhone1).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone2":
+                        leads = leads.OrderBy(s => s.MobilePhone2).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone3":
+                        leads = leads.OrderBy(s => s.MobilePhone3).ThenBy(s => s.ID);
+                        break;
+                    case "LandLine":
+                        leads = leads.OrderBy(s => s.DirectLine).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        leads = leads.OrderBy(s => s.ID);
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "FullName":
+                        leads = leads.OrderByDescending(s => s.Name).ThenBy(s => s.ID);
+                        break;
+                    case "Designation":
+                        leads = leads.OrderByDescending(s => s.JobTitle).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmail":
+                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone1":
+                        leads = leads.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone2":
+                        leads = leads.OrderByDescending(s => s.MobilePhone2).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone3":
+                        leads = leads.OrderByDescending(s => s.MobilePhone3).ThenBy(s => s.ID);
+                        break;
+                    case "LandLine":
+                        leads = leads.OrderByDescending(s => s.DirectLine).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        leads = leads.OrderByDescending(s => s.ID);
+                        break;
+                }
+            }
+
+            #endregion sort
+
+            recordsTotal = leads.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            var data = leads.Skip(page).Take(pageSize).ToList();
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    m.ID,
+                    m.FullName,
+                    Designation = m.JobTitle,
+                    m.WorkEmail,
+                    m.MobilePhone1,
+                    m.MobilePhone2,
+                    m.MobilePhone3,
+                    LandLine = m.DirectLine,
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [AjaxOnly]
+        public ActionResult AjaxGetTotalBooked()
+        {
+            var saleId = CurrentUser.Identity.ID;
+            var leads = _bookingService.GetAllBookings(m =>
+                m.BookingStatusRecord == BookingStatus.Approved &&
+                (saleId == 0 || m.SalesmanID == saleId
+                    //||
+                    // (m.Salesman != null && m.Salesman.TransferUserID == saleId)
+                ));
+
+            return Json(new
+            {
+                TotalBooked = leads.Count()
+            }, JsonRequestBehavior.AllowGet);
+        }
     }
 }

@@ -119,9 +119,30 @@
                             </div>
                         </div>
                         <div class="col-sm-12">
-                            <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.Roles).Readonly().Class("form-control")
-                                @Html.Bootstrap().LabelFor(m => m.Roles).LabelText("Roles")
+                            @if (CurrentUser.HasRoleLevel(RoleLevel.SalesLevel))
+                            {
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div style="margin: 0 auto; float: none; display: inline-flex">
+                                            <div style="width: 150px; margin: 15px;">
+                                                <div class="card">
+                                                    <div class="card-body no-padding">
+                                                        <div class="alert alert-callout alert-success no-margin">
+                                                            <strong class="text-xl" id="total_booked">0</strong><br/>
+                                                            <span class="opacity-50">TOTAL BOOKED</span>
+                                                        </div>
+                                                    </div><!--end .card-body -->
+                                                </div><!--end .card -->
+                                            </div>
+                                        </div><!--end .col -->
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Roles).Readonly().Class("form-control")
+                                    @Html.Bootstrap().LabelFor(m => m.Roles).LabelText("Roles")
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -228,7 +249,7 @@
                         //$uploadCrop.croppie('bind', {
                         //    url: e.target.result
                         //}).then(function () {
-                            $('#simpleModal').modal('show');
+                        $('#simpleModal').modal('show');
                         //});
                         //$('#profilePicture').html("<img style='width: 120px; height:120px;border-radius: 60px' src='" + e.target.result + "' class='img-polaroid user-picture-preview'/>");
                     }
@@ -268,10 +289,30 @@
                         type: 'canvas',
                         size: 'viewport'
                     }).then(function(resp) {
-                        $('.user-picture-preview')[0].src = resp;
-                        $('@Html.JquerySelectorFor(m=>m.PictureBase64)').val(resp);
-                        $('#simpleModal').modal('toggle');
+                    $('.user-picture-preview')[0].src = resp;
+                    $('@Html.JquerySelectorFor(m=>m.PictureBase64)').val(resp);
+                    $('#simpleModal').modal('toggle');
                 });
             });
+
+
+        function LoadTotalBooked() {
+            $.ajax({
+                global: false,
+                url: '@Url.Action("AjaxGetTotalBooked","Booking")',
+                type: 'POST',
+                success: function (data) {
+                    $("#total_booked").text(data.TotalBooked);
+                },
+                error: function () {
+                }
+            });
+        }
+        @if (CurrentUser.HasRoleLevel(RoleLevel.SalesLevel))
+        {
+            <text>
+        LoadTotalBooked();
+            </text>
+        }
     </script>
 }

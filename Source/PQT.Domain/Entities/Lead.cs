@@ -60,6 +60,14 @@ namespace PQT.Domain.Entities
 
         public decimal? TrainingBudgetPerHead { get; set; }//USD
 
+        public string FullName
+        {
+            get { return Salutation + " " + FirstName + " " + LastName; }
+        }
+        public string Name
+        {
+            get { return FirstName + " " + LastName; }
+        }
         public string GoodTrainingMonthStr
         {
             get

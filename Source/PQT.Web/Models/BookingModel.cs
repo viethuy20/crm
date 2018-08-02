@@ -55,9 +55,9 @@ namespace PQT.Web.Models
                 LeadID = leadId,
                 SalesmanID = CurrentUser.Identity.ID,
                 DiscountPercent = Convert.ToInt32(discountSetting.Value),
-                SenderName = lead.JobTitle,
-                SenderDestination = "",
-                SenderMail = lead.PersonalEmail,
+                SenderName = lead.FullName,
+                SenderDestination = lead.JobTitle,
+                SenderMail = lead.WorkEmail,
                 SenderTel = lead.MobilePhone1
             };
         }

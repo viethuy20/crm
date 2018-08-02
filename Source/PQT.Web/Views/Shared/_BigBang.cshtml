@@ -25,9 +25,22 @@
 <!--[if lt IE 9]>
     @Scripts.Render("~/js/ie9")
 <![endif]-->
-<script>
-    var HRGLOBAL = {};
-</script>
+    <script>
+        var HRGLOBAL = {};
+    </script>
+    
+    <style>
+        #accordion2 .dropdown-menu {
+            display: block;
+            position: initial;
+            float: initial;
+            border: 0px
+        }
+
+        #accordion2 .dropdown-menu li a {
+            padding-left: 50px;
+        }
+    </style>
 </head>
 @*@(Request.Cookies["menubar-pin"] == null || Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")*@
 <body class="header-fixed menubar-first @(Request.Cookies["menubar-pin"] != null && Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")">
