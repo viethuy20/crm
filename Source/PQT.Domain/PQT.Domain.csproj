@@ -156,6 +156,7 @@
     <Compile Include="Abstract\IUnitRepository.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Abstract\IUploadTemplateService.cs" />
     <Compile Include="Business\RuleBase.cs" />
     <Compile Include="Concrete\ConcurrentLoginTracker.cs" />
     <Compile Include="Concrete\EFAuditTracker.cs" />
@@ -173,6 +174,7 @@
     <Compile Include="Concrete\EFUnitRepository.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Concrete\EFUploadTemplateService.cs" />
     <Compile Include="Concrete\InMemLoginTracker.cs" />
     <Compile Include="DependencyContainer.cs" />
     <Compile Include="Entities\Audit.cs">
@@ -214,7 +216,7 @@
     <Compile Include="Entities\StatusRecord.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Entities\Template.cs" />
+    <Compile Include="Entities\UploadTemplate.cs" />
     <Compile Include="Entities\Trainer.cs" />
     <Compile Include="Entities\TrainerBank.cs" />
     <Compile Include="Entities\User.cs">

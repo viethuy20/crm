@@ -28,7 +28,12 @@
             <div class="form-group">
                 @Html.DatePickerFor(m => m.CallBackDate, new { @class = "form-control" })
                 @Html.ValidationMessageFor(m => m.CallBackDate)
-                @Html.Bootstrap().LabelFor(m => m.CallBackDate).LabelText("Call Back Date")
+                @Html.Bootstrap().LabelFor(m => m.CallBackDate)
+            </div>
+            <div class="form-group">
+                @Html.TextBoxFor(m => m.CallBackTiming, new { @class = "form-control datetime" })
+                @Html.ValidationMessageFor(m => m.CallBackTiming)
+                @Html.Bootstrap().LabelFor(m => m.CallBackTiming)
             </div>
             <div class="form-group">
                 <div class="pull-right">
@@ -38,3 +43,11 @@
         </div><!--end .card-body -->
     }
 </div><!--end .card -->
+<text>
+    <script>
+        $(".datetime").datetimepicker({
+            format: 'HH:mm'
+        });
+
+    </script>
+</text>

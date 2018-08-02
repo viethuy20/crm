@@ -248,9 +248,13 @@ namespace PQT.Domain.Concrete
             return GetAll<Holiday>().ToList();
         }
 
+        public IEnumerable<Holiday> GetAllHolidays(int[] year)
+        {
+            return GetAll<Holiday>(m => year.Contains(m.StartDate.Year)).ToList();
+        }
         public IEnumerable<Holiday> GetAllHolidays(int year)
         {
-            return GetAll<Holiday>(m => m.Date.Year == year).ToList();
+            return GetAll<Holiday>(m => m.StartDate.Year == year).ToList();
         }
 
         public Holiday GetHoliday(int holidayID)
@@ -258,20 +262,20 @@ namespace PQT.Domain.Concrete
             return Get<Holiday>(holidayID);
         }
 
-        public Holiday GetHoliday(DateTime holidayDate)
+        public Holiday GetHoliday(DateTime startDate)
         {
-            return Get<Holiday>(m => m.Date.Date == holidayDate.Date);
+            return Get<Holiday>(m => m.StartDate.Date <= startDate.Date && startDate.Date < m.EndDate.Date);
         }
 
         public Holiday CreateHoliday(Holiday holiday)
         {
-            Holiday holidayExist = GetHoliday(holiday.Date);
-            if (holidayExist != null)
-            {
-                holidayExist.Description = holiday.Description;
-                Update(holidayExist);
-                return holidayExist;
-            }
+            //Holiday holidayExist = GetHoliday(holiday.StartDate);
+            //if (holidayExist != null)
+            //{
+            //    holidayExist.Description = holiday.Description;
+            //    Update(holidayExist);
+            //    return holidayExist;
+            //}
             return Create(holiday);
         }
 
@@ -280,19 +284,21 @@ namespace PQT.Domain.Concrete
             return Update(holiday);
         }
 
-        public bool DeleteHoliday(DateTime date)
+        public bool DeleteHoliday(int id)
         {
-            Holiday holidayExist = GetHoliday(date);
-            if (holidayExist != null)
-                return Delete<Holiday>(holidayExist.ID);
-            return false;
+            return Delete<Holiday>(id);
         }
-
-        public IEnumerable<Holiday> GetAllHolidaysbyMonthAndYear(int month, int year)
+        public int TotalHolidays(DateTime start, DateTime end, int? countryId)
         {
-            return GetAll<Holiday>(m => m.Date.Month == month && m.Date.Year == year);
+            end = end.AddDays(1);
+            var holidays = GetAll<Holiday>(m => (countryId == null || m.CountryID == countryId) &&
+                                                (m.StartDate.Month == start.Month && m.StartDate.Year == start.Year ||
+                                                 m.EndDate.Month == start.Month && m.EndDate.Year == start.Year ||
+                                                 m.StartDate.Month == end.Month && m.StartDate.Year == end.Year ||
+                                                 m.EndDate.Month == end.Month && m.EndDate.Year == end.Year))
+                .AsEnumerable();
+            return holidays.Sum(m => m.TotalHolidays(start, end));
         }
-
 
         #endregion
 
@@ -310,7 +316,7 @@ namespace PQT.Domain.Concrete
         }
         public OfficeLocation GetOfficeLocation(string name)
         {
-            return Get<OfficeLocation>(m=>m.Name.ToLower().Trim() == name.ToLower().Trim());
+            return Get<OfficeLocation>(m => m.Name.ToLower().Trim() == name.ToLower().Trim());
         }
 
         public OfficeLocation CreateOfficeLocation(OfficeLocation info)

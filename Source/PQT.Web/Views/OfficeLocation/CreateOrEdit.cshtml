@@ -1,6 +1,12 @@
-﻿@using PQT.Domain.Enum
+﻿@using NS.Mvc
+@using PQT.Domain.Abstract
+@using PQT.Domain.Enum
 @using Resources
 @model PQT.Domain.Entities.OfficeLocation
+    @{
+        var unitRepo = DependencyHelper.GetService<IUnitRepository>();
+        var countries = unitRepo.GetAllCountries();
+    }
 <div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
     <div class="card-head">
         <header>@(Model.ID > 0 ? "Edit Office Location" : "Add Office Location")</header>
@@ -23,8 +29,12 @@
             </div>
             @Html.HiddenFor(m => m.ID)
             <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Name).Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Name).ShowRequiredStar(true)
+                @Html.Bootstrap().DropDownListFor(m=>m.CountryID, countries.ToSelectList(m => m.ID, m => m.Name)).HtmlAttributes(new { required = "required" }).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.CountryID).LabelText("Country").ShowRequiredStar(true)
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.Name).Class("form-control text-capitalize").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Name).LabelText("Office Name").ShowRequiredStar(true)
             </div>
             <div class="form-group">
                 @Html.Bootstrap().TextBoxFor(m => m.Address).Class("form-control").ShowValidationMessage(true)

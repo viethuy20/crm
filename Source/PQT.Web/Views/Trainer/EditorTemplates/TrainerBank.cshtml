@@ -6,13 +6,13 @@
     <div class="row floating-label">
         <div class="col-sm-2">
             <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.BankName).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().TextBoxFor(m => m.BankName).HtmlAttributes(new { required = "required" }).Class("form-control text-capitalize").ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.BankName).ShowRequiredStar(true)
             </div>
         </div>
         <div class="col-sm-2">
             <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.BankAccountHolderName).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().TextBoxFor(m => m.BankAccountHolderName).Class("form-control code").ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.BankAccountHolderName)
             </div>
         </div>

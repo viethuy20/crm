@@ -23,7 +23,7 @@
             </div>
             @Html.HiddenFor(m => m.ID)
             <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.GroupName).HtmlAttributes(new { required = "required" }).Class("form-control code").ShowValidationMessage(true)
+                @Html.Bootstrap().TextBoxFor(m => m.GroupName).HtmlAttributes(new { required = "required" }).Class("form-control text-capitalize").ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.GroupName).LabelText("Group Name").ShowRequiredStar(true)
             </div>
             <div class="form-group">

@@ -92,9 +92,9 @@
                 <a href="@Url.Action("Detail")?id=@Model.ID&eventId=@Model.EventID" class="btn btn-default"><i class="fa fa-eye"></i> Detail</a>
                 @if (!eventClosed && Model.LeadStatusRecord != LeadStatus.Booked)
                 {
-                    if (CurrentUser.HasPermission("Lead", "Edit"))
+                    if (CurrentUser.HasPermission("Lead", "CallingForm"))
                     {
-                        @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
+                        @Html.Bootstrap().ActionLinkButton("Edit", "CallingForm").RouteValues(new { id = Model.ID }).Class("btn-primary").PrependIcon("md md-edit")
                     }
                 }
                 @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord == LeadStatus.Initial ||
@@ -145,13 +145,13 @@
                         }
                     }
                 }
-                @if (!eventClosed && (Model.LeadStatusRecord == LeadStatus.Initial || Model.LeadStatusRecord == LeadStatus.Reject))
+                @*@if (!eventClosed && (Model.LeadStatusRecord == LeadStatus.Initial || Model.LeadStatusRecord == LeadStatus.Reject))
             {
                 if (CurrentUser.HasPermission("Lead", "Delete"))
                 {
                         <a href="#" class="btn btn-danger btnDelete" data-id="@Model.ID"><i class="md md-delete"></i> Delete</a>
                     }
-                }
+                }*@
             </div>
         </div>
     </div>

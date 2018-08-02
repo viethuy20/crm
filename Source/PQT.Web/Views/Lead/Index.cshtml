@@ -125,67 +125,68 @@
         border: 1px solid #e2e2e2;
     }
 </style>
-<div class="row text-center" style="margin-bottom: -30px;">
-    <div style="margin: 0 auto;float: none;display: inline-flex">
-        <div style="width: 150px;margin: 15px;">
-            <div class="card">
-                <div class="card-body no-padding">
-                    <div class="alert alert-callout alert-info no-margin">
-                        <strong class="text-xl" id="total_loi">0</strong><br />
-                        <span class="opacity-50">TOTAL LOI</span>
-                    </div>
-                </div><!--end .card-body -->
-            </div><!--end .card -->
-        </div>
-        <div style="width: 150px;margin: 15px;">
-            <div class="card">
-                <div class="card-body no-padding">
-                    <div class="alert alert-callout alert-danger no-margin">
-                        <strong class="text-xl" id="total_blocked">0</strong><br />
-                        <span class="opacity-50">TOTAL BLOCK</span>
-                    </div>
-                </div><!--end .card-body -->
-            </div><!--end .card -->
-        </div>
-        <div style="width: 150px;margin: 15px;">
-            <div class="card">
-                <div class="card-body no-padding">
-                    <div class="alert alert-callout alert-success no-margin">
-                        <strong class="text-xl" id="total_booked">0</strong><br />
-                        <span class="opacity-50">TOTAL BOOKED</span>
-                    </div>
-                </div><!--end .card-body -->
-            </div><!--end .card -->
-        </div>
-        <div style="width: 150px;margin: 15px;">
-            <div class="card">
-                <div class="card-body no-padding">
-                    <div class="alert alert-callout alert-success no-margin">
-                        <strong class="text-xl" id="total_kpi">0</strong><br />
-                        <span class="opacity-50">TOTAL KPIs</span>
-                    </div>
-                </div><!--end .card-body -->
-            </div><!--end .card -->
-        </div>
-    </div><!--end .col -->
-</div>
-<div class="row">
-    <a class="btn ink-reaction btn-floating-action btn-info simple-ajax-popup-align-top" title="Open Sales Rules"
-       href="@Url.Action("LoadEventSalesRules","Event", new {eventId = Model.Event.ID})"
-       style="position: fixed;top: 80px;right: 0;display: block;z-index: 1006;"><i class="md md-assignment"></i></a>
 
-    <a class="btn ink-reaction btn-floating-action btn-primary expand_new_ncl" title="Open No Call List"
-       href="#offcanvas-ncl" data-toggle="offcanvas"
-       style="position: fixed;top: 130px;right: 0;display: block;z-index: 1006;"><i class="md md-list"></i></a>
-
-</div>
 <section>
-    <input type="hidden" value="@Model.Event.ID" id="eventIdNCList" />
-    <div class="row">
-        <div class="col-md-12" style="padding-bottom: 12px;">
-            @Html.Bootstrap().ActionLinkButton("Back to Dashboard", "Index", "Home").PrependIcon("md md-arrow-back")
-        </div>
+    <div class="section-header" style="margin-bottom: -20px;">
+        <h2><span class="text-primary"><i class="fa fa-fw fa-phone"></i> @ViewBag.Title</span> 
+            @Html.Bootstrap().ActionLinkButton("Back to Dashboard", "Index", "Home").PrependIcon("md md-arrow-back").Class("")
+        </h2>
     </div>
+    <div class="row text-center" style="margin-bottom: -30px;">
+        <div style="margin: 0 auto;float: none;display: inline-flex">
+            <div style="width: 150px;margin: 15px;">
+                <div class="card">
+                    <div class="card-body no-padding">
+                        <div class="alert alert-callout alert-info no-margin">
+                            <strong class="text-xl" id="total_loi">0</strong><br />
+                            <span class="opacity-50">TOTAL LOI</span>
+                        </div>
+                    </div><!--end .card-body -->
+                </div><!--end .card -->
+            </div>
+            <div style="width: 150px;margin: 15px;">
+                <div class="card">
+                    <div class="card-body no-padding">
+                        <div class="alert alert-callout alert-danger no-margin">
+                            <strong class="text-xl" id="total_blocked">0</strong><br />
+                            <span class="opacity-50">TOTAL BLOCKED</span>
+                        </div>
+                    </div><!--end .card-body -->
+                </div><!--end .card -->
+            </div>
+            <div style="width: 150px;margin: 15px;">
+                <div class="card">
+                    <div class="card-body no-padding">
+                        <div class="alert alert-callout alert-success no-margin">
+                            <strong class="text-xl" id="total_booked">0</strong><br />
+                            <span class="opacity-50">TOTAL BOOKED</span>
+                        </div>
+                    </div><!--end .card-body -->
+                </div><!--end .card -->
+            </div>
+            <div style="width: 150px;margin: 15px;">
+                <div class="card">
+                    <div class="card-body no-padding">
+                        <div class="alert alert-callout alert-success no-margin">
+                            <strong class="text-xl" id="total_kpi">0</strong><br />
+                            <span class="opacity-50">TOTAL KPIs</span>
+                        </div>
+                    </div><!--end .card-body -->
+                </div><!--end .card -->
+            </div>
+        </div><!--end .col -->
+    </div>
+    <div class="row">
+        <a class="btn ink-reaction btn-floating-action btn-info simple-ajax-popup-align-top" title="Open Sales Rules"
+           href="@Url.Action("LoadEventSalesRules","Event", new {eventId = Model.Event.ID})"
+           style="position: fixed;top: 80px;right: 0;display: block;z-index: 1006;"><i class="md md-assignment"></i></a>
+
+        <a class="btn ink-reaction btn-floating-action btn-primary expand_new_ncl" title="Open No Call List"
+           href="#offcanvas-ncl" data-toggle="offcanvas"
+           style="position: fixed;top: 130px;right: 0;display: block;z-index: 1006;"><i class="md md-list"></i></a>
+
+    </div>
+    <input type="hidden" value="@Model.Event.ID" id="eventIdNCList" />
     <div class="row">
         <div class="col-md-12">
             <div class="card  card-underline">
@@ -200,16 +201,18 @@
                             @*<a class="btn btn-icon-toggle btn-Expand"><i class="fa fa-expand"></i></a>*@
                         </div>
                     </div>
-                    <header>
-                        <span class="text-primary"><i class="fa fa-fw fa-phone"></i> @ViewBag.Title</span> - <span style="font-size: 18px;"><b>@Model.Event.EventName (@Model.Event.EventCode)</b> - Event Dates: <b>@Model.Event.StartDate.ToString("dd/MM/yy")</b> - <b>@Model.Event.EndDate.ToString("dd/MM/yy")</b></span>
+                    <header style="line-height: 27px;">
+                        <span style="font-size: 18px;"><b>Event Name: </b>@Model.Event.EventName (@Model.Event.EventCode) - <b>Event Dates: </b>@Model.Event.StartDate.ToString("dd/MM/yy") - @Model.Event.EndDate.ToString("dd/MM/yy")</span>
                         @if (!string.IsNullOrEmpty(Model.Event.Brochure))
                         {
-                            @: - <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)" target="_blank" style="font-size: 16px;margin-left: 5px;" title="Download Brochure"><i class="fa fa-download"></i> Brochure</a>
+                            @: - <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)" target="_blank" style="font-size: 16px; margin-left: 5px;" title="Download Brochure"><i class="fa fa-download"></i> Brochure</a>
                         }
                         @if (!string.IsNullOrEmpty(Model.Event.RegContract))
                         {
-                            @: - <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.RegContract)" target="_blank" style="font-size: 16px;margin-left: 5px;" title="Download Reg Contract"><i class="fa fa-download"></i> Reg Contract</a>
+                            @: - <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.RegContract)" target="_blank" style="font-size: 16px; margin-left: 5px;" title="Download Reg Contract"><i class="fa fa-download"></i> Reg Contract</a>
                         }
+                        <br /> 
+                        <span style="font-size: 18px;">@Html.Raw(!string.IsNullOrEmpty(Model.Event.FinanceEmail) ? "<b>Finance: </b>" + @Model.Event.FinanceEmail : "") @Html.Raw(!string.IsNullOrEmpty(Model.Event.OperationOnsiteEmail) ? " - <b>Operation Onsite: </b>" + @Model.Event.OperationOnsiteEmail : "") @Html.Raw(!string.IsNullOrEmpty(Model.Event.OperationEmail) ? " - <b>Operation Office: </b>" + @Model.Event.OperationEmail : "")</span>
                     </header>
                 </div><!--end .card-head -->
                 <div class="card-body">
@@ -220,8 +223,8 @@
                                 <th>Time Updated</th>
                                 <th>Country</th>
                                 <th style="width: 150px">Company</th>
-                                <th style="width: 150px">Client Name/Job Title</th>
-                                <th>Direct Line/Mobile number</th>
+                                <th style="width: 150px">Job Title</th>
+                                <th>Direct Line/Mobile</th>
                                 <th>Salutation</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
@@ -231,13 +234,15 @@
                                 <th>Work Email</th>
                                 <th>Personal Email</th>
                                 <th>Estimated Delegate</th>
-                                <th>Budget Month</th>
+                                <th>Training Budget</th>
                                 <th>Good Training Month</th>
                                 <th>Topics Interested</th>
                                 <th>Location Interested</th>
+                                <th>First Follow Up Status</th>
+                                <th>Final Status</th>
+                                <th>Call Back Date Time</th>
                                 <th>KPI</th>
                                 <th>KPI Remarks</th>
-                                <th>Call Back</th>
                                 <th>Status</th>
                                 <th>&nbsp;</th>
                             </tr>
@@ -284,7 +289,7 @@
          var windowH = $(window).height();
          var fixedColumn = 0;
          var sizeLenght = 50;
-    
+
          function updateCanvas() {
              var windowW = $(window).width();
              var wCavas = (windowW / 2).toFixed(0);
@@ -335,9 +340,11 @@
                  { "data": "GoodTrainingMonth", "name": "GoodTrainingMonth", "orderable": true },
                  { "data": "TopicsInterested", "name": "TopicsInterested", "orderable": true },
                  { "data": "LocationInterested", "name": "LocationInterested", "orderable": true },
+                 { "data": "FirstFollowUpStatus", "name": "FirstFollowUpStatus", "orderable": true },
+                 { "data": "FinalStatus", "name": "FinalStatus", "orderable": true },
+                 { "data": "CallBackDateTime", "name": "CallBackDateTime", "orderable": true },
                  { "data": "MarkKPI", "name": "MarkKPI", "orderable": true },
                  { "data": "KPIRemarks", "name": "KPIRemarks", "orderable": true },
-                 { "data": "CallBackDate", "name": "CallBackDate", "orderable": true },
                  { "data": "StatusDisplay", "name": "StatusDisplay", "orderable": true },
                  { "data": "ID", "name": "ID", "orderable": false },
              ],
@@ -353,21 +360,20 @@
                      '">' +
                      aData["CreatedTime"] +
                      '</a>');
-                 $(nRow).find('td:eq(21)').css("white-space", "nowrap");
-                 $(nRow).find('td:eq(22)').css("white-space", "nowrap");
+                 $(nRow).find('td:eq(24)').css("white-space", "nowrap");
                  if (aData["StatusCode"] == @LeadStatus.RequestBook || aData["StatusCode"] == @LeadStatus.Booked) {
-                     $(nRow).find('td:eq(22)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
+                     $(nRow).find('td:eq(24)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
                          aData["ID"] +
                          '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;">' + aData["StatusDisplay"]+'</span></a>');
                  }
                  if ('@eventClosed' == 'False') {
-                     $(nRow).find('td:eq(23)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
+                     $(nRow).find('td:eq(25)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
                          aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');
                  }
                  $(nRow).addClass(aData["ClassStatus"]);
                  if (aData["NCLExpired"]) {
                      $(nRow).addClass("NCLExpired");
-                     $(nRow).find('td:eq(22)')
+                     $(nRow).find('td:eq(24)')
                          .html(aData["StatusDisplay"] + '<br/><span class="expired">NCL Expired</span>');
                  }
              },
@@ -395,7 +401,7 @@
                  var fixColumn = new $.fn.dataTable.FixedColumns(tableLead, {
                      leftColumns: 5,
                      sHeightMatch: "auto",
-                     rightColumns: 3
+                     rightColumns: 2
                  });
                  var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
                  if ($leftWrappers.length > 1) {
@@ -745,7 +751,6 @@
                  type: 'POST',
                  success: function (data) {
                      $("#total_loi").text(data.TotalLOI);
-                     $("#total_blocked").text(data.TotalBlocked);
                      $("#total_booked").text(data.TotalBooked);
                      $("#total_kpi").text(data.TotalKPI);
                  },
@@ -754,5 +759,19 @@
              });
          }
 
+         function LoadTotalBlocked() {
+             $.ajax({
+                 global: false,
+                 url: '@Url.Action("AjaxGetTotalBlocked")',
+                 type: 'POST',
+                 success: function (data) {
+                     $("#total_blocked").text(data.TotalBlocked);
+                 },
+                 error: function () {
+                 }
+             });
+         }
+
          LoadTotalNCLSummary();
+         LoadTotalBlocked();
     </script>)

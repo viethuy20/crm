@@ -42,13 +42,13 @@ namespace PQT.Domain.Abstract
 
         #region Holiday
         IEnumerable<Holiday> GetAllHolidays();
+        IEnumerable<Holiday> GetAllHolidays(int[] year);
         IEnumerable<Holiday> GetAllHolidays(int year);
         Holiday GetHoliday(int holidayID);
-        Holiday GetHoliday(DateTime holidayDate);
+        Holiday GetHoliday(DateTime startDate);
         Holiday CreateHoliday(Holiday holiday);
-        bool UpdateHoliday(Holiday holiday);
-        bool DeleteHoliday(DateTime date);
-        IEnumerable<Holiday> GetAllHolidaysbyMonthAndYear(int month, int year);
+        bool DeleteHoliday(int id);
+        int TotalHolidays(DateTime start, DateTime end, int? locationID);
         #endregion Holiday
 
         #region OfficeLocation

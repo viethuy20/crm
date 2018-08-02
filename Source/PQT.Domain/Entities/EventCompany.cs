@@ -23,6 +23,7 @@ namespace PQT.Domain.Entities
         [ForeignKey("EventID")]
         public virtual Event Event { get; set; }
         public int BudgetMonth { get; set; }
+        public string BusinessUnit { get; set; }
         public string Remarks { get; set; }
         public int CompanyID { get; set; }
         [ForeignKey("CompanyID")]
@@ -33,7 +34,7 @@ namespace PQT.Domain.Entities
             get
             {
                 var monthEnum = Enumeration.FromValue<MonthStatus>(BudgetMonth.ToString());
-                return monthEnum != null ? monthEnum.ToString() : "";
+                return monthEnum != null ? monthEnum.DisplayName : "";
             }
         }
         public string CompanyName

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
@@ -20,15 +21,120 @@ namespace PQT.Web.Controllers
         // GET: /CompanyResource/
         private readonly ICompanyRepository _comRepo;
         private readonly ILeadService _leadRepo;
-        public CompanyResourceController(ICompanyRepository comRepo, ILeadService leadRepo)
+        private readonly IUnitRepository _unitRepo;
+        public CompanyResourceController(ICompanyRepository comRepo, ILeadService leadRepo, IUnitRepository unitRepo)
         {
             _comRepo = comRepo;
             _leadRepo = leadRepo;
+            _unitRepo = unitRepo;
         }
         public ActionResult Index()
         {
             var model = new CompanyResourceModel();
             return View(model);
+        }
+
+        [DisplayName(@"Create Or Edit")]
+        public ActionResult CreateOrEdit(int id = 0)
+        {
+            var model = new CompanyResourceModel();
+            model.Prepare(id);
+            return PartialView(model);
+        }
+        [HttpPost]
+        [DisplayName(@"Create Or Edit")]
+        public ActionResult CreateOrEdit(CompanyResourceModel model)
+        {
+            if (model.CompanyResource.CountryID == null || model.CompanyResource.CountryID == 0)
+            {
+                return Json(new
+                {
+                    Code = 6,
+                    error = "Country should not be empty."
+                });
+            }
+            if (ModelState.IsValid)
+            {
+                model.CompanyResource.Country = _unitRepo.GetCountry((int)model.CompanyResource.CountryID).Name;
+                if (model.CompanyResource.ID == 0)
+                {
+                    TransactionWrapper.Do(() =>
+                    {
+                        var comExist = _comRepo.GetCompany(model.CompanyResource.Organisation);
+                        if (comExist == null)
+                        {
+                            var newCom = new Company
+                            {
+                                CountryID = model.CompanyResource.CountryID,
+                                CompanyName = model.CompanyResource.Organisation,
+                                BusinessUnit = model.CompanyResource.BusinessUnit,
+                                BudgetMonth = model.CompanyResource.BudgetMonth
+                            };
+                            newCom = _comRepo.CreateCompany(newCom, new List<int>());
+                            model.CompanyResource.CompanyID = newCom.ID;
+                        }
+                        else
+                        {
+                            model.CompanyResource.CompanyID = comExist.ID;
+                            comExist.BusinessUnit = model.CompanyResource.BusinessUnit;
+                            comExist.BudgetMonth = model.CompanyResource.BudgetMonth;
+                            _comRepo.UpdateCompany(comExist);
+                        }
+                        if (_comRepo.CreateCompanyResource(model.CompanyResource) != null)
+                        {
+                            return Json(new
+                            {
+                                Code = 1,
+                                Model = model.CompanyResource
+                            });
+                        }
+                        return Json(new
+                        {
+                            Code = 2
+                        });
+                    });
+                }
+                return TransactionWrapper.Do(() =>
+                {
+                    var comExist = _comRepo.GetCompany(model.CompanyResource.Organisation);
+                    if (comExist == null)
+                    {
+                        var newCom = new Company
+                        {
+                            CountryID = model.CompanyResource.CountryID,
+                            CompanyName = model.CompanyResource.Organisation,
+                            BusinessUnit = model.CompanyResource.BusinessUnit,
+                            BudgetMonth = model.CompanyResource.BudgetMonth,
+                        };
+                        newCom = _comRepo.CreateCompany(newCom, new List<int>());
+                        model.CompanyResource.CompanyID = newCom.ID;
+                    }
+                    else
+                    {
+                        model.CompanyResource.CompanyID = comExist.ID;
+                        comExist.BusinessUnit = model.CompanyResource.BusinessUnit;
+                        comExist.BudgetMonth = model.CompanyResource.BudgetMonth;
+                        _comRepo.UpdateCompany(comExist);
+                    }
+
+                    if (_comRepo.UpdateCompanyResource(model.CompanyResource))
+                    {
+                        return Json(new
+                        {
+                            Code = 3,
+                            Model = model.CompanyResource
+                        });
+                    }
+                    return Json(new
+                    {
+                        Code = 4
+                    });
+                });
+            }
+            return Json(new
+            {
+                Code = 5
+            });
         }
 
         [DisplayName(@"Import From Excel")]
@@ -226,8 +332,11 @@ namespace PQT.Web.Controllers
                         (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
                         (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
                         (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
-                        (m.WorkEmail != null && m.WorkEmail.Contains(searchValue)) ||
-                        (m.PersonalEmail != null && m.PersonalEmail.Contains(searchValue))
+                        (m.WorkEmail != null && m.WorkEmail.ToLower().Contains(searchValue)) ||
+                        (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue))||
+                        (m.BusinessUnit != null && m.BusinessUnit.Contains(searchValue))||
+                        (m.BudgetMonthStr != null && m.BudgetMonthStr.ToLower().Contains(searchValue))||
+                        (m.BudgetMonth.ToString().Contains(searchValue))
                     );
             }
             else
@@ -266,6 +375,12 @@ namespace PQT.Web.Controllers
                     case "PersonalEmail":
                         audits = audits.OrderBy(s => s.PersonalEmail).ThenBy(s => s.Organisation);
                         break;
+                    case "BusinessUnit":
+                        audits = audits.OrderBy(s => s.BusinessUnit).ThenBy(s => s.Organisation);
+                        break;
+                    case "BudgetMonth":
+                        audits = audits.OrderBy(s => s.BudgetMonth).ThenBy(s => s.Organisation);
+                        break;
                     default:
                         audits = audits.OrderBy(s => s.Organisation);
                         break;
@@ -302,6 +417,12 @@ namespace PQT.Web.Controllers
                     case "PersonalEmail":
                         audits = audits.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.Organisation);
                         break;
+                    case "BusinessUnit":
+                        audits = audits.OrderByDescending(s => s.BusinessUnit).ThenBy(s => s.Organisation);
+                        break;
+                    case "BudgetMonth":
+                        audits = audits.OrderByDescending(s => s.BudgetMonth).ThenBy(s => s.Organisation);
+                        break;
                     default:
                         audits = audits.OrderByDescending(s => s.Organisation);
                         break;
@@ -335,6 +456,8 @@ namespace PQT.Web.Controllers
                     m.MobilePhone3,
                     m.PersonalEmail,
                     m.WorkEmail,
+                    m.BusinessUnit,
+                    m.BudgetMonthStr,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);
@@ -394,8 +517,7 @@ namespace PQT.Web.Controllers
                 var daysExpired = Settings.Lead.NumberDaysExpired();
                 var companiesInNcl = _leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
                     m.UserID != currentUser.ID && m.User.TransferUserID != currentUser.ID &&
-                    m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
-                    && !m.CheckNCLExpired(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
+                    m.CheckInNCL(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
                 companyResources = _comRepo.GetAllCompanyResources().Where(m => m.CompanyID != null && !companiesInNcl.Contains((int)m.CompanyID));
             }
             else if (comId > 0)
@@ -448,6 +570,15 @@ namespace PQT.Web.Controllers
                     case "PersonalEmail":
                         companyResources = companyResources.OrderBy(s => s.PersonalEmail).ThenBy(s => s.Organisation);
                         break;
+                    case "BusinessUnit":
+                        companyResources = companyResources.OrderBy(s => s.BusinessUnit).ThenBy(s => s.Organisation);
+                        break;
+                    case "BudgetMonth":
+                        companyResources = companyResources.OrderBy(s => s.BudgetMonth).ThenBy(s => s.Organisation);
+                        break;
+                    case "Remarks":
+                        companyResources = companyResources.OrderBy(s => s.Remarks).ThenBy(s => s.Organisation);
+                        break;
                     default:
                         companyResources = companyResources.OrderBy(s => s.ID).ThenBy(s => s.Organisation);
                         break;
@@ -490,6 +621,15 @@ namespace PQT.Web.Controllers
                     case "PersonalEmail":
                         companyResources = companyResources.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.Organisation);
                         break;
+                    case "BusinessUnit":
+                        companyResources = companyResources.OrderByDescending(s => s.BusinessUnit).ThenBy(s => s.Organisation);
+                        break;
+                    case "BudgetMonth":
+                        companyResources = companyResources.OrderByDescending(s => s.BudgetMonth).ThenBy(s => s.Organisation);
+                        break;
+                    case "Remarks":
+                        companyResources = companyResources.OrderByDescending(s => s.Remarks).ThenBy(s => s.Organisation);
+                        break;
                     default:
                         companyResources = companyResources.OrderByDescending(s => s.ID).ThenBy(s => s.Organisation);
                         break;
@@ -524,6 +664,10 @@ namespace PQT.Web.Controllers
                     m.MobilePhone3,
                     m.WorkEmail,
                     m.PersonalEmail,
+                    m.BudgetMonthStr,
+                    m.BudgetMonth,
+                    m.BusinessUnit,
+                    m.Remarks,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

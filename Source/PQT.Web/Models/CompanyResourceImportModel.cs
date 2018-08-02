@@ -82,6 +82,23 @@ namespace PQT.Web.Models
                         temp.MobilePhone3 = dtRow[8].ToString();
                         temp.WorkEmail = dtRow[9].ToString();
                         temp.PersonalEmail = dtRow[10].ToString();
+                        temp.BusinessUnit = dtRow[11].ToString();
+                        temp.BudgetMonthStr = dtRow[12].ToString();
+                        if (!string.IsNullOrEmpty(temp.BudgetMonthStr))
+                        {
+                            try
+                            {
+                                temp.BudgetMonth = Convert.ToInt32(temp.BudgetMonthStr);
+                            }
+                            catch (Exception e)
+                            {
+                                temp.Error += "- Budget Month must be number.<br/>";
+                            }
+                        }
+                        else
+                        {
+                            temp.BudgetMonth = 0;
+                        }
                         temp.Number = count;
                         ImportRows.Add(temp);
                     }
@@ -121,12 +138,19 @@ namespace PQT.Web.Models
                     {
                         CountryID = com.CountryID,
                         CompanyName = com.Organisation,
+                        BusinessUnit = com.BusinessUnit,
+                        BudgetMonth = com.BudgetMonth
                     };
-                    newCom = comRepo.CreateCompany(newCom,new List<int>());
+                    newCom = comRepo.CreateCompany(newCom, new List<int>());
                     com.CompanyID = newCom.ID;
                 }
                 else
+                {
                     com.CompanyID = comExist.ID;
+                    comExist.BusinessUnit = com.BusinessUnit;
+                    comExist.BudgetMonth = com.BudgetMonth;
+                    comRepo.UpdateCompany(comExist);
+                }
                 comRepo.CreateCompanyResource(com);
                 count++;
                 var json = new
@@ -134,7 +158,7 @@ namespace PQT.Web.Models
                     count,
                     totalCount
                 };
-                ProgressHub.SendMessage(userId,System.Web.Helpers.Json.Encode(json));
+                ProgressHub.SendMessage(userId, System.Web.Helpers.Json.Encode(json));
             }
         }
     }
@@ -154,6 +178,9 @@ namespace PQT.Web.Models
         public string MobilePhone3 { get; set; }
         public string WorkEmail { get; set; }
         public string PersonalEmail { get; set; }
+        public string BusinessUnit { get; set; }
+        public string BudgetMonthStr { get; set; }
+        public int BudgetMonth { get; set; }
         public string Error { get; set; }
     }
 }

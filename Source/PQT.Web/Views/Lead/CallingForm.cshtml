@@ -66,6 +66,15 @@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val(data.TrainingBudget);*@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
                 $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val(data.Remarks);
+                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
+                if (data.BudgetMonth > 0) {
+                    $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").attr("readonly", "readonly");
+                }
+                $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").val(data.BusinessUnit);
+                if (data.BusinessUnit != undefined && data.BusinessUnit != "") {
+                    $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").attr("readonly", "readonly");
+                }
+
             } else {
                 $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(0);
                 @*$("@Html.JquerySelectorFor(m => m.EventCompany.EstimatedDelegateNumber)").val(0);
@@ -79,6 +88,8 @@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val('');*@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val('').trigger("change");
                 $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val('');
+                $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").removeAttr("readonly");
+                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").removeAttr("readonly");
             }
         }
 

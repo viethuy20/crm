@@ -72,10 +72,10 @@
                 }
 
                 @if (!eventClosed)
-            {
-                if (CurrentUser.HasPermission("Lead", "Edit"))
                 {
-                        @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.Lead.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
+                    if (CurrentUser.HasPermission("Lead", "CallingForm") && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
+                    {
+                        @Html.Bootstrap().ActionLinkButton("Edit", "CallingForm").RouteValues(new { id = Model.Lead.ID }).Class("btn-primary").PrependIcon("md md-edit")
                     }
                 }
                 @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
@@ -134,13 +134,13 @@
                         }
                     }
                 }
-                @if (!eventClosed && (Model.Lead.LeadStatusRecord == LeadStatus.Initial || Model.Lead.LeadStatusRecord == LeadStatus.Reject))
+                @*@if (!eventClosed && (Model.Lead.LeadStatusRecord == LeadStatus.Initial || Model.Lead.LeadStatusRecord == LeadStatus.Reject))
             {
                 if (CurrentUser.HasPermission("Lead", "Delete"))
                 {
                         @Html.Bootstrap().ActionLinkButton("Delete ", "Delete").Id("lead_delete").Class("btn-danger").PrependIcon("md md-delete")
                     }
-                }
+                }*@
                 @if (CurrentUser.HasPermission("Lead", "CallingForm") && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
                 {
                     <a class="btn btn-success" href="@Url.Action("CallingForm")/@Model.Lead.ID"><i class="md md-phone"></i> Call Back</a>
@@ -353,9 +353,10 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Time</th>
+                                <th>Call Duration</th>
                                 <th>Call Remarks</th>
                                 <th>Call Back Date</th>
+                                <th>Call Back Timing</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -366,8 +367,14 @@
                                     <td>@phonecall.StartTime.ToString("dd-MMM-yy HH:mm:ss")</td>
                                     <td>@((phonecall.EndTime - phonecall.StartTime))</td>
                                     <td>@Html.Raw(phonecall.RemarkHtml)</td>
-                                    <td>@(phonecall.CallBackDate != null ? Convert.ToDateTime(phonecall.CallBackDate).ToString("dd/MM/yyyy") : "")</td>
-                                    <td><a href="@Url.Action("EditCallRecord")?id=@phonecall.ID" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a></td>
+                                    <td>@phonecall.CallBackDateStr</td>
+                                    <td>@phonecall.CallBackTimingStr</td>
+                                    <td>
+                                        @*@if (Model.Lead.LeadStatusRecord != LeadStatus.Booked)
+                                        {*@
+                                            <a href="@Url.Action("EditCallRecord")?id=@phonecall.ID" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a>
+                                        @*}*@
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -711,6 +718,7 @@
              if (tr) {
                  $(tr).find('td:eq(2)').html(data.RemarkHtml);
                  $(tr).find('td:eq(3)').html(data.CallBackDateStr);
+                 $(tr).find('td:eq(4)').html(data.CallBackTimingStr);
              }
          }
 

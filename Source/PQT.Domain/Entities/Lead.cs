@@ -117,6 +117,22 @@ namespace PQT.Domain.Entities
                 return default(DateTime);
             }
         }
+        public DateTime CallBackDateTime
+        {
+            get
+            {
+                var call = PhoneCalls.LastOrDefault();
+                if (call != null && call.CallBackDate != null && call.CallBackTiming != null)
+                {
+                    return Convert.ToDateTime(call.CallBackDateTimeStr);
+                }
+                if (call != null && call.CallBackDate != null)
+                {
+                    return Convert.ToDateTime(call.CallBackDate);
+                }
+                return default(DateTime);
+            }
+        }
         public string CallBackDateDisplay
         {
             get
@@ -124,12 +140,46 @@ namespace PQT.Domain.Entities
                 var call = PhoneCalls.LastOrDefault();
                 if (call != null && call.CallBackDate != null)
                 {
-                    return Convert.ToDateTime(call.CallBackDate).ToString("dd/MM/yyyy");
+                    return call.CallBackDateStr;
+                }
+                return "";
+            }
+        }
+        public string CallBackDateTimeDisplay
+        {
+            get
+            {
+                var call = PhoneCalls.LastOrDefault();
+                if (call != null)
+                {
+                    return call.CallBackDateTimeStr;
                 }
                 return "";
             }
         }
 
+        public string FirstFollowUpStatusDisplay
+        {
+            get
+            {
+                if (FirstFollowUpStatus != null)
+                {
+                    return FirstFollowUpStatus.DisplayName;
+                }
+                return "";
+            }
+        }
+        public string FinalStatusDisplay
+        {
+            get
+            {
+                if (FinalStatus != null)
+                {
+                    return FinalStatus.DisplayName;
+                }
+                return "";
+            }
+        }
         public string StatusDisplay
         {
             get
@@ -255,6 +305,15 @@ namespace PQT.Domain.Entities
         {
             return LeadStatusRecord != null && (LeadStatusRecord == LeadStatus.Live || LeadStatusRecord == LeadStatus.LOI) &&
                     LeadStatusRecord.UpdatedTime.Date < DateTime.Today.AddDays(-daysExpired);
+        }
+
+        public bool CheckInNCL(int daysExpired)
+        {
+            return (LeadStatusRecord == LeadStatus.Blocked ||
+                    LeadStatusRecord == LeadStatus.Live ||
+                    LeadStatusRecord == LeadStatus.LOI ||
+                    LeadStatusRecord == LeadStatus.Booked) &&
+                   !CheckNCLExpired(daysExpired);
         }
         public string ClassKPIStatus
         {

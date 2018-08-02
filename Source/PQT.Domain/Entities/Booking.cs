@@ -37,7 +37,7 @@ namespace PQT.Domain.Entities
         public string SenderTel { get; set; }
         public string SenderMail { get; set; }
 
-        public string Attachment { get; set; }
+        public string Attachment { get; set; }//Signed Reg Contract
         public PaymentStatus PaymentStatus { get; set; }
         public string ProofOfPayment { get; set; }
         public string LetterOfUnderstaking { get; set; }

@@ -30,7 +30,14 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.DirectLine).Class("form-control").ShowValidationMessage(true)
+                        <div class="row">
+                            <div class="col-sm-3">
+                                @Html.Bootstrap().TextBoxFor(m => m.DialingCode).Class("form-control dialingCode").Disabled().ShowValidationMessage(true)
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.Bootstrap().TextBoxFor(m => m.DirectLine).Class("form-control").ShowValidationMessage(true)
+                            </div>
+                        </div>
                         @Html.Bootstrap().LabelFor(m => m.DirectLine)
                     </div>
                 </div>
@@ -60,37 +67,58 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.MobilePhone1).Class("form-control").ShowValidationMessage(true)
+                        <div class="row">
+                            <div class="col-sm-3">
+                                @Html.Bootstrap().TextBoxFor(m => m.DialingCode).Class("form-control dialingCode").Disabled().ShowValidationMessage(true)
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.Bootstrap().TextBoxFor(m => m.MobilePhone1).Class("form-control").ShowValidationMessage(true)
+                            </div>
+                        </div>
                         @Html.Bootstrap().LabelFor(m => m.MobilePhone1)
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.MobilePhone2).Class("form-control").ShowValidationMessage(true)
+                        <div class="row">
+                            <div class="col-sm-3">
+                                @Html.Bootstrap().TextBoxFor(m => m.DialingCode).Class("form-control dialingCode").Disabled().ShowValidationMessage(true)
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.Bootstrap().TextBoxFor(m => m.MobilePhone2).Class("form-control").ShowValidationMessage(true)
+                            </div>
+                        </div>
                         @Html.Bootstrap().LabelFor(m => m.MobilePhone2)
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.MobilePhone3).Class("form-control").ShowValidationMessage(true)
+                        <div class="row">
+                            <div class="col-sm-3">
+                                @Html.Bootstrap().TextBoxFor(m => m.DialingCode).Class("form-control dialingCode").Disabled().ShowValidationMessage(true)
+                            </div>
+                            <div class="col-sm-9">
+                                @Html.Bootstrap().TextBoxFor(m => m.MobilePhone3).Class("form-control").ShowValidationMessage(true)
+                            </div>
+                        </div>
                         @Html.Bootstrap().LabelFor(m => m.MobilePhone3)
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.WorkEmail).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().TextBoxFor(m => m.WorkEmail).Class("form-control text-lowercase").ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.WorkEmail)
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.WorkEmail1).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().TextBoxFor(m => m.WorkEmail1).Class("form-control text-lowercase").ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.WorkEmail1)
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Class("form-control text-lowercase").ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.PersonalEmail)
                     </div>
                 </div>

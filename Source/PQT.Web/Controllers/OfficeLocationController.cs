@@ -47,6 +47,7 @@ namespace PQT.Web.Controllers
                 {
                     if (_unitRepo.CreateOfficeLocation(model) != null)
                     {
+                        model.Country = _unitRepo.GetCountry(model.CountryID);
                         return Json(new
                         {
                             Code = 1,
@@ -60,6 +61,7 @@ namespace PQT.Web.Controllers
                 } 
                 if (_unitRepo.UpdateOfficeLocation(model))
                 {
+                    model.Country = _unitRepo.GetCountry(model.CountryID);
                     return Json(new
                     {
                         Code = 3,

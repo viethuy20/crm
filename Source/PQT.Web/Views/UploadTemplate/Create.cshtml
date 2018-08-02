@@ -1,0 +1,21 @@
+﻿@using Resources
+@model PQT.Domain.Entities.UploadTemplate
+
+@{
+    ViewBag.Title = "Upload Template";
+}
+<section class="col-md-6 col-md-offset-3">
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    @using (Html.BeginForm("Create", "UploadTemplate", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
+    {
+        @Html.Partial("_CreateOrEdit", Model)
+        <div class="row">
+            <div class="form-group  col-md-offset-2">
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                @Html.Bootstrap().SubmitButton().Class("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+            </div>
+        </div>
+    }
+</section>

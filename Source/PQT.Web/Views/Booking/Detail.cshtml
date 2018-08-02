@@ -29,64 +29,63 @@
         <h2 class="text-primary col-sm-3">@ViewBag.Title</h2>
 
     </div>
-    <div class="row">
-        <div class="col-sm-12" style="padding-right: 24px; padding-bottom: 12px">
-            @if (CurrentUser.HasRole("Finance"))
-            {
-                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").Id("btnBacklist").RouteValues(new { id = Model.Booking.ID }).PrependIcon("md md-arrow-back")
-            }
-            else if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
-            {
-                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "NCLForManager", "Lead").Id("btnBacklist").RouteValues(new { id = Model.Booking.EventID }).PrependIcon("md md-arrow-back")
-            }
-            else
-            {
-                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").Id("btnBacklist").RouteValues(new { id = Model.Booking.EventID }).PrependIcon("md md-arrow-back")
-            }
+<div class="row">
+    <div class="col-sm-12" style="padding-right: 24px; padding-bottom: 12px">
+        @if (CurrentUser.HasRole("Finance"))
+        {
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").Id("btnBacklist").RouteValues(new { id = Model.Booking.ID }).PrependIcon("md md-arrow-back")
+        }
+        else if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
+        {
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "NCLForManager", "Lead").Id("btnBacklist").RouteValues(new { id = Model.Booking.EventID }).PrependIcon("md md-arrow-back")
+        }
+        else
+        {
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").Id("btnBacklist").RouteValues(new { id = Model.Booking.EventID }).PrependIcon("md md-arrow-back")
+        }
 
-            @if (CurrentUser.HasPermission("Booking", "Edit") && (Model.Booking.BookingStatusRecord != BookingStatus.Approved || CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("Manager")))
-            {
-                @Html.Bootstrap().ActionLinkButton("Edit Booking", "Edit").RouteValues(new { id = Model.Booking.ID }).Class(" btn-primary").PrependIcon("md md-edit")
-            }
-            @if (CurrentUser.HasPermission("Booking", "ApproveBooking") && (Model.Booking.BookingStatusRecord == BookingStatus.Initial))
-            {
-                @Html.Bootstrap().ActionLinkButton("Approve Booking", "ApproveBooking").RouteValues(new { id = Model.Booking.ID }).Id("approve_action").Class("btn-success btnApprove").PrependIcon("md md-done")
-            }
+        @if (CurrentUser.HasPermission("Booking", "Edit") && (Model.Booking.BookingStatusRecord != BookingStatus.Approved || CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("Manager")))
+        {
+            @Html.Bootstrap().ActionLinkButton("Edit Booking", "Edit").RouteValues(new { id = Model.Booking.ID }).Class(" btn-primary").PrependIcon("md md-edit")
+        }
+        @if (CurrentUser.HasPermission("Booking", "ApproveBooking") && (Model.Booking.BookingStatusRecord == BookingStatus.Initial))
+        {
+            @Html.Bootstrap().ActionLinkButton("Approve Booking", "ApproveBooking").RouteValues(new { id = Model.Booking.ID }).Id("approve_action").Class("btn-success btnApprove").PrependIcon("md md-done")
+        }
 
-            @if (CurrentUser.HasPermission("Booking", "RejectBooking") && (Model.Booking.BookingStatusRecord == BookingStatus.Initial))
-            {
-                @Html.Bootstrap().ActionLinkButton("Reject Booking", "RejectBooking").RouteValues(new { id = Model.Booking.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
-            }
-
-        </div>
+        @if (CurrentUser.HasPermission("Booking", "RejectBooking") && (Model.Booking.BookingStatusRecord == BookingStatus.Initial))
+        {
+            @Html.Bootstrap().ActionLinkButton("Reject Booking", "RejectBooking").RouteValues(new { id = Model.Booking.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
+        }
     </div>
+</div>
     <div class="card">
         <div class="card-body @Model.Booking.ClassStatus form">
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Booking.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.StatusDisplay).LabelText("BOOKING STATUS")
+                        @Html.Bootstrap().LabelFor(m => m.Booking.StatusDisplay).LabelText("Booking Status")
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Booking.BookingStatusRecord.User.DisplayName).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.BookingStatusRecord.User.DisplayName).LabelText("CHANGE BY")
+                        @Html.Bootstrap().LabelFor(m => m.Booking.BookingStatusRecord.User.DisplayName).LabelText((Model.Booking.BookingStatusRecord == BookingStatus.Rejected ? "Rejected By" : (Model.Booking.BookingStatusRecord == BookingStatus.Approved ? "Approved By" : "Changed by")))
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Booking.StatusUpdateTimeStr).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Booking.StatusUpdateTimeStr).LabelText("UPDATE TIME")
+                        @Html.Bootstrap().LabelFor(m => m.Booking.StatusUpdateTimeStr).LabelText("Update Time")
                     </div>
                 </div>
                 @if (Model.Booking.BookingStatusRecord == BookingStatus.Rejected)
-            {
+                {
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Booking.BookingStatusRecord.Message).Class("form-control").HtmlAttributes(new { @style = "color:#f44336" }).Disabled().ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Booking.BookingStatusRecord.Message).LabelText("REASON OF REJECT")
+                            @Html.Bootstrap().TextBoxFor(m => m.Booking.BookingStatusRecord.Message).Class("form-control").HtmlAttributes(new {@style = "color:#f44336"}).Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Booking.BookingStatusRecord.Message).LabelText("Reason Of Rejection")
                         </div>
                     </div>
                 }

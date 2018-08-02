@@ -23,13 +23,13 @@
                     <div class="col-sm-6">
                         @Html.HiddenFor(m => m.ID)
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Email).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.Email).Class("form-control text-lowercase").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email").ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.DisplayName).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.DisplayName).HtmlAttributes(new { required = "required" }).Class("form-control text-capitalize").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.DisplayName).LabelText("Display Name").ShowRequiredStar(true)
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                         </div>
                     </div><div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Class("form-control text-lowercase").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.PersonalEmail)
                         </div>
                     </div>

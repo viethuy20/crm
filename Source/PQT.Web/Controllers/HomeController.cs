@@ -47,19 +47,19 @@ namespace PQT.Web.Controllers
         {
             var model = new HomeModel();
             if (CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("QC") || CurrentUser.HasRole("Manager"))
-                model.Events = _eventService.GetAllEvents();
+                model.Events = _eventService.GetAllEvents(m => (m.EventStatus == EventStatus.Live || m.EventStatus == EventStatus.Confirmed));
             else
             {
                 var userId = CurrentUser.Identity.ID;
                 model.Events = _eventService.GetAllEvents().Where(m =>
-                    m.UserID == userId ||
+                    (m.EventStatus == EventStatus.Live || m.EventStatus == EventStatus.Confirmed) && (m.UserID == userId ||
                     m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) ||
                     m.SalesGroups
                         .SelectMany(g => g.Users.Where(u => u.TransferUserID > 0).Select(u => u.TransferUserID))
                         .Contains(userId) ||
                     m.ManagerUsers.Select(u => u.ID).Contains(userId) ||
                     m.ManagerUsers.Where(u => u.TransferUserID > 0).Select(u => u.TransferUserID).Contains(userId) ||
-                    (m.DateOfOpen < DateTime.Today && DateTime.Today <= m.ClosingDate));
+                    (m.DateOfOpen < DateTime.Today && DateTime.Today <= m.ClosingDate)));
             }
             return View(model);
         }

@@ -25,7 +25,7 @@
             @Html.HiddenFor(m => m.Menu.ID)
             @Html.HiddenFor(m => m.Menu.ParentID)
             <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Menu.Title).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().TextBoxFor(m => m.Menu.Title).Class("form-control text-capitalize").ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.Menu.Title).LabelText("Title").ShowRequiredStar(true)
             </div>
             <div class="form-group">

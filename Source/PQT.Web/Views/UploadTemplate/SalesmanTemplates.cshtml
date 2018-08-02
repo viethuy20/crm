@@ -1,0 +1,51 @@
+﻿@model System.Collections.Generic.IEnumerable<PQT.Domain.Entities.UploadTemplate>
+@{
+    var groups = Model.DistinctBy(m => m.GroupNameCode);
+}
+<style>
+    #accordion2 .dropdown-menu {
+        display: block;
+        position: initial;
+        float: initial;
+        border: 0px
+    }
+
+    #accordion2 .dropdown-menu li a {
+            padding-left: 50px;
+        }
+</style>
+<div class="card card-underline" style="background: white; margin: auto; max-width: 600px; position: relative;">
+    <div class="card-head">
+        <header><b>Templates</b></header>
+    </div>
+    <div class="card-body">
+        <div class="col-md-12">
+            <div class="panel-group" id="accordion2">
+                @foreach (var group in groups)
+                {
+                    <div class="card panel">
+                        <div class="card-head card-head-xs" data-toggle="collapse" data-parent="#accordion2" data-target="#accordion2-@group.GroupNameCode">
+                            <header><b>@group.GroupName</b></header>
+                            <div class="tools">
+                                <a class="btn btn-icon-toggle"><i class="fa fa-angle-down"></i></a>
+                            </div>
+                        </div>
+                        <div id="accordion2-@group.GroupNameCode" class="collapse in">
+                            <div>
+                                <ul class="dropdown-menu animation-expand" style="">
+                                    @{
+                                        var items = Model.Where(m => m.GroupNameCode == group.GroupNameCode);
+                                        foreach (var uploadTemplate in items)
+                                        {
+                                            <li><a href="/data/@FileUploadType.Template/@uploadTemplate.FileName" target="_blank"><i class="fa fa-download"></i> @uploadTemplate.FileName </a></li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div><!--end .panel -->
+                                        }
+            </div><!--end .panel-group -->
+        </div><!--end .col -->
+    </div>
+</div>

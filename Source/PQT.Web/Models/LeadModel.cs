@@ -54,7 +54,7 @@ namespace PQT.Web.Models
             if (lead == null) return "Block failed";
             if (lead.LeadStatusRecord == LeadStatus.Booked)
                 return "Cannot process ... This item has been booked";
-            var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
+            var leads = leadRepo.GetAllLeads(m => m.Event.EventStatus == EventStatus.Live || m.Event.EventStatus == EventStatus.Confirmed);
             var maxBlock = Settings.Lead.MaxBlockeds();
             var currentUser = CurrentUser.Identity;
             if (leads.Count(m => (m.User.TransferUserID == currentUser.ID || m.UserID == currentUser.ID) && m.LeadStatusRecord == LeadStatus.Blocked) >= maxBlock)
@@ -428,6 +428,7 @@ namespace PQT.Web.Models
                     FinalStatus = lead.FinalStatus;
                     FirstFollowUpStatus = lead.FirstFollowUpStatus;
                     CompanyName = lead.CompanyName;
+                    DialingCode = lead.Company.DialingCode;
                     Lead = lead;
                 }
             }

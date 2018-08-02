@@ -16,5 +16,9 @@ namespace PQT.Web.Infrastructure.Helpers
                 return false;
             return true;
         }
+        public static bool NCLExpired(this Lead lead,int daysExpired)
+        {
+            return lead.CheckNCLExpired(daysExpired);
+        }
     }
 }

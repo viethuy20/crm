@@ -73,15 +73,15 @@
     <div class=" col-sm-6">
         <div class="card card-underline">
             <div class="card-head">
-                <header>Sender</header>
+                <header>Sender <span class="required">*</span></header>
             </div>
             <div class="card-body text-default-light">
                 <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderName).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Booking.SenderName).LabelText("Sender")
+                    @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderName).Class("form-control text-capitalize").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Booking.SenderName).ShowRequiredStar(true).LabelText("Sender")
                 </div>
                 <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderDestination).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderDestination).Class("form-control text-capitalize").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Booking.SenderDestination).LabelText("Destination")
                 </div>
                 <div class="form-group">
@@ -98,7 +98,7 @@
     <div class=" col-sm-12">
         <div class="card card-underline">
             <div class="card-head">
-                <header>Delegates</header>
+                <header>Delegates <span class="required">*</span></header>
                 @Html.ValidationMessageFor(m => m.Booking.Delegates)
             </div>
             <div class="card-body text-default-light" id="delegateContain">
@@ -127,11 +127,11 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserName).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserName).Class("form-control text-capitalize").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserName).ShowRequiredStar(true).LabelText("Authoriser")
                 </div>
                 <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserDestination).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserDestination).Class("form-control text-capitalize").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserDestination).LabelText("Destination")
                 </div>
                 <div class="form-group">
@@ -150,8 +150,8 @@
             {
                 @Html.Bootstrap().Link(Model.Booking.Attachment, FileUpload.GetImageUrl(FileUploadType.Booking, Model.Booking.Attachment)).Class("form-control").HtmlAttributes(new { target = "_blank" })
             }
-            @Html.Bootstrap().FileFor(m => m.AttachmentFile).ShowValidationMessage(false).HtmlAttributes(new { @style = "margin-top: 15px" })
-            @Html.Bootstrap().LabelFor(m => m.Booking.Attachment)
+            @Html.Bootstrap().FileFor(m => m.AttachmentFile).ShowValidationMessage(true).HtmlAttributes(new { @style = "margin-top: 15px", required = "required" })
+            @Html.Bootstrap().LabelFor(m => m.Booking.Attachment).LabelText("Signed Reg Contract").ShowRequiredStar(true)
         </div>
     </div>
     <div class=" col-sm-6">
@@ -173,13 +173,21 @@
                     @Html.Bootstrap().LabelFor(m => m.Booking.TotalWrittenRevenue)
                 </div>
                 <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Booking.TotalPaidRevenue).Class("form-control").ShowValidationMessage(true)
+                    @if (CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("Manager"))
+                    {
+                        @Html.Bootstrap().TextBoxFor(m => m.Booking.TotalPaidRevenue).Class("form-control").ShowValidationMessage(true)
+                    }
+                    else
+                    {
+                        @Html.Bootstrap().TextBoxFor(m => m.Booking.TotalPaidRevenue).Readonly().Class("form-control").ShowValidationMessage(true)
+                    }
                     @Html.Bootstrap().LabelFor(m => m.Booking.TotalPaidRevenue)
                 </div>
-                <div class="form-group ">
+                <div class="form-group">
                     @if (CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("Manager"))
                     {
                         @Html.Bootstrap().DropDownListFor(m => m.Booking.PaymentStatus, EnumerationHelper.ToSelectList<PaymentStatus>()).Class("form-control").ShowValidationMessage(true)
+
                     }
                     else
                     {

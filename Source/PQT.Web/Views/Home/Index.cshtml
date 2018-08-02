@@ -108,6 +108,8 @@
                                 DOC: @item.DateOfConfirmationStr - Closing Date: @item.ClosingDateStr
                                 <br />
                                 Location: @item.Location
+                                <br />
+                                Venue: @item.HotelVenue
                                 @if (CurrentUser.HasRole("Finance"))
                                 {
                                     <a href="@Url.Action("Index", "Booking", new {id = item.ID})" class="link-event">

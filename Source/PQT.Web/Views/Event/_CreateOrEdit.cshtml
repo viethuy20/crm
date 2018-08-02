@@ -28,7 +28,7 @@
             </div>
             <div class="col-sm-6">
                 <div class="form-group ">
-                    @Html.Bootstrap().TextBoxFor(m => m.Event.EventName).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.EventName).Class("form-control text-capitalize").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Event.EventName).ShowRequiredStar(true)
                 </div>
             </div>
@@ -120,27 +120,33 @@
                     @Html.Bootstrap().LabelFor(m => m.Event.Location)
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="form-group ">
-                    @Html.Bootstrap().TextBoxFor(m => m.Event.FinanceEmail).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.FinanceEmail).Class("form-control text-lowercase").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Event.FinanceEmail).LabelText("Finance")
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="form-group ">
-                    @Html.Bootstrap().TextBoxFor(m => m.Event.OperationEmail).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Event.OperationEmail).LabelText("Operation")
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.OperationEmail).Class("form-control text-lowercase").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.OperationEmail).LabelText("Operation Office")
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group ">
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.OperationOnsiteEmail).Class("form-control text-lowercase").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.OperationOnsiteEmail).LabelText("Operation Onsite")
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="form-group ">
-                    @Html.Bootstrap().TextBoxFor(m => m.Event.ProductionEmail).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.ProductionEmail).Class("form-control text-lowercase").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Event.ProductionEmail).LabelText("Production")
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="form-group ">
-                    @Html.Bootstrap().TextBoxFor(m => m.Event.SalesEmail).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().TextBoxFor(m => m.Event.SalesEmail).Class("form-control text-lowercase").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Event.SalesEmail).LabelText("Sales")
                 </div>
             </div>

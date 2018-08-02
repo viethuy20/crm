@@ -10,6 +10,12 @@
     </div>
     <div class="form-group row">
         <div class="col-sm-6">
+            @if (CurrentUser.HasPermission("CompanyResource", "CreateOrEdit"))
+            {
+                @Html.Bootstrap().ActionLinkButton(Resource.AddNew, "CreateOrEdit").RouteValues(new { id = 0 }).PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary simple-ajax-popup-align-top" })
+            }
+
+
             @if (CurrentUser.HasPermission("CompanyResource", "ImportFromExcel"))
             {
                 @Html.Bootstrap().ActionLinkButton(Resource.ImportFromExcel, "ImportFromExcel").PrependIcon("md md-cloud-upload").HtmlAttributes(new { @class = "btn btn-info " })
@@ -26,13 +32,15 @@
                             <th>Salutation</th>
                             <th>First Name</th>
                             <th>Last Name</th>
-                            <th>Organisation</th>
+                            <th>Company</th>
                             <th>Role</th>
                             <th>Mobile Phone1</th>
                             <th>Mobile Phone2</th>
                             <th>Mobile Phone3</th>
                             <th>Work Email</th>
                             <th>Personal Email</th>
+                            <th>Business Unit</th>
+                            <th>Budget Month</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -72,13 +80,17 @@
                 { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
                 { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
                 { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
+                { "data": "BusinessUnit", "name": "BusinessUnit", "orderable": true },
+                { "data": "BudgetMonthStr", "name": "BudgetMonth", "orderable": true },
                 { "data": "ID", "name": "ID", "orderable": false },
             ],
             "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
             "iDisplayLength": 50,
             "aaSorting": [[4, "asc"]],
             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                $(nRow).find('td:eq(11)').html(' <a href="#" data-action="delete" data-id="' + aData["ID"] +'"><i class="md md-delete text-danger"></i></a>');
+                $(nRow).attr("data-id", aData["ID"]);
+                $(nRow).find('td:eq(13)').html('<a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a> ' +
+                    '<a href="#" data-action="delete" data-id="' + aData["ID"] + '"><i class="md md-delete text-danger"></i></a>');
             },
             initComplete: function () {
                 var _table = this;
@@ -115,7 +127,7 @@
             });
         });
 
-        @*function onFail() {
+        function onFail() {
             $(".error").removeClass('hide');
             $(".success").addClass('hide');
             $(".texterror").text("@Resource.Error");
@@ -146,33 +158,50 @@
                     $(".texterror").text(data.error);
                 $(".error").removeClass('hide');
             }
-        }*@
+        }
 
-        //function addNewLineItem(data) {
-        //    var rowIndex = $Table.fnAddData([
-        //        data.CountryName,
-        //        data.Name,
-        //        data.ProductOrService,
-        //        data.Sector,
-        //        data.Industry,
-        //        '<a data-action="delete" data-id="' + data.ID + '" href="#"><i class="md md-delete text-danger"></i></a>'
-        //    ]);
-        //    var row = $Table.fnGetNodes(rowIndex);
-        //    $(row).attr('data-id', data.ID);
-        //}
-        //function updateItem(data) {
-        //    var tr = $($Table.fnGetNodes());
-        //    tr.each(function (index, item) {
-        //        if ($(item).data('id') == data.ID) {
-        //            var td = $(item).find("td");
-        //            if (td.length > 0) {
-        //                $(td[0]).text(data.CountryName);
-        //                $(td[1]).text(data.Name);
-        //                $(td[2]).text(data.ProductOrService);
-        //                $(td[3]).text(data.Sector);
-        //                $(td[4]).text(data.Industry);
-        //            }
-        //        }
-        //    });
-        //}
+        function addNewLineItem(data) {
+            var rowIndex = $Table.fnAddData([
+                data.Country,
+                data.Salutation,
+                data.FirstName,
+                data.LastName,
+                data.Organisation,
+                data.Role,
+                data.MobilePhone1,
+                data.MobilePhone2,
+                data.MobilePhone3,
+                data.WorkEmail,
+                data.PersonalEmail,
+                data.BusinessUnit,
+                data.BudgetMonthStr,
+                '<a class="simple-ajax-popup-align-top" data-action="edit" href="@Url.Action("CreateOrEdit")?id=' + data.ID + '"><i class="md md-edit text-info"></i></a>' +
+                '<a data-action="delete" data-id="' + data.ID + '" href="#"><i class="md md-delete text-danger"></i></a>'
+            ]);
+            var row = $Table.fnGetNodes(rowIndex);
+            $(row).attr('data-id', data.ID);
+        }
+        function updateItem(data) {
+            var tr = $($Table.fnGetNodes());
+            tr.each(function (index, item) {
+                if ($(item).data('id') == data.ID) {
+                    var td = $(item).find("td");
+                    if (td.length > 0) {
+                        $(td[0]).text(data.Country);
+                        $(td[1]).text(data.Salutation);
+                        $(td[2]).text(data.FirstName);
+                        $(td[3]).text(data.LastName);
+                        $(td[4]).text(data.Organisation);
+                        $(td[5]).text(data.Role);
+                        $(td[6]).text(data.MobilePhone1);
+                        $(td[7]).text(data.MobilePhone2);
+                        $(td[8]).text(data.MobilePhone3);
+                        $(td[9]).text(data.WorkEmail);
+                        $(td[10]).text(data.PersonalEmail);
+                        $(td[11]).text(data.BusinessUnit);
+                        $(td[12]).text(data.BudgetMonthStr);
+                    }
+                }
+            });
+        }
 </script>)

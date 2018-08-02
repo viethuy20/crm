@@ -4688,7 +4688,7 @@ DayGrid.mixin({
 						titleHtml + ' ' + timeHtml : // put a natural space in between
 						timeHtml + ' ' + titleHtml   //
 						) +
-				'</div>' +
+	        '<i class="fa fa-remove" style="float: right;margin-top: 2px;"></i></div>' +
 				(isResizable ?
 					'<div class="fc-resizer"/>' :
 					''

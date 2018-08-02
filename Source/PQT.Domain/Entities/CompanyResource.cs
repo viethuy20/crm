@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using NS;
 
 namespace PQT.Domain.Entities
 {
@@ -23,5 +24,18 @@ namespace PQT.Domain.Entities
         //[ForeignKey("CompanyID")]
         //public virtual Company Company { get; set; }
         public int? CountryID { get; set; }
+
+        public string BusinessUnit { get; set; }
+        public int BudgetMonth { get; set; }
+        public string Remarks { get; set; }
+
+        public string BudgetMonthStr
+        {
+            get
+            {
+                var monthEnum = Enumeration.FromValue<MonthStatus>(BudgetMonth.ToString());
+                return monthEnum != null ? monthEnum.DisplayName : "";
+            }
+        }
     }
 }

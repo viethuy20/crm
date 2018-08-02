@@ -40,10 +40,17 @@
         <div class="headerbar-right">
             <ul class="header-nav header-nav-options">
                 <li>
-                    <a href="#offcanvas-notify" data-toggle="offcanvas" class="btn btn-icon-toggle btn-default" id="notify-trigger">
+                    <a href="@Url.Action("SalesmanTemplates","UploadTemplate")" title="Templates" class="btn btn-icon-toggle btn-default simple-ajax-popup-align-top">
+                        <i class="fa fa-files-o"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#offcanvas-notify" data-toggle="offcanvas" title="Notifications" class="btn btn-icon-toggle btn-default" id="notify-trigger">
                         <i class="fa fa-bell"></i><sup class="badge style-danger count @(count == 0? "hide":"")">@(count)</sup>
                     </a>
                 </li>
+                
+
                 @*<li>
                         <!-- Search form -->
                         <form class="navbar-search" role="search">
@@ -624,6 +631,7 @@
                             fixedColumn = 0;
                             tableLead.fnDraw();
                             LoadTotalNCLSummary();
+                            LoadTotalBlocked();
                         }
                     }
                 } catch (e) {

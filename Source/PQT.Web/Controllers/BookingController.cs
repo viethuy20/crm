@@ -48,7 +48,13 @@ namespace PQT.Web.Controllers
             return View(eventData);
         }
 
-        public ActionResult Detail(int id = 0, int leadId = 0, int eventId = 0)
+        [DisplayName(@"Bookings approved")]
+        public ActionResult BookingsApproved()
+        {
+            return View(new BookingViewModel());
+        }
+
+        public ActionResult Detail(int id = 0, int leadId = 0, int eventId = 0, int approvedList = 0)
         {
             var model = new BookingModel();
             Booking booking = null;
@@ -297,21 +303,35 @@ namespace PQT.Web.Controllers
             IEnumerable<Booking> bookings = new HashSet<Booking>();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                bookings = _bookingService.GetAllBookings(m => m.EventID == eventId && (
-                                                   (m.CreatedTime.ToString("dd/MM/yyyy HH:mm:ss").Contains(searchValue) ||
-                                                   m.Company != null && m.Company.CompanyName.Contains(searchValue)) ||
-                                                   m.Address.Contains(searchValue) ||
-                                                   m.Tel.Contains(searchValue) ||
-                                                   m.Fax.Contains(searchValue) ||
-                                                   m.AuthoriserName.Contains(searchValue) ||
-                                                   m.SenderName.Contains(searchValue) ||
-                                                   (m.Event != null && m.Event.EventName.Contains(searchValue)) ||
-                                                   (m.Salesman != null && m.Salesman.DisplayName.Contains(searchValue)) ||
-                                                   m.FeePerDelegate.ToString().Contains(searchValue) ||
-                                                   m.DiscountPercent.ToString().Contains(searchValue) ||
-                                                   m.TotalWrittenRevenue.ToString().Contains(searchValue) ||
-                                                   m.TotalPaidRevenue.ToString().Contains(searchValue) ||
-                                                   (m.BookingStatusRecord != null && m.BookingStatusRecord.Status.DisplayName.Contains(searchValue))));
+                bookings = _bookingService.GetAllBookings(
+                    m => m.EventID == eventId && (
+                             m.CreatedTime.ToString("dd/MM/yyyy HH:mm:ss")
+                                 .Contains(searchValue) ||
+                             (m.Company != null && m.Company.CompanyName.ToLower()
+                                  .Contains(searchValue)) ||
+                             (m.Address != null && m.Address.ToLower()
+                                  .Contains(searchValue)) ||
+                             (m.Tel != null &&
+                              m.Tel.ToLower().Contains(searchValue)) ||
+                             (m.Fax != null &&
+                              m.Fax.ToLower().Contains(searchValue)) ||
+                             (m.AuthoriserName != null &&
+                              m.AuthoriserName.ToLower().Contains(searchValue)) ||
+                             (m.SenderName != null && m.SenderName.ToLower()
+                                  .Contains(searchValue)) ||
+                             (m.Event != null && m.Event.EventName.ToLower()
+                                  .Contains(searchValue)) ||
+                             (m.Salesman != null && m.Salesman.DisplayName
+                                  .ToLower().Contains(searchValue)) ||
+                             m.FeePerDelegate.ToString().Contains(searchValue) ||
+                             m.DiscountPercent.ToString().Contains(searchValue) ||
+                             m.TotalWrittenRevenue.ToString()
+                                 .Contains(searchValue) ||
+                             m.TotalPaidRevenue.ToString()
+                                 .Contains(searchValue) ||
+                             (m.BookingStatusRecord != null &&
+                              m.BookingStatusRecord.Status.DisplayName.ToLower()
+                                  .Contains(searchValue))));
             }
             else
             {
@@ -451,10 +471,198 @@ namespace PQT.Web.Controllers
                     Salesman = m.Salesman != null ? m.Salesman.DisplayName : "",
                     m.FeePerDelegate,
                     Discount = m.DiscountPercent,
-                    m.TotalWrittenRevenue,
-                    m.TotalPaidRevenue,
+                    TotalWrittenRevenue = m.TotalWrittenRevenue.ToString("N2"),
+                    TotalPaidRevenue = m.TotalPaidRevenue.ToString("N2"),
                     Status = m.BookingStatusRecord != null ? m.BookingStatusRecord.Status.DisplayName : "",
                     ClassStatus = m.ClassStatus
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
+        [AjaxOnly]
+        public ActionResult AjaxGetBookingsApproved()
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+            var searchValue = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
+            }
+
+            var datefrom = default(DateTime);
+            if (Request.Form.GetValues("DateFrom").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                var _dateFrom = Request.Form.GetValues("DateFrom").FirstOrDefault().Trim().ToLower();
+                if (!string.IsNullOrEmpty(_dateFrom))
+                    datefrom = Convert.ToDateTime(_dateFrom);
+            }
+            var dateto = default(DateTime);
+            if (Request.Form.GetValues("DateTo").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                var _dateto = Request.Form.GetValues("DateTo").FirstOrDefault().Trim().ToLower();
+                if (!string.IsNullOrEmpty(_dateto))
+                    dateto = Convert.ToDateTime(_dateto);
+            }
+
+
+            var eventId = 0;
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("EventID").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                if (Request.Form.GetValues("EventID") != null && !string.IsNullOrEmpty(Request.Form.GetValues("EventID").FirstOrDefault()))
+                {
+                    eventId = Convert.ToInt32(Request.Form.GetValues("EventID").FirstOrDefault());
+                }
+            }
+
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+            //var saleId = PermissionHelper.SalesmanId();
+            IEnumerable<Booking> bookings = new HashSet<Booking>();
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                bookings = _bookingService.GetAllBookings(m => m.BookingStatusRecord == BookingStatus.Approved &&
+                                                               (datefrom == default(DateTime) ||
+                                                                m.CreatedTime.Date >= datefrom.Date) &&
+                                                               (dateto == default(DateTime) ||
+                                                                m.CreatedTime.Date <= dateto.Date) &&
+                                                               (eventId == 0 || m.EventID == eventId) && (
+                                                                   (m.CreatedTime.ToString("dd/MM/yyyy")
+                                                                        .Contains(searchValue) ||
+                                                                    m.Company != null && m.Company.CompanyName.ToLower()
+                                                                        .Contains(searchValue)) ||
+                                                                   (m.Event != null && m.Event.EventName.ToLower()
+                                                                        .Contains(searchValue)) ||
+                                                                   (m.Event != null && m.Event.EventCode.ToLower()
+                                                                        .Contains(searchValue)) ||
+                                                                   m.TotalWrittenRevenue.ToString()
+                                                                       .Contains(searchValue) ||
+                                                                   m.TotalPaidRevenue.ToString()
+                                                                       .Contains(searchValue) ||
+                                                                   (m.PaymentStatus != null && m.PaymentStatusDisplay
+                                                                        .ToLower().Contains(searchValue))));
+            }
+            else
+            {
+                bookings = _bookingService.GetAllBookings(m => m.BookingStatusRecord == BookingStatus.Approved &&
+                                                               (datefrom == default(DateTime) ||
+                                                                m.CreatedTime.Date >= datefrom.Date) &&
+                                                               (dateto == default(DateTime) ||
+                                                                m.CreatedTime.Date <= dateto.Date) &&
+                                                               (eventId == 0 || m.EventID == eventId));
+            }
+            // ReSharper disable once AssignNullToNotNullAttribute
+
+            #region sort
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "CreatedTime":
+                        bookings = bookings.OrderBy(s => s.CreatedTime).ThenBy(s => s.ID);
+                        break;
+                    case "Country":
+                        bookings = bookings.OrderBy(s => s.Company != null ? s.Company.CountryName : "").ThenBy(s => s.ID);
+                        break;
+                    case "CompanyName":
+                        bookings = bookings.OrderBy(s => s.Company != null ? s.Company.CompanyName : "").ThenBy(s => s.ID);
+                        break;
+                    case "EventName":
+                        bookings = bookings.OrderBy(s => s.Event != null ? s.Event.EventName : "").ThenBy(s => s.ID);
+                        break;
+                    case "EventCode":
+                        bookings = bookings.OrderBy(s => s.Event != null ? s.Event.EventCode : "").ThenBy(s => s.ID);
+                        break;
+                    case "TotalWrittenRevenue":
+                        bookings = bookings.OrderBy(s => s.TotalWrittenRevenue).ThenBy(s => s.ID);
+                        break;
+                    case "TotalPaidRevenue":
+                        bookings = bookings.OrderBy(s => s.TotalPaidRevenue).ThenBy(s => s.ID);
+                        break;
+                    case "PaymentStatus":
+                        bookings = bookings.OrderBy(s => s.PaymentStatusDisplay).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        bookings = bookings.OrderBy(s => s.ID);
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "CreatedTime":
+                        bookings = bookings.OrderByDescending(s => s.CreatedTime).ThenBy(s => s.ID);
+                        break;
+                    case "Country":
+                        bookings = bookings.OrderByDescending(s => s.Company != null ? s.Company.CountryName : "").ThenBy(s => s.ID);
+                        break;
+                    case "CompanyName":
+                        bookings = bookings.OrderByDescending(s => s.Company != null ? s.Company.CompanyName : "").ThenBy(s => s.ID);
+                        break;
+                    case "EventName":
+                        bookings = bookings.OrderByDescending(s => s.Event != null ? s.Event.EventName : "").ThenBy(s => s.ID);
+                        break;
+                    case "EventCode":
+                        bookings = bookings.OrderByDescending(s => s.Event != null ? s.Event.EventCode : "").ThenBy(s => s.ID);
+                        break;
+                    case "TotalWrittenRevenue":
+                        bookings = bookings.OrderByDescending(s => s.TotalWrittenRevenue).ThenBy(s => s.ID);
+                        break;
+                    case "TotalPaidRevenue":
+                        bookings = bookings.OrderByDescending(s => s.TotalPaidRevenue).ThenBy(s => s.ID);
+                        break;
+                    case "PaymentStatus":
+                        bookings = bookings.OrderByDescending(s => s.PaymentStatusDisplay).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        bookings = bookings.OrderByDescending(s => s.ID);
+                        break;
+                }
+            }
+
+            #endregion sort
+
+            recordsTotal = bookings.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            var data = bookings.Skip(skip).Take(pageSize).ToList();
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    m.ID,
+                    CreatedTime = m.CreatedTime.ToString("dd/MM/yyyy"),
+                    Country = m.Company != null ? m.Company.CountryName : "",
+                    CompanyName = m.Company != null ? m.Company.CompanyName : "",
+                    EventName = m.Event != null ? m.Event.EventName : "",
+                    EventCode = m.Event != null ? m.Event.EventCode : "",
+                    TotalWrittenRevenue = m.TotalWrittenRevenue.ToString("N2"),
+                    TotalPaidRevenue = m.TotalPaidRevenue.ToString("N2"),
+                    PaymentStatus = m.PaymentStatusDisplay,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

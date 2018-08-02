@@ -43,7 +43,7 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Email).Readonly().Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.Email).Readonly().Class("form-control text-lowercase").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Email).ShowRequiredStar(true)
                         </div>
                     </div>
@@ -61,13 +61,13 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Class("form-control text-lowercase").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.PersonalEmail)
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.PassportID).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.PassportID).Readonly().Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.PassportID).LabelText("Passport/ID")
                         </div>
                     </div>

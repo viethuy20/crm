@@ -35,7 +35,7 @@ namespace PQT.Domain.Concrete
                 switch (sortColumn)
                 {
                     case "CountryName":
-                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m=>m.EntityStatus.Value == EntityStatus.Normal.Value)
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderBy(s => s.Country.Name).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
                             .AsEnumerable();
                         break;
@@ -300,11 +300,18 @@ namespace PQT.Domain.Concrete
                 //exist.FinalStatus = company.FinalStatus;
                 //exist.DateNextFollowUp = company.DateNextFollowUp;
                 exist.BudgetMonth = company.BudgetMonth;
+                exist.BusinessUnit = company.BusinessUnit;
                 //exist.GoodTrainingMonth = company.GoodTrainingMonth;
                 //exist.TopicsInterested = company.TopicsInterested;
                 //exist.LocationInterested = company.LocationInterested;
                 //exist.TrainingBudget = company.TrainingBudget;
                 exist.Remarks = company.Remarks;
+                var com = Get<Company>(exist.CompanyID);
+                if (com == null) return Update(exist);
+                com.BusinessUnit = company.BusinessUnit;
+                com.BudgetMonth = company.BudgetMonth;
+                com.Remarks = company.Remarks;
+                Update(com);
                 return Update(exist);
             }
             return false;

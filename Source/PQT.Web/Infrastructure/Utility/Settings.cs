@@ -15,6 +15,11 @@ namespace PQT.Web.Infrastructure.Utility
             get { return DependencyHelper.GetService<ISettingRepository>(); }
         }
 
+        private static IUnitRepository UnitRepository
+        {
+            get { return DependencyHelper.GetService<IUnitRepository>(); }
+        }
+
         #endregion
 
         /// <summary>
@@ -69,7 +74,9 @@ namespace PQT.Web.Infrastructure.Utility
         {
             public static int NumberDaysExpired()
             {
-                return Convert.ToInt32(GetSetting(Setting.ModuleType.Lead, Setting.ModuleKey.Lead.NumberDaysExpired, typeof(int)));
+                var expiredDays = Convert.ToInt32(GetSetting(Setting.ModuleType.Lead, Setting.ModuleKey.Lead.NumberDaysExpired, typeof(int)));
+                var holidays = TotalHolidays(expiredDays);
+                return expiredDays + holidays;
             }
             public static int MaxBlockeds()
             {
@@ -78,6 +85,14 @@ namespace PQT.Web.Infrastructure.Utility
             public static int MaxLOIs()
             {
                 return Convert.ToInt32(GetSetting(Setting.ModuleType.Lead, Setting.ModuleKey.Lead.MaxLOIs, typeof(int)));
+            }
+
+            public static int TotalHolidays(int expiredDays)
+            {
+                return UnitRepository.TotalHolidays(DateTime.Today, DateTime.Today.AddDays(expiredDays),
+                    CurrentUser.Identity.OfficeLocation != null
+                        ? CurrentUser.Identity.OfficeLocation.CountryID
+                        : (int?) null);
             }
         }
 

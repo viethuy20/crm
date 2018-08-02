@@ -63,6 +63,7 @@ namespace PQT.Domain.Concrete
             {
                 exist.Remark = info.Remark;
                 exist.CallBackDate = info.CallBackDate;
+                exist.CallBackTiming = info.CallBackTiming;
                 return Update(exist);
             }
             return false;

@@ -20,13 +20,16 @@
                 <th>Salutation</th>
                 <th class="nowrap">First Name</th>
                 <th class="nowrap">Last Name</th>
-                <th style="min-width:200px">Organisation</th>
+                <th style="min-width:200px">Company</th>
                 <th style="min-width:200px">Role</th>
                 <th class="nowrap">Mobile Phone1</th>
                 <th class="nowrap">Mobile Phone2</th>
                 <th class="nowrap">Mobile Phone3</th>
                 <th class="nowrap">Work Email</th>
                 <th class="nowrap">Personal Email</th>
+                <th class="nowrap">Business Unit</th>
+                <th class="nowrap">Budget Month</th>
+                <th class="nowrap">Remarks</th>
             </tr>
         </thead>
     </table>
@@ -64,6 +67,9 @@
                  { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
                  { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
                  { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
+                 { "data": "BusinessUnit", "name": "BusinessUnit", "orderable": true },
+                 { "data": "BudgetMonthStr", "name": "BudgetMonth", "orderable": true },
+                 { "data": "Remarks", "name": "Remarks", "orderable": true },
              ],
              "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
              "iDisplayLength": 25,
@@ -81,6 +87,8 @@
                  $(nRow).attr('data-mobilephone3', aData["MobilePhone3"]);
                  $(nRow).attr('data-workemail', aData["WorkEmail"]);
                  $(nRow).attr('data-personalemail', aData["PersonalEmail"]);
+                 $(nRow).attr('data-budgetmonth', aData["BudgetMonth"]);
+                 $(nRow).attr('data-businessunit', aData["BusinessUnit"]);
                  $(nRow).find('td:eq(2)').addClass('nowrap');
                  $(nRow).find('td:eq(3)').addClass('nowrap');
                  $(nRow).find('td:eq(6)').addClass('nowrap');
@@ -88,12 +96,14 @@
                  $(nRow).find('td:eq(8)').addClass('nowrap');
                  $(nRow).find('td:eq(9)').addClass('nowrap');
                  $(nRow).find('td:eq(10)').addClass('nowrap');
+                 $(nRow).find('td:eq(11)').addClass('nowrap');
+                 $(nRow).find('td:eq(12)').addClass('nowrap');
              },
              initComplete: function() {
                  var _table = this;
                  var filter_box = _table.parent().find("#crtable_filter");
                  var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
-                 htmlFilter += '<label>Organisation:<input type="search" name="search_organisation" /></label>';
+                 htmlFilter += '<label>Company:<input type="search" name="search_organisation" /></label>';
                  htmlFilter += '<label>Role:<input type="search" name="search_role" /></label>';
                  filter_box.html(htmlFilter);
                  searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);

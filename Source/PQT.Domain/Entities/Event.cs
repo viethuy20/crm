@@ -33,7 +33,8 @@ namespace PQT.Domain.Entities
         public string Remark { get; set; }
         public string Brochure { get; set; }
         public string FinanceEmail { get; set; }
-        public string OperationEmail { get; set; }
+        public string OperationEmail { get; set; }//Operation Office
+        public string OperationOnsiteEmail { get; set; }
         public string ProductionEmail { get; set; }
         public string SalesEmail { get; set; }
         public string RegContract { get; set; }

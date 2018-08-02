@@ -56,7 +56,7 @@ namespace PQT.Web.Controllers
             }
             return View(model);
         }
-        [DisplayName(@"No Call List For Salesman")]
+        [DisplayName(@"No Call List")]
         public ActionResult NCL(int id = 0)
         {
             var model = new LeadModelView();
@@ -236,26 +236,25 @@ namespace PQT.Web.Controllers
                 var leadExists = _repo.GetAllLeads(m =>
                     m.EventID == model.EventID && m.UserID != currentUser.ID &&
                     m.User.TransferUserID != currentUser.ID &&
-                    m.CompanyID == model.CompanyID && !m.CheckNCLExpired(daysExpired) &&
-                    (m.LeadStatusRecord == LeadStatus.Blocked ||
-                     m.LeadStatusRecord == LeadStatus.Live ||
-                     m.LeadStatusRecord == LeadStatus.LOI ||
-                     m.LeadStatusRecord == LeadStatus.Booked));
+                    m.CompanyID == model.CompanyID && m.LeadStatusRecord != LeadStatus.Initial &&
+                    m.LeadStatusRecord != LeadStatus.Reject
+                    && !m.CheckNCLExpired(daysExpired));
                 if (leadExists.Any())
                 {
                     TempData["error"] = "Cannot process... This company is existing in NCL";
                     return RedirectToAction("Index", new { id = model.EventID });
                 }
                 var callExists = _repo.GetAllLeads(m =>
-                    m.EventID == model.EventID && (m.UserID == currentUser.ID ||
-                    m.User.TransferUserID == currentUser.ID) &&
-                    (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail == model.WorkEmail) ||
-                    (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1 == model.MobilePhone1) ||
-                    (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2 == model.MobilePhone2) ||
-                    (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3 == model.MobilePhone3));
+                    m.EventID == model.EventID && (
+                        (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail == model.WorkEmail) ||
+                        (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1 == model.WorkEmail1) ||
+                        (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail == model.PersonalEmail) ||
+                        (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1 == model.MobilePhone1) ||
+                        (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2 == model.MobilePhone2) ||
+                        (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3 == model.MobilePhone3)));
                 if (callExists.Any())
                 {
-                    TempData["error"] = "Client contact exists in your called list";
+                    TempData["error"] = "Client contact exists in called list";
                     return RedirectToAction("StartCallForm", new { id = model.EventID });
                 }
 
@@ -286,10 +285,24 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Call Back Form")]
         public ActionResult CallingForm(CallingModel model)
         {
+            var callExists = _repo.GetAllLeads(m =>
+                m.EventID == model.EventID &&
+                m.ID != model.LeadID &&
+                ((!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail == model.WorkEmail) ||
+                 (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1 == model.WorkEmail1) ||
+                 (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail == model.PersonalEmail) ||
+                 (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1 == model.MobilePhone1) ||
+                 (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2 == model.MobilePhone2) ||
+                 (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3 == model.MobilePhone3)));
+            if (callExists.Any())
+            {
+                TempData["error"] = "Client contact exists in called list";
+                return RedirectToAction("CallingForm", new { id = model.LeadID });
+            }
             if (model.Save())
             {
                 TempData["message"] = "Call successful";
-                return RedirectToAction("Detail", new { id = model.Lead.ID });
+                return RedirectToAction("Detail", new { id = model.LeadID });
             }
             if (model.Event == null)
             {
@@ -435,7 +448,7 @@ namespace PQT.Web.Controllers
                                                    m.CountryCode.ToLower().Contains(searchValue) ||
                                                    m.JobTitle.ToLower().Contains(searchValue) ||
                                                    m.DirectLine.ToLower().Contains(searchValue) ||
-                                                   m.CallBackDateDisplay.ToLower().Contains(searchValue) ||
+                                                   m.CallBackDateTimeDisplay.ToLower().Contains(searchValue) ||
                                                    (m.Salutation != null && m.Salutation.ToLower().Contains(searchValue)) ||
                                                    (m.FirstName != null && m.FirstName.ToLower().Contains(searchValue)) ||
                                                    (m.LastName != null && m.LastName.ToLower().Contains(searchValue)) ||
@@ -444,7 +457,9 @@ namespace PQT.Web.Controllers
                                                    (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
                                                    (m.WorkEmail != null && m.WorkEmail.ToLower().Contains(searchValue)) ||
                                                    (m.WorkEmail1 != null && m.WorkEmail1.ToLower().Contains(searchValue)) ||
-                                                   (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue))));
+                                                   (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue)) ||
+                                                   (m.FirstFollowUpStatusDisplay.ToLower().Contains(searchValue)) ||
+                                                   (m.FinalStatusDisplay.ToLower().Contains(searchValue))));
             }
             else
             {
@@ -523,6 +538,15 @@ namespace PQT.Web.Controllers
                     case "MarkKPI":
                         leads = leads.OrderBy(s => s.MarkKPI).ThenBy(s => s.ID);
                         break;
+                    case "FirstFollowUpStatus":
+                        leads = leads.OrderBy(s => s.FirstFollowUpStatus).ThenBy(s => s.ID);
+                        break;
+                    case "FinalStatus":
+                        leads = leads.OrderBy(s => s.FinalStatus).ThenBy(s => s.ID);
+                        break;
+                    case "CallBackDateTime":
+                        leads = leads.OrderBy(s => s.CallBackDateTime).ThenBy(s => s.ID);
+                        break;
                     default:
                         leads = leads.OrderBy(s => s.ID);
                         break;
@@ -598,6 +622,15 @@ namespace PQT.Web.Controllers
                     case "MarkKPI":
                         leads = leads.OrderByDescending(s => s.MarkKPI).ThenBy(s => s.ID);
                         break;
+                    case "FirstFollowUpStatus":
+                        leads = leads.OrderByDescending(s => s.FirstFollowUpStatus).ThenBy(s => s.ID);
+                        break;
+                    case "FinalStatus":
+                        leads = leads.OrderByDescending(s => s.FinalStatus).ThenBy(s => s.ID);
+                        break;
+                    case "CallBackDateTime":
+                        leads = leads.OrderByDescending(s => s.CallBackDateTime).ThenBy(s => s.ID);
+                        break;
                     default:
                         leads = leads.OrderByDescending(s => s.ID);
                         break;
@@ -648,6 +681,9 @@ namespace PQT.Web.Controllers
                     m.ClassStatus,
                     m.MarkKPI,
                     m.KPIRemarks,
+                    FirstFollowUpStatus = m.FirstFollowUpStatusDisplay,
+                    FinalStatus = m.FinalStatusDisplay,
+                    CallBackDateTime = m.CallBackDateTimeDisplay,
                     NCLExpired = m.CheckNCLExpired(daysExpired),
                     actionBlock = m.LeadStatusRecord == LeadStatus.Blocked ? "Unblock" : "Block"
                 })
@@ -711,19 +747,13 @@ namespace PQT.Web.Controllers
             var daysExpired = Settings.Lead.NumberDaysExpired();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId &&
-                                               (m.LeadStatusRecord == LeadStatus.Live ||
-                                                m.LeadStatusRecord == LeadStatus.LOI ||
-                                                m.LeadStatusRecord == LeadStatus.Booked ||
-                                                m.LeadStatusRecord == LeadStatus.Blocked) && !m.CheckNCLExpired(daysExpired));
+                leads = _repo.GetAllLeads(m => m.EventID == eventId
+                                               && m.CheckInNCL(daysExpired));
             }
             else
             {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId &&
-                                               (m.LeadStatusRecord == LeadStatus.Live ||
-                                                m.LeadStatusRecord == LeadStatus.LOI ||
-                                                m.LeadStatusRecord == LeadStatus.Booked ||
-                                                m.LeadStatusRecord == LeadStatus.Blocked) && !m.CheckNCLExpired(daysExpired));
+                leads = _repo.GetAllLeads(m => m.EventID == eventId
+                                               && m.CheckInNCL(daysExpired));
             }
             // ReSharper disable once AssignNullToNotNullAttribute
 
@@ -844,7 +874,8 @@ namespace PQT.Web.Controllers
             var daysExpired = Settings.Lead.NumberDaysExpired();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId && m.LeadStatusRecord != LeadStatus.Initial && (
+                leads = _repo.GetAllLeads(m => m.EventID == eventId &&
+                                               m.LeadStatusRecord != LeadStatus.Initial && (
                                                    m.StatusUpdateTimeStr.Contains(searchValue) ||
                                                    m.StatusDisplay.ToLower().Contains(searchValue) ||
                                                    m.CompanyName.ToLower().Contains(searchValue) ||
@@ -852,19 +883,27 @@ namespace PQT.Web.Controllers
                                                    m.JobTitle.ToLower().Contains(searchValue) ||
                                                    m.DirectLine.ToLower().Contains(searchValue) ||
                                                    m.CallBackDateDisplay.ToLower().Contains(searchValue) ||
-                                                   (m.Salutation != null && m.Salutation.ToLower().Contains(searchValue)) ||
-                                                   (m.FirstName != null && m.FirstName.ToLower().Contains(searchValue)) ||
+                                                   (m.Salutation != null &&
+                                                    m.Salutation.ToLower().Contains(searchValue)) ||
+                                                   (m.FirstName != null &&
+                                                    m.FirstName.ToLower().Contains(searchValue)) ||
                                                    (m.LastName != null && m.LastName.ToLower().Contains(searchValue)) ||
                                                    (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
                                                    (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
                                                    (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
-                                                   (m.WorkEmail != null && m.WorkEmail.ToLower().Contains(searchValue)) ||
-                                                   (m.WorkEmail1 != null && m.WorkEmail1.ToLower().Contains(searchValue)) ||
-                                                   (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue))) && !m.CheckNCLExpired(daysExpired));
+                                                   (m.WorkEmail != null &&
+                                                    m.WorkEmail.ToLower().Contains(searchValue)) ||
+                                                   (m.WorkEmail1 != null &&
+                                                    m.WorkEmail1.ToLower().Contains(searchValue)) ||
+                                                   (m.PersonalEmail != null &&
+                                                    m.PersonalEmail.ToLower().Contains(searchValue))) &&
+                                               !m.CheckNCLExpired(daysExpired));
             }
             else
             {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId && m.LeadStatusRecord != LeadStatus.Initial && !m.CheckNCLExpired(daysExpired));
+                leads = _repo.GetAllLeads(m =>
+                    m.EventID == eventId && m.LeadStatusRecord != LeadStatus.Initial &&
+                    !m.CheckNCLExpired(daysExpired));
             }
             // ReSharper disable once AssignNullToNotNullAttribute
 
@@ -1072,9 +1111,10 @@ namespace PQT.Web.Controllers
             var leads = _repo.GetAllLeads(m => m.EventID == eventId &&
                                                (saleId == 0 || m.UserID == saleId ||
                                                 (m.User != null && m.User.TransferUserID == saleId)) &&
-                                           (m.MarkKPI || m.LeadStatusRecord == LeadStatus.LOI ||
+                                           (m.MarkKPI ||
+                                           (m.LeadStatusRecord == LeadStatus.LOI && !m.CheckNCLExpired(daysExpired)) ||
                                             m.LeadStatusRecord == LeadStatus.Booked ||
-                                            m.LeadStatusRecord == LeadStatus.Blocked) && !m.CheckNCLExpired(daysExpired));
+                                            m.LeadStatusRecord == LeadStatus.Blocked));
 
             return Json(new
             {
@@ -1082,6 +1122,24 @@ namespace PQT.Web.Controllers
                 TotalBlocked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Blocked),
                 TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked),
                 TotalKPI = leads.Count(m => m.MarkKPI)
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [AjaxOnly]
+        public ActionResult AjaxGetTotalBlocked()
+        {
+            var saleId = CurrentUser.Identity.ID;
+            var leads = _repo.GetAllLeads(m =>
+                m.LeadStatusRecord == LeadStatus.Blocked &&
+                (m.Event.EventStatus == EventStatus.Live ||
+                 m.Event.EventStatus == EventStatus.Confirmed) &&
+                (saleId == 0 || m.UserID == saleId ||
+                 (m.User != null && m.User.TransferUserID == saleId)));
+
+            return Json(new
+            {
+                TotalBlocked = leads.Count()
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -1091,10 +1149,10 @@ namespace PQT.Web.Controllers
             var daysExpired = Settings.Lead.NumberDaysExpired();
             //var saleId = PermissionHelper.SalesmanId();
             var leads = _repo.GetAllLeads(m => m.EventID == eventId &&
-                                           (m.MarkKPI || m.LeadStatusRecord == LeadStatus.LOI ||
+                                           (m.MarkKPI ||
+                                            (m.LeadStatusRecord == LeadStatus.LOI && !m.CheckNCLExpired(daysExpired)) ||
                                             m.LeadStatusRecord == LeadStatus.Booked ||
-                                            m.LeadStatusRecord == LeadStatus.Blocked)
-                                               && !m.CheckNCLExpired(daysExpired));
+                                            m.LeadStatusRecord == LeadStatus.Blocked));
 
             return Json(new
             {
@@ -1104,7 +1162,6 @@ namespace PQT.Web.Controllers
                 TotalKPI = leads.Count(m => m.MarkKPI)
             }, JsonRequestBehavior.AllowGet);
         }
-
 
         [AjaxOnly]
         public ActionResult EventCompanyInfo(int eventId, int companyId)
@@ -1122,6 +1179,7 @@ namespace PQT.Web.Controllers
             {
                 model.ID,
                 model.BudgetMonth,
+                model.BusinessUnit,
                 model.Remarks,
             }, JsonRequestBehavior.AllowGet);
         }
@@ -1175,6 +1233,13 @@ namespace PQT.Web.Controllers
                 // ReSharper disable once PossibleNullReferenceException
                 industry = Request.Form.GetValues("Industry").FirstOrDefault().Trim().ToLower();
             }
+            var businessUnit = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("BusinessUnit") != null && Request.Form.GetValues("BusinessUnit").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                businessUnit = Request.Form.GetValues("BusinessUnit").FirstOrDefault().Trim().ToLower();
+            }
 
 
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
@@ -1211,7 +1276,9 @@ namespace PQT.Web.Controllers
                 (string.IsNullOrEmpty(sector) ||
                  (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
                 (string.IsNullOrEmpty(industry) ||
-                 (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry)));
+                 (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry))) &&
+                (string.IsNullOrEmpty(businessUnit) ||
+                 (!string.IsNullOrEmpty(m.BusinessUnit) && m.BusinessUnit.ToLower().Contains(businessUnit)));
             companies = companies.Where(predicate);
 
             #region sort
@@ -1230,6 +1297,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "Industry":
                         companies = companies.OrderBy(s => s.Industry).ThenBy(s => s.Tier);
+                        break;
+                    case "BusinessUnit":
+                        companies = companies.OrderBy(s => s.BusinessUnit).ThenBy(s => s.Tier);
                         break;
                     default:
                         companies = companies.OrderBy(s => s.Tier).ThenBy(s => s.CompanyName);
@@ -1251,6 +1321,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "Industry":
                         companies = companies.OrderByDescending(s => s.Industry).ThenBy(s => s.Tier);
+                        break;
+                    case "BusinessUnit":
+                        companies = companies.OrderByDescending(s => s.BusinessUnit).ThenBy(s => s.Tier);
                         break;
                     default:
                         companies = companies.OrderByDescending(s => s.Tier).ThenBy(s => s.CompanyName);
@@ -1281,6 +1354,7 @@ namespace PQT.Web.Controllers
                     m.ProductOrService,
                     m.Sector,
                     m.Industry,
+                    m.BusinessUnit,
                     m.Tier,
                 })
             };

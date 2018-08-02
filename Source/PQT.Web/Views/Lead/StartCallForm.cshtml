@@ -83,6 +83,7 @@
                                                             <th>Product/Service</th>
                                                             <th>Sector</th>
                                                             <th>Industry</th>
+                                                            <th>Business Unit</th>
                                                         </tr>
                                                         </thead>
                                                     </table>
@@ -184,6 +185,7 @@
                      d.ProductService = $('#grid_companies_filter').find('input[name="search_service"]').val();
                      d.Sector = $('#grid_companies_filter').find('input[name="search_sector"]').val();
                      d.Industry = $('#grid_companies_filter').find('input[name="search_industry"]').val();
+                     d.BusinessUnit = $('#grid_companies_filter').find('input[name="search_businessunit"]').val();
                  }
              },
              "columns": [
@@ -193,13 +195,14 @@
                  { "data": "ProductOrService", "name": "ProductOrService", "orderable": true },
                  { "data": "Sector", "name": "Sector", "orderable": true },
                  { "data": "Industry", "name": "Industry", "orderable": true },
+                 { "data": "BusinessUnit", "name": "BusinessUnit", "orderable": true },
              ],
              'columnDefs': [
                  {
                      'targets': 0,
                      'searchable': false,
                      'orderable': false,
-                     'width': '1%',
+                     'width': '1px',
                      'className': 'dt-body-center',
                      'render': function(data, type, full, meta) {
                          return '<input type="checkbox">';
@@ -227,6 +230,7 @@
                  htmlFilter += '<label>Product/Service:<input type="search" name="search_service" /></label>';
                  htmlFilter += '<label>Sector:<input type="search" name="search_sector" /></label>';
                  htmlFilter += '<label>Industry:<input type="search" name="search_industry" /></label>';
+                 htmlFilter += '<label>Business Unit:<input type="search" name="search_businessunit" /></label>';
                  filter_box.html(htmlFilter);
 
                  searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
@@ -340,7 +344,7 @@
                  if (index == 1) {
                      $(".next").addClass("hide");
                      $(".finish").removeClass("hide");
-                     LoadEventCompanyInfo();
+                     //LoadEventCompanyInfo();
                      $("#btncanvas-comResource").removeClass("hide");
                      addDialingCode();
                      StartTick();
@@ -386,6 +390,11 @@
             $("@Html.JquerySelectorFor(m => m.MobilePhone2)").val("");
             $("@Html.JquerySelectorFor(m => m.WorkEmail)").val("");
             $("@Html.JquerySelectorFor(m => m.PersonalEmail)").val("");
+            $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(0).trigger("change");
+            $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").val("");
+            $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val("");
+            $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").removeAttr("readonly");
+            $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").removeAttr("readonly");
 
             //if ($("select.callingCompany").val() != "" && !tickStarted) {
             //    StartTick();
@@ -410,11 +419,19 @@
              $("@Html.JquerySelectorFor(m => m.MobilePhone3)").val($(this).data("mobilephone3"));
              $("@Html.JquerySelectorFor(m => m.WorkEmail)").val($(this).data("workemail"));
              $("@Html.JquerySelectorFor(m => m.PersonalEmail)").val($(this).data("personalemail"));
+             $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val($(this).data("budgetmonth")).trigger("change");
+             if ($(this).data("budgetmonth") > 0) {
+                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").attr("readonly", "readonly");
+             }
+             $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").val($(this).data("businessunit"));
+             if ($(this).data("businessunit") != undefined && $(this).data("businessunit") != "") {
+                 $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").attr("readonly", "readonly");
+             }
 
              //if ($("select.callingCompany").val() != "" && !tickStarted) {
              //    StartTick();
              //}
-             
+
              StartTick();
              wizard.bootstrapWizard('next');
          });
@@ -430,7 +447,7 @@
              });
          }
 
-         function LoadEventCompanyInfo() {
+         @*function LoadEventCompanyInfo() {
              if (company_id_selected_val > 0) {
                  $.ajax({
                      url: '@Url.Action("EventCompanyInfo")?eventId=@Model.EventID&companyID=' + company_id_selected_val,
@@ -445,7 +462,7 @@
              } else {
                  SetEventCompanyInfo(null);
              }
-         }
+         }*@
 
         function SetEventCompanyInfo(data) {
             if (data) {

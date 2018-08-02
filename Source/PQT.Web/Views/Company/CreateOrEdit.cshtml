@@ -35,7 +35,7 @@
                     @Html.Bootstrap().LabelFor(m => m.Company.CountryID).LabelText("Country").ShowRequiredStar(true)
                 </div>
                 <div class="form-group col-md-6">
-                    @Html.Bootstrap().TextBoxFor(m => m.Company.CompanyName).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().TextBoxFor(m => m.Company.CompanyName).Class("form-control text-capitalize").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Company.CompanyName).LabelText("Name").ShowRequiredStar(true)
                 </div>
                 <div class="form-group col-md-6">
@@ -44,39 +44,39 @@
                 </div>
                 <div class="form-group col-md-6">
                     @Html.Bootstrap().TextBoxFor(m => m.Company.Sector).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Company.Sector).LabelText("Sector")
+                    @Html.Bootstrap().LabelFor(m => m.Company.Sector)
                 </div>
                 <div class="form-group col-md-6">
                     @Html.Bootstrap().TextBoxFor(m => m.Company.Industry).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Company.Industry).LabelText("Industry")
+                    @Html.Bootstrap().LabelFor(m => m.Company.Industry)
                 </div>
                 <div class="form-group col-md-6">
                     @Html.Bootstrap().TextBoxFor(m => m.Company.Ownership).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Company.Ownership).LabelText("Ownership")
+                    @Html.Bootstrap().LabelFor(m => m.Company.Ownership)
                 </div>
                 <div class="form-group col-md-6">
-                    @Html.Bootstrap().TextBoxFor(m => m.Company.BusinessUnits).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Company.BusinessUnits).LabelText("Business Units")
+                    @Html.Bootstrap().TextBoxFor(m => m.Company.BusinessUnit).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.BusinessUnit)
                 </div>
                 @*<div class="form-group col-md-6">
-                    @Html.Bootstrap().TextBoxFor(m => m.Company.Designation).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Company.Designation).LabelText("Designation")
-                </div>
-                <div class="form-group col-md-6">
-                    @Html.Bootstrap().TextBoxFor(m => m.Company.Email).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Company.Email).LabelText("Email")
-                </div>
-                <div class="form-group col-md-6">
-                    @Html.Bootstrap().TextBoxFor(m => m.Company.PersonalContact).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Company.PersonalContact).LabelText("Personal Contact")
-                </div>*@
+        @Html.Bootstrap().TextBoxFor(m => m.Company.Designation).Class("form-control").ShowValidationMessage(true)
+        @Html.Bootstrap().LabelFor(m => m.Company.Designation).LabelText("Designation")
+    </div>
+    <div class="form-group col-md-6">
+        @Html.Bootstrap().TextBoxFor(m => m.Company.Email).Class("form-control text-lowercase").ShowValidationMessage(true)
+        @Html.Bootstrap().LabelFor(m => m.Company.Email).LabelText("Email")
+    </div>
+    <div class="form-group col-md-6">
+        @Html.Bootstrap().TextBoxFor(m => m.Company.PersonalContact).Class("form-control").ShowValidationMessage(true)
+        @Html.Bootstrap().LabelFor(m => m.Company.PersonalContact).LabelText("Personal Contact")
+    </div>*@
                 <div class="form-group col-md-6">
                     @Html.Bootstrap().TextBoxFor(m => m.Company.BudgetPerHead).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Company.BudgetPerHead).LabelText("Budget Per Head")
+                    @Html.Bootstrap().LabelFor(m => m.Company.BudgetPerHead)
                 </div>
                 <div class="form-group col-md-6">
                     @Html.Bootstrap().TextBoxFor(m => m.Company.FinancialYear).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Company.FinancialYear).LabelText("Financial Year")
+                    @Html.Bootstrap().LabelFor(m => m.Company.FinancialYear)
                 </div>
                 <div class="form-group col-md-6">
                     @Html.Bootstrap().DropDownListFor(m => m.Company.Tier, EnumerationHelper.ToSelectList<TierType>()).HtmlAttributes(new { required = "required" }).OptionLabel("").Class("form-control").ShowValidationMessage(true)

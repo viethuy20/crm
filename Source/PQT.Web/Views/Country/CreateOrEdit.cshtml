@@ -23,11 +23,11 @@
             </div>
             @Html.HiddenFor(m => m.ID)
             <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Code).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().TextBoxFor(m => m.Code).Class("form-control code").ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.Code).LabelText("Code").ShowRequiredStar(true)
             </div>
             <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Name).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().TextBoxFor(m => m.Name).Class("form-control text-capitalize").ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.Name).LabelText("Name").ShowRequiredStar(true)
             </div>
             <div class="form-group">

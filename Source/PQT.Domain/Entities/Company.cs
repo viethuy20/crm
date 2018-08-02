@@ -22,14 +22,11 @@ namespace PQT.Domain.Entities
         public string Sector { get; set; }
         public string Industry { get; set; }
         public string Ownership { get; set; }
-        public string BusinessUnits { get; set; }
-        //public string Designation { get; set; }
-        //public string Email { get; set; }
-        //public string PersonalContact { get; set; }
+        public string BusinessUnit { get; set; }
+        public int BudgetMonth { get; set; }
         public decimal BudgetPerHead { get; set; }
         public int FinancialYear { get; set; }
         public int Tier { get; set; }//tier: 1-red 2-blue -0-black
-
         public string CountryName
         {
             get
@@ -48,7 +45,7 @@ namespace PQT.Domain.Entities
             {
                 if (Country != null)
                 {
-                    return Country.Code;
+                    return Country.Code + " (" + Country.DialingCode + ")";
                 }
 
                 return "";
@@ -70,7 +67,17 @@ namespace PQT.Domain.Entities
         public string Address { get; set; }
         public string Tel { get; set; }
         public string Fax { get; set; }
+        public string Remarks { get; set; }
         public virtual ICollection<User> ManagerUsers { get; set; }
+
+        public string BudgetMonthStr
+        {
+            get
+            {
+                var monthEnum = Enumeration.FromValue<MonthStatus>(BudgetMonth.ToString());
+                return monthEnum != null ? monthEnum.DisplayName : "";
+            }
+        }
     }
 
 

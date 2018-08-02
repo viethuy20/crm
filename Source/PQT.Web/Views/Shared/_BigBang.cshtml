@@ -67,6 +67,16 @@
 
     <script>
 
+        $(document).on('blur', '.text-capitalize', function () {
+            $(this).val(capitalize($(this).val()));
+        });
+        $(document).on('blur', '.text-lowercase', function () {
+            $(this).val($(this).val().toLowerCase());
+        });
+        function capitalize(text) {
+            return text.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+        };
+
         var ucSelector = '.code';
         $(document).on('blur', ucSelector, function () {
             if (typeof (HRGLOBAL.AUTO_UPPERCASE) === 'undefined' || HRGLOBAL.AUTO_UPPERCASE == true)
