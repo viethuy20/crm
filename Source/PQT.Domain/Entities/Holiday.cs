@@ -18,7 +18,7 @@ namespace PQT.Domain.Entities
         {
             if (EndDate != default(DateTime) && EndDate.AddDays(-1).Date > StartDate.Date)
             {
-                return StartDate.ToString("ddd, dd MMM yyyy") + " - " + EndDate.ToString("ddd, dd MMM yyyy");
+                return StartDate.ToString("ddd, dd MMM yyyy") + " - " + EndDate.AddDays(-1).ToString("ddd, dd MMM yyyy");
             }
             return StartDate.ToString("ddd, dd MMM yyyy");
         }

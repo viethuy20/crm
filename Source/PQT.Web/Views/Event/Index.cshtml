@@ -67,7 +67,7 @@
                 { "data": "ID", "name": "ID", "orderable": false },
             ],
             "iDisplayLength": 50,
-            "aaSorting": [[1, "asc"]],
+            "aaSorting": [[0, "desc"]],
             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 
                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' + aData["ID"] + '">' + aData["EventCode"] + '</a>');

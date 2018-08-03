@@ -40,11 +40,11 @@ namespace PQT.Web.Controllers
         public ActionResult Index(int id = 0)
         {
             var eventData = _eventService.GetEvent(id);
-            if (eventData == null)
-            {
-                TempData["error"] = "Event not found";
-                return RedirectToAction("Index", "Home");
-            }
+            //if (eventData == null)
+            //{
+                //TempData["error"] = "Event not found";
+                //return RedirectToAction("Index", "Home");
+            //}
             return View(eventData);
         }
 
@@ -304,7 +304,7 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 bookings = _bookingService.GetAllBookings(
-                    m => m.EventID == eventId && (
+                    m => (eventId == 0 || m.EventID == eventId) && (
                              m.CreatedTime.ToString("dd/MM/yyyy HH:mm:ss")
                                  .Contains(searchValue) ||
                              (m.Company != null && m.Company.CompanyName.ToLower()
@@ -321,6 +321,8 @@ namespace PQT.Web.Controllers
                                   .Contains(searchValue)) ||
                              (m.Event != null && m.Event.EventName.ToLower()
                                   .Contains(searchValue)) ||
+                             (m.Event != null && m.Event.EventCode.ToLower()
+                                  .Contains(searchValue)) ||
                              (m.Salesman != null && m.Salesman.DisplayName
                                   .ToLower().Contains(searchValue)) ||
                              m.FeePerDelegate.ToString().Contains(searchValue) ||
@@ -335,7 +337,7 @@ namespace PQT.Web.Controllers
             }
             else
             {
-                bookings = _bookingService.GetAllBookings(m => m.EventID == eventId);
+                bookings = _bookingService.GetAllBookings(m => eventId == 0 || m.EventID == eventId);
             }
             // ReSharper disable once AssignNullToNotNullAttribute
 
@@ -367,6 +369,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "Event":
                         bookings = bookings.OrderBy(s => s.Event.EventName).ThenBy(s => s.ID);
+                        break;
+                    case "EventCode":
+                        bookings = bookings.OrderBy(s => s.Event.EventCode).ThenBy(s => s.ID);
                         break;
                     case "Salesman":
                         bookings = bookings.OrderBy(s => s.Salesman != null ? s.Salesman.DisplayName : "").ThenBy(s => s.ID);
@@ -419,6 +424,9 @@ namespace PQT.Web.Controllers
                     case "Event":
                         bookings = bookings.OrderByDescending(s => s.Event.EventName).ThenBy(s => s.ID);
                         break;
+                    case "EventCode":
+                        bookings = bookings.OrderByDescending(s => s.Event.EventCode).ThenBy(s => s.ID);
+                        break;
                     case "Salesman":
                         bookings = bookings.OrderByDescending(s => s.Salesman != null ? s.Salesman.DisplayName : "").ThenBy(s => s.ID);
                         break;
@@ -468,6 +476,7 @@ namespace PQT.Web.Controllers
                     Authoriser = m.AuthoriserName,
                     Sender = m.SenderName,
                     Event = m.Event != null ? m.Event.EventName : "",
+                    EventCode = m.Event != null ? m.Event.EventCode : "",
                     Salesman = m.Salesman != null ? m.Salesman.DisplayName : "",
                     m.FeePerDelegate,
                     Discount = m.DiscountPercent,

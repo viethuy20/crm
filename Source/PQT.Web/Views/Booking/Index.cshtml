@@ -15,7 +15,7 @@
     }
 </style>
 <section>
-    <input type="hidden" value="@Model.ID" id="eventIdNCList" />
+    <input type="hidden" value="@(Model!=null?Model.ID:0)" id="eventIdNCList" />
     <div class="row">
         <div class="col-md-12" style="padding-bottom: 12px;">
             @Html.Bootstrap().ActionLinkButton("Back to Dashboard", "Index", "Home").PrependIcon("md md-arrow-back")
@@ -25,7 +25,13 @@
         <div class="col-md-12">
             <div class="card  card-underline">
                 <div class="card-head">
-                    <header><i class="fa fa-file-text"></i> @ViewBag.Title - <span style="font-size: 18px;"><b>@Model.EventName</b> - <b>@Model.EventCode</b> - Event Dates: <b>@Model.StartDate.ToString("dd MMM yyyy")</b> - <b>@Model.EndDate.ToString("dd MMM yyyy")</b></span></header>
+                    <header>
+                        <i class="fa fa-file-text"></i> @ViewBag.Title
+                        @if (Model != null)
+                        {
+                            @:- <span style="font-size: 18px;"><b>@Model.EventName</b> - <b>@Model.EventCode</b> - Event Dates: <b>@Model.StartDate.ToString("dd MMM yyyy")</b> - <b>@Model.EndDate.ToString("dd MMM yyyy")</b></span>
+                    }
+                    </header>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -75,15 +81,15 @@
              "orderMulti": false, // for disable multiple column at once
              "stateSave": false,
              "ajax": {
-                 "url": "@Url.Action("AjaxGetBookings")?eventId=@Model.ID",
+                 "url": "@Url.Action("AjaxGetBookings")?eventId=@(Model!=null?Model.ID:0)",
                  "type": "POST",
                  "datatype": "json",
                  "data": function(d) {
                  }
              },
              "columns": [
-                 { "data": "CreatedTime", "name": "CreatedTime", "orderable": true },
                  { "data": "Event", "name": "Event", "orderable": true },
+                 { "data": "CreatedTime", "name": "CreatedTime", "orderable": true },
                  { "data": "Company", "name": "Company", "orderable": true },
                  { "data": "Address", "name": "Address", "orderable": true },
                  { "data": "Tel", "name": "Tel", "orderable": true },
@@ -101,7 +107,7 @@
              "iDisplayLength": sizeLenght,
              "aaSorting": [[1, "desc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
+                 $(nRow).find('td:eq(1)').html('<a href="@Url.Action("Detail")/' +
                      aData["ID"] +
                      '">' +
                      aData["CreatedTime"] +

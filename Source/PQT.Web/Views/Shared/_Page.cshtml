@@ -518,7 +518,6 @@
                     } catch (e) {
                     }
                 }
-
             };
 
             UserNotification.prototype.notifyRequest = function() {
@@ -653,9 +652,7 @@
                 var $eventIdNCList = $("#eventIdNCList");
                 try {
                     if (bookingTable) {
-                        if ($eventIdNCList && $eventIdNCList.val() == this.booking.EventID) {
-                            bookingTable.fnDraw();
-                        }
+                        bookingTable.fnDraw();
                     }
                 } catch (e) {
                 }
