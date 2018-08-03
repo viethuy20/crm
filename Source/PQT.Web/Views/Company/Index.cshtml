@@ -42,6 +42,7 @@
                             <th>Sector</th>
                             <th>Industry</th>
                             <th>Tier</th>
+                            <th>Business Unit</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -75,13 +76,14 @@
                 { "data": "Sector", "name": "Sector", "orderable": true },
                 { "data": "Industry", "name": "Industry", "orderable": true },
                 { "data": "Tier", "name": "Tier", "orderable": true },
+                { "data": "BusinessUnit", "name": "BusinessUnit", "orderable": true },
                 { "data": "ID", "name": "ID", "orderable": false },
             ],
             "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
             "iDisplayLength": 50,
             "aaSorting": [[2, "asc"]],
             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                $(nRow).find('td:eq(6)').html('<a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a> ' + 
+                $(nRow).find('td:eq(7)').html('<a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a> ' + 
                     ' <a href="#" data-action="delete" data-id="' + aData["ID"] +'"><i class="md md-delete text-danger"></i></a>');
                 $(nRow).attr("data-id", aData["ID"]);
                 $(nRow).addClass("tier" + aData["Tier"]);
@@ -162,6 +164,7 @@
                 data.Sector,
                 data.Industry,
                 data.Tier,
+                data.BusinessUnit,
                 '<a class="simple-ajax-popup-align-top" data-action="edit" href="@Url.Action("CreateOrEdit")?id=' + data.ID + '"><i class="md md-edit text-info"></i></a>' +
                 '<a data-action="delete" data-id="' + data.ID + '" href="#"><i class="md md-delete text-danger"></i></a>'
             ]);
@@ -181,6 +184,7 @@
                         $(td[3]).text(data.Sector);
                         $(td[4]).text(data.Industry);
                         $(td[5]).text(data.Tier);
+                        $(td[6]).text(data.BusinessUnit);
                     }
                     
                     $(item).removeClass("tier1");

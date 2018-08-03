@@ -188,7 +188,8 @@ namespace PQT.Web.Controllers
                         (m.CompanyName != null && m.CompanyName.ToLower().Contains(searchValue)) ||
                         (m.ProductOrService != null && m.ProductOrService.ToLower().Contains(searchValue)) ||
                         (m.Sector != null && m.Sector.ToLower().Contains(searchValue)) ||
-                        (m.Industry != null && m.Industry.ToLower().Contains(searchValue)));
+                        (m.Industry != null && m.Industry.ToLower().Contains(searchValue))||
+                        (m.BusinessUnit != null && m.BusinessUnit.ToLower().Contains(searchValue)));
                 companies = _comRepo.GetAllCompanies(predicate, sortColumnDir, sortColumn,
                     page, pageSize);
                 recordsTotal = _comRepo.GetCountCompanies(predicate);
@@ -212,6 +213,7 @@ namespace PQT.Web.Controllers
                     m.ProductOrService,
                     m.Sector,
                     m.Industry,
+                    m.BusinessUnit,
                     m.Tier,
                 })
             };

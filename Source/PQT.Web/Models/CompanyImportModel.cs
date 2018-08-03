@@ -72,7 +72,7 @@ namespace PQT.Web.Models
                         temp.Sector = dtRow[3].ToString();
                         temp.Industry = dtRow[4].ToString();
                         temp.Ownership = dtRow[5].ToString();
-                        temp.BusinessUnits = dtRow[6].ToString();
+                        temp.BusinessUnit = dtRow[6].ToString();
                         try
                         {
                             temp.BudgetPerHeadStr = dtRow[7].ToString();
@@ -164,7 +164,7 @@ namespace PQT.Web.Models
         public string Sector { get; set; }
         public string Industry { get; set; }
         public string Ownership { get; set; }
-        public string BusinessUnits { get; set; }
+        public string BusinessUnit { get; set; }
         public string BudgetPerHeadStr { get; set; }
         public string FinancialYearStr { get; set; }
         public decimal BudgetPerHead { get; set; }
