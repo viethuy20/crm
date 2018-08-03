@@ -39,7 +39,7 @@
                                         </tr>
                                     </thead>
                                     @{
-                                        List<Setting> itemsGroup = Model.Where(j => j.Module == g).ToList();
+                                        List<Setting> itemsGroup = Model.Where(j => j.Module == g && j.Type != "Hidden").ToList();
                                         foreach (Setting item in itemsGroup)
                                         {
                                             //if (CurrentUser.HasSettingPermission(item.Module, item.Name))
@@ -69,8 +69,7 @@
                                                         }
                                                         else if (item.Type == "Textbox")
                                                         {
-                                                            @(item.MaxLenght > 0 ? Html.Bootstrap().TextBox(item.Name).Value(item.Value).HtmlAttributes(new { maxlength = item.MaxLenght, @class = "form-control nouc" }) : Html.Bootstrap().TextBox(item.Name).Value(item.Value).HtmlAttributes(new { @class = "form-control nouc" }))
-
+                                                            @(item.MaxLenght > 0 ? Html.Bootstrap().TextBox(item.Name).Value(item.Value).HtmlAttributes(new { maxlength = item.MaxLenght, @class = "form-control" }) : Html.Bootstrap().TextBox(item.Name).Value(item.Value).HtmlAttributes(new { @class = "form-control" }))
                                                         }
 
                                                         @Html.DisplayFor(modelItem => item.Note)

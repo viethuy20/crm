@@ -2594,6 +2594,7 @@
     <Content Include="Views\UploadTemplate\Edit.cshtml" />
     <Content Include="Views\UploadTemplate\SalesmanTemplates.cshtml" />
     <Content Include="Views\Holiday\Index.cshtml" />
+    <Content Include="Views\Account\ActiveKey.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

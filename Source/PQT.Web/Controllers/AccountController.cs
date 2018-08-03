@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Configuration;
 using System.Web.Mvc;
 using System.Web.Security;
 using NS.Entity;
@@ -175,5 +176,29 @@ namespace PQT.Web.Controllers
         {
             return Redirect(BypassAuth.Decrypt(token));
         }
+
+
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
+        public ActionResult ActiveKey()
+        {
+            if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["SecretKey"]) ||
+                ConfigurationManager.AppSettings["ActiveKey"] == ConfigurationManager.AppSettings["SecretKey"])
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View(0);
+        }
+        [HttpPost]
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
+        public ActionResult ActiveKey(string key)
+        {
+            if (!string.IsNullOrEmpty(key))
+            {
+                PermissionHelper.AddOrUpdateAppSettings("ActiveKey", key);
+                return RedirectToAction("Index", "Home");
+            }
+            return View(0);
+        }
+
     }
 }

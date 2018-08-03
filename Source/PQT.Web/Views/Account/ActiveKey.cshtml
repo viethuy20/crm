@@ -1,0 +1,75 @@
+﻿@model int
+
+@{
+    Layout = null;
+}
+<html lang="en">
+<head>
+    <title>PQT Control - Active</title>
+
+    <!-- BEGIN META -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="your,keywords">
+    <meta name="description" content="Short explanation about this website">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:300italic,400italic,300,400,500,700,900' rel='stylesheet' type='text/css' />
+    <link type="text/css" rel="stylesheet" href="../../Content/css/theme-default/bootstrap.css?1422792965" />
+    <link type="text/css" rel="stylesheet" href="../../Content/css/theme-default/materialadmin.css?1425466319" />
+    <link type="text/css" rel="stylesheet" href="../../Content/css/theme-default/font-awesome.min.css?1422529194" />
+    <link type="text/css" rel="stylesheet" href="../../Content/css/theme-default/material-design-iconic-font.min.css?1421434286" />
+</head>
+<body class="menubar-hoverable header-fixed ">
+
+    <!-- BEGIN LOGIN SECTION -->
+    <section class="section-account">
+        <div class="img-backdrop" style="background-image: url('../../Content/img/img16.jpg')"></div>
+        <div class="spacer"></div>
+        <div class="card contain-sm style-transparent">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-5 text-center">
+                        <img src="~/Content/img/logo_bg.jpg" style="width: 210px" />
+                    </div>
+                    <div class="col-sm-7">
+                        @using (Html.BeginForm("ActiveKey", "Account", FormMethod.Post, new { id = "login_form", @class = "form" }))
+                        {
+                            <div class="form-group">
+                                <input type="text" class="form-control text-lowercase" id="key" name="key">
+                                <label for="key">Licence Key</label>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-xs-6 text-right">
+                                    <button class="btn btn-primary btn-raised" type="submit">Active</button>
+                                </div><!--end .col -->
+                            </div><!--end .row -->
+                        }
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <p class="error">
+                                @Html.ValidationMessage("")
+                            </p>
+                        }
+                    </div><!--end .col -->
+                </div><!--end .row -->
+            </div><!--end .card-body -->
+        </div><!--end .card -->
+    </section>
+
+
+    <script src="../../Content/js/libs/jquery/jquery-1.11.2.min.js"></script>
+    <script src="../../Content/js/libs/jquery/jquery-migrate-1.2.1.min.js"></script>
+    <script src="../../Content/js/libs/bootstrap/bootstrap.min.js"></script>
+    <script src="../../Content/js/libs/spin.js/spin.min.js"></script>
+    <script src="../../Content/js/libs/autosize/jquery.autosize.min.js"></script>
+    <script src="../../Content/js/libs/nanoscroller/jquery.nanoscroller.min.js"></script>
+    <script src="../../Content/js/core/source/App.js"></script>
+    <script src="../../Content/js/core/source/AppNavigation.js"></script>
+    <script src="../../Content/js/core/source/AppOffcanvas.js"></script>
+    <script src="../../Content/js/core/source/AppCard.js"></script>
+    <script src="../../Content/js/core/source/AppForm.js"></script>
+    <script src="../../Content/js/core/source/AppNavSearch.js"></script>
+    <script src="../../Content/js/core/source/AppVendor.js"></script>
+    <script src="../../Content/js/core/demo/Demo.js"></script>
+</body>
+</html>

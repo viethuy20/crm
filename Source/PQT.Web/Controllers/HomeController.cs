@@ -72,7 +72,6 @@ namespace PQT.Web.Controllers
             return Json(notifications, JsonRequestBehavior.AllowGet);
         }
 
-
         [AjaxOnly]
         public ActionResult PanelNotification()
         {
@@ -155,5 +154,20 @@ namespace PQT.Web.Controllers
                 return Json(e.Message, JsonRequestBehavior.AllowGet);
             }
         }
+
+        [AjaxOnly]
+        public ActionResult UpdateActiveKey(string key)
+        {
+            try
+            {
+                PermissionHelper.AddOrUpdateAppSettings("LicenceKey", key);
+                return Json("successful", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(e.Message, JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
 }

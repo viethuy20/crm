@@ -1,3 +1,4 @@
+using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -15,7 +16,17 @@ namespace PQT.Web.Infrastructure.Filters
             string controller = rd.GetRequiredString("controller");
             string action = rd.GetRequiredString("action");
 
-           
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["SecretKey"]) &&
+                ConfigurationManager.AppSettings["ActiveKey"] != ConfigurationManager.AppSettings["SecretKey"])
+            {
+                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new
+                {
+                    controller = "Account",
+                    action = "ActiveKey",
+                    area = ""
+                }));
+            }
+
             ////////////////////////////////////////
             // Bypass if this action has excluded the RequestAuthorize filter
             // aka allow anonymous access
@@ -83,7 +94,7 @@ namespace PQT.Web.Infrastructure.Filters
                     if (filterContext.IsChildAction)
                         filterContext.Result = new EmptyResult();
                     else
-                        filterContext.Result = new ViewResult { ViewName = "Forbidden"};
+                        filterContext.Result = new ViewResult { ViewName = "Forbidden" };
                 }
                 else
                 {
