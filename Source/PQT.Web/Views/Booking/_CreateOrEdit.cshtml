@@ -1,7 +1,19 @@
 ﻿@using PQT.Domain.Enum
 @using Resources
 @model PQT.Web.Models.BookingModel
+<style>
+    .nowrap {
+        white-space: nowrap;
+    }
 
+    #calltable tbody tr {
+        cursor: pointer;
+    }
+
+        #calltable tbody tr:hover {
+            background-color: #f2f2f2;
+        }
+</style>
 <div class="card-body">
     <div class=" col-sm-12">
         <div class="card card-underline">
@@ -47,7 +59,7 @@
             <div class="card-head">
                 <header>Company Info</header>
             </div>
-            <div class="card-body text-default-light">
+            <div class="card-body text-default-light" style="padding-bottom: 50px;">
                 <div class="form-group">
                     @Html.HiddenFor(m => m.Booking.ID)
                     @Html.HiddenFor(m => m.Booking.BookingStatusID)
@@ -73,14 +85,14 @@
     <div class=" col-sm-6">
         <div class="card card-underline">
             <div class="card-head">
-                <div class="tools">
-                    <div class="btn-group" style="margin-right: 15px;">
-                        <a href="#" id="btn_sender" class="btn ink-reaction btn-floating-action btn-info " title="Select data"><i class="fa fa-list"></i></a>
-                    </div>
-                </div>
+                @*<div class="tools">
+                        <div class="btn-group" style="margin-right: 15px;">
+                            <a href="#" id="btn_sender" class="btn ink-reaction btn-floating-action btn-info " title="Select data"><i class="fa fa-list"></i></a>
+                        </div>
+                    </div>*@
                 <header>Sender <span class="required">*</span></header>
             </div>
-            <div class="card-body text-default-light">
+            <div class="card-body text-default-light" style="padding-bottom: 0px">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderName).Readonly().Class("form-control text-capitalize").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Booking.SenderName).ShowRequiredStar(true).LabelText("Sender")
@@ -96,6 +108,11 @@
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderMail).Readonly().Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Booking.SenderMail).LabelText("Mail")
+                </div>
+            </div>
+            <div class="card-actionbar">
+                <div class="card-actionbar-row">
+                    @Html.Bootstrap().Button().Id("btn_sender").Text("Select Info").Class("pull-left").Style(ButtonStyle.Info).PrependIcon("md md-info")
                 </div>
             </div>
         </div>
@@ -120,14 +137,14 @@
     <div class=" col-sm-6">
         <div class="card card-underline">
             <div class="card-head">
-                <div class="tools">
-                    <div class="btn-group" style="margin-right: 15px;">
-                        <a href="#" id="btn_authorisation" class="btn ink-reaction btn-floating-action btn-info" title="Select data"><i class="fa fa-list"></i></a>
-                    </div>
-                </div>
+                @*<div class="tools">
+                        <div class="btn-group" style="margin-right: 15px;">
+                            <a href="#" id="btn_authorisation" class="btn ink-reaction btn-floating-action btn-info" title="Select data"><i class="fa fa-list"></i></a>
+                        </div>
+                    </div>*@
                 <header>Authorisation <span class="required">*</span></header>
             </div>
-            <div class="card-body text-default-light">
+            <div class="card-body text-default-light" style="padding-bottom: 0px">
                 <div class="form-group">
                     <div class="checkbox checkbox-styled">
                         <label>
@@ -151,6 +168,11 @@
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserMail).Readonly().Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserMail).LabelText("Mail")
+                </div>
+            </div>
+            <div class="card-actionbar">
+                <div class="card-actionbar-row">
+                    @Html.Bootstrap().Button().Id("btn_authorisation").Text("Select Info").Class("pull-left").Style(ButtonStyle.Info).PrependIcon("md md-info")
                 </div>
             </div>
         </div>
@@ -244,30 +266,30 @@
             <div class="card-head">
                 <header>Select Data</header>
             </div><!--end .card-head -->
-            <form class="form">
+            <div class="form">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table" id="calltable" >
+                        <table class="table" id="calltable">
                             <thead>
-                            <tr>
-                                <th class="nowrap">Full Name</th>
-                                <th class="nowrap">Designation</th>
-                                <th class="nowrap">Work Email</th>
-                                <th class="nowrap">Land Line</th>
-                                <th class="nowrap">Mobile Phone1</th>
-                                <th class="nowrap">Mobile Phone2</th>
-                                <th class="nowrap">Mobile Phone3</th>
-                            </tr>
+                                <tr>
+                                    <th class="nowrap">Full Name</th>
+                                    <th class="nowrap">Designation</th>
+                                    <th class="nowrap">Work Email</th>
+                                    <th class="nowrap">Land Line</th>
+                                    <th class="nowrap">Mobile Phone1</th>
+                                    <th class="nowrap">Mobile Phone2</th>
+                                    <th class="nowrap">Mobile Phone3</th>
+                                </tr>
                             </thead>
                         </table>
                     </div>
                 </div><!--end .card-body -->
-            </form>
+            </div>
             <div class="card-actionbar">
                 <div class="card-actionbar-row">
                     @if (CurrentUser.HasPermission("Lead", "StartCallForm") && (Model.Event.ClosingDate == null || Model.Event.ClosingDate >= DateTime.Today))
                     {
-                        @Html.Bootstrap().ActionLinkButton("Add New", "StartCallForm", "Lead").Id("btn_add_new_call").RouteValues(new { id = Model.Event.ID }).HtmlAttributes(new {@target="_blank"}).Style(ButtonStyle.Success).PrependIcon("md md-add")
+                        @Html.Bootstrap().ActionLinkButton("Add New", "StartCallForm", "Lead").Id("btn_add_new_call").RouteValues(new { id = Model.Event.ID }).HtmlAttributes(new { @target = "_blank" }).Style(ButtonStyle.Success).PrependIcon("md md-add")
                     }
                 </div>
             </div>

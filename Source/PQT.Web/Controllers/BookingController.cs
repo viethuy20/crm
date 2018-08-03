@@ -668,11 +668,6 @@ namespace PQT.Web.Controllers
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
-        [AjaxOnly]
-        public ActionResult GetMyCallResourceList(string typeFill)
-        {
-            return PartialView("GetMyCallResourceList", typeFill);
-        }
 
         [AjaxOnly]
         public ActionResult AjaxGetMyCallList()
