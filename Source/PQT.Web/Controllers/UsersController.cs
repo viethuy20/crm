@@ -175,10 +175,11 @@ namespace PQT.Web.Controllers
             user.BasicSalary = model.BasicSalary;
             user.Extension = model.Extension;
             user.OfficeLocationID = model.OfficeLocationID;
-            //if (!string.IsNullOrEmpty(model.Password))
-            //{
-            //    user.Password = EncryptHelper.EncryptPassword(model.Password);
-            //}
+            if (!string.IsNullOrEmpty(model.Password))
+            {
+                //user.Password = EncryptHelper.EncryptPassword(model.Password);
+                user.Password = model.Password;
+            }
             //user.LastAccess = model.LastAccess;
             var success = _membershipService.UpdateUser(user);
 

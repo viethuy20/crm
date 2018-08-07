@@ -237,7 +237,7 @@
                     </div>
                     <div class="col-sm-12">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.EventCompany.BusinessUnit).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextAreaFor(m => m.EventCompany.BusinessUnit).Rows(5).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.EventCompany.BusinessUnit)
                         </div>
                     </div>

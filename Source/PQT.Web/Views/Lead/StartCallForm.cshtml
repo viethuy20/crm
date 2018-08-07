@@ -7,8 +7,6 @@
     ViewBag.Title = "Start Call";
 }
 <style>
-    
-
     #grid_companies tbody tr {
         cursor: pointer;
     }
@@ -65,7 +63,7 @@
                             </div>
                             <div class="tab-content clearfix">
                                 <div class="tab-pane active" id="step1" style="padding-top: 50px; padding-bottom: 50px">
-                                    <div class="col-md-5 ">
+                                    <div class="col-md-6">
                                         <div class="card card-underline form-group">
                                             <div class="card-head">
                                                 <header>
@@ -76,22 +74,23 @@
                                                 <div class="row table-responsive">
                                                     <table class="table no-margin" id="grid_companies">
                                                         <thead>
-                                                        <tr>
-                                                            <th></th>
-                                                            <th>Country</th>
-                                                            <th>Company</th>
-                                                            <th>Product/Service</th>
-                                                            <th>Sector</th>
-                                                            <th>Industry</th>
-                                                            <th>Business Unit</th>
-                                                        </tr>
+                                                            <tr>
+                                                                <th></th>
+                                                                <th>Country</th>
+                                                                <th>Company</th>
+                                                                <th>Product/Service</th>
+                                                                <th>Sector</th>
+                                                                <th>Industry</th>
+                                                                <th>Business Unit</th>
+                                                                <th>Ownership</th>
+                                                            </tr>
                                                         </thead>
                                                     </table>
                                                 </div>
                                             </div><!--end .card-body -->
                                         </div>
                                     </div>
-                                    <div class="col-md-7 ">
+                                    <div class="col-md-6">
                                         <div class="card card-underline form-group">
                                             <div class="card-head">
                                                 <header><b>Company Resources</b></header>
@@ -113,9 +112,9 @@
                                 </div><!--end #step3 -->
                             </div><!--end .tab-content -->
                             <ul class="pager wizard">
-                                <li class="previous"><a class="btn-raised" href="javascript:void(0);">Previous</a></li>
-                                <li class="next"><a class="btn-raised" href="javascript:void(0);">Next</a></li>
-                                <li class="finish "><button type="submit" class="btn btn-success pull-right" id="endcall_save"><i class="md md-call-end"></i> Finish Call</button></li>
+                                <li class="previous"><a class="btn-raised"  style="position: fixed;bottom: 50px;left: 40px;display: block;z-index: 1006;" href="javascript:void(0);">Previous</a></li>
+                                <li class="next"><a class="btn-raised" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;" href="javascript:void(0);">Next</a></li>
+                                <li class="finish "><button type="submit" class="btn btn-success pull-right" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;"  id="endcall_save"><i class="md md-call-end"></i> Finish Call</button></li>
                             </ul>
                         }
                     </div><!--end .card-body -->
@@ -168,6 +167,7 @@
             var company_id_selected = $("@Html.JquerySelectorFor(m=>m.CompanyID)");
             company_id_selected_val = company_id_selected.val();
          var company_name_selected = $("@Html.JquerySelectorFor(m=>m.CompanyName)");
+         var company_business_selected = '@Model.BusinessUnit';
          var company_dialingCode_selected = '@Model.DialingCode';
          var tableCompanies = $("#grid_companies").DataTable({
              "processing": true, // for show progress bar
@@ -186,6 +186,7 @@
                      d.Sector = $('#grid_companies_filter').find('input[name="search_sector"]').val();
                      d.Industry = $('#grid_companies_filter').find('input[name="search_industry"]').val();
                      d.BusinessUnit = $('#grid_companies_filter').find('input[name="search_businessunit"]').val();
+                     d.Ownership = $('#grid_companies_filter').find('input[name="search_ownership"]').val();
                  }
              },
              "columns": [
@@ -196,6 +197,7 @@
                  { "data": "Sector", "name": "Sector", "orderable": true },
                  { "data": "Industry", "name": "Industry", "orderable": true },
                  { "data": "BusinessUnit", "name": "BusinessUnit", "orderable": true },
+                 { "data": "Ownership", "name": "Ownership", "orderable": true },
              ],
              'columnDefs': [
                  {
@@ -225,12 +227,13 @@
              initComplete: function() {
                  var _table = this;
                  var filter_box = _table.parent().find("#grid_companies_filter");
-                 var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
-                 htmlFilter += '<label>Company:<input type="search" name="search_name" /></label>';
-                 htmlFilter += '<label>Product/Service:<input type="search" name="search_service" /></label>';
-                 htmlFilter += '<label>Sector:<input type="search" name="search_sector" /></label>';
-                 htmlFilter += '<label>Industry:<input type="search" name="search_industry" /></label>';
-                 htmlFilter += '<label>Business Unit:<input type="search" name="search_businessunit" /></label>';
+                 var htmlFilter = '<label>Country:<input style="width: 120px" type="search" name="search_country" /></label>';
+                 htmlFilter += '<label>Company:<input style="width: 120px" type="search" name="search_name" /></label>';
+                 htmlFilter += '<label>Product/Service:<input style="width: 120px" type="search" name="search_service" /></label>';
+                 htmlFilter += '<label>Sector:<input style="width: 120px" type="search" name="search_sector" /></label>';
+                 htmlFilter += '<label>Industry:<input style="width: 120px" type="search" name="search_industry" /></label>';
+                 htmlFilter += '<label>Business Unit:<input style="width: 120px" type="search" name="search_businessunit" /></label>';
+                 htmlFilter += '<label>Ownership:<input style="width: 120px" type="search" name="search_ownership" /></label>';
                  filter_box.html(htmlFilter);
 
                  searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
@@ -265,6 +268,7 @@
              var rowId = data.ID;
              var rowCompanyName = data.CompanyName;
              var rowDialingCode = data.DialingCode;
+             var rowBusiness = data.BusinessUnit;
 
 
              // If checkbox is checked and row ID is not in list of selected row IDs
@@ -273,6 +277,7 @@
                  company_id_selected_val = rowId;
                  company_name_selected.val(rowCompanyName);
                  company_dialingCode_selected = rowDialingCode;
+                 company_business_selected = rowBusiness;
                  LoadCompanyResources();
                  // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
              } else if (!$this.checked) {
@@ -280,6 +285,8 @@
                  company_id_selected_val = 0;
                  company_name_selected.val("");
                  company_dialingCode_selected = "";
+                 company_business_selected = "";
+                 $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").removeAttr("readonly");
                  ClearDataSelected();
              }
              if ($this.checked) {
@@ -408,6 +415,9 @@
         }
          $(document).on('click', '#crtable tbody tr,#crtable2 tbody tr', function () {
 
+             StartTick();
+             wizard.bootstrapWizard('next');
+
              $("@Html.JquerySelectorFor(m => m.JobTitle)").val($(this).data("role"));
              @*$("@Html.JquerySelectorFor(m => m.DirectLine)").val($(this).data("mobilephone1"));
              $("@Html.JquerySelectorFor(m => m.GeneralLine)").val($(this).data("businessphone"));*@
@@ -432,12 +442,14 @@
              //    StartTick();
              //}
 
-             StartTick();
-             wizard.bootstrapWizard('next');
          });
 
          addDialingCode();
          function addDialingCode() {
+             if (company_business_selected != null && company_business_selected != "") {
+                 $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").val(company_business_selected);
+                 $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").attr("readonly", "readonly");
+             }
              if (company_dialingCode_selected == "") return;
              var dialingCodes = $('.dialingCode');
              dialingCodes.each(function (index, item) {

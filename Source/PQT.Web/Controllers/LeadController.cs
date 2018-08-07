@@ -1241,6 +1241,14 @@ namespace PQT.Web.Controllers
                 businessUnit = Request.Form.GetValues("BusinessUnit").FirstOrDefault().Trim().ToLower();
             }
 
+            var ownership = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Ownership") != null && Request.Form.GetValues("Ownership").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                ownership = Request.Form.GetValues("Ownership").FirstOrDefault().Trim().ToLower();
+            }
+
 
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int page = start != null ? Convert.ToInt32(start) : 0;
@@ -1278,7 +1286,9 @@ namespace PQT.Web.Controllers
                 (string.IsNullOrEmpty(industry) ||
                  (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry))) &&
                 (string.IsNullOrEmpty(businessUnit) ||
-                 (!string.IsNullOrEmpty(m.BusinessUnit) && m.BusinessUnit.ToLower().Contains(businessUnit)));
+                 (!string.IsNullOrEmpty(m.BusinessUnit) && m.BusinessUnit.ToLower().Contains(businessUnit)))&&
+                (string.IsNullOrEmpty(ownership) ||
+                 (!string.IsNullOrEmpty(m.Ownership) && m.Ownership.ToLower().Contains(ownership)));
             companies = companies.Where(predicate);
 
             #region sort
@@ -1300,6 +1310,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "BusinessUnit":
                         companies = companies.OrderBy(s => s.BusinessUnit).ThenBy(s => s.Tier);
+                        break;
+                    case "Ownership":
+                        companies = companies.OrderBy(s => s.Ownership).ThenBy(s => s.Tier);
                         break;
                     default:
                         companies = companies.OrderBy(s => s.Tier).ThenBy(s => s.CompanyName);
@@ -1324,6 +1337,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "BusinessUnit":
                         companies = companies.OrderByDescending(s => s.BusinessUnit).ThenBy(s => s.Tier);
+                        break;
+                    case "Ownership":
+                        companies = companies.OrderByDescending(s => s.Ownership).ThenBy(s => s.Tier);
                         break;
                     default:
                         companies = companies.OrderByDescending(s => s.Tier).ThenBy(s => s.CompanyName);
@@ -1355,6 +1371,7 @@ namespace PQT.Web.Controllers
                     m.Sector,
                     m.Industry,
                     m.BusinessUnit,
+                    m.Ownership,
                     m.Tier,
                 })
             };

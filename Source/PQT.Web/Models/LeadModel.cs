@@ -299,6 +299,7 @@ namespace PQT.Web.Models
         public string DirectLine { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string CompanyName { get; set; }
+        public string BusinessUnit { get; set; }
 
         public string LineExtension { get; set; }
         public int EventID { get; set; }
@@ -370,6 +371,7 @@ namespace PQT.Web.Models
                 {
                     JobTitle = resource.Role;
                     CompanyName = resource.Organisation;
+                    BusinessUnit = resource.BusinessUnit;
                     Salutation = resource.Salutation;
                     FirstName = resource.FirstName;
                     LastName = resource.LastName;
@@ -385,6 +387,11 @@ namespace PQT.Web.Models
                         if (country != null)
                         {
                             DialingCode = country.DialingCode;
+                        }
+                        var com = comRepo.GetCompany((int)resource.CompanyID);
+                        if (com != null)
+                        {
+                            BusinessUnit = com.DialingCode;
                         }
                     }
                 }
@@ -429,6 +436,7 @@ namespace PQT.Web.Models
                     FirstFollowUpStatus = lead.FirstFollowUpStatus;
                     CompanyName = lead.CompanyName;
                     DialingCode = lead.Company.DialingCode;
+                    BusinessUnit = lead.Company.BusinessUnit;
                     Lead = lead;
                 }
             }
