@@ -102,6 +102,12 @@ namespace PQT.Web.Infrastructure.Utility
             {
                 return Convert.ToInt32(GetSetting(Setting.ModuleType.System, Setting.ModuleKey.System.NotificationNumber, typeof(int)));
             }
+
+            public static string[] AccessIPs()
+            {
+                var value = Convert.ToString(GetSetting(Setting.ModuleType.System, Setting.ModuleKey.System.AccessIPs, typeof(string)));
+                return !String.IsNullOrEmpty(value) ? value.Split(",", StringSplitOptions.RemoveEmptyEntries) : new List<string>().ToArray();
+            }
         }
         public class KPI
         {

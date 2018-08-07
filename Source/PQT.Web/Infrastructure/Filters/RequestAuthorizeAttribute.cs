@@ -1,5 +1,6 @@
 using System.Configuration;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using PQT.Domain.Entities;
@@ -15,6 +16,18 @@ namespace PQT.Web.Infrastructure.Filters
             RouteData rd = filterContext.RouteData;
             string controller = rd.GetRequiredString("controller");
             string action = rd.GetRequiredString("action");
+
+            //var reqip = HttpContext.Current.Request.UserHostAddress;
+            //var accessIps = Settings.System.AccessIPs();
+            //if (accessIps.Any() && accessIps.Contains(reqip))
+            //{
+            //    filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new
+            //    {
+            //        controller = "Account",
+            //        action = "ActiveKey",
+            //        area = ""
+            //    }));
+            //}
 
             if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["SecretKey"]) &&
                 ConfigurationManager.AppSettings["ActiveKey"] != ConfigurationManager.AppSettings["SecretKey"])

@@ -163,6 +163,8 @@ namespace PQT.Web.Controllers
                 }
                 if (model.ImportRows.Any(m => !string.IsNullOrEmpty(m.Error)))
                 {
+                    model.SessionName = "SessionComResourceImport" + Guid.NewGuid();
+                    Session[model.SessionName] = model;
                     return View(model);
                 }
                 model.ParseValue();
