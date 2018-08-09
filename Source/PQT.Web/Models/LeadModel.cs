@@ -43,9 +43,10 @@ namespace PQT.Web.Models
         {
             var leadRepo = DependencyHelper.GetService<ILeadService>();
             var lead = leadRepo.GetLead(id);
-            if (lead.LeadStatusRecord != LeadStatus.Initial && lead.LeadStatusRecord != LeadStatus.Reject)
+            if (lead.LeadStatusRecord == LeadStatus.Deleted)
                 return "Cannot process ... Call status: " + lead.StatusDisplay;
-            return leadRepo.DeleteLead(id) ? "" : "Delete failed";
+            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Deleted, CurrentUser.Identity.ID,"delete call");
+            return leadRepo.UpdateLead(lead) ? "" : "Delete failed";
         }
         public string BlockLead()
         {

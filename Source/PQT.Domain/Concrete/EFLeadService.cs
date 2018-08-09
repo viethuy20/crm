@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
+using PQT.Domain.Enum;
 
 namespace PQT.Domain.Concrete
 {
@@ -17,7 +19,9 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<Lead> GetAllLeads(Func<Lead, bool> predicate)
         {
-            return GetAll(predicate, m => m.Event, m => m.LeadStatusRecord).AsEnumerable();
+            Func<Lead, bool> predicate2 =
+                m => predicate(m) && m.LeadStatusRecord != LeadStatus.Deleted;
+            return GetAll(predicate2, m => m.Event, m => m.LeadStatusRecord).AsEnumerable();
         }
 
         public Lead GetLead(int id)

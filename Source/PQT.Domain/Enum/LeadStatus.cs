@@ -8,6 +8,7 @@ namespace PQT.Domain.Enum
 {
     public class LeadStatus : Enumeration
     {
+        public static readonly LeadStatus Deleted = New<LeadStatus>(0, "Deleted");
         public static readonly LeadStatus Initial = New<LeadStatus>(1, "Initial");
         public static readonly LeadStatus RequestNCL = New<LeadStatus>(2, "Request NCL");
         public static readonly LeadStatus RequestLOI = New<LeadStatus>(3, "Request LOI");

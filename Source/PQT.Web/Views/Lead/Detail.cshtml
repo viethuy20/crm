@@ -15,11 +15,11 @@
             color: #8a6d3b;
         }
 
-    .card .Blocked {
+    .card .Blocked ,.card .Deleted {
         background-color: #fad7d4 !important;
     }
 
-        .card .Blocked input {
+        .card .Blocked input, .card .Deleted input {
             color: #a94442;
         }
 
@@ -134,7 +134,7 @@
                         }
                     }
                 }
-                @if (!eventClosed)
+                @if (!eventClosed && (Model.Lead.LeadStatusRecord != LeadStatus.Deleted))
             {
                 if (CurrentUser.HasPermission("Lead", "Delete"))
                 {
@@ -435,7 +435,7 @@
                          type: 'POST',
                          success: function (data) {
                              if (data == "") {
-                                 location.href = '@Url.Action("Index",new {id = Model.Lead.EventID })';
+                                 location.reload();
                              } else {
                                  toastr.error(data);
                              }

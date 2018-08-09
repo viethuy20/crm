@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using PQT.Domain.Entities;
 
@@ -8,7 +9,7 @@ namespace PQT.Domain.Abstract
 {
     public interface ILeadService
     {
-        IEnumerable<Lead> GetAllLeads(Func<Lead,bool> predicate);
+        IEnumerable<Lead> GetAllLeads(Func<Lead, bool> predicate);
         Lead GetLead(int id);
         Lead CreateLead(Lead info);
         bool UpdateLead(Lead info);
