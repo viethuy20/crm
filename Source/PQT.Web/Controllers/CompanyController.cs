@@ -171,7 +171,70 @@ namespace PQT.Web.Controllers
                 // ReSharper disable once PossibleNullReferenceException
                 searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
             }
+            var companyName = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("CompanyName") != null && Request.Form.GetValues("CompanyName").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                companyName = Request.Form.GetValues("CompanyName").FirstOrDefault().Trim().ToLower();
+            }
+            var countryName = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("CountryName") != null && Request.Form.GetValues("CountryName").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                countryName = Request.Form.GetValues("CountryName").FirstOrDefault().Trim().ToLower();
+            }
+            var productService = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("ProductService") != null && Request.Form.GetValues("ProductService").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                productService = Request.Form.GetValues("ProductService").FirstOrDefault().Trim().ToLower();
+            }
+            var sector = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Sector") != null && Request.Form.GetValues("Sector").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                sector = Request.Form.GetValues("Sector").FirstOrDefault().Trim().ToLower();
+            }
+            var tier = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Tier") != null && Request.Form.GetValues("Tier").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                tier = Request.Form.GetValues("Tier").FirstOrDefault().Trim().ToLower();
+            }
+            var industry = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Industry") != null && Request.Form.GetValues("Industry").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                industry = Request.Form.GetValues("Industry").FirstOrDefault().Trim().ToLower();
+            }
+            var businessUnit = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("BusinessUnit") != null && Request.Form.GetValues("BusinessUnit").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                businessUnit = Request.Form.GetValues("BusinessUnit").FirstOrDefault().Trim().ToLower();
+            }
 
+            var ownership = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Ownership") != null && Request.Form.GetValues("Ownership").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                ownership = Request.Form.GetValues("Ownership").FirstOrDefault().Trim().ToLower();
+            }
+            var financialYear = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("FinancialYear") != null && Request.Form.GetValues("FinancialYear").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                financialYear = Request.Form.GetValues("FinancialYear").FirstOrDefault().Trim().ToLower();
+            }
 
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int page = start != null ? Convert.ToInt32(start) : 0;
@@ -181,14 +244,32 @@ namespace PQT.Web.Controllers
 
             if (!string.IsNullOrEmpty(searchValue))
             {
-
                 Func<Company, bool> predicate = m =>
+                (string.IsNullOrEmpty(companyName) ||
+                 (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
+                    (string.IsNullOrEmpty(productService) || (!string.IsNullOrEmpty(m.ProductOrService) &&
+                                                              m.ProductOrService.ToLower().Contains(productService))) &&
+                    (string.IsNullOrEmpty(countryName) ||
+                     (m.Country != null && m.Country.Code.ToLower().Contains(countryName)) ||
+                     (m.Country != null && m.Country.Name.ToLower().Contains(countryName))) &&
+                    (string.IsNullOrEmpty(sector) ||
+                     (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
+                    (string.IsNullOrEmpty(industry) ||
+                     (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry))) &&
+                (string.IsNullOrEmpty(tier) ||
+                 (m.Tier.ToString().Contains(tier))) &&
+                    (string.IsNullOrEmpty(businessUnit) ||
+                     (!string.IsNullOrEmpty(m.BusinessUnit) && m.BusinessUnit.ToLower().Contains(businessUnit))) &&
+                    (string.IsNullOrEmpty(ownership) ||
+                     (!string.IsNullOrEmpty(m.Ownership) && m.Ownership.ToLower().Contains(ownership))) &&
+                    (string.IsNullOrEmpty(financialYear) ||
+                     (m.FinancialYear > 0 && m.FinancialYear.ToString().Contains(financialYear))) &&
                    (
                         (m.Country != null && m.Country.Name.ToLower().Contains(searchValue)) ||
                         (m.CompanyName != null && m.CompanyName.ToLower().Contains(searchValue)) ||
                         (m.ProductOrService != null && m.ProductOrService.ToLower().Contains(searchValue)) ||
                         (m.Sector != null && m.Sector.ToLower().Contains(searchValue)) ||
-                        (m.Industry != null && m.Industry.ToLower().Contains(searchValue))||
+                        (m.Industry != null && m.Industry.ToLower().Contains(searchValue)) ||
                         (m.BusinessUnit != null && m.BusinessUnit.ToLower().Contains(searchValue)));
                 companies = _comRepo.GetAllCompanies(predicate, sortColumnDir, sortColumn,
                     page, pageSize);
@@ -196,8 +277,28 @@ namespace PQT.Web.Controllers
             }
             else
             {
-                companies = _comRepo.GetAllCompanies(sortColumnDir, sortColumn, page, pageSize);
-                recordsTotal = _comRepo.GetCountCompanies(null);
+                Func<Company, bool> predicate = m =>
+                   (string.IsNullOrEmpty(companyName) ||
+                    (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
+                       (string.IsNullOrEmpty(productService) || (!string.IsNullOrEmpty(m.ProductOrService) &&
+                                                                 m.ProductOrService.ToLower().Contains(productService))) &&
+                       (string.IsNullOrEmpty(countryName) ||
+                        (m.Country != null && m.Country.Code.ToLower().Contains(countryName)) ||
+                        (m.Country != null && m.Country.Name.ToLower().Contains(countryName))) &&
+                       (string.IsNullOrEmpty(sector) ||
+                        (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
+                       (string.IsNullOrEmpty(industry) ||
+                        (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry)))&&
+                       (string.IsNullOrEmpty(tier) ||
+                        (m.Tier.ToString().Contains(tier))) &&
+                       (string.IsNullOrEmpty(businessUnit) ||
+                        (!string.IsNullOrEmpty(m.BusinessUnit) && m.BusinessUnit.ToLower().Contains(businessUnit))) &&
+                       (string.IsNullOrEmpty(ownership) ||
+                        (!string.IsNullOrEmpty(m.Ownership) && m.Ownership.ToLower().Contains(ownership))) &&
+                       (string.IsNullOrEmpty(financialYear) ||
+                        (m.FinancialYear > 0 && m.FinancialYear.ToString().Contains(financialYear)));
+                companies = _comRepo.GetAllCompanies(predicate, sortColumnDir, sortColumn, page, pageSize);
+                recordsTotal = _comRepo.GetCountCompanies(predicate);
             }
 
             var json = new
@@ -214,6 +315,7 @@ namespace PQT.Web.Controllers
                     m.Sector,
                     m.Industry,
                     m.BusinessUnit,
+                    m.FinancialYear,
                     m.Tier,
                 })
             };

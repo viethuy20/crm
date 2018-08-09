@@ -308,12 +308,36 @@ namespace PQT.Web.Controllers
             var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
             // ReSharper disable once AssignNullToNotNullAttribute
             var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
-            var searchValue = "";
+
+            var country = "";
             // ReSharper disable once AssignNullToNotNullAttribute
-            if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
+            if (Request.Form.GetValues("Country") != null && !string.IsNullOrEmpty(Request.Form.GetValues("Country").FirstOrDefault()))
             {
                 // ReSharper disable once PossibleNullReferenceException
-                searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
+                country = Request.Form.GetValues("Country").FirstOrDefault().Trim().ToLower();
+            }
+            var organisation = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Organisation") != null && Request.Form.GetValues("Organisation").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                organisation = Request.Form.GetValues("Organisation").FirstOrDefault().Trim().ToLower();
+            }
+            var role = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Role") != null && Request.Form.GetValues("Role").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                role = Request.Form.GetValues("Role").FirstOrDefault().Trim().ToLower();
+            }
+
+
+            var searchValue = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Others") != null && Request.Form.GetValues("Others").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                searchValue = Request.Form.GetValues("Others").FirstOrDefault().Trim().ToLower();
             }
 
 
@@ -326,6 +350,12 @@ namespace PQT.Web.Controllers
             {
                 if (!string.IsNullOrEmpty(searchValue))
                     audits = _comRepo.GetAllCompanyResources(m =>
+                        (string.IsNullOrEmpty(country) ||
+                         (!string.IsNullOrEmpty(m.Country) && m.Country.ToLower().Contains(country))) &&
+                        (string.IsNullOrEmpty(organisation) ||
+                         (!string.IsNullOrEmpty(m.Organisation) && m.Organisation.ToLower().Contains(organisation))) &&
+                        (string.IsNullOrEmpty(role) ||
+                         (!string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(role))) &&
                         (m.Country != null && m.Country.ToLower().Contains(searchValue)) ||
                         m.Organisation.ToLower().Contains(searchValue) ||
                         m.LastName.ToLower().Contains(searchValue) ||
@@ -335,15 +365,21 @@ namespace PQT.Web.Controllers
                         (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
                         (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
                         (m.WorkEmail != null && m.WorkEmail.ToLower().Contains(searchValue)) ||
-                        (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue))||
-                        (m.BusinessUnit != null && m.BusinessUnit.Contains(searchValue))||
-                        (m.BudgetMonthStr != null && m.BudgetMonthStr.ToLower().Contains(searchValue))||
+                        (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue)) ||
+                        (m.BusinessUnit != null && m.BusinessUnit.Contains(searchValue)) ||
+                        (m.BudgetMonthStr != null && m.BudgetMonthStr.ToLower().Contains(searchValue)) ||
                         (m.BudgetMonth.ToString().Contains(searchValue))
                     );
             }
             else
             {
-                audits = _comRepo.GetAllCompanyResources();
+                audits = _comRepo.GetAllCompanyResources(m =>
+                    (string.IsNullOrEmpty(country) ||
+                     (!string.IsNullOrEmpty(m.Country) && m.Country.ToLower().Contains(country))) &&
+                    (string.IsNullOrEmpty(organisation) ||
+                     (!string.IsNullOrEmpty(m.Organisation) && m.Organisation.ToLower().Contains(organisation))) &&
+                    (string.IsNullOrEmpty(role) ||
+                     (!string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(role))));
             }
 
             if (sortColumnDir == "asc")

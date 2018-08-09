@@ -209,6 +209,7 @@ namespace PQT.Web.Controllers
                  (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry)));
             companies = _comRepo.GetAllCompanies(predicate, sortColumnDir, sortColumn,
                 page, pageSize);
+            recordsTotal = _comRepo.GetCountCompanies(predicate);
 
             var json = new
             {

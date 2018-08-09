@@ -66,6 +66,10 @@
                 "type": "POST",
                 "datatype": "json",
                 "data": function (d) {
+                    d.Country = $('#table_filter').find('input[name="search_country"]').val();
+                    d.Organisation = $('#table_filter').find('input[name="search_organisation"]').val();
+                    d.Role = $('#table_filter').find('input[name="search_role"]').val();
+                    d.Others = $('#table_filter').find('input[name="search_others"]').val();
                 }
             },
             "columns": [
@@ -94,16 +98,27 @@
             },
             initComplete: function () {
                 var _table = this;
-                _table.parent().find('input[type="search"]').unbind();
-                var timeOutTyping;
-                _table.parent().find('input[type="search"]').bind('keyup', function (e) {
-                    clearTimeout(timeOutTyping);
-                    timeOutTyping = setTimeout(function () {
-                        _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
-                    }, 600);
-                });
+                var filter_box = _table.parent().find("#table_filter");
+                var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
+                htmlFilter += '<label>Company:<input type="search" name="search_organisation" /></label>';
+                htmlFilter += '<label>Role:<input type="search" name="search_role" /></label>';
+                htmlFilter += '<label>Others:<input type="search" name="search_others" /></label>';
+                filter_box.html(htmlFilter);
+                searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
             },
         });
+        function searchBindingKeyUp(elementSearch, tableElement) {
+            elementSearch.unbind();
+            var timeOutTyping;
+            elementSearch.bind('keyup',
+                function (e) {
+                    clearTimeout(timeOutTyping);
+                    timeOutTyping = setTimeout(function () {
+                            tableElement.fnFilter(elementSearch.eq(0).val());
+                        },
+                        600);
+                });
+        }
         $Table.on('click', '[data-action="delete"]', function (e) {
             e.preventDefault();
             var selftr = $(this);

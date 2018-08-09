@@ -61,6 +61,10 @@ namespace PQT.Domain.Concrete
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderBy(s => s.BusinessUnit).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize).AsEnumerable();
                         break;
+                    case "FinancialYear":
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
+                            .OrderBy(s => s.FinancialYear).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
                     default:
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderBy(s => s.CompanyName).Skip(page).Take(pageSize).AsEnumerable();
@@ -99,6 +103,11 @@ namespace PQT.Domain.Concrete
                     case "BusinessUnit":
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                             .OrderByDescending(s => s.BusinessUnit).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
+                            .AsEnumerable();
+                        break;
+                    case "FinancialYear":
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers).Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
+                            .OrderByDescending(s => s.FinancialYear).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
                             .AsEnumerable();
                         break;
                     default:
@@ -148,6 +157,11 @@ namespace PQT.Domain.Concrete
                             .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderBy(s => s.BusinessUnit).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
                             .AsEnumerable();
                         break;
+                    case "FinancialYear":
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                            .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderBy(s => s.FinancialYear).ThenBy(s => s.CompanyName).Skip(page).Take(pageSize)
+                            .AsEnumerable();
+                        break;
                     default:
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
                             .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderBy(s => s.CompanyName).Skip(page).Take(pageSize).AsEnumerable();
@@ -188,6 +202,11 @@ namespace PQT.Domain.Concrete
                     case "BusinessUnit":
                         companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
                             .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderByDescending(s => s.BusinessUnit).ThenBy(s => s.CompanyName)
+                            .Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "FinancialYear":
+                        companies = _db.Set<Company>().Include(m => m.Country).Include(m => m.ManagerUsers)
+                            .AsEnumerable().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(predicate).OrderByDescending(s => s.FinancialYear).ThenBy(s => s.CompanyName)
                             .Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     default:

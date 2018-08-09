@@ -43,6 +43,7 @@
                             <th>Industry</th>
                             <th>Tier</th>
                             <th>Business Unit</th>
+                            <th>Financial Year</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -67,6 +68,15 @@
                 "type": "POST",
                 "datatype": "json",
                 "data": function (d) {
+                    d.CountryName = $('#table_filter').find('input[name="search_country"]').val();
+                    d.CompanyName = $('#table_filter').find('input[name="search_name"]').val();
+                    d.ProductService = $('#table_filter').find('input[name="search_service"]').val();
+                    d.Sector = $('#table_filter').find('input[name="search_sector"]').val();
+                    d.Industry = $('#table_filter').find('input[name="search_industry"]').val();
+                    d.Tier = $('#table_filter').find('input[name="search_tier"]').val();
+                    d.BusinessUnit = $('#table_filter').find('input[name="search_businessunit"]').val();
+                    d.Ownership = $('#table_filter').find('input[name="search_ownership"]').val();
+                    d.FinancialYear = $('#table_filter').find('input[name="search_fnancialyear"]').val();
                 }
             },
             "columns": [
@@ -77,29 +87,46 @@
                 { "data": "Industry", "name": "Industry", "orderable": true },
                 { "data": "Tier", "name": "Tier", "orderable": true },
                 { "data": "BusinessUnit", "name": "BusinessUnit", "orderable": true },
+                { "data": "FinancialYear", "name": "FinancialYear", "orderable": true },
                 { "data": "ID", "name": "ID", "orderable": false },
             ],
             "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
             "iDisplayLength": 50,
             "aaSorting": [[2, "asc"]],
             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                $(nRow).find('td:eq(7)').html('<a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a> ' + 
+                $(nRow).find('td:eq(8)').html('<a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a> ' + 
                     ' <a href="#" data-action="delete" data-id="' + aData["ID"] +'"><i class="md md-delete text-danger"></i></a>');
                 $(nRow).attr("data-id", aData["ID"]);
                 $(nRow).addClass("tier" + aData["Tier"]);
             },
             initComplete: function () {
                 var _table = this;
-                _table.parent().find('input[type="search"]').unbind();
-                var timeOutTyping;
-                _table.parent().find('input[type="search"]').bind('keyup', function (e) {
-                    clearTimeout(timeOutTyping);
-                    timeOutTyping = setTimeout(function () {
-                        _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
-                    }, 600);
-                });
+                var filter_box = _table.parent().find("#table_filter");
+                var htmlFilter = '<label>Country:<input style="width: 120px" type="search" name="search_country" /></label>';
+                htmlFilter += '<label>Company:<input style="width: 120px" type="search" name="search_name" /></label>';
+                htmlFilter += '<label>Product/Service:<input style="width: 120px" type="search" name="search_service" /></label>';
+                htmlFilter += '<label>Sector:<input style="width: 120px" type="search" name="search_sector" /></label>';
+                htmlFilter += '<label>Industry:<input style="width: 120px" type="search" name="search_industry" /></label>';
+                htmlFilter += '<label>Tier:<input style="width: 120px" type="search" name="search_tier" /></label>';
+                htmlFilter += '<label>Business Unit:<input style="width: 120px" type="search" name="search_businessunit" /></label>';
+                htmlFilter += '<label>Ownership:<input style="width: 120px" type="search" name="search_ownership" /></label>';
+                htmlFilter += '<label>Financial Year:<input style="width: 120px" type="search" name="search_fnancialyear" /></label>';
+                filter_box.html(htmlFilter);
+                searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
             },
         });
+        function searchBindingKeyUp(elementSearch, tableElement) {
+            elementSearch.unbind();
+            var timeOutTyping;
+            elementSearch.bind('keyup',
+                function(e) {
+                    clearTimeout(timeOutTyping);
+                    timeOutTyping = setTimeout(function() {
+                            tableElement.fnFilter(elementSearch.eq(0).val());
+                        },
+                        600);
+                });
+        }
         $Table.on('click', '[data-action="delete"]', function (e) {
             e.preventDefault();
             var selftr = $(this);
@@ -165,6 +192,7 @@
                 data.Industry,
                 data.Tier,
                 data.BusinessUnit,
+                data.FinancialYear,
                 '<a class="simple-ajax-popup-align-top" data-action="edit" href="@Url.Action("CreateOrEdit")?id=' + data.ID + '"><i class="md md-edit text-info"></i></a>' +
                 '<a data-action="delete" data-id="' + data.ID + '" href="#"><i class="md md-delete text-danger"></i></a>'
             ]);
@@ -185,6 +213,7 @@
                         $(td[4]).text(data.Industry);
                         $(td[5]).text(data.Tier);
                         $(td[6]).text(data.BusinessUnit);
+                        $(td[7]).text(data.FinancialYear);
                     }
                     
                     $(item).removeClass("tier1");
