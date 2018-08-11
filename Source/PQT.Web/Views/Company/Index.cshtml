@@ -184,7 +184,7 @@
         }
 
         function addNewLineItem(data) {
-            var rowIndex = $Table.fnAddData([
+            @*var rowIndex = $Table.fnAddData([
                 data.CountryName,
                 data.CompanyName,
                 data.ProductOrService,
@@ -198,29 +198,11 @@
             ]);
             var row = $Table.fnGetNodes(rowIndex);
             $(row).attr('data-id', data.ID);
-            $(row).addClass("tier" + data.Tier);
+            $(row).addClass("tier" + data.Tier);*@
+            $Table.fnFilter('');
         }
         function updateItem(data) {
-            var tr = $($Table.fnGetNodes());
-            tr.each(function (index, item) {
-                if ($(item).data('id') == data.ID) {
-                    var td = $(item).find("td");
-                    if (td.length > 0) {
-                        $(td[0]).text(data.CountryName);
-                        $(td[1]).text(data.CompanyName);
-                        $(td[2]).text(data.ProductOrService);
-                        $(td[3]).text(data.Sector);
-                        $(td[4]).text(data.Industry);
-                        $(td[5]).text(data.Tier);
-                        $(td[6]).text(data.BusinessUnit);
-                        $(td[7]).text(data.FinancialYear);
-                    }
-                    
-                    $(item).removeClass("tier1");
-                    $(item).removeClass("tier2");
-                    $(item).removeClass("tier3");
-                    $(item).addClass("tier" + data.Tier);
-                }
-            });
+            
+            $Table.fnFilter('');
         }
     </script>)

@@ -76,15 +76,16 @@ namespace PQT.Web.Infrastructure
 
         public override Company CreateCompany(Company company, IEnumerable<int> users)
         {
-            var menu = CompanyRepository.CreateCompany(company, users);
-            _companies.Add(new Company(menu));
-            return menu;
+            company = CompanyRepository.CreateCompany(company, users);
+            var com = new Company(CompanyRepository.GetCompany(company.ID));
+            _companies.Add(com);
+            return com;
         }
 
         public override List<Company> CreateCompanies(List<Company> companies)
         {
             var menus = CompanyRepository.CreateCompanies(companies);
-            _companies.AddRange(menus.Select(m => new Company(m)));
+            _companies.AddRange(menus.Select(m => new Company(CompanyRepository.GetCompany(m.ID))));
             return menus;
         }
         public override bool UpdateCompany(Company company)

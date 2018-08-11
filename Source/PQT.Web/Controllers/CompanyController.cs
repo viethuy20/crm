@@ -55,9 +55,10 @@ namespace PQT.Web.Controllers
             {
                 if (model.Company.ID == 0)
                 {
-                    if (_comRepo.CreateCompany(model.Company, model.UsersSelected) != null)
+                    model.Company.Country = _unitRepo.GetCountry((int)model.Company.CountryID);
+                    model.Company = _comRepo.CreateCompany(model.Company, model.UsersSelected);
+                    if (model.Company != null)
                     {
-                        model.Company.Country = _unitRepo.GetCountry((int)model.Company.CountryID);
                         return Json(new
                         {
                             Code = 1,

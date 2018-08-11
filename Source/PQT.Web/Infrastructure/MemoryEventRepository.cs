@@ -67,7 +67,7 @@ namespace PQT.Web.Infrastructure
         public override Event CreateEvent(Event info, IEnumerable<int> groups, IEnumerable<int> users)
         {
             var menu = EventRepository.CreateEvent(info, groups, users);
-            _events.Add(menu);
+            _events.Add(new Event(EventRepository.GetEvent(info.ID)));
             return menu;
         }
 
@@ -75,7 +75,7 @@ namespace PQT.Web.Infrastructure
         {
             if (!EventRepository.UpdateEvent(info)) return false;
             _events.Remove(GetEvent(info.ID));
-            _events.Add(info);
+            _events.Add(new Event(EventRepository.GetEvent(info.ID)));
             return true;
         }
 
