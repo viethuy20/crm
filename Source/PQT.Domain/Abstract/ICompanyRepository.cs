@@ -9,15 +9,17 @@ namespace PQT.Domain.Abstract
     public interface ICompanyRepository
     {
         #region Company
-        int GetCountCompanies(Func<Company, bool> predicate);
-        IEnumerable<Company> GetAllCompanies(string sortColumnDir, string sortColumn, int page, int pageSize);
-        IEnumerable<Company> GetAllCompanies(Func<Company, bool> predicate, string sortColumnDir, string sortColumn, int page, int pageSize);
+        //int GetCountCompanies(Func<Company, bool> predicate);
+        //IEnumerable<Company> GetAllCompanies(string sortColumnDir, string sortColumn, int page, int pageSize);
+        void RetrieveCacheCompanies();
+        IEnumerable<Company> GetAllCompanies();
+        IEnumerable<Company> GetAllCompanies(Func<Company, bool> predicate);
         Company GetCompany(int companyID);
         Company GetCompany(string name);
         Company CreateCompany(Company company, IEnumerable<int> users);
-        void CreateCompanies(List<Company> companies);
+        List<Company> CreateCompanies(List<Company> companies);
         bool UpdateCompany(Company company);
-        bool UpdateCompany(Company company, IEnumerable<int> users);
+        Company UpdateCompany(Company company, IEnumerable<int> users);
         bool DeleteCompany(int companyID);
         #endregion Company
 
@@ -31,9 +33,5 @@ namespace PQT.Domain.Abstract
         bool DeleteCompanyResource(int resourceID);
         #endregion Company Resource
 
-
-        EventCompany GetEventCompany(int eventId, int companyId);
-        EventCompany GetEventCompany(int companyId);
-        bool UpdateEventCompany(EventCompany company);
     }
 }

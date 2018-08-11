@@ -91,11 +91,13 @@ namespace PQT.Web
             //_kernel.Bind<ILoginTracker>().To<InMemLoginTracker>();
             kernel.Bind<EFMenuRepository>().ToSelf();
             kernel.Bind<IMenuRepository>().To<MemoryMenuRepository>().InSingletonScope();
+            kernel.Bind<EFCompanyRepository>().ToSelf();
+            kernel.Bind<ICompanyRepository>().To<MemoryCompanyRepository>().InSingletonScope();
+            kernel.Bind<EFEventService>().ToSelf();
+            kernel.Bind<IEventService>().To<MemoryEventRepository>().InSingletonScope();
             kernel.Bind<IUnitRepository>().To<EFUnitRepository>();
             kernel.Bind<ISettingRepository>().To<EFSettingRepository>();
-            kernel.Bind<ICompanyRepository>().To<EFCompanyRepository>();
             kernel.Bind<ILeadService>().To<EFLeadService>();
-            kernel.Bind<IEventService>().To<EFEventService>();
             kernel.Bind<ISalesGroupService>().To<EFSalesGroupService>();
             kernel.Bind<ITrainerService>().To<EFTrainerService>();
             kernel.Bind<IBookingService>().To<EfBookingService>();

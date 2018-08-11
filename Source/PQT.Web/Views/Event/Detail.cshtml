@@ -335,6 +335,7 @@
                         d.CompanyName = $('input[name="search_name"]').val();
                         d.ProductService = $('input[name="search_service"]').val();
                         d.Sector = $('input[name="search_sector"]').val();
+                        d.Tier = $('input[name="search_tier"]').val();
                         d.Industry = $('input[name="search_industry"]').val();
                     }
                 },
@@ -361,6 +362,7 @@
                     htmlFilter +='<label>Product/Service:<input type="search" name="search_service" /></label>';
                     htmlFilter +='<label>Sector:<input type="search" name="search_sector" /></label>';
                     htmlFilter +='<label>Industry:<input type="search" name="search_industry" /></label>';
+                    htmlFilter +='<label>Tier:<input type="search" name="search_tier" /></label>';
                     filter_box.html(htmlFilter);
 
                     searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);

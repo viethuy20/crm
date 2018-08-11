@@ -16,33 +16,39 @@ namespace PQT.Domain.Concrete
         {
         }
 
-        public IEnumerable<Event> GetAllEvents()
+        public virtual void RetrieveCacheEvents()
         {
-            return GetAll<Event>().AsEnumerable();
+
         }
-        public IEnumerable<Event> GetAllEvents(Func<Event, bool> predicate)
+        public virtual IEnumerable<Event> GetAllEvents()
         {
-            return GetAll(predicate, m => m.EventSessions, m => m.SalesGroups, m => m.ManagerUsers, m => m.User).AsEnumerable();
+            return GetAll<Event>(m => m.EventSessions, m => m.SalesGroups, m => m.ManagerUsers, m => m.EventCompanies, m => m.User).Select(m => new Event(m)).AsEnumerable();
         }
-        public Event GetEvent(int id)
+        public virtual IEnumerable<Event> GetAllEvents(Func<Event, bool> predicate)
+        {
+            return GetAll(predicate, m => m.EventSessions, m => m.SalesGroups, m => m.ManagerUsers, m => m.User).Select(m => new Event(m)).AsEnumerable();
+        }
+        public virtual Event GetEvent(int id)
         {
             if (id == 0)
             {
                 return null;
             }
-            return Get<Event>(u => u.ID == id, u => new
+            return Get<Event>(u => u.ID == id, m => new
             {
-                u.SalesGroups,
-                u.ManagerUsers,
-                u.User
+                m.EventSessions,
+                m.SalesGroups,
+                m.ManagerUsers,
+                m.EventCompanies,
+                m.User
             });
         }
-        public Event GetEvent(string code)
+        public virtual Event GetEvent(string code)
         {
             return Get<Event>(m => m.EventCode == code.Trim().ToUpper());
         }
 
-        public Event CreateEvent(Event info, IEnumerable<int> groups, IEnumerable<int> users)
+        public virtual Event CreateEvent(Event info, IEnumerable<int> groups, IEnumerable<int> users)
         {
             return TransactionWrapper.Do(() =>
             {
@@ -53,13 +59,13 @@ namespace PQT.Domain.Concrete
             });
         }
 
-        public bool UpdateEvent(Event info)
+        public virtual bool UpdateEvent(Event info)
         {
             info.EventCode = info.EventCode.Trim().ToUpper();
             return Update(info);
         }
 
-        public bool UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> groups, IEnumerable<int> users)
+        public virtual bool UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> groups, IEnumerable<int> users)
         {
             return TransactionWrapper.Do(() =>
             {
@@ -93,7 +99,7 @@ namespace PQT.Domain.Concrete
                 return Update(exist);
             });
         }
-        public bool AssignCompany(int id, IEnumerable<int> companyIds)
+        public virtual bool AssignCompany(int id, IEnumerable<int> companyIds)
         {
             return TransactionWrapper.Do(() =>
             {
@@ -116,9 +122,47 @@ namespace PQT.Domain.Concrete
             });
         }
 
-        public bool DeleteEvent(int id)
+        public virtual bool DeleteEvent(int id)
         {
             return Delete<Event>(id);
+        }
+
+
+        public virtual EventCompany GetEventCompany(int eventId, int companyId)
+        {
+            return GetAll<EventCompany>(m => m.EventID == eventId && m.CompanyID == companyId).LastOrDefault();
+        }
+
+        public virtual EventCompany GetEventCompany(int companyId)
+        {
+            return GetAll<EventCompany>(m => m.CompanyID == companyId).OrderBy(m => m.UpdatedTime).LastOrDefault(m => m.UpdatedTime != null);
+        }
+
+        public virtual EventCompany CreateEventCompany(EventCompany company)
+        {
+            return Create(company);
+        }
+
+        public virtual bool UpdateEventCompany(EventCompany company)
+        {
+            //var exist = Get<EventCompany>(company.ID);
+            //if (exist != null)
+            //{
+            //exist.BudgetMonth = company.BudgetMonth;
+            //exist.BusinessUnit = company.BusinessUnit;
+            //exist.Remarks = company.Remarks;
+            return Update(company);
+            //}
+            //return false;
+        }
+
+        public virtual void UpdateCompanyCache(Company info)
+        {
+
+        }
+        public virtual void UpdateSalesGroupCache(SalesGroup info)
+        {
+
         }
     }
 }

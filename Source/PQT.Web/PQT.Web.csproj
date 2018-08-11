@@ -380,6 +380,8 @@
     <Compile Include="Hubs\ProgressHub.cs" />
     <Compile Include="Infrastructure\Helpers\ImageHelper.cs" />
     <Compile Include="Infrastructure\Helpers\LeadHelper.cs" />
+    <Compile Include="Infrastructure\MemoryEventRepository.cs" />
+    <Compile Include="Infrastructure\MemoryCompanyRepository.cs" />
     <Compile Include="Infrastructure\Notification\LeadNotificationService.cs" />
     <Compile Include="Infrastructure\Notification\LeadNotificator.cs" />
     <Compile Include="Infrastructure\Utility\FileUpload.cs" />

@@ -229,6 +229,8 @@
             <div class="form">
                 <div class="card-body">
                     @Html.HiddenFor(m => m.EventCompany.ID)
+                    @Html.HiddenFor(m => m.EventCompany.EventID)
+                    @Html.HiddenFor(m => m.EventCompany.CompanyID)
                     <div class="col-sm-12">
                         <div class="form-group">
                             @Html.Bootstrap().DropDownListFor(m => m.EventCompany.BudgetMonth, EnumerationHelper.ToSelectList<MonthStatus>()).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)

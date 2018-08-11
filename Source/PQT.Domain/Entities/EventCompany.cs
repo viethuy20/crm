@@ -19,6 +19,19 @@ namespace PQT.Domain.Entities
             EventID = eventId;
             CompanyID = companyId;
         }
+        public EventCompany(EventCompany eventCom)
+        {
+            ID = eventCom.ID;
+            EventID = eventCom.EventID;
+            CompanyID = eventCom.CompanyID;
+            //Event = eventCom.Event;
+            BudgetMonth = eventCom.BudgetMonth;
+            BusinessUnit = eventCom.BusinessUnit;
+            Remarks = eventCom.Remarks;
+            Company = new Company(eventCom.Company);
+            CreatedTime = eventCom.CreatedTime;
+            UpdatedTime = eventCom.UpdatedTime;
+        }
         public int? EventID { get; set; }
         [ForeignKey("EventID")]
         public virtual Event Event { get; set; }

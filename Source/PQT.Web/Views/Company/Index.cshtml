@@ -186,7 +186,7 @@
         function addNewLineItem(data) {
             var rowIndex = $Table.fnAddData([
                 data.CountryName,
-                data.Name,
+                data.CompanyName,
                 data.ProductOrService,
                 data.Sector,
                 data.Industry,
@@ -207,7 +207,7 @@
                     var td = $(item).find("td");
                     if (td.length > 0) {
                         $(td[0]).text(data.CountryName);
-                        $(td[1]).text(data.Name);
+                        $(td[1]).text(data.CompanyName);
                         $(td[2]).text(data.ProductOrService);
                         $(td[3]).text(data.Sector);
                         $(td[4]).text(data.Industry);

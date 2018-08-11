@@ -22,6 +22,36 @@ namespace PQT.Domain.Entities
             SalesSupervision = SalesSupervision.None;
         }
 
+        public User(User user)
+        {
+            ID = user.ID;
+            DisplayName = user.DisplayName;
+            Email = user.Email;
+            BusinessPhone = user.BusinessPhone;
+            MobilePhone = user.MobilePhone;
+            Roles = new HashSet<Role>();
+            LastAccess = user.LastAccess;
+            Address = user.Address;
+            PersonalEmail = user.PersonalEmail;
+            PassportID = user.PassportID;
+            Nationality = user.Nationality;
+            DateOfBirth = user.DateOfBirth;
+            BusinessDevelopmentUnit = user.BusinessDevelopmentUnit;
+            SalesManagementUnit = user.SalesManagementUnit;
+            SalesSupervision = user.SalesSupervision;
+            EmploymentEndDate = user.EmploymentEndDate;
+            EmploymentDate = user.EmploymentDate;
+            FirstEvaluationDate = user.FirstEvaluationDate;
+            Status = user.Status;
+            UserStatus = user.UserStatus;
+            SalaryCurrency = user.SalaryCurrency;
+            BasicSalary = user.BasicSalary;
+            DirectSupervisorID = user.DirectSupervisorID;
+            UserSalaryHistories = user.UserSalaryHistories;
+            Extension = user.Extension;
+            OfficeLocationID = user.OfficeLocationID;
+        }
+
         #region Primitive
 
         public string DisplayName { get; set; }

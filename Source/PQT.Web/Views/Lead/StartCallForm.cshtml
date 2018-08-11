@@ -167,7 +167,9 @@
             var company_id_selected = $("@Html.JquerySelectorFor(m=>m.CompanyID)");
             company_id_selected_val = company_id_selected.val();
          var company_name_selected = $("@Html.JquerySelectorFor(m=>m.CompanyName)");
-         var company_business_selected = '@Model.BusinessUnit';
+         var company_business_selected = '@Model.EventCompany.BusinessUnit';
+         var company_remark_selected = '@Model.EventCompany.Remarks';
+         var company_budget_selected = '@Model.EventCompany.BudgetMonth';
          var company_dialingCode_selected = '@Model.DialingCode';
          var tableCompanies = $("#grid_companies").DataTable({
              "processing": true, // for show progress bar
@@ -185,6 +187,7 @@
                      d.ProductService = $('#grid_companies_filter').find('input[name="search_service"]').val();
                      d.Sector = $('#grid_companies_filter').find('input[name="search_sector"]').val();
                      d.Industry = $('#grid_companies_filter').find('input[name="search_industry"]').val();
+                     d.Tier = $('#grid_companies_filter').find('input[name="search_tier"]').val();
                      d.BusinessUnit = $('#grid_companies_filter').find('input[name="search_businessunit"]').val();
                      d.Ownership = $('#grid_companies_filter').find('input[name="search_ownership"]').val();
                  }
@@ -231,6 +234,7 @@
                  htmlFilter += '<label>Company:<input style="width: 120px" type="search" name="search_name" /></label>';
                  htmlFilter += '<label>Product/Service:<input style="width: 120px" type="search" name="search_service" /></label>';
                  htmlFilter += '<label>Sector:<input style="width: 120px" type="search" name="search_sector" /></label>';
+                 htmlFilter += '<label>Tier:<input style="width: 120px" type="search" name="search_tier" /></label>';
                  htmlFilter += '<label>Industry:<input style="width: 120px" type="search" name="search_industry" /></label>';
                  htmlFilter += '<label>Business Unit:<input style="width: 120px" type="search" name="search_businessunit" /></label>';
                  htmlFilter += '<label>Ownership:<input style="width: 120px" type="search" name="search_ownership" /></label>';
@@ -269,6 +273,8 @@
              var rowCompanyName = data.CompanyName;
              var rowDialingCode = data.DialingCode;
              var rowBusiness = data.BusinessUnit;
+             var rowBudget = data.BudgetMonth;
+             var rowRemark = data.Remarks;
 
 
              // If checkbox is checked and row ID is not in list of selected row IDs
@@ -278,6 +284,8 @@
                  company_name_selected.val(rowCompanyName);
                  company_dialingCode_selected = rowDialingCode;
                  company_business_selected = rowBusiness;
+                 company_remark_selected = rowRemark;
+                 company_budget_selected = rowBudget;
                  LoadCompanyResources();
                  // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
              } else if (!$this.checked) {
@@ -286,6 +294,8 @@
                  company_name_selected.val("");
                  company_dialingCode_selected = "";
                  company_business_selected = "";
+                 company_remark_selected = "";
+                 company_budget_selected = "";
                  $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").removeAttr("readonly");
                  ClearDataSelected();
              }
@@ -449,6 +459,13 @@
              if (company_business_selected != null && company_business_selected != "") {
                  $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").val(company_business_selected);
                  $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").attr("readonly", "readonly");
+             }
+             if (company_budget_selected != null && company_budget_selected != "" && company_budget_selected > 0) {
+                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(company_budget_selected).trigger("change");
+                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").attr("readonly", "readonly");
+             }
+             if (company_remark_selected != null && company_remark_selected != "") {
+                 $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val(company_remark_selected);
              }
              if (company_dialingCode_selected == "") return;
              var dialingCodes = $('.dialingCode');

@@ -69,7 +69,7 @@ namespace PQT.Web.Controllers
                         Code = 2
                     });
                 }
-                if (_comRepo.UpdateCompany(model.Company, model.UsersSelected))
+                if (_comRepo.UpdateCompany(model.Company, model.UsersSelected) != null)
                 {
                     model.Company.Country = _unitRepo.GetCountry((int)model.Company.CountryID);
                     return Json(new
@@ -237,7 +237,7 @@ namespace PQT.Web.Controllers
             }
 
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
-            int page = start != null ? Convert.ToInt32(start) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
 
             IEnumerable<Company> companies = new HashSet<Company>();
@@ -271,9 +271,7 @@ namespace PQT.Web.Controllers
                         (m.Sector != null && m.Sector.ToLower().Contains(searchValue)) ||
                         (m.Industry != null && m.Industry.ToLower().Contains(searchValue)) ||
                         (m.BusinessUnit != null && m.BusinessUnit.ToLower().Contains(searchValue)));
-                companies = _comRepo.GetAllCompanies(predicate, sortColumnDir, sortColumn,
-                    page, pageSize);
-                recordsTotal = _comRepo.GetCountCompanies(predicate);
+                companies = _comRepo.GetAllCompanies(predicate).ToList();
             }
             else
             {
@@ -288,7 +286,7 @@ namespace PQT.Web.Controllers
                        (string.IsNullOrEmpty(sector) ||
                         (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
                        (string.IsNullOrEmpty(industry) ||
-                        (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry)))&&
+                        (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry))) &&
                        (string.IsNullOrEmpty(tier) ||
                         (m.Tier.ToString().Contains(tier))) &&
                        (string.IsNullOrEmpty(businessUnit) ||
@@ -297,16 +295,84 @@ namespace PQT.Web.Controllers
                         (!string.IsNullOrEmpty(m.Ownership) && m.Ownership.ToLower().Contains(ownership))) &&
                        (string.IsNullOrEmpty(financialYear) ||
                         (m.FinancialYear > 0 && m.FinancialYear.ToString().Contains(financialYear)));
-                companies = _comRepo.GetAllCompanies(predicate, sortColumnDir, sortColumn, page, pageSize);
-                recordsTotal = _comRepo.GetCountCompanies(predicate);
+                companies = _comRepo.GetAllCompanies(predicate).ToList();
             }
+
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "CountryName":
+                        companies = companies.OrderBy(s => s.Country.Name).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    case "ProductOrService":
+                        companies = companies.OrderBy(s => s.ProductOrService).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    case "Sector":
+                        companies = companies.OrderBy(s => s.Sector).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    case "Industry":
+                        companies = companies.OrderBy(s => s.Industry).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    case "Tier":
+                        companies = companies.OrderBy(s => s.Tier).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    case "BusinessUnit":
+                        companies = companies.OrderBy(s => s.BusinessUnit).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    case "FinancialYear":
+                        companies = companies.OrderBy(s => s.FinancialYear).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    default:
+                        companies = companies.OrderBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "CountryName":
+                        companies = companies.OrderByDescending(s => s.Country.Name).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    case "ProductOrService":
+                        companies = companies.OrderByDescending(s => s.ProductOrService).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    case "Sector":
+                        companies = companies.OrderByDescending(s => s.Sector).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    case "Industry":
+                        companies = companies.OrderByDescending(s => s.Industry).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    case "Tier":
+                        companies = companies.OrderByDescending(s => s.Tier).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    case "BusinessUnit":
+                        companies = companies.OrderByDescending(s => s.BusinessUnit).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    case "FinancialYear":
+                        companies = companies.OrderByDescending(s => s.FinancialYear).ThenBy(s => s.CompanyName).AsEnumerable();
+                        break;
+                    default:
+                        companies = companies.OrderByDescending(s => s.CompanyName).AsEnumerable();
+                        break;
+                }
+            }
+
+
+            recordsTotal = companies.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            var data = companies.Skip(skip).Take(pageSize).ToList();
 
             var json = new
             {
                 draw = draw,
                 recordsFiltered = recordsTotal,
                 recordsTotal = recordsTotal,
-                data = companies.Select(m => new
+                data = data.Select(m => new
                 {
                     m.ID,
                     m.CountryName,

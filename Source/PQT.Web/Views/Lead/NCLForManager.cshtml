@@ -391,13 +391,19 @@
                      aData["ID"] +
                      '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;"><i class="fa fa-fw fa-eye"></i> Detail</span></a>');
                  if (aData["StatusCode"] == '@LeadStatus.RequestNCL' ||
-                     aData["StatusCode"] == '@LeadStatus.RequestBook' ||
                      aData["StatusCode"] == '@LeadStatus.RequestLOI') {
                      $(nRow).find('td:eq(22)').html('<a href="#" data-action="Approval" data-id="' +
                          aData["ID"] +
                          '"><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/><a class="simple-ajax-popup-align-top" href="@Url.Action("RejectAction")?id=' +
                          aData["ID"] +
                          '"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
+                 } else if (aData["StatusCode"] == '@LeadStatus.RequestBook') {
+                     $(nRow).find('td:eq(22)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
+                         aData["ID"] +
+                         '&eventId=@Model.Event.ID" ><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/>' +
+                         '<a href="@Url.Action("Detail","Booking")?leadId=' +
+                         aData["ID"] +
+                         '&eventId=@Model.Event.ID"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
                  } else {
                      $(nRow).find('td:eq(22)').html('');
                  }

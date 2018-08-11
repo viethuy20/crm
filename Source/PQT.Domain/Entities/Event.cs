@@ -12,15 +12,49 @@ namespace PQT.Domain.Entities
     {
         public Event()
         {
-            StartDate=DateTime.Today;
-            EndDate=DateTime.Today.AddMonths(1);
+            StartDate = DateTime.Today;
+            EndDate = DateTime.Today.AddMonths(1);
             var rand = new Random((int)DateTime.Now.Ticks).Next(0x1000000);
             EventSessions = new HashSet<EventSession>();
             SalesGroups = new HashSet<SalesGroup>();
-            //Users = new HashSet<User>();
+            ManagerUsers = new HashSet<User>();
             EventCompanies = new HashSet<EventCompany>();
             //Trainers = new HashSet<Trainer>();
             BackgroundColor = string.Format("#{0:X6}", rand);
+        }
+        public Event(Event e)
+        {
+            ID = e.ID;
+            EventCode = e.EventCode;
+            EventName = e.EventName;
+            BackgroundColor = e.BackgroundColor;
+            HotelVenue = e.HotelVenue;
+            SalesRules = e.SalesRules;
+            PrimaryJobtitleKeywords = e.PrimaryJobtitleKeywords;
+            SecondaryJobtitleKeywords = e.SecondaryJobtitleKeywords;
+            Location = e.Location;
+            Remark = e.Remark;
+            Brochure = e.Brochure;
+            FinanceEmail = e.FinanceEmail;
+            OperationEmail = e.OperationEmail;
+            OperationOnsiteEmail = e.OperationOnsiteEmail;
+            ProductionEmail = e.ProductionEmail;
+            SalesEmail = e.SalesEmail;
+            RegContract = e.RegContract;
+            EventStatus = e.EventStatus;
+            DateOfOpen = e.DateOfOpen;
+            DateOfConfirmation = e.DateOfConfirmation;
+            ClosingDate = e.ClosingDate;
+            StartDate = e.StartDate;
+            EndDate = e.EndDate;
+            IsEventEnd = e.IsEventEnd;
+            UserID = e.UserID;
+            EventSessions = e.EventSessions.Select(m => new EventSession(m)).ToList();
+            SalesGroups = e.SalesGroups.Select(m => new SalesGroup(m)).ToList();
+            ManagerUsers = e.ManagerUsers;
+            EventCompanies = e.EventCompanies.Select(m => new EventCompany(m)).ToList();
+            CreatedTime = e.CreatedTime;
+            UpdatedTime = e.UpdatedTime;
         }
         public string EventCode { get; set; }
         public string EventName { get; set; }
@@ -65,7 +99,7 @@ namespace PQT.Domain.Entities
         {
             get
             {
-                if (DateOfConfirmation!=null)
+                if (DateOfConfirmation != null)
                 {
                     return Convert.ToDateTime(DateOfConfirmation).ToString("dd/MM/yyyy");
                 }

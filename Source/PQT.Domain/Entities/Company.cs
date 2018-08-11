@@ -14,6 +14,29 @@ namespace PQT.Domain.Entities
             ManagerUsers = new HashSet<User>();
             Tier = 3;
         }
+        public Company(Company c)
+        {
+            ID = c.ID;
+            CountryID = c.CountryID;
+            Country = c.Country;
+            CompanyName = c.CompanyName;
+            ProductOrService = c.ProductOrService;
+            Sector = c.Sector;
+            Industry = c.Industry;
+            Ownership = c.Ownership;
+            BusinessUnit = c.BusinessUnit;
+            BudgetMonth = c.BudgetMonth;
+            BudgetPerHead = c.BudgetPerHead;
+            FinancialYear = c.FinancialYear;
+            Tier = c.Tier;
+            Address = c.Address;
+            Tel = c.Tel;
+            Fax = c.Fax;
+            Remarks = c.Remarks;
+            ManagerUsers = c.ManagerUsers;
+            CreatedTime = c.CreatedTime;
+            UpdatedTime = c.UpdatedTime;
+        }
         public int? CountryID { get; set; }
         [ForeignKey("CountryID")]
         public virtual Country Country { get; set; }

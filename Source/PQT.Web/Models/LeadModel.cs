@@ -45,7 +45,7 @@ namespace PQT.Web.Models
             var lead = leadRepo.GetLead(id);
             if (lead.LeadStatusRecord == LeadStatus.Deleted)
                 return "Cannot process ... Call status: " + lead.StatusDisplay;
-            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Deleted, CurrentUser.Identity.ID,"delete call");
+            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Deleted, CurrentUser.Identity.ID, "delete call");
             return leadRepo.UpdateLead(lead) ? "" : "Delete failed";
         }
         public string BlockLead()
@@ -357,7 +357,6 @@ namespace PQT.Web.Models
         public void PrepareCall(int eventId, int resourceId)
         {
             EventID = eventId;
-            EventCompany = new EventCompany();
             FirstFollowUpStatus = FollowUpStatus.Pending;
             FinalStatus = FinalStatus.Pending;
             PhoneCall = new PhoneCall();
@@ -395,19 +394,31 @@ namespace PQT.Web.Models
                             BusinessUnit = com.DialingCode;
                         }
                     }
+                    var comp = comRepo.GetCompany(Convert.ToInt32(resource.CompanyID));
+                    if (comp != null)
+                    {
+                        EventCompany = new EventCompany
+                        {
+                            EventID = eventId,
+                            BusinessUnit = comp.BusinessUnit,
+                            BudgetMonth = comp.BudgetMonth,
+                            Remarks = comp.Remarks,
+                            CompanyID = Convert.ToInt32(resource.CompanyID)
+                        };
+                    }
                 }
             }
         }
         public void PrepareCalling(int leadId)
         {
 
-            EventCompany = new EventCompany();
             FirstFollowUpStatus = FollowUpStatus.Pending;
             FinalStatus = FinalStatus.Pending;
             LeadID = leadId;
             if (leadId > 0)
             {
                 var leadRepo = DependencyHelper.GetService<ILeadService>();
+                var eventRepo = DependencyHelper.GetService<IEventService>();
                 var lead = leadRepo.GetLead(leadId);
                 PhoneCall = new PhoneCall { LeadID = leadId };
                 if (lead != null)
@@ -439,6 +450,8 @@ namespace PQT.Web.Models
                     DialingCode = lead.Company.DialingCode;
                     BusinessUnit = lead.Company.BusinessUnit;
                     Lead = lead;
+                    //var eventCom = eventRepo.GetEventCompany(Lead.EventID, Lead.CompanyID);
+                    //EventCompany = eventCom;
                 }
             }
         }
@@ -535,20 +548,27 @@ namespace PQT.Web.Models
                 {
                     Lead.LeadStatusRecord = new LeadStatusRecord(Lead.ID, LeadStatus.Initial, CurrentUser.Identity.ID);
                     leadRepo.UpdateLead(Lead);
-                    Lead.Company = comRepo.GetCompany(Lead.CompanyID);
-                    Lead.Event = eventRepo.GetEvent(Lead.EventID);
                     //LeadNotificator.NotifyUser(result.Event.Users, result);
                     //LeadNotificator.NotifyUser(result.Event.SalesGroups.SelectMany(m => m.Users), result);
                     PhoneCall.EndTime = DateTime.Now;
                     PhoneCall.LeadID = Lead.ID;
                     var result = leadRepo.CreatePhoneCall(PhoneCall);
-                    comRepo.UpdateEventCompany(EventCompany);
+
+
+                    if (Lead.Company != null)
+                    {
+                        Lead.Company.BusinessUnit = EventCompany.BusinessUnit;
+                        Lead.Company.BudgetMonth = EventCompany.BudgetMonth;
+                        Lead.Company.Remarks = EventCompany.Remarks;
+                        comRepo.UpdateCompany(Lead.Company);
+                    }
                     if (result != null)
                     {
+                        Lead.Event = eventRepo.GetEvent(Lead.EventID);
                         return true;
                     }
+                    Lead.Event = eventRepo.GetEvent(Lead.EventID);
                 }
-
                 return false;
             });
         }
@@ -557,6 +577,7 @@ namespace PQT.Web.Models
             return TransactionWrapper.Do(() =>
             {
                 var leadRepo = DependencyHelper.GetService<ILeadService>();
+                var eventRepo = DependencyHelper.GetService<IEventService>();
                 var comRepo = DependencyHelper.GetService<ICompanyRepository>();
                 PhoneCall.EndTime = DateTime.Now;
                 var result = leadRepo.CreatePhoneCall(PhoneCall);
@@ -584,7 +605,13 @@ namespace PQT.Web.Models
                     Lead.FirstFollowUpStatus = FirstFollowUpStatus;
                     Lead.FinalStatus = FinalStatus;
                     leadRepo.UpdateLead(Lead);
-                    comRepo.UpdateEventCompany(EventCompany);
+                    if (Lead.Company != null)
+                    {
+                        Lead.Company.BusinessUnit = EventCompany.BusinessUnit;
+                        Lead.Company.BudgetMonth = EventCompany.BudgetMonth;
+                        Lead.Company.Remarks = EventCompany.Remarks;
+                        comRepo.UpdateCompany(Lead.Company);
+                    }
                     return true;
                 }
                 return false;

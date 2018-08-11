@@ -39,7 +39,10 @@ namespace PQT.Domain.Concrete
 
         public Lead CreateLead(Lead info)
         {
-            return Create(info);
+            info = Create(info);
+            if (info != null)
+            { info.Company = Get<Company>(info.CompanyID); }
+            return info;
         }
 
         public bool UpdateLead(Lead info)

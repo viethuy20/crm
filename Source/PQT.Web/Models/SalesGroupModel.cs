@@ -30,9 +30,11 @@ namespace PQT.Web.Models
         public string UpdateGroup()
         {
             var repo = DependencyHelper.GetService<ISalesGroupService>();
+            var eventRepo = DependencyHelper.GetService<IEventService>();
             SalesGroup = repo.UpdateSalesGroup(ID, GroupName, UsersSelected);
             if (SalesGroup != null)
             {
+                eventRepo.UpdateSalesGroupCache(SalesGroup);
                 return "";
             }
             return "Group not found.";

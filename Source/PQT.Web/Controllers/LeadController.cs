@@ -1166,15 +1166,26 @@ namespace PQT.Web.Controllers
         [AjaxOnly]
         public ActionResult EventCompanyInfo(int eventId, int companyId)
         {
-            var model = _companyRepo.GetEventCompany(eventId, companyId);
-            if (model != null && model.UpdatedTime == null)
+            var model = _companyRepo.GetCompany(companyId);
+            if (model == null)
             {
-                var other = _companyRepo.GetEventCompany(companyId);
-                if (other != null)
+                model = new Company();
+                return Json(new
                 {
-                    model = other;
-                }
+                    model.ID,
+                    model.BudgetMonth,
+                    model.BusinessUnit,
+                    model.Remarks,
+                }, JsonRequestBehavior.AllowGet);
             }
+            //if (model.UpdatedTime == null)
+            //{
+            //    var other = _eventService.GetEventCompany(companyId);
+            //    if (other != null)
+            //    {
+            //        model = other;
+            //    }
+            //}
             return Json(new
             {
                 model.ID,
@@ -1233,6 +1244,13 @@ namespace PQT.Web.Controllers
                 // ReSharper disable once PossibleNullReferenceException
                 industry = Request.Form.GetValues("Industry").FirstOrDefault().Trim().ToLower();
             }
+            var tier = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Tier") != null && Request.Form.GetValues("Tier").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                tier = Request.Form.GetValues("Tier").FirstOrDefault().Trim().ToLower();
+            }
             var businessUnit = "";
             // ReSharper disable once AssignNullToNotNullAttribute
             if (Request.Form.GetValues("BusinessUnit") != null && Request.Form.GetValues("BusinessUnit").FirstOrDefault() != null)
@@ -1286,7 +1304,8 @@ namespace PQT.Web.Controllers
                 (string.IsNullOrEmpty(industry) ||
                  (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry))) &&
                 (string.IsNullOrEmpty(businessUnit) ||
-                 (!string.IsNullOrEmpty(m.BusinessUnit) && m.BusinessUnit.ToLower().Contains(businessUnit)))&&
+                 (!string.IsNullOrEmpty(m.BusinessUnit) && m.BusinessUnit.ToLower().Contains(businessUnit))) &&
+                (string.IsNullOrEmpty(tier) || (m.Tier.ToString().Contains(tier))) &&
                 (string.IsNullOrEmpty(ownership) ||
                  (!string.IsNullOrEmpty(m.Ownership) && m.Ownership.ToLower().Contains(ownership)));
             companies = companies.Where(predicate);
@@ -1371,6 +1390,8 @@ namespace PQT.Web.Controllers
                     m.Sector,
                     m.Industry,
                     m.BusinessUnit,
+                    m.BudgetMonth,
+                    m.Remarks,
                     m.Ownership,
                     m.Tier,
                 })
