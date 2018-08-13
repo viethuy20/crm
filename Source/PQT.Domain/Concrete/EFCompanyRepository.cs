@@ -59,21 +59,31 @@ namespace PQT.Domain.Concrete
         {
             if (users.Any())
                 company.ManagerUsers = _db.Set<User>().Where(r => users.Contains(r.ID)).ToList();
-            return Create(company);
+            company = Create(company);
+            if (company != null)
+            {
+                company.Country = Get<Country>(Convert.ToInt32(company.CountryID));
+            }
+            return company;
         }
 
-        public virtual List<Company> CreateCompanies(List<Company> companies)
-        {
-            foreach (var company in companies)
-            {
-                _db.Set<Company>().Add(company);
-            }
-            _db.SaveChanges();
-            return companies;
-        }
+        //public virtual List<Company> CreateCompanies(List<Company> companies)
+        //{
+        //    foreach (var company in companies)
+        //    {
+        //        _db.Set<Company>().Add(company);
+        //    }
+        //    _db.SaveChanges();
+        //    return companies;
+        //}
         public virtual bool UpdateCompany(Company company)
         {
-            return Update(company);
+            if (Update(company))
+            {
+                company.Country = Get<Country>(Convert.ToInt32(company.CountryID));
+                return true;
+            }
+            return false;
         }
         public virtual Company UpdateCompany(Company company, IEnumerable<int> users)
         {
@@ -81,7 +91,11 @@ namespace PQT.Domain.Concrete
             {
                 if (users.Any())
                     company.ManagerUsers = _db.Set<User>().Where(r => users.Contains(r.ID)).ToList();
-                Create(company);
+                company = Create(company);
+                if (company != null)
+                {
+                    company.Country = Get<Country>(Convert.ToInt32(company.CountryID));
+                }
                 return company;
             }
             var exist = Get<Company>(company.ID);
@@ -105,8 +119,12 @@ namespace PQT.Domain.Concrete
             exist.ManagerUsers.Clear();
             if (users.Any())
                 exist.ManagerUsers = _db.Set<User>().Where(r => users.Contains(r.ID)).ToList();
-            Update(exist);
-            return exist;
+            if (Update(exist))
+            {
+                exist.Country = Get<Country>(Convert.ToInt32(company.CountryID));
+                return exist;
+            }
+            return null;
         }
 
         public virtual bool DeleteCompany(int companyID)

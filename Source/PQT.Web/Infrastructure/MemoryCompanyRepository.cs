@@ -77,22 +77,22 @@ namespace PQT.Web.Infrastructure
         public override Company CreateCompany(Company company, IEnumerable<int> users)
         {
             company = CompanyRepository.CreateCompany(company, users);
-            var com = new Company(CompanyRepository.GetCompany(company.ID));
+            var com = new Company(company);
             _companies.Add(com);
             return com;
         }
 
-        public override List<Company> CreateCompanies(List<Company> companies)
-        {
-            var menus = CompanyRepository.CreateCompanies(companies);
-            _companies.AddRange(menus.Select(m => new Company(CompanyRepository.GetCompany(m.ID))));
-            return menus;
-        }
+        //public override List<Company> CreateCompanies(List<Company> companies)
+        //{
+        //    var menus = CompanyRepository.CreateCompanies(companies);
+        //    _companies.AddRange(menus.Select(m => new Company(CompanyRepository.GetCompany(m.ID))));
+        //    return menus;
+        //}
         public override bool UpdateCompany(Company company)
         {
             if (!CompanyRepository.UpdateCompany(company)) return false;
             _companies.Remove(GetCompany(company.ID));
-            var reTryCom = new Company(CompanyRepository.GetCompany(company.ID));
+            var reTryCom = new Company(company);
             _companies.Add(reTryCom);
             EventService.UpdateCompanyCache(reTryCom);
             return true;
@@ -100,17 +100,20 @@ namespace PQT.Web.Infrastructure
         public override Company UpdateCompany(Company company, IEnumerable<int> users)
         {
             var com = CompanyRepository.UpdateCompany(company, users);
-            var exist = GetCompany(company.ID);
-            if (exist != null)
+            if (com != null)
             {
-                _companies.Remove(GetCompany(company.ID));
-                var reTryCom = new Company(CompanyRepository.GetCompany(company.ID));
-                _companies.Add(reTryCom);
-                EventService.UpdateCompanyCache(reTryCom);
-            }
-            else
-            {
-                _companies.Add(new Company(CompanyRepository.GetCompany(company.ID)));
+                var exist = GetCompany(company.ID);
+                if (exist != null)
+                {
+                    _companies.Remove(exist);
+                    var reTryCom = new Company(com);
+                    _companies.Add(reTryCom);
+                    EventService.UpdateCompanyCache(reTryCom);
+                }
+                else
+                {
+                    _companies.Add(new Company(com));
+                }
             }
             return com;
         }
