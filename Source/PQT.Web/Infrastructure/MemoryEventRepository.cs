@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Concrete;
 using PQT.Domain.Entities;
@@ -204,6 +205,14 @@ namespace PQT.Web.Infrastructure
                 com.ManagerUsers = info.ManagerUsers;
                 com.CreatedTime = info.CreatedTime;
                 com.UpdatedTime = info.UpdatedTime;
+            }
+        }
+        public override void DeleteCompanyCache(Company info)
+        {
+            var coms = _events.SelectMany(m => m.EventCompanies).Where(m => m.CompanyID == info.ID).Select(m => m.Company).ToList();
+            foreach (var com in coms)
+            {
+                com.EntityStatus = EntityStatus.Deleted;
             }
         }
         public override void UpdateSalesGroupCache(SalesGroup info)

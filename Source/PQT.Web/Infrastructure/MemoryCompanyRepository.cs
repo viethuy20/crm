@@ -122,7 +122,9 @@ namespace PQT.Web.Infrastructure
         {
             if (CompanyRepository.DeleteCompany(companyID))
             {
-                _companies.Remove(GetCompany(companyID));
+                var com = GetCompany(companyID);
+                _companies.Remove(com);
+                EventService.DeleteCompanyCache(com);
                 return true;
             }
             return false;

@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
+using PQT.Domain.Enum;
 using PQT.Web.Hubs;
 using PQT.Web.Infrastructure.Filters;
 using PQT.Web.Infrastructure.Utility;
@@ -619,15 +621,22 @@ namespace PQT.Web.Controllers
             var eventData = _repo.GetEvent(eventId);
             if (eventData != null)
             {
-                companies = eventData.EventCompanies.Select(m=>m.Company).Where(m =>
-                       (string.IsNullOrEmpty(companyName) || (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
-                       (string.IsNullOrEmpty(productService) || (!string.IsNullOrEmpty(m.ProductOrService) && m.ProductOrService.ToLower().Contains(productService))) &&
-                       (string.IsNullOrEmpty(countryName) || (!string.IsNullOrEmpty(m.CountryCode) && m.CountryCode.ToLower().Contains(countryName)) ||
-                       (!string.IsNullOrEmpty(m.CountryName) && m.CountryName.ToLower().Contains(countryName))) && 
-                       (string.IsNullOrEmpty(tier) || (m.Tier.ToString().Contains(tier))) &&
-                       (string.IsNullOrEmpty(sector) || (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
-                       (string.IsNullOrEmpty(industry) || (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry)))
-                   );
+                companies = eventData.EventCompanies.Select(m => m.Company).Where(m =>
+                    m.EntityStatus == EntityStatus.Normal &&
+                    (string.IsNullOrEmpty(companyName) ||
+                     (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
+                    (string.IsNullOrEmpty(productService) ||
+                     (!string.IsNullOrEmpty(m.ProductOrService) &&
+                      m.ProductOrService.ToLower().Contains(productService))) &&
+                    (string.IsNullOrEmpty(countryName) ||
+                     (!string.IsNullOrEmpty(m.CountryCode) && m.CountryCode.ToLower().Contains(countryName)) ||
+                     (!string.IsNullOrEmpty(m.CountryName) && m.CountryName.ToLower().Contains(countryName))) &&
+                    (string.IsNullOrEmpty(tier) || (m.Tier.ToString().Contains(tier))) &&
+                    (string.IsNullOrEmpty(sector) ||
+                     (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
+                    (string.IsNullOrEmpty(industry) ||
+                     (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry)))
+                );
             }
 
 

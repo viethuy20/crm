@@ -245,26 +245,26 @@ namespace PQT.Web.Models
         {
 
         }
-        public CallSheetModel(int eventId)
-        {
-            Lead = new Lead { EventID = eventId, UserID = CurrentUser.Identity.ID };
-            var eventRepo = DependencyHelper.GetService<IEventService>();
-            var eventLead = eventRepo.GetEvent(eventId);
-            if (eventLead != null)
-            {
-                var daysExpired = Settings.Lead.NumberDaysExpired();
-                var leadRepo = DependencyHelper.GetService<ILeadService>();
-                var companyIds = leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
-                    m.UserID != CurrentUser.Identity.ID &&
-                    m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
-                    && !m.CheckNCLExpired(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
-                Companies = eventLead.EventCompanies.Where(m => !companyIds.Contains(m.CompanyID)).Select(m => m.Company);
-            }
-            else
-            {
-                Companies = new List<Company>();
-            }
-        }
+        //public CallSheetModel(int eventId)
+        //{
+        //    Lead = new Lead { EventID = eventId, UserID = CurrentUser.Identity.ID };
+        //    var eventRepo = DependencyHelper.GetService<IEventService>();
+        //    var eventLead = eventRepo.GetEvent(eventId);
+        //    if (eventLead != null)
+        //    {
+        //        var daysExpired = Settings.Lead.NumberDaysExpired();
+        //        var leadRepo = DependencyHelper.GetService<ILeadService>();
+        //        var companyIds = leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
+        //            m.UserID != CurrentUser.Identity.ID &&
+        //            m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
+        //            && !m.CheckNCLExpired(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
+        //        Companies = eventLead.EventCompanies.Where(m => !companyIds.Contains(m.CompanyID)).Select(m => m.Company);
+        //    }
+        //    else
+        //    {
+        //        Companies = new List<Company>();
+        //    }
+        //}
 
         public bool Save()
         {

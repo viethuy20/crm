@@ -52,7 +52,7 @@ namespace PQT.Web.Models
                 Users = saleRepo.GetAllSalesmans();
                 SalesGroups = saleRepo.GetAllSalesGroups();
                 Event.EventSessions = Event.EventSessions.Where(m => m.EntityStatus == EntityStatus.Normal).ToList();
-                Event.EventCompanies = Event.EventCompanies.Where(m => m.EntityStatus == EntityStatus.Normal).ToList();
+                //Event.EventCompanies = Event.EventCompanies.Where(m => m.EntityStatus == EntityStatus.Normal).ToList();
             }
         }
         public void PrepareAssign(int id)

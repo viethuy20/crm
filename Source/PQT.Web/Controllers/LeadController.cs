@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using NS.Entity;
 using NS.Helpers;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
@@ -1282,7 +1283,8 @@ namespace PQT.Web.Controllers
                     m.UserID != currentUser.ID && m.User.TransferUserID != currentUser.ID &&
                     m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
                                      && !m.CheckNCLExpired(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
-                companies = eventLead.EventCompanies.Where(m => !companiesInNcl.Contains(m.CompanyID)).Select(m => m.Company);
+                companies = eventLead.EventCompanies.Where(m =>
+                    m.EntityStatus == EntityStatus.Normal && !companiesInNcl.Contains(m.CompanyID)).Select(m => m.Company);
             }
             else
             {
@@ -1411,9 +1413,9 @@ namespace PQT.Web.Controllers
                 Tier3 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier3),
                 Tier1 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier1),
                 Tier2 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier2),
-                TotalTier3 = eventData.EventCompanies.Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier3),
-                TotalTier1 = eventData.EventCompanies.Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier1),
-                TotalTier2 = eventData.EventCompanies.Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier2),
+                TotalTier3 = eventData.EventCompanies.Count(m => m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier3),
+                TotalTier1 = eventData.EventCompanies.Count(m => m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier1),
+                TotalTier2 = eventData.EventCompanies.Count(m => m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier2),
                 TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked),
             }, JsonRequestBehavior.AllowGet);
         }

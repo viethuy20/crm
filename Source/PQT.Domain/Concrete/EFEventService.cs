@@ -160,6 +160,10 @@ namespace PQT.Domain.Concrete
         {
 
         }
+        public virtual void DeleteCompanyCache(Company info)
+        {
+
+        }
         public virtual void UpdateSalesGroupCache(SalesGroup info)
         {
 
