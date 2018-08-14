@@ -16,20 +16,19 @@
     <table class="table" id="crtable">
         <thead>
             <tr>
-                <th style="min-width:100px">Country</th>
-                <th>Salutation</th>
+                <th>Country</th>
+                <th>Title</th>
                 <th class="nowrap">First Name</th>
                 <th class="nowrap">Last Name</th>
-                <th style="min-width:200px">Company</th>
                 <th style="min-width:200px">Role</th>
                 <th class="nowrap">Mobile Phone1</th>
                 <th class="nowrap">Mobile Phone2</th>
                 <th class="nowrap">Mobile Phone3</th>
                 <th class="nowrap">Work Email</th>
                 <th class="nowrap">Personal Email</th>
-                <th class="nowrap">Business Unit</th>
+                @*<th class="nowrap">Business Unit</th>
                 <th class="nowrap">Budget Month</th>
-                <th class="nowrap">Remarks</th>
+                <th class="nowrap">Remarks</th>*@
             </tr>
         </thead>
     </table>
@@ -50,8 +49,9 @@
                  "datatype": "json",
                  "data": function(d) {
                      d.ComId = company_id_selected_val;
-                     d.Country = $('#crtable_filter').find('input[name="search_country"]').val();
-                     d.Organisation = $('#crtable_filter').find('input[name="search_organisation"]').val();
+                     d.Name = $('#crtable_filter').find('input[name="search_name"]').val();
+                     d.Mobile = $('#crtable_filter').find('input[name="search_mobile"]').val();
+                     d.Email = $('#crtable_filter').find('input[name="search_email"]').val();
                      d.Role = $('#crtable_filter').find('input[name="search_role"]').val();
                  }
              },
@@ -60,16 +60,16 @@
                  { "data": "Salutation", "name": "Salutation", "orderable": true },
                  { "data": "FirstName", "name": "FirstName", "orderable": true },
                  { "data": "LastName", "name": "LastName", "orderable": true },
-                 { "data": "Organisation", "name": "Organisation", "orderable": true },
+                 //{ "data": "Organisation", "name": "Organisation", "orderable": true },
                  { "data": "Role", "name": "Role", "orderable": true },
                  { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
                  { "data": "MobilePhone2", "name": "MobilePhone2", "orderable": true },
                  { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
                  { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
                  { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
-                 { "data": "BusinessUnit", "name": "BusinessUnit", "orderable": true },
-                 { "data": "BudgetMonthStr", "name": "BudgetMonth", "orderable": true },
-                 { "data": "Remarks", "name": "Remarks", "orderable": true },
+                 //{ "data": "BusinessUnit", "name": "BusinessUnit", "orderable": true },
+                 //{ "data": "BudgetMonthStr", "name": "BudgetMonth", "orderable": true },
+                 //{ "data": "Remarks", "name": "Remarks", "orderable": true },
              ],
              "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
              "iDisplayLength": 25,
@@ -87,23 +87,21 @@
                  $(nRow).attr('data-mobilephone3', aData["MobilePhone3"]);
                  $(nRow).attr('data-workemail', aData["WorkEmail"]);
                  $(nRow).attr('data-personalemail', aData["PersonalEmail"]);
-                 $(nRow).attr('data-budgetmonth', aData["BudgetMonth"]);
-                 $(nRow).attr('data-businessunit', aData["BusinessUnit"]);
+                 //$(nRow).attr('data-budgetmonth', aData["BudgetMonth"]);
+                 //$(nRow).attr('data-businessunit', aData["BusinessUnit"]);
                  $(nRow).find('td:eq(2)').addClass('nowrap');
                  $(nRow).find('td:eq(3)').addClass('nowrap');
                  $(nRow).find('td:eq(6)').addClass('nowrap');
                  $(nRow).find('td:eq(7)').addClass('nowrap');
                  $(nRow).find('td:eq(8)').addClass('nowrap');
                  $(nRow).find('td:eq(9)').addClass('nowrap');
-                 $(nRow).find('td:eq(10)').addClass('nowrap');
-                 $(nRow).find('td:eq(11)').addClass('nowrap');
-                 $(nRow).find('td:eq(12)').addClass('nowrap');
              },
              initComplete: function() {
                  var _table = this;
                  var filter_box = _table.parent().find("#crtable_filter");
-                 var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
-                 htmlFilter += '<label>Company:<input type="search" name="search_organisation" /></label>';
+                 var htmlFilter = '<label>Name:<input type="search" name="search_name" /></label>';
+                 htmlFilter += '<label>Mobile:<input type="search" name="search_mobile" /></label>';
+                 htmlFilter += '<label>Email:<input type="search" name="search_email" /></label>';
                  htmlFilter += '<label>Role:<input type="search" name="search_role" /></label>';
                  filter_box.html(htmlFilter);
                  searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);

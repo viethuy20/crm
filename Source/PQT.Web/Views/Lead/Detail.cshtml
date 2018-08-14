@@ -68,9 +68,13 @@
                 }
                 else
                 {
-                    @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").Id("btnBacklist").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
+                    @Html.Bootstrap().ActionLinkButton("Back to My Call List", "Index").Id("btnBacklist").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
                 }
 
+                @if (!eventClosed && CurrentUser.HasPermission("Lead", "StartCallForm"))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Back to Companies List", "StartCallForm").Id("btnBacklist").RouteValues(new { id = Model.Lead.EventID }).PrependIcon("md md-arrow-back")
+                }
                 @if (!eventClosed)
                 {
                     if (CurrentUser.HasPermission("Lead", "CallingForm") && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
@@ -402,7 +406,7 @@
                 </div>
             </div>
             <div class="offcanvas-body">
-                @Html.Partial("_CompanyResourceList", Model.Lead.EventID)
+                @Html.Partial("_CompanyResourceList2", Model.Lead.EventID)
             </div>
         </div>
     </div>
@@ -722,7 +726,7 @@
              }
          }
 
-         $(document).on('click', '#crtable tbody tr', function () {
+         $(document).on('click', '#crtable2 tbody tr', function () {
              location.href = '@Url.Action("StartCallForm",new{id=Model.Lead.EventID})?resourceId=' + $(this).data("id");
          });
     </script>)

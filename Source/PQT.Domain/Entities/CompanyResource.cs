@@ -28,17 +28,11 @@ namespace PQT.Domain.Entities
         //public virtual Company Company { get; set; }
         public int? CountryID { get; set; }
 
-        public string BusinessUnit { get; set; }
-        public int BudgetMonth { get; set; }
         public string Remarks { get; set; }
 
-        public string BudgetMonthStr
+        public string FullName
         {
-            get
-            {
-                var monthEnum = Enumeration.FromValue<MonthStatus>(BudgetMonth.ToString());
-                return monthEnum != null ? monthEnum.DisplayName : "";
-            }
+            get { return FirstName + " " + LastName; }
         }
     }
 }

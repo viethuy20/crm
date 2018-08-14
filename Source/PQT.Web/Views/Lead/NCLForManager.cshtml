@@ -281,6 +281,8 @@
                             <th>Good Training Month</th>
                             <th>Topics Interested</th>
                             <th>Location Interested</th>
+                            <th>First Follow Up Status</th>
+                            <th>Final Status</th>
                             <th>Call Back</th>
                             <th>Status</th>
                             <th></th>
@@ -365,13 +367,15 @@
                  { "data": "GoodTrainingMonth", "name": "GoodTrainingMonth", "orderable": true },
                  { "data": "TopicsInterested", "name": "TopicsInterested", "orderable": true },
                  { "data": "LocationInterested", "name": "LocationInterested", "orderable": true },
+                 { "data": "FirstFollowUpStatus", "name": "FirstFollowUpStatus", "orderable": true },
+                 { "data": "FinalStatus", "name": "FinalStatus", "orderable": true },
                  { "data": "CallBackDate", "name": "CallBackDate", "orderable": true },
                  { "data": "StatusDisplay", "name": "StatusDisplay", "orderable": true },
                  { "data": "ID", "name": "ID", "orderable": false },
                  { "data": "ID", "name": "ID", "orderable": false },
              ],
              "iDisplayLength": sizeLenght,
-             "aaSorting": [[22, "asc"]],
+             "aaSorting": [[24, "asc"]],
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
                      aData["ID"] +
@@ -381,33 +385,33 @@
 
 
                  var dropdowns = "";
-                 $(nRow).find('td:eq(20)').css("white-space","nowrap");
+                 $(nRow).find('td:eq(22)').css("white-space","nowrap");
                  if (aData["StatusCode"] == @LeadStatus.RequestBook || aData["StatusCode"] == @LeadStatus.Booked) {
-                     $(nRow).find('td:eq(20)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
+                     $(nRow).find('td:eq(22)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
                          aData["ID"] +
                          '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;">' + aData["StatusDisplay"]+'</span></a>');
                  }
-                 $(nRow).find('td:eq(21)').html('<a href="@Url.Action("Detail")?id=' +
+                 $(nRow).find('td:eq(23)').html('<a href="@Url.Action("Detail")?id=' +
                      aData["ID"] +
                      '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;"><i class="fa fa-fw fa-eye"></i> Detail</span></a>');
                  if (aData["StatusCode"] == '@LeadStatus.RequestNCL' ||
                      aData["StatusCode"] == '@LeadStatus.RequestLOI') {
-                     $(nRow).find('td:eq(22)').html('<a href="#" data-action="Approval" data-id="' +
+                     $(nRow).find('td:eq(24)').html('<a href="#" data-action="Approval" data-id="' +
                          aData["ID"] +
                          '"><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/><a class="simple-ajax-popup-align-top" href="@Url.Action("RejectAction")?id=' +
                          aData["ID"] +
                          '"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
                  } else if (aData["StatusCode"] == '@LeadStatus.RequestBook') {
-                     $(nRow).find('td:eq(22)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
+                     $(nRow).find('td:eq(24)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
                          aData["ID"] +
                          '&eventId=@Model.Event.ID" ><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/>' +
                          '<a href="@Url.Action("Detail","Booking")?leadId=' +
                          aData["ID"] +
                          '&eventId=@Model.Event.ID"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
                  } else {
-                     $(nRow).find('td:eq(22)').html('');
+                     $(nRow).find('td:eq(24)').html('');
                  }
-                 $(nRow).find('td:eq(22)').css("white-space", "nowrap");
+                 $(nRow).find('td:eq(24)').css("white-space", "nowrap");
                  $(nRow).addClass(aData["ClassStatus"]);
              },
              initComplete: function () {

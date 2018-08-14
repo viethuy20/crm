@@ -68,7 +68,7 @@ namespace PQT.Web.Controllers
                 return RedirectToAction("Index", "Home");
             }
             var userId = CurrentUser.Identity.ID;
-            if (DateTime.Today <= model.Event.EndDate && !model.Event.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) &&
+            if (!(CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("QC") || CurrentUser.HasRole("Manager")) && DateTime.Today <= model.Event.EndDate && !model.Event.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) &&
                 !model.Event.ManagerUsers.Select(u => u.ID).Contains(userId))
             {
                 TempData["error"] = "Don't have access permission for this event";
@@ -658,7 +658,7 @@ namespace PQT.Web.Controllers
                     m.EventID,
                     CreatedTime = m.StatusUpdateTimeStr,
                     Company = m.Company.CompanyName,
-                    Country = m.Company.CountryCode,
+                    Country = m.Company.CountryCodeAndDialing,
                     m.JobTitle,
                     m.DirectLine,
                     CallBackDate = m.CallBackDate == default(DateTime) ? "" : m.CallBackDate.ToString("dd/MM/yyyy"),
@@ -897,7 +897,9 @@ namespace PQT.Web.Controllers
                                                    (m.WorkEmail1 != null &&
                                                     m.WorkEmail1.ToLower().Contains(searchValue)) ||
                                                    (m.PersonalEmail != null &&
-                                                    m.PersonalEmail.ToLower().Contains(searchValue))) &&
+                                                    m.PersonalEmail.ToLower().Contains(searchValue)) ||
+                                                   (m.FirstFollowUpStatusDisplay.ToLower().Contains(searchValue)) ||
+                                                   (m.FinalStatusDisplay.ToLower().Contains(searchValue))) &&
                                                !m.CheckNCLExpired(daysExpired));
             }
             else
@@ -973,6 +975,12 @@ namespace PQT.Web.Controllers
                     case "LocationInterested":
                         leads = leads.OrderBy(s => s.LocationInterested).ThenBy(s => s.ID);
                         break;
+                    case "FirstFollowUpStatus":
+                        leads = leads.OrderBy(s => s.FirstFollowUpStatus).ThenBy(s => s.ID);
+                        break;
+                    case "FinalStatus":
+                        leads = leads.OrderBy(s => s.FinalStatus).ThenBy(s => s.ID);
+                        break;
                     case "StatusDisplay":
                         leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -1045,6 +1053,12 @@ namespace PQT.Web.Controllers
                     case "LocationInterested":
                         leads = leads.OrderByDescending(s => s.LocationInterested).ThenBy(s => s.ID);
                         break;
+                    case "FirstFollowUpStatus":
+                        leads = leads.OrderByDescending(s => s.FirstFollowUpStatus).ThenBy(s => s.ID);
+                        break;
+                    case "FinalStatus":
+                        leads = leads.OrderByDescending(s => s.FinalStatus).ThenBy(s => s.ID);
+                        break;
                     case "StatusDisplay":
                         leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -1074,7 +1088,7 @@ namespace PQT.Web.Controllers
                     m.EventID,
                     CreatedTime = m.StatusUpdateTime.ToString("dd/MM/yyyy HH:mm:ss"),
                     Company = m.Company.CompanyName,
-                    Country = m.Company.CountryCode,
+                    Country = m.Company.CountryCodeAndDialing,
                     Salesman = m.User.DisplayName,
                     m.JobTitle,
                     m.DirectLine,
@@ -1097,6 +1111,8 @@ namespace PQT.Web.Controllers
                     m.LocationInterested,
                     m.StatusCode,
                     m.ClassStatus,
+                    FirstFollowUpStatus = m.FirstFollowUpStatusDisplay,
+                    FinalStatus = m.FinalStatusDisplay,
                     actionBlock = m.LeadStatusRecord == LeadStatus.Blocked ? "Unblock" : "Block"
                 })
             };
@@ -1318,7 +1334,7 @@ namespace PQT.Web.Controllers
                 switch (sortColumn)
                 {
                     case "CountryName":
-                        companies = companies.OrderBy(s => s.CountryName).ThenBy(s => s.Tier);
+                        companies = companies.OrderBy(s => s.CountryCode).ThenBy(s => s.Tier);
                         break;
                     case "ProductOrService":
                         companies = companies.OrderBy(s => s.ProductOrService).ThenBy(s => s.Tier);
@@ -1345,7 +1361,7 @@ namespace PQT.Web.Controllers
                 switch (sortColumn)
                 {
                     case "CountryName":
-                        companies = companies.OrderByDescending(s => s.CountryName).ThenBy(s => s.Tier);
+                        companies = companies.OrderByDescending(s => s.CountryCode).ThenBy(s => s.Tier);
                         break;
                     case "ProductOrService":
                         companies = companies.OrderByDescending(s => s.ProductOrService).ThenBy(s => s.Tier);
@@ -1385,7 +1401,7 @@ namespace PQT.Web.Controllers
                 data = data.Select(m => new
                 {
                     m.ID,
-                    Country = m.CountryName,
+                    Country = m.CountryCode,
                     m.CompanyName,
                     m.DialingCode,
                     m.ProductOrService,

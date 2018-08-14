@@ -138,8 +138,6 @@ namespace PQT.Web.Models
                     {
                         CountryID = com.CountryID,
                         CompanyName = com.Organisation,
-                        BusinessUnit = com.BusinessUnit,
-                        BudgetMonth = com.BudgetMonth
                     };
                     newCom = comRepo.CreateCompany(newCom, new List<int>());
                     com.CompanyID = newCom.ID;
@@ -147,9 +145,9 @@ namespace PQT.Web.Models
                 else
                 {
                     com.CompanyID = comExist.ID;
-                    comExist.BusinessUnit = com.BusinessUnit;
-                    comExist.BudgetMonth = com.BudgetMonth;
-                    comRepo.UpdateCompany(comExist);
+                    //comExist.BusinessUnit = com.BusinessUnit;
+                    //comExist.BudgetMonth = com.BudgetMonth;
+                    //comRepo.UpdateCompany(comExist);
                 }
                 comRepo.CreateCompanyResource(com);
                 count++;

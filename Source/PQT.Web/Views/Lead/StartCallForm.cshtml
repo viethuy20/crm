@@ -39,7 +39,7 @@
 <section>
     <div class="row">
         <div class="col-md-12" style="padding-bottom: 12px;">
-            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").RouteValues(new { id = Model.EventID }).PrependIcon("md md-arrow-back")
+            @Html.Bootstrap().ActionLinkButton("Back to My Call List", "Index").RouteValues(new { id = Model.EventID }).PrependIcon("md md-arrow-back")
         </div>
     </div>
     <div class="row">
@@ -112,19 +112,14 @@
                                 </div><!--end #step3 -->
                             </div><!--end .tab-content -->
                             <ul class="pager wizard">
-                                <li class="previous"><a class="btn-raised"  style="position: fixed;bottom: 50px;left: 40px;display: block;z-index: 1006;" href="javascript:void(0);">Previous</a></li>
-                                <li class="next"><a class="btn-raised" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;" href="javascript:void(0);">Next</a></li>
+                                <li class="previous"><a class="btn-raised"  style="position: fixed;bottom: 50px;left: 40px;display: block;z-index: 1006;" href="javascript:void(0);"><i class="md md-arrow-back"></i> Back to Companies List</a></li>
+                                <li class="next"><a class="btn-raised" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;" href="javascript:void(0);">Next Call Info <i class="md md-arrow-forward"></i></a></li>
                                 <li class="finish "><button type="submit" class="btn btn-success pull-right" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;"  id="endcall_save"><i class="md md-call-end"></i> Finish Call</button></li>
                             </ul>
                         }
                     </div><!--end .card-body -->
                 </div><!--end .card-body -->
             </div><!--end .card -->
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").RouteValues(new { id = Model.EventID }).PrependIcon("md md-arrow-back")
         </div>
     </div>
 </section>
@@ -439,14 +434,14 @@
              $("@Html.JquerySelectorFor(m => m.MobilePhone3)").val($(this).data("mobilephone3"));
              $("@Html.JquerySelectorFor(m => m.WorkEmail)").val($(this).data("workemail"));
              $("@Html.JquerySelectorFor(m => m.PersonalEmail)").val($(this).data("personalemail"));
-             $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val($(this).data("budgetmonth")).trigger("change");
+             @*$("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val($(this).data("budgetmonth")).trigger("change");
              if ($(this).data("budgetmonth") > 0) {
                  $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").attr("readonly", "readonly");
              }
              $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").val($(this).data("businessunit"));
              if ($(this).data("businessunit") != undefined && $(this).data("businessunit") != "") {
                  $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").attr("readonly", "readonly");
-             }
+             }*@
 
              //if ($("select.callingCompany").val() != "" && !tickStarted) {
              //    StartTick();

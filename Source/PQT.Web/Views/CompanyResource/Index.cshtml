@@ -29,7 +29,7 @@
                     <thead>
                         <tr>
                             <th>Country</th>
-                            <th>Salutation</th>
+                            <th>Title</th>
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Company</th>
@@ -39,8 +39,6 @@
                             <th>Mobile Phone3</th>
                             <th>Work Email</th>
                             <th>Personal Email</th>
-                            <th>Business Unit</th>
-                            <th>Budget Month</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -68,6 +66,9 @@
                 "data": function (d) {
                     d.Country = $('#table_filter').find('input[name="search_country"]').val();
                     d.Organisation = $('#table_filter').find('input[name="search_organisation"]').val();
+                    d.Name = $('#crtable_filter').find('input[name="search_name"]').val();
+                    d.Mobile = $('#crtable_filter').find('input[name="search_mobile"]').val();
+                    d.Email = $('#crtable_filter').find('input[name="search_email"]').val();
                     d.Role = $('#table_filter').find('input[name="search_role"]').val();
                     d.Others = $('#table_filter').find('input[name="search_others"]').val();
                 }
@@ -84,8 +85,6 @@
                 { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
                 { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
                 { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
-                { "data": "BusinessUnit", "name": "BusinessUnit", "orderable": true },
-                { "data": "BudgetMonthStr", "name": "BudgetMonth", "orderable": true },
                 { "data": "ID", "name": "ID", "orderable": false },
             ],
             "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
@@ -93,7 +92,7 @@
             "aaSorting": [[4, "asc"]],
             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                 $(nRow).attr("data-id", aData["ID"]);
-                $(nRow).find('td:eq(13)').html('<a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a> ' +
+                $(nRow).find('td:eq(11)').html('<a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a> ' +
                     '<a href="#" data-action="delete" data-id="' + aData["ID"] + '"><i class="md md-delete text-danger"></i></a>');
             },
             initComplete: function () {
@@ -101,6 +100,9 @@
                 var filter_box = _table.parent().find("#table_filter");
                 var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
                 htmlFilter += '<label>Company:<input type="search" name="search_organisation" /></label>';
+                htmlFilter += '<label>Name:<input type="search" name="search_name" /></label>';
+                htmlFilter += '<label>Mobile:<input type="search" name="search_mobile" /></label>';
+                htmlFilter += '<label>Email:<input type="search" name="search_email" /></label>';
                 htmlFilter += '<label>Role:<input type="search" name="search_role" /></label>';
                 htmlFilter += '<label>Others:<input type="search" name="search_others" /></label>';
                 filter_box.html(htmlFilter);

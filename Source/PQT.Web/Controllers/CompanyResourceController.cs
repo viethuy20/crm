@@ -67,8 +67,6 @@ namespace PQT.Web.Controllers
                             {
                                 CountryID = model.CompanyResource.CountryID,
                                 CompanyName = model.CompanyResource.Organisation,
-                                BusinessUnit = model.CompanyResource.BusinessUnit,
-                                BudgetMonth = model.CompanyResource.BudgetMonth
                             };
                             newCom = _comRepo.CreateCompany(newCom, new List<int>());
                             model.CompanyResource.CompanyID = newCom.ID;
@@ -76,9 +74,7 @@ namespace PQT.Web.Controllers
                         else
                         {
                             model.CompanyResource.CompanyID = comExist.ID;
-                            comExist.BusinessUnit = model.CompanyResource.BusinessUnit;
-                            comExist.BudgetMonth = model.CompanyResource.BudgetMonth;
-                            _comRepo.UpdateCompany(comExist);
+                            //_comRepo.UpdateCompany(comExist);
                         }
                         if (_comRepo.CreateCompanyResource(model.CompanyResource) != null)
                         {
@@ -103,8 +99,6 @@ namespace PQT.Web.Controllers
                         {
                             CountryID = model.CompanyResource.CountryID,
                             CompanyName = model.CompanyResource.Organisation,
-                            BusinessUnit = model.CompanyResource.BusinessUnit,
-                            BudgetMonth = model.CompanyResource.BudgetMonth,
                         };
                         newCom = _comRepo.CreateCompany(newCom, new List<int>());
                         model.CompanyResource.CompanyID = newCom.ID;
@@ -112,9 +106,9 @@ namespace PQT.Web.Controllers
                     else
                     {
                         model.CompanyResource.CompanyID = comExist.ID;
-                        comExist.BusinessUnit = model.CompanyResource.BusinessUnit;
-                        comExist.BudgetMonth = model.CompanyResource.BudgetMonth;
-                        _comRepo.UpdateCompany(comExist);
+                        //comExist.BusinessUnit = model.CompanyResource.BusinessUnit;
+                        //comExist.BudgetMonth = model.CompanyResource.BudgetMonth;
+                        //_comRepo.UpdateCompany(comExist);
                     }
 
                     if (_comRepo.UpdateCompanyResource(model.CompanyResource))
@@ -323,6 +317,27 @@ namespace PQT.Web.Controllers
                 // ReSharper disable once PossibleNullReferenceException
                 organisation = Request.Form.GetValues("Organisation").FirstOrDefault().Trim().ToLower();
             }
+            var name = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Name") != null && !string.IsNullOrEmpty(Request.Form.GetValues("Name").FirstOrDefault()))
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                name = Request.Form.GetValues("Name").FirstOrDefault().Trim().ToLower();
+            }
+            var mobile = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Mobile") != null && Request.Form.GetValues("Mobile").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                mobile = Request.Form.GetValues("Mobile").FirstOrDefault().Trim().ToLower();
+            }
+            var email = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Email") != null && Request.Form.GetValues("Email").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                email = Request.Form.GetValues("Email").FirstOrDefault().Trim().ToLower();
+            }
             var role = "";
             // ReSharper disable once AssignNullToNotNullAttribute
             if (Request.Form.GetValues("Role") != null && Request.Form.GetValues("Role").FirstOrDefault() != null)
@@ -354,6 +369,17 @@ namespace PQT.Web.Controllers
                          (!string.IsNullOrEmpty(m.Country) && m.Country.ToLower().Contains(country))) &&
                         (string.IsNullOrEmpty(organisation) ||
                          (!string.IsNullOrEmpty(m.Organisation) && m.Organisation.ToLower().Contains(organisation))) &&
+                        (string.IsNullOrEmpty(name) ||
+                         (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(name))) &&
+                        (string.IsNullOrEmpty(mobile) ||
+                         (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(mobile)) ||
+                         (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(mobile)) ||
+                         (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(mobile))
+                        ) &&
+                        (string.IsNullOrEmpty(email) ||
+                         (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email)) ||
+                         (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(email))
+                        ) &&
                         (string.IsNullOrEmpty(role) ||
                          (!string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(role))) &&
                         (m.Country != null && m.Country.ToLower().Contains(searchValue)) ||
@@ -365,10 +391,7 @@ namespace PQT.Web.Controllers
                         (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
                         (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
                         (m.WorkEmail != null && m.WorkEmail.ToLower().Contains(searchValue)) ||
-                        (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue)) ||
-                        (m.BusinessUnit != null && m.BusinessUnit.Contains(searchValue)) ||
-                        (m.BudgetMonthStr != null && m.BudgetMonthStr.ToLower().Contains(searchValue)) ||
-                        (m.BudgetMonth.ToString().Contains(searchValue))
+                        (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue))
                     );
             }
             else
@@ -378,6 +401,17 @@ namespace PQT.Web.Controllers
                      (!string.IsNullOrEmpty(m.Country) && m.Country.ToLower().Contains(country))) &&
                     (string.IsNullOrEmpty(organisation) ||
                      (!string.IsNullOrEmpty(m.Organisation) && m.Organisation.ToLower().Contains(organisation))) &&
+                    (string.IsNullOrEmpty(name) ||
+                     (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(name))) &&
+                    (string.IsNullOrEmpty(mobile) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(mobile)) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(mobile)) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(mobile))
+                    ) &&
+                    (string.IsNullOrEmpty(email) ||
+                     (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email)) ||
+                     (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(email))
+                    ) &&
                     (string.IsNullOrEmpty(role) ||
                      (!string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(role))));
             }
@@ -412,12 +446,6 @@ namespace PQT.Web.Controllers
                         break;
                     case "PersonalEmail":
                         audits = audits.OrderBy(s => s.PersonalEmail).ThenBy(s => s.Organisation);
-                        break;
-                    case "BusinessUnit":
-                        audits = audits.OrderBy(s => s.BusinessUnit).ThenBy(s => s.Organisation);
-                        break;
-                    case "BudgetMonth":
-                        audits = audits.OrderBy(s => s.BudgetMonth).ThenBy(s => s.Organisation);
                         break;
                     default:
                         audits = audits.OrderBy(s => s.Organisation);
@@ -455,12 +483,6 @@ namespace PQT.Web.Controllers
                     case "PersonalEmail":
                         audits = audits.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.Organisation);
                         break;
-                    case "BusinessUnit":
-                        audits = audits.OrderByDescending(s => s.BusinessUnit).ThenBy(s => s.Organisation);
-                        break;
-                    case "BudgetMonth":
-                        audits = audits.OrderByDescending(s => s.BudgetMonth).ThenBy(s => s.Organisation);
-                        break;
                     default:
                         audits = audits.OrderByDescending(s => s.Organisation);
                         break;
@@ -494,8 +516,6 @@ namespace PQT.Web.Controllers
                     m.MobilePhone3,
                     m.PersonalEmail,
                     m.WorkEmail,
-                    m.BusinessUnit,
-                    m.BudgetMonthStr,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);
@@ -523,19 +543,26 @@ namespace PQT.Web.Controllers
                 // ReSharper disable once PossibleNullReferenceException
                 comId = Convert.ToInt32(Request.Form.GetValues("ComId").FirstOrDefault());
             }
-            var country = "";
+            var name = "";
             // ReSharper disable once AssignNullToNotNullAttribute
-            if (Request.Form.GetValues("Country") != null && !string.IsNullOrEmpty(Request.Form.GetValues("Country").FirstOrDefault()))
+            if (Request.Form.GetValues("Name") != null && !string.IsNullOrEmpty(Request.Form.GetValues("Name").FirstOrDefault()))
             {
                 // ReSharper disable once PossibleNullReferenceException
-                country = Request.Form.GetValues("Country").FirstOrDefault().Trim().ToLower();
+                name = Request.Form.GetValues("Name").FirstOrDefault().Trim().ToLower();
             }
-            var organisation = "";
+            var mobile = "";
             // ReSharper disable once AssignNullToNotNullAttribute
-            if (Request.Form.GetValues("Organisation") != null && Request.Form.GetValues("Organisation").FirstOrDefault() != null)
+            if (Request.Form.GetValues("Mobile") != null && Request.Form.GetValues("Mobile").FirstOrDefault() != null)
             {
                 // ReSharper disable once PossibleNullReferenceException
-                organisation = Request.Form.GetValues("Organisation").FirstOrDefault().Trim().ToLower();
+                mobile = Request.Form.GetValues("Mobile").FirstOrDefault().Trim().ToLower();
+            }
+            var email = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Email") != null && Request.Form.GetValues("Email").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                email = Request.Form.GetValues("Email").FirstOrDefault().Trim().ToLower();
             }
             var role = "";
             // ReSharper disable once AssignNullToNotNullAttribute
@@ -562,10 +589,17 @@ namespace PQT.Web.Controllers
                 companyResources = _comRepo.GetAllCompanyResources(m => m.CompanyID == comId);
 
             Func<CompanyResource, bool> predicate = m =>
-                (string.IsNullOrEmpty(country) ||
-                 (!string.IsNullOrEmpty(m.Country) && m.Country.ToLower().Contains(country))) &&
-                (string.IsNullOrEmpty(organisation) ||
-                 (!string.IsNullOrEmpty(m.Organisation) && m.Organisation.ToLower().Contains(organisation))) &&
+                (string.IsNullOrEmpty(name) ||
+                 (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(name))) &&
+                (string.IsNullOrEmpty(mobile) ||
+                 (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(mobile)) ||
+                 (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(mobile)) ||
+                 (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(mobile))
+                 ) &&
+                 (string.IsNullOrEmpty(email) ||
+                 (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email)) ||
+                 (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(email))
+                 ) &&
                 (string.IsNullOrEmpty(role) ||
                  (!string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(role)));
             companyResources = companyResources.Where(predicate);
@@ -607,12 +641,6 @@ namespace PQT.Web.Controllers
                         break;
                     case "PersonalEmail":
                         companyResources = companyResources.OrderBy(s => s.PersonalEmail).ThenBy(s => s.Organisation);
-                        break;
-                    case "BusinessUnit":
-                        companyResources = companyResources.OrderBy(s => s.BusinessUnit).ThenBy(s => s.Organisation);
-                        break;
-                    case "BudgetMonth":
-                        companyResources = companyResources.OrderBy(s => s.BudgetMonth).ThenBy(s => s.Organisation);
                         break;
                     case "Remarks":
                         companyResources = companyResources.OrderBy(s => s.Remarks).ThenBy(s => s.Organisation);
@@ -659,12 +687,6 @@ namespace PQT.Web.Controllers
                     case "PersonalEmail":
                         companyResources = companyResources.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.Organisation);
                         break;
-                    case "BusinessUnit":
-                        companyResources = companyResources.OrderByDescending(s => s.BusinessUnit).ThenBy(s => s.Organisation);
-                        break;
-                    case "BudgetMonth":
-                        companyResources = companyResources.OrderByDescending(s => s.BudgetMonth).ThenBy(s => s.Organisation);
-                        break;
                     case "Remarks":
                         companyResources = companyResources.OrderByDescending(s => s.Remarks).ThenBy(s => s.Organisation);
                         break;
@@ -702,9 +724,6 @@ namespace PQT.Web.Controllers
                     m.MobilePhone3,
                     m.WorkEmail,
                     m.PersonalEmail,
-                    m.BudgetMonthStr,
-                    m.BudgetMonth,
-                    m.BusinessUnit,
                     m.Remarks,
                 })
             };

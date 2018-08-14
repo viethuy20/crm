@@ -68,6 +68,18 @@ namespace PQT.Domain.Entities
             {
                 if (Country != null)
                 {
+                    return Country.Code;
+                }
+
+                return "";
+            }
+        }
+        public string CountryCodeAndDialing
+        {
+            get
+            {
+                if (Country != null)
+                {
                     return Country.Code + " (" + Country.DialingCode + ")";
                 }
 

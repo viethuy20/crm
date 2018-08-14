@@ -353,12 +353,12 @@ namespace PQT.Web.Controllers
                             item.MobilePhone1 = lead.MobilePhone1;
                             item.MobilePhone2 = lead.MobilePhone2;
                             item.MobilePhone3 = lead.MobilePhone3;
-                            if (eventCompany != null)
-                            {
-                                item.BusinessUnit = eventCompany.BusinessUnit;
-                                item.BudgetMonth = eventCompany.BudgetMonth;
-                                item.Remarks = eventCompany.Remarks;
-                            }
+                            //if (eventCompany != null)
+                            //{
+                            //    item.BusinessUnit = eventCompany.BusinessUnit;
+                            //    item.BudgetMonth = eventCompany.BudgetMonth;
+                            //    item.Remarks = eventCompany.Remarks;
+                            //}
                             _comRepo.UpdateCompanyResource(item);
                         }
                     }
@@ -380,12 +380,12 @@ namespace PQT.Web.Controllers
                             Salutation = lead.Salutation,
                             WorkEmail = lead.WorkEmail
                         };
-                        if (eventCompany != null)
-                        {
-                            item.BusinessUnit = eventCompany.BusinessUnit;
-                            item.BudgetMonth = eventCompany.BudgetMonth;
-                            item.Remarks = eventCompany.Remarks;
-                        }
+                        //if (eventCompany != null)
+                        //{
+                        //    item.BusinessUnit = eventCompany.BusinessUnit;
+                        //    item.BudgetMonth = eventCompany.BudgetMonth;
+                        //    item.Remarks = eventCompany.Remarks;
+                        //}
                         _comRepo.CreateCompanyResource(item);
                     }
                     var json = new

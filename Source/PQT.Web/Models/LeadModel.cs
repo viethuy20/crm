@@ -371,7 +371,7 @@ namespace PQT.Web.Models
                 {
                     JobTitle = resource.Role;
                     CompanyName = resource.Organisation;
-                    BusinessUnit = resource.BusinessUnit;
+                    //BusinessUnit = resource.BusinessUnit;
                     Salutation = resource.Salutation;
                     FirstName = resource.FirstName;
                     LastName = resource.LastName;
