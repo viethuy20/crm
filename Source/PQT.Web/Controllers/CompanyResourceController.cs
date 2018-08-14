@@ -22,11 +22,13 @@ namespace PQT.Web.Controllers
         private readonly ICompanyRepository _comRepo;
         private readonly ILeadService _leadRepo;
         private readonly IUnitRepository _unitRepo;
-        public CompanyResourceController(ICompanyRepository comRepo, ILeadService leadRepo, IUnitRepository unitRepo)
+        private readonly IEventService _eventService;
+        public CompanyResourceController(ICompanyRepository comRepo, ILeadService leadRepo, IUnitRepository unitRepo, IEventService eventService)
         {
             _comRepo = comRepo;
             _leadRepo = leadRepo;
             _unitRepo = unitRepo;
+            _eventService = eventService;
         }
         public ActionResult Index()
         {
@@ -583,7 +585,11 @@ namespace PQT.Web.Controllers
                 var companiesInNcl = _leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
                     m.UserID != currentUser.ID && m.User.TransferUserID != currentUser.ID &&
                     m.CheckInNCL(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
-                companyResources = _comRepo.GetAllCompanyResources().Where(m => m.CompanyID != null && !companiesInNcl.Contains((int)m.CompanyID));
+                var eventLead = _eventService.GetEvent(eventId);
+                var assignCompanies = eventLead.EventCompanies.Where(m =>
+                     m.EntityStatus == EntityStatus.Normal && !companiesInNcl.Contains(m.CompanyID)).Select(m => m.CompanyID);
+                companyResources = _comRepo.GetAllCompanyResources()
+                    .Where(m => m.CompanyID != null && assignCompanies.Contains((int) m.CompanyID));
             }
             else if (comId > 0)
                 companyResources = _comRepo.GetAllCompanyResources(m => m.CompanyID == comId);

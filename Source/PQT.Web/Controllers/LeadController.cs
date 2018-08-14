@@ -49,8 +49,8 @@ namespace PQT.Web.Controllers
                 return RedirectToAction("Index", "Home");
             }
             var userId = CurrentUser.Identity.ID;
-            if (DateTime.Today <= model.Event.EndDate && !model.Event.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) &&
-                !model.Event.ManagerUsers.Select(u => u.ID).Contains(userId))
+            if (DateTime.Today > model.Event.ClosingDate || (model.Event.DateOfOpen > DateTime.Today && !model.Event.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) &&
+                !model.Event.ManagerUsers.Select(u => u.ID).Contains(userId)))
             {
                 TempData["error"] = "Don't have access permission for this event";
                 return RedirectToAction("Index", "Home");
@@ -68,8 +68,8 @@ namespace PQT.Web.Controllers
                 return RedirectToAction("Index", "Home");
             }
             var userId = CurrentUser.Identity.ID;
-            if (!(CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("QC") || CurrentUser.HasRole("Manager")) && DateTime.Today <= model.Event.EndDate && !model.Event.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) &&
-                !model.Event.ManagerUsers.Select(u => u.ID).Contains(userId))
+            if (!(CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("QC") || CurrentUser.HasRole("Manager")) && (DateTime.Today > model.Event.ClosingDate || (model.Event.DateOfOpen > DateTime.Today && !model.Event.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) &&
+                                                                 !model.Event.ManagerUsers.Select(u => u.ID).Contains(userId))))
             {
                 TempData["error"] = "Don't have access permission for this event";
                 return RedirectToAction("Index", "Home");
@@ -540,10 +540,10 @@ namespace PQT.Web.Controllers
                         leads = leads.OrderBy(s => s.MarkKPI).ThenBy(s => s.ID);
                         break;
                     case "FirstFollowUpStatus":
-                        leads = leads.OrderBy(s => s.FirstFollowUpStatus).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.FirstFollowUpStatusDisplay).ThenBy(s => s.ID);
                         break;
                     case "FinalStatus":
-                        leads = leads.OrderBy(s => s.FinalStatus).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.FinalStatusDisplay).ThenBy(s => s.ID);
                         break;
                     case "CallBackDateTime":
                         leads = leads.OrderBy(s => s.CallBackDateTime).ThenBy(s => s.ID);
@@ -624,10 +624,10 @@ namespace PQT.Web.Controllers
                         leads = leads.OrderByDescending(s => s.MarkKPI).ThenBy(s => s.ID);
                         break;
                     case "FirstFollowUpStatus":
-                        leads = leads.OrderByDescending(s => s.FirstFollowUpStatus).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.FirstFollowUpStatusDisplay).ThenBy(s => s.ID);
                         break;
                     case "FinalStatus":
-                        leads = leads.OrderByDescending(s => s.FinalStatus).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.FinalStatusDisplay).ThenBy(s => s.ID);
                         break;
                     case "CallBackDateTime":
                         leads = leads.OrderByDescending(s => s.CallBackDateTime).ThenBy(s => s.ID);
@@ -976,10 +976,10 @@ namespace PQT.Web.Controllers
                         leads = leads.OrderBy(s => s.LocationInterested).ThenBy(s => s.ID);
                         break;
                     case "FirstFollowUpStatus":
-                        leads = leads.OrderBy(s => s.FirstFollowUpStatus).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.FirstFollowUpStatusDisplay).ThenBy(s => s.ID);
                         break;
                     case "FinalStatus":
-                        leads = leads.OrderBy(s => s.FinalStatus).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.FinalStatusDisplay).ThenBy(s => s.ID);
                         break;
                     case "StatusDisplay":
                         leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
@@ -1054,10 +1054,10 @@ namespace PQT.Web.Controllers
                         leads = leads.OrderByDescending(s => s.LocationInterested).ThenBy(s => s.ID);
                         break;
                     case "FirstFollowUpStatus":
-                        leads = leads.OrderByDescending(s => s.FirstFollowUpStatus).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.FirstFollowUpStatusDisplay).ThenBy(s => s.ID);
                         break;
                     case "FinalStatus":
-                        leads = leads.OrderByDescending(s => s.FinalStatus).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.FinalStatusDisplay).ThenBy(s => s.ID);
                         break;
                     case "StatusDisplay":
                         leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);

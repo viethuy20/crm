@@ -59,7 +59,7 @@ namespace PQT.Web.Controllers
                         .Contains(userId) ||
                     m.ManagerUsers.Select(u => u.ID).Contains(userId) ||
                     m.ManagerUsers.Where(u => u.TransferUserID > 0).Select(u => u.TransferUserID).Contains(userId) ||
-                    (m.DateOfOpen < DateTime.Today && DateTime.Today <= m.ClosingDate)));
+                    (m.DateOfOpen <= DateTime.Today && DateTime.Today <= m.ClosingDate)));
             }
             return View(model);
         }
