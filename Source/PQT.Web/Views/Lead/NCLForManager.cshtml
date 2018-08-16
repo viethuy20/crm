@@ -332,6 +332,21 @@
          var fixedColumn = 0;
          var sizeLenght = 50;
 
+         function updateCanvas() {
+             var windowW = $(window).width();
+             var wCavas = (windowW / 2).toFixed(0);
+             if (wCavas < 480) {
+                 $('#offcanvas-ncl').css('width', '480px');
+             } else {
+                 $('#offcanvas-ncl').css('width', wCavas + 'px');
+             }
+         }
+
+         updateCanvas();
+         window.onresize = function (event) {
+             updateCanvas();
+         };
+
 
          var tableLead = $("#tableLead");
          var dataTableLead = tableLead.dataTable({

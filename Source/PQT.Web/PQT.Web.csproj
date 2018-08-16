@@ -2489,6 +2489,7 @@
     <Content Include="Content\SampleFiles\VoIP_sample.xlsx" />
     <Content Include="Content\SampleFiles\company_resources_sample.xlsx" />
     <Content Include="Content\SampleFiles\countries_sample.xlsx" />
+    <Content Include="backup\script_bk.bat" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>

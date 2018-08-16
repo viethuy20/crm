@@ -753,7 +753,13 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 leads = _repo.GetAllLeads(m => m.EventID == eventId
-                                               && m.CheckInNCL(daysExpired));
+                                               && m.CheckInNCL(daysExpired)&& (
+                                                   m.Salesman.Contains(searchValue) ||
+                                                   m.StatusUpdateTimeStr.Contains(searchValue) ||
+                                                   m.StatusDisplay.Contains(searchValue) ||
+                                                   m.CompanyName.ToLower().Contains(searchValue) ||
+                                                   m.CountryCode.ToLower().Contains(searchValue) ||
+                                                   m.JobTitle.ToLower().Contains(searchValue)));
             }
             else
             {
