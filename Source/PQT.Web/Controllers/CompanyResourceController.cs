@@ -587,9 +587,11 @@ namespace PQT.Web.Controllers
                     m.CheckInNCL(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
                 var eventLead = _eventService.GetEvent(eventId);
                 var assignCompanies = eventLead.EventCompanies.Where(m =>
-                     m.EntityStatus == EntityStatus.Normal && !companiesInNcl.Contains(m.CompanyID)).Select(m => m.CompanyID);
+                        m.EntityStatus == EntityStatus.Normal && m.Company != null &&
+                        m.Company.EntityStatus == EntityStatus.Normal && !companiesInNcl.Contains(m.CompanyID))
+                    .Select(m => m.CompanyID);
                 companyResources = _comRepo.GetAllCompanyResources()
-                    .Where(m => m.CompanyID != null && assignCompanies.Contains((int) m.CompanyID));
+                    .Where(m => m.CompanyID != null && assignCompanies.Contains((int)m.CompanyID));
             }
             else if (comId > 0)
                 companyResources = _comRepo.GetAllCompanyResources(m => m.CompanyID == comId);

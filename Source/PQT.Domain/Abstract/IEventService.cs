@@ -23,6 +23,7 @@ namespace PQT.Domain.Abstract
         EventCompany GetEventCompany(int companyId);
         EventCompany CreateEventCompany(EventCompany company);
         bool UpdateEventCompany(EventCompany company);
+        bool DeleteEventCompany(int id);
         void DeleteCompanyCache(Company info);
         void UpdateCompanyCache(Company info);
         void UpdateSalesGroupCache(SalesGroup info);

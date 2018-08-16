@@ -155,6 +155,10 @@ namespace PQT.Domain.Concrete
             //}
             //return false;
         }
+        public virtual bool DeleteEventCompany(int id)
+        {
+            return Delete<EventCompany>(id);
+        }
 
         public virtual void UpdateCompanyCache(Company info)
         {

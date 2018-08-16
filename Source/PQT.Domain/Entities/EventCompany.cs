@@ -31,6 +31,7 @@ namespace PQT.Domain.Entities
             Company = new Company(eventCom.Company);
             CreatedTime = eventCom.CreatedTime;
             UpdatedTime = eventCom.UpdatedTime;
+            EntityStatus = eventCom.EntityStatus;
         }
         public int? EventID { get; set; }
         [ForeignKey("EventID")]

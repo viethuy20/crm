@@ -147,6 +147,8 @@
                             $("form").removeData("validator");
                             $("form").removeData("unobtrusiveValidation");
                             $.validator.unobtrusive.parse("form");
+
+                            $("#hubConnectionId").val(hubConnectionId);
                         }
                     }
                 }).magnificPopup('open');

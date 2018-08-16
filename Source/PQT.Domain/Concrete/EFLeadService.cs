@@ -41,7 +41,9 @@ namespace PQT.Domain.Concrete
         {
             info = Create(info);
             if (info != null)
-            { info.Company = Get<Company>(info.CompanyID); }
+            {
+                info.Company = Get<Company>(info.CompanyID);
+            }
             return info;
         }
 

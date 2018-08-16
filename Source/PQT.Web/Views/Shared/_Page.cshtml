@@ -714,15 +714,18 @@
             });
         }
 
-
-        $.connection.hub.start();
+        hubConnectionId = "";
+        $.connection.hub.start().done(function () {
+            hubConnectionId = $.connection.hub.id;
+        });
         $.connection.hub.qs = "UserID=@(currentUser!=null?currentUser.ID.ToString():"")";
         $.connection.hub.disconnected(function () {
             setTimeout(function () {
-                $.connection.hub.start();
+                $.connection.hub.start().done(function () {
+                    hubConnectionId = $.connection.hub.id;
+                });
             }, 5000); // Restart connection after 5 seconds.you can set the time based your requirement
         });
-
     </script>
 
     <script>

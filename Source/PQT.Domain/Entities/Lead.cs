@@ -345,6 +345,50 @@ namespace PQT.Domain.Entities
                 ID
             };
         }
+        public object SerializingFull(int daysExpired)
+        {
+            return new
+            {
+                ID,
+                EventID,
+                CreatedTime = StatusUpdateTimeStr,
+                Company = Company.CompanyName,
+                Country = Company.CountryCodeAndDialing,
+                JobTitle,
+                DirectLine,
+                CallBackDate = CallBackDate == default(DateTime) ? "" : CallBackDate.ToString("dd/MM/yyyy"),
+                Event.EventName,
+                Event.EventCode,
+                Salutation,
+                FirstName,
+                LastName,
+                MobilePhone1,
+                MobilePhone2,
+                MobilePhone3,
+                PersonalEmail,
+                WorkEmail,
+                EstimatedDelegateNumber,
+                TrainingBudgetPerHead = TrainingBudgetPerHead != null ? Convert.ToDecimal(TrainingBudgetPerHead).ToString("N2") : "",
+                GoodTrainingMonth,
+                TopicsInterested,
+                LocationInterested,
+                StatusCode,
+                ClassStatus,
+                MarkKPI,
+                KPIRemarks,
+                FirstFollowUpStatus = FirstFollowUpStatusDisplay,
+                FinalStatus = FinalStatusDisplay,
+                CallBackDateTime = CallBackDateTimeDisplay,
+                NCLExpired = CheckNCLExpired(daysExpired),
+                actionBlock = LeadStatusRecord == LeadStatus.Blocked ? "Unblock" : "Block",
+                EventColor,
+                Salesman,
+                DateCreatedDisplay = StatusUpdateTimeStr,
+                CountryCode,
+                StatusDisplay,
+                CompanyName,
+            };
+        }
         [NotMapped]
         public Booking Booking { get; set; }
     }

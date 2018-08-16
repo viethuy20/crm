@@ -55,6 +55,7 @@ namespace PQT.Domain.Entities
             EventCompanies = e.EventCompanies.Select(m => new EventCompany(m)).ToList();
             CreatedTime = e.CreatedTime;
             UpdatedTime = e.UpdatedTime;
+            EntityStatus = e.EntityStatus;
         }
         public string EventCode { get; set; }
         public string EventName { get; set; }

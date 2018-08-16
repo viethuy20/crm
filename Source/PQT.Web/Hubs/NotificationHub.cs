@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 using AutoMapper;
@@ -111,6 +112,18 @@ namespace PQT.Web.Hubs
             IHubContext context = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
             context.Clients.All.notify(message, dataType);
         }
+        public static void Notify(string message, string dataType, params string[] excludeIds)
+        {
+            IHubContext context = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
+            if (excludeIds != null && excludeIds.Any())
+            {
+                context.Clients.AllExcept(excludeIds).notify(message, dataType);
+            }
+            else
+            {
+                context.Clients.All.notify(message, dataType);
+            }
+        }
 
         public static void NotifyUser(User user, string message, string dataType)
         {
@@ -118,9 +131,9 @@ namespace PQT.Web.Hubs
             context.Clients.Group(GetUserGroupName(user.ID.ToString())).notify(message, dataType);
         }
 
-        public static void Notify(Lead lead)
+        public static void Notify(Lead lead, params string[] excludeIds)
         {
-            Notify(Json.Encode(lead.Serializing()), GetEntityName(lead));
+            Notify(Json.Encode(lead.Serializing()), GetEntityName(lead), excludeIds);
         }
         public static void Notify(Booking booking)
         {

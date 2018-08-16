@@ -24,6 +24,7 @@
             {
             <div class="card-body">
                 @Html.HiddenFor(m => m.id)
+                @Html.HiddenFor(m => m.hubConnectionId)
                 <div class="col-sm-12">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Lead.Company.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)

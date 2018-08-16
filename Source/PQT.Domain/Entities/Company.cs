@@ -36,6 +36,7 @@ namespace PQT.Domain.Entities
             ManagerUsers = c.ManagerUsers;
             CreatedTime = c.CreatedTime;
             UpdatedTime = c.UpdatedTime;
+            EntityStatus = c.EntityStatus;
         }
         public int? CountryID { get; set; }
         [ForeignKey("CountryID")]

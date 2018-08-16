@@ -20,6 +20,7 @@ namespace PQT.Web.Models
     public class LeadModel
     {
         public int id { get; set; }
+        public string hubConnectionId { get; set; }
         public string requestType { get; set; }
         public HttpPostedFileBase AttachmentFile { get; set; }
         public string Reason { get; set; }
@@ -176,17 +177,30 @@ namespace PQT.Web.Models
             LeadNotificator.NotifyUpdateNCL(lead.ID);
             return "";
         }
-        public string ApprovalRequest()
+        public object ApprovalRequest()
         {
             var leadRepo = DependencyHelper.GetService<ILeadService>();
             var lead = leadRepo.GetLead(id);
-            if (lead == null) return "Approval failed";
+            if (lead == null)
+                return new
+                {
+                    Message = "Approval failed",
+                    IsSuccess = false
+                };
             if (lead.LeadStatusRecord == LeadStatus.Booked)
-                return "Cannot process ... This item has been booked";
+                return new
+                {
+                    Message = "Cannot process ... This item has been booked",
+                    IsSuccess = false
+                };
             if (lead.LeadStatusRecord != LeadStatus.RequestLOI &&
                 lead.LeadStatusRecord != LeadStatus.RequestNCL &&
                 lead.LeadStatusRecord != LeadStatus.RequestBook)
-                return "Approval failed";
+                return new
+                {
+                    Message = "Approval failed",
+                    IsSuccess = false
+                };
 
             var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
             var daysExpired = Settings.Lead.NumberDaysExpired();
@@ -194,46 +208,87 @@ namespace PQT.Web.Models
                                m.CompanyID == lead.CompanyID &&
                                m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
                                && !m.CheckNCLExpired(daysExpired)))
-                return "Cannot approve this company... Company is requesting to NCL or exists in NCL";
+                return new
+                {
+                    Message = "Cannot approve this company... Company is requesting to NCL or exists in NCL",
+                    IsSuccess = false
+                };
 
-
+            var currentUserId = CurrentUser.Identity.ID;
             var titleNotify = lead.LeadStatusRecord.Status.DisplayName + " approved";
             if (lead.LeadStatusRecord == LeadStatus.RequestNCL)
             {
-                lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Live, CurrentUser.Identity.ID);
+                lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Live, currentUserId);
             }
             else if (lead.LeadStatusRecord == LeadStatus.RequestLOI)
             {
-                lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.LOI, CurrentUser.Identity.ID);
+                lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.LOI, currentUserId);
             }
             else if (lead.LeadStatusRecord == LeadStatus.RequestBook)
             {
-                lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Booked, CurrentUser.Identity.ID);
+                lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Booked, currentUserId);
             }
-            if (!leadRepo.UpdateLead(lead)) return "Approval failed";
+            if (!leadRepo.UpdateLead(lead))
+                return new
+                {
+                    Message = "Approval failed",
+                    IsSuccess = false
+                };
             var membershipService = DependencyHelper.GetService<IMembershipService>();
             LeadNotificator.NotifyUser(new List<User> { lead.User.TransferUserID > 0 ? membershipService.GetUser((int)lead.User.TransferUserID) : lead.User }, lead.ID, titleNotify); // notify for manager
-            LeadNotificator.NotifyUpdateNCL(lead.ID);
-            return "";
+            LeadNotificator.NotifyUpdateNCL(lead.ID, hubConnectionId);
+            return new
+            {
+                Data = lead.SerializingFull(daysExpired),
+                Message = "",
+                IsSuccess = true
+            };
         }
-        public string RejectRequest()
+        public object RejectRequest()
         {
             var leadRepo = DependencyHelper.GetService<ILeadService>();
             var lead = leadRepo.GetLead(id);
-            if (lead == null) return "Reject failed";
+            if (lead == null)
+                return new
+                {
+                    Message = "Reject failed",
+                    IsSuccess = false
+                };
             if (lead.LeadStatusRecord == LeadStatus.Booked)
-                return "Cannot process ... This item has been booked";
+                return new
+                {
+                    Message = "Cannot process ... This item has been booked",
+                    IsSuccess = false
+                };
             if (lead.LeadStatusRecord != LeadStatus.RequestLOI &&
                 lead.LeadStatusRecord != LeadStatus.RequestNCL &&
                 lead.LeadStatusRecord != LeadStatus.RequestBook)
-                return "Reject failed";
+                return new
+                {
+                    Message = "Reject failed",
+                    IsSuccess = false
+                };
+
+            var currentUserId = CurrentUser.Identity.ID;
             var titleNotify = lead.LeadStatusRecord.Status.DisplayName + " rejected";
-            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Reject, CurrentUser.Identity.ID, Reason);
-            if (!leadRepo.UpdateLead(lead)) return "Reject failed";
+            lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Reject, currentUserId, Reason);
+            if (!leadRepo.UpdateLead(lead))
+                return new
+                {
+                    Message = "Reject failed",
+                    IsSuccess = false
+                };
             var membershipService = DependencyHelper.GetService<IMembershipService>();
             LeadNotificator.NotifyUser(new List<User> { lead.User.TransferUserID > 0 ? membershipService.GetUser((int)lead.User.TransferUserID) : lead.User }, lead.ID, titleNotify); // notify for manager
-            LeadNotificator.NotifyUpdateNCL(lead.ID);
-            return "";
+            LeadNotificator.NotifyUpdateNCL(lead.ID, hubConnectionId);
+
+            var daysExpired = Settings.Lead.NumberDaysExpired();
+            return new
+            {
+                Data = lead.SerializingFull(daysExpired),
+                Message = "",
+                IsSuccess = true
+            };
         }
     }
     public class CallSheetModel
@@ -544,6 +599,7 @@ namespace PQT.Web.Models
                     UserID = CurrentUser.Identity.ID
                 };
                 Lead = leadRepo.CreateLead(Lead);
+                var company = Lead.Company;
                 if (Lead != null)
                 {
                     Lead.LeadStatusRecord = new LeadStatusRecord(Lead.ID, LeadStatus.Initial, CurrentUser.Identity.ID);
@@ -555,12 +611,12 @@ namespace PQT.Web.Models
                     var result = leadRepo.CreatePhoneCall(PhoneCall);
 
 
-                    if (Lead.Company != null)
+                    if (company != null)
                     {
-                        Lead.Company.BusinessUnit = EventCompany.BusinessUnit;
-                        Lead.Company.BudgetMonth = EventCompany.BudgetMonth;
-                        Lead.Company.Remarks = EventCompany.Remarks;
-                        comRepo.UpdateCompany(Lead.Company);
+                        company.BusinessUnit = EventCompany.BusinessUnit;
+                        company.BudgetMonth = EventCompany.BudgetMonth;
+                        company.Remarks = EventCompany.Remarks;
+                        comRepo.UpdateCompany(company);
                     }
                     if (result != null)
                     {

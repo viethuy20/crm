@@ -216,8 +216,8 @@ namespace PQT.Web.Controllers
                 return RedirectToAction("Index");
             }
             var userId = CurrentUser.Identity.ID;
-            if (DateTime.Today <= model.Event.EndDate && !model.Event.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) &&
-                !model.Event.ManagerUsers.Select(u => u.ID).Contains(userId))
+            if (DateTime.Today > model.Event.ClosingDate || (model.Event.DateOfOpen > DateTime.Today && !model.Event.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) &&
+                                                             !model.Event.ManagerUsers.Select(u => u.ID).Contains(userId)))
             {
                 TempData["error"] = "Cannot call this event... don't have access permission";
                 return RedirectToAction("Index", "Home");
@@ -371,7 +371,11 @@ namespace PQT.Web.Controllers
         {
             if (string.IsNullOrEmpty(model.Reason))
             {
-                return Json("`Reason` must not be empty");
+                return Json(new
+                {
+                    Message = "`Reason` must not be empty",
+                    IsSuccess = false
+                });
             }
             return Json(model.RejectRequest());
         }
@@ -1300,7 +1304,9 @@ namespace PQT.Web.Controllers
                     m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
                                      && !m.CheckNCLExpired(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
                 companies = eventLead.EventCompanies.Where(m =>
-                    m.EntityStatus == EntityStatus.Normal && !companiesInNcl.Contains(m.CompanyID)).Select(m => m.Company);
+                        m.EntityStatus == EntityStatus.Normal && m.Company != null &&
+                        m.Company.EntityStatus == EntityStatus.Normal && !companiesInNcl.Contains(m.CompanyID))
+                    .Select(m => m.Company);
             }
             else
             {
@@ -1429,9 +1435,9 @@ namespace PQT.Web.Controllers
                 Tier3 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier3),
                 Tier1 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier1),
                 Tier2 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier2),
-                TotalTier3 = eventData.EventCompanies.Count(m => m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier3),
-                TotalTier1 = eventData.EventCompanies.Count(m => m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier1),
-                TotalTier2 = eventData.EventCompanies.Count(m => m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier2),
+                TotalTier3 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier3),
+                TotalTier1 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier1),
+                TotalTier2 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier2),
                 TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked),
             }, JsonRequestBehavior.AllowGet);
         }

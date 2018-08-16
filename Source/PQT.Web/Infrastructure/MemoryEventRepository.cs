@@ -90,19 +90,24 @@ namespace PQT.Web.Infrastructure
         public override bool AssignCompany(int id, IEnumerable<int> companyIds)
         {
             if (!EventRepository.AssignCompany(id, companyIds)) return false;
-            _events.Remove(GetEvent(id));
             var eventExist = EventRepository.GetEvent(id);
             if (eventExist != null)
             {
+                _events.Remove(GetEvent(id));
                 foreach (var eventCompany in eventExist.EventCompanies.Where(m => m.Company == null).ToList())
                 {
-                    if (eventCompany.Company == null)
+                    var com = CompanyRepository.GetCompany(eventCompany.CompanyID);
+                    if (com != null)
                     {
-                        eventCompany.Company = CompanyRepository.GetCompany(eventCompany.CompanyID);
+                        eventCompany.Company = com;
+                    }
+                    else
+                    {
+                        eventExist.EventCompanies.Remove(eventCompany);
                     }
                 }
+                _events.Add(new Event(eventExist));
             }
-            _events.Add(new Event(eventExist));
             return true;
         }
 
@@ -209,10 +214,12 @@ namespace PQT.Web.Infrastructure
         }
         public override void DeleteCompanyCache(Company info)
         {
-            var coms = _events.SelectMany(m => m.EventCompanies).Where(m => m.CompanyID == info.ID).Select(m => m.Company).ToList();
+            var coms = _events.SelectMany(m => m.EventCompanies).Where(m => m.CompanyID == info.ID).ToList();
             foreach (var com in coms)
             {
                 com.EntityStatus = EntityStatus.Deleted;
+                com.Company.EntityStatus = EntityStatus.Deleted;
+                EventRepository.DeleteEventCompany(com.ID);
             }
         }
         public override void UpdateSalesGroupCache(SalesGroup info)

@@ -36,10 +36,10 @@
     }
 
 
-    #tableLead tbody tr.Reject td {
-        color: #8a6d3b;
-        background-color: #ffefd5;
-    }
+        #tableLead tbody tr.Reject td {
+            color: #8a6d3b;
+            background-color: #ffefd5;
+        }
 
     .DTFC_Cloned tbody tr.Reject td {
         color: #8a6d3b;
@@ -168,6 +168,7 @@
         .ncl_new:hover {
             color: #0aa89e
         }
+
     .table a {
         text-decoration: underline;
     }
@@ -185,7 +186,7 @@
                 <div class="card">
                     <div class="card-body no-padding">
                         <div class="alert alert-callout alert-info no-margin">
-                            <strong class="text-xl" id="total_loi">0</strong><br/>
+                            <strong class="text-xl" id="total_loi">0</strong><br />
                             <span class="opacity-50">TOTAL LOI</span>
                         </div>
                     </div><!--end .card-body -->
@@ -195,7 +196,7 @@
                 <div class="card">
                     <div class="card-body no-padding">
                         <div class="alert alert-callout alert-danger no-margin">
-                            <strong class="text-xl" id="total_blocked">0</strong><br/>
+                            <strong class="text-xl" id="total_blocked">0</strong><br />
                             <span class="opacity-50">TOTAL BLOCKED</span>
                         </div>
                     </div><!--end .card-body -->
@@ -205,7 +206,7 @@
                 <div class="card">
                     <div class="card-body no-padding">
                         <div class="alert alert-callout alert-success no-margin">
-                            <strong class="text-xl" id="total_booked">0</strong><br/>
+                            <strong class="text-xl" id="total_booked">0</strong><br />
                             <span class="opacity-50">TOTAL BOOKED</span>
                         </div>
                     </div><!--end .card-body -->
@@ -215,7 +216,7 @@
                 <div class="card">
                     <div class="card-body no-padding">
                         <div class="alert alert-callout alert-success no-margin">
-                            <strong class="text-xl" id="total_kpi">0</strong><br/>
+                            <strong class="text-xl" id="total_kpi">0</strong><br />
                             <span class="opacity-50">TOTAL KPIs</span>
                         </div>
                     </div><!--end .card-body -->
@@ -234,7 +235,7 @@
 
     </div>
     <div class="row">
-        <input type="hidden" value="@Model.Event.ID" id="eventIdNCList"/>
+        <input type="hidden" value="@Model.Event.ID" id="eventIdNCList" />
         <div class="col-md-12">
             <div class="card  card-underline">
                 <div class="card-head">
@@ -261,33 +262,33 @@
                 <div class="card-body">
                     <table class="table" id="tableLead">
                         <thead>
-                        <tr>
-                            <th>Time Updated</th>
-                            <th>Salesman</th>
-                            <th>Country</th>
-                            <th style="width: 150px">Company</th>
-                            <th style="width: 150px">Job Title</th>
-                            <th>Direct Line/Mobile</th>
-                            <th>Salutation</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Mobile Phone1</th>
-                            <th>Mobile Phone2</th>
-                            <th>Mobile Phone3</th>
-                            <th>Work Email</th>
-                            <th>Personal Email</th>
-                            <th>Estimated Delegate</th>
-                            <th>Training Budget</th>
-                            <th>Good Training Month</th>
-                            <th>Topics Interested</th>
-                            <th>Location Interested</th>
-                            <th>First Follow Up Status</th>
-                            <th>Final Status</th>
-                            <th>Call Back</th>
-                            <th>Status</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
+                            <tr>
+                                <th>Time Updated</th>
+                                <th>Salesman</th>
+                                <th>Country</th>
+                                <th style="width: 150px">Company</th>
+                                <th style="width: 150px">Job Title</th>
+                                <th>Direct Line/Mobile</th>
+                                <th>Salutation</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Mobile Phone1</th>
+                                <th>Mobile Phone2</th>
+                                <th>Mobile Phone3</th>
+                                <th>Work Email</th>
+                                <th>Personal Email</th>
+                                <th>Estimated Delegate</th>
+                                <th>Training Budget</th>
+                                <th>Good Training Month</th>
+                                <th>Topics Interested</th>
+                                <th>Location Interested</th>
+                                <th>First Follow Up Status</th>
+                                <th>Final Status</th>
+                                <th>Call Back</th>
+                                <th>Status</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
                         </thead>
                     </table>
                 </div><!--end .card-body -->
@@ -310,14 +311,14 @@
             <div class="table-responsive">
                 <table class="table" id="tableNCList">
                     <thead>
-                    <tr>
-                        <th>Date Created</th>
-                        <th>Sales</th>
-                        <th>Country</th>
-                        <th>Organisation</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                    </tr>
+                        <tr>
+                            <th>Date Created</th>
+                            <th>Sales</th>
+                            <th>Country</th>
+                            <th>Organisation</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                        </tr>
                     </thead>
                 </table>
             </div>
@@ -329,11 +330,11 @@
          var windowW = $(window).width();
          var windowH = $(window).height();
          var fixedColumn = 0;
-         var sizeLenght = 100;
+         var sizeLenght = 50;
 
 
          var tableLead = $("#tableLead");
-         tableLead.dataTable({
+         var dataTableLead = tableLead.dataTable({
              "processing": true, // for show progress bar
              "serverSide": true, // for process server side
              "filter": true, // this is for disable filter (search box)
@@ -377,42 +378,7 @@
              "iDisplayLength": sizeLenght,
              "aaSorting": [[24, "asc"]],
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
-                     aData["ID"] +
-                     '">' +
-                     aData["CreatedTime"] +
-                     '</a>');
-
-
-                 var dropdowns = "";
-                 $(nRow).find('td:eq(22)').css("white-space","nowrap");
-                 if (aData["StatusCode"] == @LeadStatus.RequestBook || aData["StatusCode"] == @LeadStatus.Booked) {
-                     $(nRow).find('td:eq(22)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
-                         aData["ID"] +
-                         '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;">' + aData["StatusDisplay"]+'</span></a>');
-                 }
-                 $(nRow).find('td:eq(23)').html('<a href="@Url.Action("Detail")?id=' +
-                     aData["ID"] +
-                     '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;"><i class="fa fa-fw fa-eye"></i> Detail</span></a>');
-                 if (aData["StatusCode"] == '@LeadStatus.RequestNCL' ||
-                     aData["StatusCode"] == '@LeadStatus.RequestLOI') {
-                     $(nRow).find('td:eq(24)').html('<a href="#" data-action="Approval" data-id="' +
-                         aData["ID"] +
-                         '"><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/><a class="simple-ajax-popup-align-top" href="@Url.Action("RejectAction")?id=' +
-                         aData["ID"] +
-                         '"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
-                 } else if (aData["StatusCode"] == '@LeadStatus.RequestBook') {
-                     $(nRow).find('td:eq(24)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
-                         aData["ID"] +
-                         '&eventId=@Model.Event.ID" ><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/>' +
-                         '<a href="@Url.Action("Detail","Booking")?leadId=' +
-                         aData["ID"] +
-                         '&eventId=@Model.Event.ID"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
-                 } else {
-                     $(nRow).find('td:eq(24)').html('');
-                 }
-                 $(nRow).find('td:eq(24)').css("white-space", "nowrap");
-                 $(nRow).addClass(aData["ClassStatus"]);
+                 updateTableRow(nRow, aData);
              },
              initComplete: function () {
                  var _table = this;
@@ -432,6 +398,45 @@
                  FixedTable();
              },
          });
+
+         function updateTableRow(nRow,data) {
+                $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' + data["ID"] + '">' + data["CreatedTime"] + '</a>');
+                if (data["StatusCode"] == @LeadStatus.RequestBook || data["StatusCode"] == @LeadStatus.Booked) {
+                    $(nRow).find('td:eq(22)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
+                    data["ID"] + '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;">' + data["StatusDisplay"]+'</span></a>');
+                }
+                $(nRow).find('td:eq(23)').html('<a href="@Url.Action("Detail")?id=' + data["ID"] + '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;"><i class="fa fa-fw fa-eye"></i> Detail</span></a>');
+                if (data["StatusCode"] == '@LeadStatus.RequestNCL' || data["StatusCode"] == '@LeadStatus.RequestLOI') {
+                    $(nRow).find('td:eq(24)').html('<a href="#" data-action="Approval" data-id="' +
+                        data["ID"] +
+                        '"><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/><a class="simple-ajax-popup-align-top" href="@Url.Action("RejectAction")?id=' +
+                        data["ID"] +
+                        '"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
+                } else if (data["StatusCode"] == '@LeadStatus.RequestBook') {
+                    $(nRow).find('td:eq(24)').html('<a href="@Url.Action("Detail", "Booking")?leadId=' +
+                        data["ID"] +
+                        '&eventId=@Model.Event.ID" ><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/>' +
+                        '<a href="@Url.Action("Detail", "Booking")?leadId=' +
+                        data["ID"] +
+                        '&eventId=@Model.Event.ID"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
+                } else {
+                    $(nRow).find('td:eq(24)').html('');
+                }
+                $(nRow).find('td:eq(24)').css("min-height", " 91px");
+                $(nRow).find('td:eq(24)').css("white-space", "nowrap");
+                $(nRow).removeClass("Reject");
+                $(nRow).removeClass("Blocked");
+                $(nRow).removeClass("Initial");
+                $(nRow).removeClass("Live");
+                $(nRow).removeClass("LOI");
+                $(nRow).removeClass("Booked");
+                $(nRow).removeClass("RequestNCL");
+                $(nRow).removeClass("RequestLOI");
+                $(nRow).removeClass("RequestBooking");
+                $(nRow).addClass(data["ClassStatus"]);
+                $(nRow).attr("data-id", data["ID"]);
+         }
+
          function FixedTable() {
              if (fixedColumn<4) {
                  fixedColumn ++;
@@ -465,15 +470,84 @@
                  if (isOK) {
                      $("#dvLoading").show();
                      $.ajax({
-                         url: '@Url.Action("ApprovalAction")?id=' + $sefl.data('id'),
+                         url: '@Url.Action("ApprovalAction")?id=' + $sefl.data('id') + '&hubConnectionId=' + hubConnectionId,
                          type: 'POST',
                          success: function (data) {
-                             if (data == "") {
+                             if (data.IsSuccess) {
                                  toastr.success("Approved successful");
-                                 fixedColumn = false;
-                                 tableLead.fnFilter('');
+
+                                 data = data.Data;
+                                 var tr = $(tableLead.fnGetNodes());
+                                 tr.each(function(index, nRow) {
+                                     if ($(nRow).data('id') == data.ID) {
+                                         updateTableRow(nRow, data);
+                                     }
+                                 });
+                                 tr = $(".DTFC_LeftBodyLiner").find(".dataTable").find("tr");
+                                 tr.each(function(index, nRow) {
+                                     if ($(nRow).data('id') != undefined && $(nRow).data('id') == data.ID) {
+                                         $(nRow).removeClass("Reject");
+                                         $(nRow).removeClass("Blocked");
+                                         $(nRow).removeClass("Initial");
+                                         $(nRow).removeClass("Live");
+                                         $(nRow).removeClass("LOI");
+                                         $(nRow).removeClass("Booked");
+                                         $(nRow).removeClass("RequestNCL");
+                                         $(nRow).removeClass("RequestLOI");
+                                         $(nRow).removeClass("RequestBooking");
+                                         $(nRow).addClass(data["ClassStatus"]);
+                                     }
+                                 });
+                                 tr = $(".DTFC_RightBodyLiner").find(".dataTable").find("tr");
+                                 tr.each(function(index, nRow) {
+                                     if ($(nRow).data('id') == data.ID) {
+
+                                        if (data["StatusCode"] == @LeadStatus.RequestBook ||
+                                            data["StatusCode"] == @LeadStatus.Booked) {
+                                            $(nRow).find('td:eq(0)').html(
+                                                '<a href="@Url.Action("Detail", "Booking")?leadId=' +
+                                                data["ID"] +
+                                                '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;">' +
+                                                data["StatusDisplay"] +
+                                                '</span></a>');
+                                        } else {
+                                            $(nRow).find('td:eq(0)').html(data["StatusDisplay"]);
+                                        }
+                                        $(nRow).find('td:eq(1)').html('<a href="@Url.Action("Detail")?id=' +
+                                            data["ID"] +
+                                            '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;"><i class="fa fa-fw fa-eye"></i> Detail</span></a>');
+                                        if (data["StatusCode"] == '@LeadStatus.RequestNCL' ||
+                                            data["StatusCode"] == '@LeadStatus.RequestLOI') {
+                                            $(nRow).find('td:eq(2)').html('<a href="#" data-action="Approval" data-id="' +
+                                                data["ID"] +
+                                                '"><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/><a class="simple-ajax-popup-align-top" href="@Url.Action("RejectAction")?id=' +
+                                                data["ID"] +
+                                                '"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
+                                        } else if (data["StatusCode"] == '@LeadStatus.RequestBook') {
+                                            $(nRow).find('td:eq(2)').html('<a href="@Url.Action("Detail", "Booking")?leadId=' +
+                                                data["ID"] +
+                                                '&eventId=@Model.Event.ID" ><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/>' +
+                                                '<a href="@Url.Action("Detail", "Booking")?leadId=' +
+                                                data["ID"] +
+                                                '&eventId=@Model.Event.ID"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
+                                        } else {
+                                            $(nRow).find('td:eq(2)').html('');
+                                        }
+
+                                        $(nRow).removeClass("Reject");
+                                        $(nRow).removeClass("Blocked");
+                                        $(nRow).removeClass("Initial");
+                                        $(nRow).removeClass("Live");
+                                        $(nRow).removeClass("LOI");
+                                        $(nRow).removeClass("Booked");
+                                        $(nRow).removeClass("RequestNCL");
+                                        $(nRow).removeClass("RequestLOI");
+                                        $(nRow).removeClass("RequestBooking");
+                                        $(nRow).addClass(data["ClassStatus"]);
+                                     }
+                                 });
                              } else {
-                                 toastr.error(data);
+                                 toastr.error(data.Message);
                              }
                          },
                          error: function () {
@@ -537,8 +611,7 @@
              $('.expand_new_ncl').removeClass('ncl_new');
          });
 
-    </script>
-                         )
+    </script>)
 
 @Html.Script(
     @<script>
@@ -552,13 +625,79 @@
              toastr.error('@Resource.SaveError');
          }
          function onSuccessRejectAction(data) {
-             if (data == "") {
+             if (data.IsSuccess) {
                  toastr.success("Reject successful");
                  $.magnificPopup.close();
-                 fixedColumn = 0;
-                 tableLead.fnFilter('');
+                 data = data.Data;
+                 var tr = $(tableLead.fnGetNodes());
+                 tr.each(function(index, nRow) {
+                     if ($(nRow).data('id') == data.ID) {
+                         updateTableRow(nRow, data);
+                     }
+                 });
+                 tr = $(".DTFC_LeftBodyLiner").find(".dataTable").find("tr");
+                 tr.each(function(index, nRow) {
+                     if ($(nRow).data('id') != undefined && $(nRow).data('id') == data.ID) {
+                         $(nRow).removeClass("Reject");
+                         $(nRow).removeClass("Blocked");
+                         $(nRow).removeClass("Initial");
+                         $(nRow).removeClass("Live");
+                         $(nRow).removeClass("LOI");
+                         $(nRow).removeClass("Booked");
+                         $(nRow).removeClass("RequestNCL");
+                         $(nRow).removeClass("RequestLOI");
+                         $(nRow).removeClass("RequestBooking");
+                         $(nRow).addClass(data["ClassStatus"]);
+                     }
+                 });
+                 tr = $(".DTFC_RightBodyLiner").find(".dataTable").find("tr");
+                 tr.each(function(index, nRow) {
+                     if ($(nRow).data('id') == data.ID) {
+                        if (data["StatusCode"] == @LeadStatus.RequestBook ||
+                            data["StatusCode"] == @LeadStatus.Booked) {
+                            $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail", "Booking")?leadId=' +
+                                data["ID"] +
+                                '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;">' +
+                                data["StatusDisplay"] +
+                                '</span></a>');
+                        } else {
+                            $(nRow).find('td:eq(0)').html(data["StatusDisplay"]);
+                        }
+                        $(nRow).find('td:eq(1)').html('<a href="@Url.Action("Detail")?id=' +
+                            data["ID"] +
+                            '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;"><i class="fa fa-fw fa-eye"></i> Detail</span></a>');
+                        if (data["StatusCode"] == '@LeadStatus.RequestNCL' ||
+                            data["StatusCode"] == '@LeadStatus.RequestLOI') {
+                            $(nRow).find('td:eq(2)').html('<a href="#" data-action="Approval" data-id="' +
+                                data["ID"] +
+                                '"><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/><a class="simple-ajax-popup-align-top" href="@Url.Action("RejectAction")?id=' +
+                                data["ID"] +
+                                '"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
+                        } else if (data["StatusCode"] == '@LeadStatus.RequestBook') {
+                            $(nRow).find('td:eq(2)').html('<a href="@Url.Action("Detail", "Booking")?leadId=' +
+                                data["ID"] +
+                                '&eventId=@Model.Event.ID" ><span class=" text-success"><i class="md fa-fw md-done"></i> Approve</span></a><br/>' +
+                                '<a href="@Url.Action("Detail", "Booking")?leadId=' +
+                                data["ID"] +
+                                '&eventId=@Model.Event.ID"><span class=" text-danger"><i class="md fa-fw md-cancel"></i> Reject</span></a>');
+                        } else {
+                            $(nRow).find('td:eq(2)').html('');
+                        }
+
+                        $(nRow).removeClass("Reject");
+                        $(nRow).removeClass("Blocked");
+                        $(nRow).removeClass("Initial");
+                        $(nRow).removeClass("Live");
+                        $(nRow).removeClass("LOI");
+                        $(nRow).removeClass("Booked");
+                        $(nRow).removeClass("RequestNCL");
+                        $(nRow).removeClass("RequestLOI");
+                        $(nRow).removeClass("RequestBooking");
+                        $(nRow).addClass(data["ClassStatus"]);
+                     }
+                 });
              } else {
-                 toastr.error(data);
+                 toastr.error(data.Message);
              }
          }
     </script>)

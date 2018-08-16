@@ -29,14 +29,14 @@ namespace PQT.Web.Infrastructure.Notification
             get { return DependencyResolver.Current.GetService<IMembershipService>(); }
         }
 
-        public static void NotifyUpdateNCL(int leadId)
+        public static void NotifyUpdateNCL(int leadId, params string[] excludeIds)
         {
             var thread = new Thread(() =>
             {
                 var lead = LeadRepository.GetLead(leadId);
                 if (lead == null)
                     return;
-                NotificationHub.Notify(lead);
+                NotificationHub.Notify(lead, excludeIds);
             });
             thread.Start();
         }
