@@ -41,7 +41,7 @@ namespace PQT.Web.Infrastructure
 
         #endregion
 
-        public sealed override void RetrieveCacheEvents()
+        private void RetrieveCacheEvents()
         {
             _events.Clear();
             var allEvents = EventRepository.GetAllEvents();

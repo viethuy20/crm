@@ -20,13 +20,13 @@
                 @foreach (var group in groups)
                 {
                     <div class="card panel">
-                        <div class="card-head card-head-xs" data-toggle="collapse" data-parent="#accordion2" data-target="#accordion2-@group.GroupNameCode">
+                        <div class="card-head card-head-xs collapsed" data-toggle="collapse" data-parent="#accordion2" data-target="#accordion2-@group.GroupNameCode">
                             <header><b>@group.GroupName</b></header>
                             <div class="tools">
                                 <a class="btn btn-icon-toggle"><i class="fa fa-angle-down"></i></a>
                             </div>
                         </div>
-                        <div id="accordion2-@group.GroupNameCode" class="collapse in">
+                        <div id="accordion2-@group.GroupNameCode" class="collapse">
                             <div>
                                 <ul class="dropdown-menu animation-expand" style="">
                                     @{

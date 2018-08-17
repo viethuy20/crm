@@ -11,7 +11,6 @@ namespace PQT.Domain.Abstract
         #region Company
         //int GetCountCompanies(Func<Company, bool> predicate);
         //IEnumerable<Company> GetAllCompanies(string sortColumnDir, string sortColumn, int page, int pageSize);
-        void RetrieveCacheCompanies();
         IEnumerable<Company> GetAllCompanies();
         IEnumerable<Company> GetAllCompanies(Func<Company, bool> predicate);
         Company GetCompany(int companyID);

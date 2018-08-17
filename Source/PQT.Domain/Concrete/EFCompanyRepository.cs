@@ -17,9 +17,6 @@ namespace PQT.Domain.Concrete
         }
 
         #region Company
-        public virtual void RetrieveCacheCompanies()
-        {
-        }
         public virtual IEnumerable<Company> GetAllCompanies()
         {
             return GetAll<Company>(m => new

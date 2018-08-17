@@ -8,7 +8,6 @@ namespace PQT.Domain.Abstract
 {
     public interface IEventService
     {
-        void RetrieveCacheEvents();
         IEnumerable<Event> GetAllEvents();
         IEnumerable<Event> GetAllEvents(Func<Event, bool> predicate);
         Event GetEvent(int id);

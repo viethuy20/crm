@@ -37,7 +37,7 @@ namespace PQT.Web.Infrastructure
 
         #endregion
 
-        public sealed override void RetrieveCacheCompanies()
+        private void RetrieveCacheCompanies()
         {
             _companies.Clear();
             _companies.AddRange(CompanyRepository.GetAllCompanies());

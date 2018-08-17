@@ -16,10 +16,6 @@ namespace PQT.Domain.Concrete
         {
         }
 
-        public virtual void RetrieveCacheEvents()
-        {
-
-        }
         public virtual IEnumerable<Event> GetAllEvents()
         {
             return GetAll<Event>(m => m.EventSessions, m => m.SalesGroups, m => m.ManagerUsers, m => m.EventCompanies, m => m.User).Select(m => new Event(m)).AsEnumerable();

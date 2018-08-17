@@ -1,11 +1,11 @@
 @echo off
 set USER="root"
 set PASSWORD="priqua"
-set OUTPUT="D:\BackupTemp_NoDelete\db"
+set OUTPUT="D:\PQControlBackupTemp_NoDelete\db"
 set OUTPUT2="D:\Dropbox\db"
 
 set INPUTDATA="C:\inetpub\wwwroot\PQT_Control\data"
-set OUTPUTDATA="D:\BackupTemp_NoDelete\data"
+set OUTPUTDATA="D:\PQControlBackupTemp_NoDelete\data"
 set OUTPUTDATA2="D:\Dropbox\data"
 
 echo MySQL Backup wird gestartet...
@@ -18,17 +18,17 @@ echo Compressing...
 "C:\Program Files (x86)\WinRAR\WinRAR.EXE" m -ppriqualive -r %OUTPUT%/%date%.rar %OUTPUT%/%date%
 
 echo copy bk file to dropbox...
-xcopy /s %OUTPUT% %OUTPUT2%
+xcopy /s/y %OUTPUT% %OUTPUT2%
 
 echo Backup data resource wird gestartet...
 mkdir %OUTPUTDATA%/%date%
-xcopy /s %INPUTDATA% %OUTPUTDATA%/%date%
+xcopy /s/y %INPUTDATA% %OUTPUTDATA%/%date%
 
 echo Compressing data ... 
 "C:\Program Files (x86)\WinRAR\WinRAR.EXE" m -ppriqualive -r %OUTPUTDATA%/%date%.rar %OUTPUTDATA%/%date%
 
 echo copy bk file to dropbox...
-xcopy /s %OUTPUTDATA% %OUTPUTDATA2%
+xcopy /s/y %OUTPUTDATA% %OUTPUTDATA2%
 
 echo Backup durchgeführt!
 
