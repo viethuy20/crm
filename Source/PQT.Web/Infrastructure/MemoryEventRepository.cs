@@ -34,13 +34,18 @@ namespace PQT.Web.Infrastructure
         {
             get { return DependencyHelper.GetService<ICompanyRepository>(); }
         }
+        public ITrainerService TrainerService
+        {
+            get { return DependencyHelper.GetService<ITrainerService>(); }
+        }
 
         #endregion
 
         public sealed override void RetrieveCacheEvents()
         {
             _events.Clear();
-            _events.AddRange(EventRepository.GetAllEvents());
+            var allEvents = EventRepository.GetAllEvents();
+            _events.AddRange(allEvents);
         }
 
 
@@ -68,7 +73,11 @@ namespace PQT.Web.Infrastructure
         public override Event CreateEvent(Event info, IEnumerable<int> groups, IEnumerable<int> users)
         {
             var menu = EventRepository.CreateEvent(info, groups, users);
-            _events.Add(new Event(EventRepository.GetEvent(info.ID)));
+            foreach (var trainer in menu.EventSessions.Where(m => m.Trainer == null).ToList())
+            {
+                trainer.Trainer = TrainerService.GetTrainer((int)trainer.TrainerID);
+            }
+            _events.Add(new Event(menu));
             return menu;
         }
 
@@ -76,16 +85,50 @@ namespace PQT.Web.Infrastructure
         {
             if (!EventRepository.UpdateEvent(info)) return false;
             _events.Remove(GetEvent(info.ID));
-            _events.Add(new Event(EventRepository.GetEvent(info.ID)));
+            var exist = EventRepository.GetEvent(info.ID);
+            foreach (var trainer in exist.EventSessions.Where(m => m.Trainer == null).ToList())
+            {
+                trainer.Trainer = TrainerService.GetTrainer((int)trainer.TrainerID);
+            }
+            foreach (var eventCompany in exist.EventCompanies.Where(m => m.Company == null).ToList())
+            {
+                var com = CompanyRepository.GetCompany(eventCompany.CompanyID);
+                if (com != null)
+                {
+                    eventCompany.Company = com;
+                }
+                else
+                {
+                    exist.EventCompanies.Remove(eventCompany);
+                }
+            }
+            _events.Add(new Event(exist));
             return true;
         }
 
-        public override bool UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> groups, IEnumerable<int> users)
+        public override Event UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> groups, IEnumerable<int> users)
         {
-            if (!EventRepository.UpdateEventIncludeUpdateCollection(info, groups, users)) return false;
+            var exist = EventRepository.UpdateEventIncludeUpdateCollection(info, groups, users);
+            if (exist == null) return null;
             _events.Remove(GetEvent(info.ID));
-            _events.Add(new Event(EventRepository.GetEvent(info.ID)));
-            return true;
+            foreach (var trainer in exist.EventSessions.Where(m => m.Trainer == null).ToList())
+            {
+                trainer.Trainer = TrainerService.GetTrainer((int)trainer.TrainerID);
+            }
+            foreach (var eventCompany in exist.EventCompanies.Where(m => m.Company == null).ToList())
+            {
+                var com = CompanyRepository.GetCompany(eventCompany.CompanyID);
+                if (com != null)
+                {
+                    eventCompany.Company = com;
+                }
+                else
+                {
+                    exist.EventCompanies.Remove(eventCompany);
+                }
+            }
+            _events.Add(new Event(exist));
+            return exist;
         }
         public override bool AssignCompany(int id, IEnumerable<int> companyIds)
         {
@@ -105,6 +148,10 @@ namespace PQT.Web.Infrastructure
                     {
                         eventExist.EventCompanies.Remove(eventCompany);
                     }
+                }
+                foreach (var trainer in eventExist.EventSessions.Where(m => m.Trainer == null).ToList())
+                {
+                    trainer.Trainer = TrainerService.GetTrainer((int)trainer.TrainerID);
                 }
                 _events.Add(new Event(eventExist));
             }

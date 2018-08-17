@@ -251,12 +251,14 @@
                         <span style="font-size: 18px;"><b>Event Name: </b>@Model.Event.EventName (@Model.Event.EventCode) - <b>Event Dates: </b>@Model.Event.StartDate.ToString("dd/MM/yy") - @Model.Event.EndDate.ToString("dd/MM/yy")</span>
                         @if (!string.IsNullOrEmpty(Model.Event.Brochure))
                         {
-                            @: - <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)" target="_blank" style="font-size: 16px; margin-left: 5px;" title="Download Brochure"><i class="fa fa-download"></i> Brochure</a>
+                            @: - <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)" target="_blank" style="font-size: 16px; margin-left: 5px;" title="Download Brochure"><i class="fa fa-download"></i> Sales Brochure</a>
                         }
                         @if (!string.IsNullOrEmpty(Model.Event.RegContract))
                         {
                             @: - <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.RegContract)" target="_blank" style="font-size: 16px; margin-left: 5px;" title="Download Reg Contract"><i class="fa fa-download"></i> Reg Contract</a>
                         }
+                        <br />
+                        <span style="font-size: 18px;">@Html.Raw(!string.IsNullOrEmpty(Model.Event.FinanceEmail) ? "<b>Finance: </b>" + @Model.Event.FinanceEmail : "") @Html.Raw(!string.IsNullOrEmpty(Model.Event.OperationOnsiteEmail) ? " - <b>Operation Onsite: </b>" + @Model.Event.OperationOnsiteEmail : "") @Html.Raw(!string.IsNullOrEmpty(Model.Event.OperationEmail) ? " - <b>Operation Office: </b>" + @Model.Event.OperationEmail : "")</span>
                     </header>
                 </div><!--end .card-head -->
                 <div class="card-body">

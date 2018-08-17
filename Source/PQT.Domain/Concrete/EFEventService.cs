@@ -36,10 +36,10 @@ namespace PQT.Domain.Concrete
             }
             return Get<Event>(u => u.ID == id, m => new
             {
-                m.EventSessions,
-                m.SalesGroups,
+                EventSessions = m.EventSessions.Select(s => s.Trainer),
+                SalesGroups = m.SalesGroups.Select(s => s.Users),
                 m.ManagerUsers,
-                m.EventCompanies,
+                EventCompanies = m.EventCompanies.Select(s => s.Company),
                 m.User
             });
         }
@@ -65,14 +65,14 @@ namespace PQT.Domain.Concrete
             return Update(info);
         }
 
-        public virtual bool UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> groups, IEnumerable<int> users)
+        public virtual Event UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> groups, IEnumerable<int> users)
         {
             return TransactionWrapper.Do(() =>
             {
                 var exist = Get<Event>(info.ID);
                 if (exist == null)
                 {
-                    return false;
+                    return null;
                 }
                 info.EventCode = info.EventCode.Trim().ToUpper();
                 Update(info);
@@ -96,7 +96,8 @@ namespace PQT.Domain.Concrete
                         exist.EventSessions.Remove(item);
                         PermanentlyDelete(item);
                     }
-                return Update(exist);
+                Update(exist);
+                return exist;
             });
         }
         public virtual bool AssignCompany(int id, IEnumerable<int> companyIds)
@@ -157,7 +158,7 @@ namespace PQT.Domain.Concrete
         }
         public virtual bool DeleteEventCompany(int id)
         {
-            return Delete<EventCompany>(id);
+            return PermanentlyDelete(Get<EventCompany>(id));
         }
 
         public virtual void UpdateCompanyCache(Company info)

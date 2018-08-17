@@ -109,11 +109,7 @@ namespace PQT.Web.Models
                     Event.RegContract = uploadPicture;
                 }
             }
-            if (repo.UpdateEventIncludeUpdateCollection(Event, GroupsSelected, UsersSelected))
-            {
-                return true;
-            }
-            return false;
+            return repo.UpdateEventIncludeUpdateCollection(Event, GroupsSelected, UsersSelected) != null;
         }
         public bool AssignCompany()
         {

@@ -15,7 +15,7 @@ namespace PQT.Domain.Abstract
         Event GetEvent(string code);
         Event CreateEvent(Event info, IEnumerable<int> groups, IEnumerable<int> users);
         bool UpdateEvent(Event info);
-        bool UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> groups, IEnumerable<int> users);
+        Event UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> groups, IEnumerable<int> users);
         bool AssignCompany(int id, IEnumerable<int> companies);
         bool DeleteEvent(int id);
 
