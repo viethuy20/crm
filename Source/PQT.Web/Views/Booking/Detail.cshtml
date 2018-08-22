@@ -193,47 +193,53 @@
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <div class="form-group">
-                                                    @Html.Bootstrap().TextBox("Delegate" + item.ID).Value(item.Name).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                    @Html.Bootstrap().TextBox("Delegate" + item.ID).Value(item.FullName).Disabled().Class("form-control").ShowValidationMessage(true)
                                                     <label>Delegate @current</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-12">
                                                 <div class="form-group">
-                                                    @Html.Bootstrap().TextBox("Designation" + item.ID).Value(item.Designation).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                    @Html.Bootstrap().TextBox("JobTitle" + item.ID).Value(item.JobTitle).Disabled().Class("form-control").ShowValidationMessage(true)
                                                     <label>Designation</label>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.Bootstrap().TextBox("Mail" + item.ID).Value(item.Mail).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                    <label>Mail</label>
+                                                    @Html.Bootstrap().TextBox("WorkEmail" + item.ID).Value(item.WorkEmail).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                    <label>Work Email</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.Bootstrap().TextBox("PersonalEmail" + item.ID).Value(item.PersonalEmail).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                    <label>Personal Email</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.Bootstrap().TextBox("LandLine" + item.ID).Value(item.LandLine).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                    <label>Land Line</label>
+                                                    @Html.Bootstrap().TextBox("DirectLine" + item.ID).Value(item.DirectLine).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                    <label>Direct Line</label>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.Bootstrap().TextBox("Mobile1_" + item.ID).Value(item.Mobile1).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                    @Html.Bootstrap().TextBox("MobilePhone1_" + item.ID).Value(item.MobilePhone1).Disabled().Class("form-control").ShowValidationMessage(true)
                                                     <label>Mobile1</label>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.Bootstrap().TextBox("Mobile2_" + item.ID).Value(item.Mobile2).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                    @Html.Bootstrap().TextBox("MobilePhone2_" + item.ID).Value(item.MobilePhone2).Disabled().Class("form-control").ShowValidationMessage(true)
                                                     <label>Mobile2</label>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.Bootstrap().TextBox("Mobile3_" + item.ID).Value(item.Mobile3).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                    @Html.Bootstrap().TextBox("MobilePhone3_" + item.ID).Value(item.MobilePhone3).Disabled().Class("form-control").ShowValidationMessage(true)
                                                     <label>Mobile3</label>
                                                 </div>
                                             </div>

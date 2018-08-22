@@ -64,6 +64,7 @@ namespace PQT.Domain.Entities
         {
             get { return Salutation + " " + FirstName + " " + LastName; }
         }
+
         public string Name
         {
             get { return FirstName + " " + LastName; }

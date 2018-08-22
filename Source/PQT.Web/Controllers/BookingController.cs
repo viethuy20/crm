@@ -42,8 +42,8 @@ namespace PQT.Web.Controllers
             var eventData = _eventService.GetEvent(id);
             //if (eventData == null)
             //{
-                //TempData["error"] = "Event not found";
-                //return RedirectToAction("Index", "Home");
+            //TempData["error"] = "Event not found";
+            //return RedirectToAction("Index", "Home");
             //}
             return View(eventData);
         }
@@ -750,14 +750,20 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
-                    case "FullName":
-                        leads = leads.OrderBy(s => s.Name).ThenBy(s => s.ID);
+                    case "Salutation":
+                        leads = leads.OrderBy(s => s.Salutation).ThenBy(s => s.ID);
                         break;
-                    case "Designation":
+                    case "FirstName":
+                        leads = leads.OrderBy(s => s.FirstName).ThenBy(s => s.ID);
+                        break;
+                    case "LastName":
+                        leads = leads.OrderBy(s => s.LastName).ThenBy(s => s.ID);
+                        break;
+                    case "JobTitle":
                         leads = leads.OrderBy(s => s.JobTitle).ThenBy(s => s.ID);
                         break;
-                    case "WorkEmail":
-                        leads = leads.OrderBy(s => s.WorkEmail).ThenBy(s => s.ID);
+                    case "DirectLine":
+                        leads = leads.OrderBy(s => s.DirectLine).ThenBy(s => s.ID);
                         break;
                     case "MobilePhone1":
                         leads = leads.OrderBy(s => s.MobilePhone1).ThenBy(s => s.ID);
@@ -768,8 +774,11 @@ namespace PQT.Web.Controllers
                     case "MobilePhone3":
                         leads = leads.OrderBy(s => s.MobilePhone3).ThenBy(s => s.ID);
                         break;
-                    case "LandLine":
-                        leads = leads.OrderBy(s => s.DirectLine).ThenBy(s => s.ID);
+                    case "WorkEmail":
+                        leads = leads.OrderBy(s => s.WorkEmail).ThenBy(s => s.ID);
+                        break;
+                    case "PersonalEmail":
+                        leads = leads.OrderBy(s => s.PersonalEmail).ThenBy(s => s.ID);
                         break;
                     default:
                         leads = leads.OrderBy(s => s.ID);
@@ -780,14 +789,20 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
-                    case "FullName":
-                        leads = leads.OrderByDescending(s => s.Name).ThenBy(s => s.ID);
+                    case "Salutation":
+                        leads = leads.OrderByDescending(s => s.Salutation).ThenBy(s => s.ID);
                         break;
-                    case "Designation":
+                    case "FirstName":
+                        leads = leads.OrderByDescending(s => s.FirstName).ThenBy(s => s.ID);
+                        break;
+                    case "LastName":
+                        leads = leads.OrderByDescending(s => s.LastName).ThenBy(s => s.ID);
+                        break;
+                    case "JobTitle":
                         leads = leads.OrderByDescending(s => s.JobTitle).ThenBy(s => s.ID);
                         break;
-                    case "WorkEmail":
-                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.ID);
+                    case "DirectLine":
+                        leads = leads.OrderByDescending(s => s.DirectLine).ThenBy(s => s.ID);
                         break;
                     case "MobilePhone1":
                         leads = leads.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.ID);
@@ -798,8 +813,11 @@ namespace PQT.Web.Controllers
                     case "MobilePhone3":
                         leads = leads.OrderByDescending(s => s.MobilePhone3).ThenBy(s => s.ID);
                         break;
-                    case "LandLine":
-                        leads = leads.OrderByDescending(s => s.DirectLine).ThenBy(s => s.ID);
+                    case "WorkEmail":
+                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.ID);
+                        break;
+                    case "PersonalEmail":
+                        leads = leads.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.ID);
                         break;
                     default:
                         leads = leads.OrderByDescending(s => s.ID);
@@ -824,13 +842,16 @@ namespace PQT.Web.Controllers
                 data = data.Select(m => new
                 {
                     m.ID,
-                    m.FullName,
-                    Designation = m.JobTitle,
+                    m.Salutation,
+                    m.FirstName,
+                    m.LastName,
+                    m.JobTitle,
                     m.WorkEmail,
+                    m.PersonalEmail,
                     m.MobilePhone1,
                     m.MobilePhone2,
                     m.MobilePhone3,
-                    LandLine = m.DirectLine,
+                    m.DirectLine,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);
@@ -844,8 +865,8 @@ namespace PQT.Web.Controllers
             var leads = _bookingService.GetAllBookings(m =>
                 m.BookingStatusRecord == BookingStatus.Approved &&
                 (saleId == 0 || m.SalesmanID == saleId
-                    //||
-                    // (m.Salesman != null && m.Salesman.TransferUserID == saleId)
+                //||
+                // (m.Salesman != null && m.Salesman.TransferUserID == saleId)
                 ));
 
             return Json(new
@@ -853,5 +874,275 @@ namespace PQT.Web.Controllers
                 TotalBooked = leads.Count()
             }, JsonRequestBehavior.AllowGet);
         }
+
+
+
+
+        [AjaxOnly]
+        public ActionResult AjaxGetDelegates(int eventId)
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+
+
+            var country = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Country") != null && !string.IsNullOrEmpty(Request.Form.GetValues("Country").FirstOrDefault()))
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                country = Request.Form.GetValues("Country").FirstOrDefault().Trim().ToLower();
+            }
+            var company = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Company") != null && !string.IsNullOrEmpty(Request.Form.GetValues("Company").FirstOrDefault()))
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                company = Request.Form.GetValues("Company").FirstOrDefault().Trim().ToLower();
+            }
+            var name = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Name") != null && !string.IsNullOrEmpty(Request.Form.GetValues("Name").FirstOrDefault()))
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                name = Request.Form.GetValues("Name").FirstOrDefault().Trim().ToLower();
+            }
+            var mobile = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Mobile") != null && Request.Form.GetValues("Mobile").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                mobile = Request.Form.GetValues("Mobile").FirstOrDefault().Trim().ToLower();
+            }
+            var email = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Email") != null && Request.Form.GetValues("Email").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                email = Request.Form.GetValues("Email").FirstOrDefault().Trim().ToLower();
+            }
+            var role = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Role") != null && Request.Form.GetValues("Role").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                role = Request.Form.GetValues("Role").FirstOrDefault().Trim().ToLower();
+            }
+            var session = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Session") != null && Request.Form.GetValues("Session").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                session = Request.Form.GetValues("Session").FirstOrDefault().Trim().ToLower();
+            }
+            var status = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("Status") != null && Request.Form.GetValues("Status").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                status = Request.Form.GetValues("Status").FirstOrDefault().Trim().ToLower();
+            }
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int page = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+            IEnumerable<PQT.Domain.Entities.Delegate> leads = new HashSet<PQT.Domain.Entities.Delegate>();
+            var bookings = _bookingService.GetAllBookings(m => m.EventID == eventId && m.BookingStatusRecord == BookingStatus.Approved &&
+                                                               (string.IsNullOrEmpty(country) ||
+                                                                (m.Company != null && m.Company.CountryName.ToLower().Contains(country))) &&
+                                                               (string.IsNullOrEmpty(company) ||
+                                                                (m.Company != null && m.Company.CompanyName.ToLower().Contains(company))));
+            Func<PQT.Domain.Entities.Delegate, bool> predicate = m =>
+                (string.IsNullOrEmpty(name) ||
+                 (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(name))) &&
+                (string.IsNullOrEmpty(email) ||
+                 (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email))||
+                 (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(email))) &&
+                (string.IsNullOrEmpty(mobile) ||
+                 (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(mobile)) ||
+                 (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(mobile)) ||
+                 (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(mobile)) ||
+                 (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(mobile)));
+            leads = bookings.SelectMany(m => m.Delegates.Select(d =>
+                    d.PassInfo(m.Company.CountryName, m.CompanyName, m.Salesman.DisplayName, m.EventSessions)))
+                .Where(predicate);
+
+            #region sort
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "CreatedTime":
+                        leads = leads.OrderBy(s => s.CreatedTime).ThenBy(s => s.ID);
+                        break;
+                    case "Salesman":
+                        leads = leads.OrderBy(s => s.Salesman).ThenBy(s => s.ID);
+                        break;
+                    case "Country":
+                        leads = leads.OrderBy(s => s.Country).ThenBy(s => s.ID);
+                        break;
+                    case "Salutation":
+                        leads = leads.OrderBy(s => s.Salutation).ThenBy(s => s.ID);
+                        break;
+                    case "Company":
+                        leads = leads.OrderBy(s => s.Company).ThenBy(s => s.ID);
+                        break;
+                    case "DirectLine":
+                        leads = leads.OrderBy(s => s.DirectLine).ThenBy(s => s.ID);
+                        break;
+                    case "FirstName":
+                        leads = leads.OrderBy(s => s.FirstName).ThenBy(s => s.ID);
+                        break;
+                    case "LastName":
+                        leads = leads.OrderBy(s => s.LastName).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone1":
+                        leads = leads.OrderBy(s => s.MobilePhone1).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone2":
+                        leads = leads.OrderBy(s => s.MobilePhone2).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone3":
+                        leads = leads.OrderBy(s => s.MobilePhone3).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmail":
+                        leads = leads.OrderBy(s => s.WorkEmail).ThenBy(s => s.ID);
+                        break;
+                    case "Personal Email":
+                        leads = leads.OrderBy(s => s.PersonalEmail).ThenBy(s => s.ID);
+                        break;
+                    case "Job Title":
+                        leads = leads.OrderBy(s => s.JobTitle).ThenBy(s => s.ID);
+                        break;
+                    //case "Session":
+                    //    leads = leads.OrderBy(s => s.Session).ThenBy(s => s.ID);
+                    //    break;
+                    case "AttendanceStatus":
+                        leads = leads.OrderBy(s => s.AttendanceStatus).ThenBy(s => s.ID);
+                        break;
+                    case "OverallFeedbacks":
+                        leads = leads.OrderBy(s => s.OverallFeedbacks).ThenBy(s => s.ID);
+                        break;
+                    case "OpTopicsInterested":
+                        leads = leads.OrderBy(s => s.OpTopicsInterested).ThenBy(s => s.ID);
+                        break;
+                    case "OpLocationsInterested":
+                        leads = leads.OrderBy(s => s.OpLocationsInterested).ThenBy(s => s.ID);
+                        break;
+                    case "OpGoodTrainingMonth":
+                        leads = leads.OrderBy(s => s.OpGoodTrainingMonth).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        leads = leads.OrderBy(s => s.ID);
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "CreatedTime":
+                        leads = leads.OrderByDescending(s => s.CreatedTime).ThenBy(s => s.ID);
+                        break;
+                    case "Salesman":
+                        leads = leads.OrderByDescending(s => s.Salesman).ThenBy(s => s.ID);
+                        break;
+                    case "Country":
+                        leads = leads.OrderByDescending(s => s.Country).ThenBy(s => s.ID);
+                        break;
+                    case "Salutation":
+                        leads = leads.OrderByDescending(s => s.Salutation).ThenBy(s => s.ID);
+                        break;
+                    case "Company":
+                        leads = leads.OrderByDescending(s => s.Company).ThenBy(s => s.ID);
+                        break;
+                    case "DirectLine":
+                        leads = leads.OrderByDescending(s => s.DirectLine).ThenBy(s => s.ID);
+                        break;
+                    case "FirstName":
+                        leads = leads.OrderByDescending(s => s.FirstName).ThenBy(s => s.ID);
+                        break;
+                    case "LastName":
+                        leads = leads.OrderByDescending(s => s.LastName).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone1":
+                        leads = leads.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone2":
+                        leads = leads.OrderByDescending(s => s.MobilePhone2).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone3":
+                        leads = leads.OrderByDescending(s => s.MobilePhone3).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmail":
+                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.ID);
+                        break;
+                    case "Personal Email":
+                        leads = leads.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.ID);
+                        break;
+                    case "Job Title":
+                        leads = leads.OrderByDescending(s => s.JobTitle).ThenBy(s => s.ID);
+                        break;
+                    //case "Session":
+                    //    leads = leads.OrderByDescending(s => s.Session).ThenBy(s => s.ID);
+                    //    break;
+                    case "AttendanceStatus":
+                        leads = leads.OrderByDescending(s => s.AttendanceStatus).ThenBy(s => s.ID);
+                        break;
+                    case "OverallFeedbacks":
+                        leads = leads.OrderByDescending(s => s.OverallFeedbacks).ThenBy(s => s.ID);
+                        break;
+                    case "OpTopicsInterested":
+                        leads = leads.OrderByDescending(s => s.OpTopicsInterested).ThenBy(s => s.ID);
+                        break;
+                    case "OpLocationsInterested":
+                        leads = leads.OrderByDescending(s => s.OpLocationsInterested).ThenBy(s => s.ID);
+                        break;
+                    case "OpGoodTrainingMonth":
+                        leads = leads.OrderByDescending(s => s.OpGoodTrainingMonth).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        leads = leads.OrderByDescending(s => s.ID);
+                        break;
+                }
+            }
+
+            #endregion sort
+
+            recordsTotal = leads.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            var data = leads.Skip(page).Take(pageSize).ToList();
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    m.ID,
+                    CreatedTime = m.CreatedTimeStr,
+                    m.FullName,
+                    m.JobTitle,
+                    m.WorkEmail,
+                    m.MobilePhone1,
+                    m.MobilePhone2,
+                    m.MobilePhone3,
+                    LandLine = m.DirectLine,
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

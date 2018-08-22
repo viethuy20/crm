@@ -1,0 +1,303 @@
+﻿@using Resources
+@model PQT.Web.Models.EventModel
+
+@{
+    ViewBag.Title = "Event Detail";
+}
+
+<style>
+    #grid_companies tbody tr {
+        cursor: pointer;
+    }
+
+        #grid_companies tbody tr.Tier1 {
+            color: #a94442;
+            background-color: #ffdad7;
+        }
+
+            #grid_companies tbody tr.Tier1.selected {
+                color: #a94442;
+                background-color: #fcaca6;
+            }
+
+        #grid_companies tbody tr.Tier2 {
+            color: #31708f;
+            background-color: #d8edff !important;
+        }
+
+            #grid_companies tbody tr.Tier2.selected {
+                color: #31708f;
+                background-color: #add9ff !important;
+            }
+
+        #grid_companies tbody tr.Tier0.selected {
+            color: #313534;
+            background-color: #e5e6e6 !important;
+        }
+</style>
+<section>
+
+    <div class="row section-header" style="height: auto">
+        <h2 class="text-primary col-sm-3">@ViewBag.Title</h2>
+    </div>
+    <div class="row">
+        <div class="col-sm-12" style="padding-right: 24px; padding-bottom: 12px">
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+            @if (CurrentUser.HasPermission("Event", "Edit"))
+            {
+                @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.Event.ID }).Class("btn-primary").PrependIcon("md md-edit")
+            }
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body form">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.EventCode).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.EventCode)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.EventStatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.EventStatus)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.BackgroundColor).HtmlAttributes(new { @style = "color:#fff;background:" + Model.Event.BackgroundColor }).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.BackgroundColor).LabelText("Event Color")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.EventName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.EventName)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.StartDate)">
+                            @Model.Event.StartDate.ToString("dd MMM yyyy")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.StartDate).LabelText("Event First Day")
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.EndDate)">
+                            @Model.Event.EndDate.ToString("dd MMM yyyy")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.EndDate).LabelText("Event Last Day")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.DateOfConfirmation)">
+                            @(Model.Event.DateOfConfirmation != null ? Convert.ToDateTime(Model.Event.DateOfConfirmation).ToString("dd MMM yyyy") : "")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.DateOfConfirmation)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.ClosingDate)">
+                            @(Model.Event.ClosingDate != null ? Convert.ToDateTime(Model.Event.ClosingDate).ToString("dd MMM yyyy") : "")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.ClosingDate).LabelText("Date of Closing Sales")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.DateOfOpen)">
+                            @(Model.Event.DateOfOpen != null ? Convert.ToDateTime(Model.Event.DateOfOpen).ToString("dd MMM yyyy") : "")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.DateOfOpen).LabelText("Date Of Open (Cross Sell)")
+                    </div>
+                </div>
+                <div class=" col-sm-6">
+                    <div class="form-group">
+                        @if (!string.IsNullOrEmpty(Model.Event.Brochure))
+                        {
+                            @Html.Bootstrap().Link(Model.Event.Brochure, FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                        }
+                        @Html.Bootstrap().LabelFor(m => m.Event.Brochure)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.FinanceEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.FinanceEmail).LabelText("Finance")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.OperationEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.OperationEmail).LabelText("Operation Office")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.OperationOnsiteEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.OperationOnsiteEmail).LabelText("Operation Onsite")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.ProductionEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.ProductionEmail).LabelText("Production")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.SalesEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.SalesEmail).LabelText("Sales")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextAreaFor(m => m.Event.HotelVenue).Rows(3).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.HotelVenue)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextAreaFor(m => m.Event.Location).Rows(3).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.Location)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Event Sessions</header>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <table class="table no-margin">
+                    <thead>
+                        <tr>
+                            <th>Session Title</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Trainer Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach (var item in Model.Event.EventSessions)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.SessionTitle
+                                    </td>
+                                    <td>
+                                        @item.StartDate.ToString("dd MMM yyyy")
+                                    </td>
+                                    <td>
+                                        @item.EndDate.ToString("dd MMM yyyy")
+                                    </td>
+                                    <td>
+                                        @item.TrainerName
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div><!--end .card-body -->
+    </div>
+
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Delegate info</header>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <table class="table no-margin" id="grid_delegates">
+                    <thead>
+                        <tr>
+                            <th class="hide"></th>
+                            <th>Country</th>
+                            <th>Company</th>
+                            <th>Product/Service</th>
+                            <th>Sector</th>
+                            <th>Industry</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div><!--end .card-body -->
+    </div>
+</section>
+
+@Html.Script(
+    @<script>
+        var table = $("#grid_delegates").DataTable({
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "stateSave": false,
+                "ajax": {
+                    "url": "@Url.Action("AjaxGetEventCompanies")?eventId=@Model.Event.ID",
+                    "type": "POST",
+                    "datatype": "json",
+                    "data": function (d) {
+                        d.Country = $('#grid_delegates_filter').find('input[name="search_country"]').val();
+                        d.Company = $('#grid_delegates_filter').find('input[name="search_company"]').val();
+                        d.Name = $('#grid_delegates_filter').find('input[name="search_name"]').val();
+                        d.Mobile = $('#grid_delegates_filter').find('input[name="search_mobile"]').val();
+                        d.Email = $('#grid_delegates_filter').find('input[name="search_email"]').val();
+                        d.Role = $('#grid_delegates_filter').find('input[name="search_role"]').val();
+                        d.Session = $('#grid_delegates_filter').find('input[name="search_session"]').val();
+                        d.Status = $('#grid_delegates_filter').find('input[name="search_status"]').val();
+                    }
+                },
+                "columns": [
+                    { "data": "ID", "name": "ID", "orderable": true },
+                    { "data": "Country", "name": "Country", "orderable": true },
+                    { "data": "CompanyName", "name": "CompanyName", "orderable": true },
+                    { "data": "ProductOrService", "name": "ProductOrService", "orderable": true },
+                    { "data": "Sector", "name": "Sector", "orderable": true },
+                    { "data": "Industry", "name": "Industry", "orderable": true },
+                ],
+                "iDisplayLength": 25,
+                "aaSorting": [[0, "asc"]],
+                "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $(nRow).addClass('Tier' + aData["Tier"]);
+                    $(nRow).find('td:eq(0)').addClass("hide");
+                },
+                initComplete: function() {
+                    var _table = this;
+                    var filter_box = _table.parent().find("#grid_delegates_filter");
+                    var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
+                    htmlFilter +='<label>Company:<input type="search" name="search_company" /></label>';
+                    htmlFilter += '<label>Name:<input type="search" name="search_name" /></label>';
+                    htmlFilter += '<label>Mobile:<input type="search" name="search_mobile" /></label>';
+                    htmlFilter += '<label>Email:<input type="search" name="search_email" /></label>';
+                    htmlFilter += '<label>Role:<input type="search" name="search_role" /></label>';
+                    htmlFilter += '<label>Session:<input type="search" name="search_session" /></label>';
+                    htmlFilter += '<label>Status:<input type="search" name="search_status" /></label>';
+                    filter_box.html(htmlFilter);
+
+                    searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
+                },
+            });
+            function searchBindingKeyUp(elementSearch,tableElement) {
+                elementSearch.unbind();
+                var timeOutTyping;
+                elementSearch.bind('keyup',
+                    function(e) {
+                        clearTimeout(timeOutTyping);
+                        timeOutTyping = setTimeout(function() {
+                            tableElement.fnFilter(elementSearch.eq(0).val());
+                            },
+                            600);
+                    });
+            }
+    </script>)

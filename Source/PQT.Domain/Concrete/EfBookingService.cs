@@ -22,7 +22,7 @@ namespace PQT.Domain.Concrete
         }
         public IEnumerable<Booking> GetAllBookings(Func<Booking, bool> predicate)
         {
-            return GetAll(predicate).AsEnumerable();
+            return GetAll(predicate, m => m.Delegates).AsEnumerable();
         }
 
         public Booking GetBooking(int id)

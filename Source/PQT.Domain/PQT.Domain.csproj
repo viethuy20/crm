@@ -189,6 +189,7 @@
     <Compile Include="Entities\Holiday.cs" />
     <Compile Include="Entities\Lead.cs" />
     <Compile Include="Entities\LeadStatusRecord.cs" />
+    <Compile Include="Entities\LocalInfo.cs" />
     <Compile Include="Entities\OfficeLocation.cs" />
     <Compile Include="Entities\PhoneCall.cs" />
     <Compile Include="Entities\EventSession.cs" />
@@ -201,6 +202,7 @@
     <Compile Include="Entities\Event.cs" />
     <Compile Include="Entities\Booking.cs" />
     <Compile Include="Entities\Delegate.cs" />
+    <Compile Include="Entities\Recruitment.cs" />
     <Compile Include="Entities\Role.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -219,12 +221,17 @@
     </Compile>
     <Compile Include="Entities\UserNotification.cs" />
     <Compile Include="Entities\UserSalaryHistory.cs" />
+    <Compile Include="Entities\AccomodationInfo.cs" />
+    <Compile Include="Entities\InterviewSummary.cs" />
+    <Compile Include="Entities\VenueInfo.cs" />
     <Compile Include="Entity.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="EntityBase.cs" />
     <Compile Include="Enum\BookingStatus.cs" />
+    <Compile Include="Enum\InfoStatus.cs" />
     <Compile Include="Enum\PaymentStatus.cs" />
+    <Compile Include="Enum\RecruitmentStatus.cs" />
     <Compile Include="Enum\SalaryCurrency.cs" />
     <Compile Include="Enum\EmailType.cs" />
     <Compile Include="Enum\KPIStatus.cs" />

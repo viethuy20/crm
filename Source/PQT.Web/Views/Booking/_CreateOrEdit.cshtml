@@ -229,6 +229,18 @@
                     @Html.Bootstrap().LabelFor(m => m.Booking.PaymentStatus)
                 </div>
                 <div class="form-group">
+                    @if (CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("Manager"))
+                    {
+                        @Html.Bootstrap().DropDownListFor(m => m.Booking.AttendanceStatus, EnumerationHelper.ToSelectList<AttendanceStatus>()).Class("form-control").ShowValidationMessage(true)
+                    }
+                    else
+                    {
+                        @Html.Bootstrap().TextBoxFor(m => m.Booking.AttendanceStatusDisplay).Disabled().Class("form-control").ShowValidationMessage(true)
+                        @Html.HiddenFor(m => m.Booking.AttendanceStatus)
+                    }
+                    @Html.Bootstrap().LabelFor(m => m.Booking.AttendanceStatus)
+                </div>
+                <div class="form-group">
                     @Html.HiddenFor(m => m.Booking.LetterOfUnderstaking)
                     @if (!string.IsNullOrEmpty(Model.Booking.ProofOfPayment))
                     {
@@ -272,13 +284,16 @@
                         <table class="table" id="calltable">
                             <thead>
                                 <tr>
-                                    <th class="nowrap">Full Name</th>
+                                    <th class="nowrap">Salutation</th>
+                                    <th class="nowrap">First Name</th>
+                                    <th class="nowrap">Last Name</th>
                                     <th class="nowrap">Designation</th>
-                                    <th class="nowrap">Work Email</th>
-                                    <th class="nowrap">Land Line</th>
+                                    <th class="nowrap">Direct Line</th>
                                     <th class="nowrap">Mobile Phone1</th>
                                     <th class="nowrap">Mobile Phone2</th>
                                     <th class="nowrap">Mobile Phone3</th>
+                                    <th class="nowrap">Work Email</th>
+                                    <th class="nowrap">Personal Email</th>
                                 </tr>
                             </thead>
                         </table>
@@ -356,24 +371,31 @@
                  }
              },
              "columns": [
-                 { "data": "FullName", "name": "FullName", "orderable": true },
-                 { "data": "Designation", "name": "Designation", "orderable": true },
-                 { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
-                 { "data": "LandLine", "name": "LandLine", "orderable": true },
+                 { "data": "Salutation", "name": "Salutation", "orderable": true },
+                 { "data": "FirstName", "name": "FirstName", "orderable": true },
+                 { "data": "LastName", "name": "LastName", "orderable": true },
+                 { "data": "JobTitle", "name": "JobTitle", "orderable": true },
+                 { "data": "DirectLine", "name": "DirectLine", "orderable": true },
                  { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
                  { "data": "MobilePhone2", "name": "MobilePhone2", "orderable": true },
                  { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
+                 { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
+                 { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
              ],
              "iDisplayLength": 25,
              "aaSorting": [[0, "asc"]],
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 $(nRow).attr('data-name', aData["FullName"]);
-                 $(nRow).attr('data-designation', aData["Designation"]);
-                 $(nRow).attr('data-email', aData["WorkEmail"]);
-                 $(nRow).attr('data-landline', aData["LandLine"]);
-                 $(nRow).attr('data-mobile1', aData["MobilePhone1"]);
-                 $(nRow).attr('data-mobile2', aData["MobilePhone2"]);
-                 $(nRow).attr('data-mobile3', aData["MobilePhone3"]);
+                 $(nRow).attr('data-id', aData["ID"]);
+                 $(nRow).attr('data-salutation', aData["Salutation"]);
+                 $(nRow).attr('data-firstname', aData["FirstName"]);
+                 $(nRow).attr('data-lastname', aData["LastName"]);
+                 $(nRow).attr('data-jobtitle', aData["JobTitle"]);
+                 $(nRow).attr('data-directline', aData["DirectLine"]);
+                 $(nRow).attr('data-mobilephone1', aData["MobilePhone1"]);
+                 $(nRow).attr('data-mobilephone2', aData["MobilePhone2"]);
+                 $(nRow).attr('data-mobilephone3', aData["MobilePhone3"]);
+                 $(nRow).attr('data-workemail', aData["WorkEmail"]);
+                 $(nRow).attr('data-personalemail', aData["PersonalEmail"]);
                  $(nRow).find('td:eq(0)').addClass('nowrap');
              },
              initComplete: function() {
@@ -456,25 +478,29 @@
             $.magnificPopup.close();
             if (typefill == "sender") {
                 $("@Html.JquerySelectorFor(m => m.Booking.SenderName)").val($(this).data("name"));
-                $("@Html.JquerySelectorFor(m => m.Booking.SenderDestination)").val($(this).data("designation"));
+                $("@Html.JquerySelectorFor(m => m.Booking.SenderDestination)").val($(this).data("jobtitle"));
                 $("@Html.JquerySelectorFor(m => m.Booking.SenderMail)").val($(this).data("email"));
                 $("@Html.JquerySelectorFor(m => m.Booking.SenderTel)").val($(this).data("mobile1"));
             } else if (typefill == "authorisation") {
                 $("@Html.JquerySelectorFor(m => m.Booking.AuthoriserName)").val($(this).data("name"));
-                $("@Html.JquerySelectorFor(m => m.Booking.AuthoriserDestination)").val($(this).data("designation"));
+                $("@Html.JquerySelectorFor(m => m.Booking.AuthoriserDestination)").val($(this).data("jobtitle"));
                 $("@Html.JquerySelectorFor(m => m.Booking.AuthoriserMail)").val($(this).data("email"));
                 $("@Html.JquerySelectorFor(m => m.Booking.AuthoriserTel)").val($(this).data("mobile1"));
             } else if (typefill == "delegate") {
                 var guid = sub._generateGuid();
                 $('#sub-tmpl').tmpl({ index: guid }).appendTo('#delegateContain');
                 ReValidateForm();
-                $("#Booking_Delegates_" + guid + "__Name").val($(this).data("name"));
-                $("#Booking_Delegates_" + guid + "__Designation").val($(this).data("designation"));
-                $("#Booking_Delegates_" + guid + "__LandLine").val($(this).data("landline"));
-                $("#Booking_Delegates_" + guid + "__Mail").val($(this).data("email"));
-                $("#Booking_Delegates_" + guid + "__Mobile1").val($(this).data("mobile1"));
-                $("#Booking_Delegates_" + guid + "__Mobile2").val($(this).data("mobile2"));
-                $("#Booking_Delegates_" + guid + "__Mobile3").val($(this).data("mobile3"));
+                $("#Booking_Delegates_" + guid + "__LeadID").val($(this).data("id"));
+                $("#Booking_Delegates_" + guid + "__Salutation").val($(this).data("salutation").toUpperCase()).trigger("change");
+                $("#Booking_Delegates_" + guid + "__FirstName").val($(this).data("firstname"));
+                $("#Booking_Delegates_" + guid + "__LastName").val($(this).data("lastname"));
+                $("#Booking_Delegates_" + guid + "__JobTitle").val($(this).data("jobtitle"));
+                $("#Booking_Delegates_" + guid + "__DirectLine").val($(this).data("directline"));
+                $("#Booking_Delegates_" + guid + "__MobilePhone1").val($(this).data("mobilephone1"));
+                $("#Booking_Delegates_" + guid + "__MobilePhone2").val($(this).data("mobilephone2"));
+                $("#Booking_Delegates_" + guid + "__MobilePhone3").val($(this).data("mobilephone3"));
+                $("#Booking_Delegates_" + guid + "__WorkEmail").val($(this).data("workemail"));
+                $("#Booking_Delegates_" + guid + "__PersonalEmail").val($(this).data("personalemail"));
             }
         });
         var isReloadSelectData = false;

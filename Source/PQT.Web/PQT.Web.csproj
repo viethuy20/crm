@@ -370,6 +370,7 @@
     <Compile Include="Controllers\LeadController.cs" />
     <Compile Include="Controllers\MenusController.cs" />
     <Compile Include="Controllers\EventController.cs" />
+    <Compile Include="Controllers\OperationController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\TrainerController.cs" />
@@ -2599,6 +2600,8 @@
     <Content Include="Views\Holiday\Index.cshtml" />
     <Content Include="Views\Account\ActiveKey.cshtml" />
     <Content Include="Views\Lead\_CompanyResourceList3.cshtml" />
+    <Content Include="Views\Operation\Index.cshtml" />
+    <Content Include="Views\Operation\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

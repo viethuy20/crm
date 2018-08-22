@@ -1,60 +1,85 @@
-﻿@model PQT.Domain.Entities.Delegate
+﻿@using PQT.Domain.Enum
+@model PQT.Domain.Entities.Delegate
 
 @using (Html.BeginCollectionItem())
 {
     <div class="delegateItem col-sm-6">
         <div style="border: 1px solid #e1e1e1;padding: 20px;margin-bottom: 10px;">
             <div class="row">
-                <div class="col-sm-12">
+                @Html.HiddenFor(m => m.ID)
+                <div class="col-sm-2">
                     <div class="form-group">
-                        @Html.HiddenFor(m => m.ID)
-                        @Html.Bootstrap().TextBoxFor(m => m.Name).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Name).ShowRequiredStar(true)
+                        @Html.Bootstrap().DropDownListFor(m => m.Salutation, EnumerationHelper.ToSelectList<NameTitle>()).HtmlAttributes(new { required = "required" }).Class("form-control").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Salutation)
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Designation).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Designation)
+                        @Html.Bootstrap().TextBoxFor(m => m.FirstName).Class("form-control text-capitalize").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.FirstName)
                     </div>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Mail).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Mail)
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.LandLine).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.LandLine)
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Mobile1).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Mobile1)
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Mobile2).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Mobile2)
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Mobile3).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Mobile3)
+                        @Html.Bootstrap().TextBoxFor(m => m.LastName).Class("form-control text-capitalize").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.LastName)
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.JobTitle).Class("form-control").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.JobTitle)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.WorkEmail).Class("form-control").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.WorkEmail)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Class("form-control").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.PersonalEmail)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.DirectLine).Class("form-control").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.DirectLine)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.MobilePhone1).Class("form-control").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.MobilePhone1)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.MobilePhone2).Class("form-control").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.MobilePhone2)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.MobilePhone3).Class("form-control").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.MobilePhone3)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    @Html.HiddenFor(m => m.LeadID)
+                    @Html.HiddenFor(m => m.OverallFeedbacks)
+                    @Html.HiddenFor(m => m.OpTopicsInterested)
+                    @Html.HiddenFor(m => m.OpLocationsInterested)
+                    @Html.HiddenFor(m => m.OpGoodTrainingMonth)
+                    @Html.HiddenFor(m => m.AttendanceStatus)
                     <div class="btn-group pull-right">
                         <a onclick="return sub.remove(this);" data-action="remove" class="btn btn-danger btn-flat"><i class="md md-delete"></i> Remove</a>
                     </div>

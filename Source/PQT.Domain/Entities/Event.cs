@@ -56,6 +56,18 @@ namespace PQT.Domain.Entities
             CreatedTime = e.CreatedTime;
             UpdatedTime = e.UpdatedTime;
             EntityStatus = e.EntityStatus;
+            VenueInfoID = e.VenueInfoID;
+            VenueInfo = e.VenueInfo;
+            AccomodationInfoID = e.AccomodationInfoID;
+            AccomodationInfo = e.AccomodationInfo;
+            DriverInfoID = e.DriverInfoID;
+            DriverInfo = e.DriverInfo;
+            PhotographerInfoID = e.PhotographerInfoID;
+            PhotographerInfo = e.PhotographerInfo;
+            LocalVisaAgentInfoID = e.LocalVisaAgentInfoID;
+            LocalVisaAgentInfo = e.LocalVisaAgentInfo;
+            PostEventInfoID = e.PostEventInfoID;
+            PostEventInfo = e.PostEventInfo;
         }
         public string EventCode { get; set; }
         public string EventName { get; set; }
@@ -88,6 +100,26 @@ namespace PQT.Domain.Entities
         public int UserID { get; set; }
         [ForeignKey("UserID")]
         public virtual User User { get; set; }
+        public int? VenueInfoID { get; set; }
+        [ForeignKey("VenueInfoID")]
+        public virtual VenueInfo VenueInfo { get; set; }
+        public int? AccomodationInfoID { get; set; }
+        [ForeignKey("AccomodationInfoID")]
+        public virtual AccomodationInfo AccomodationInfo { get; set; }
+
+        public int? DriverInfoID { get; set; }
+        [ForeignKey("DriverInfoID")]
+        public virtual DriverInfo DriverInfo { get; set; }
+        public int? PhotographerInfoID { get; set; }
+        [ForeignKey("PhotographerInfoID")]
+        public virtual PhotographerInfo PhotographerInfo { get; set; }
+        public int? LocalVisaAgentInfoID { get; set; }
+        [ForeignKey("LocalVisaAgentInfoID")]
+        public virtual LocalVisaAgentInfo LocalVisaAgentInfo { get; set; }
+        public int? PostEventInfoID { get; set; }
+        [ForeignKey("PostEventInfoID")]
+        public virtual PostEventInfo PostEventInfo { get; set; }
+
         public virtual ICollection<EventSession> EventSessions { get; set; }
         //for assign sales group
         public virtual ICollection<SalesGroup> SalesGroups { get; set; }

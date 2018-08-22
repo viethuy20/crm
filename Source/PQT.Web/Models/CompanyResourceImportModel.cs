@@ -77,13 +77,14 @@ namespace PQT.Web.Models
                             temp.Error += "- Organisation: " + dtRow[1] + " is wrong.<br/>";
                         }
                         temp.Role = dtRow[5].ToString();
-                        temp.MobilePhone1 = dtRow[6].ToString();
-                        temp.MobilePhone2 = dtRow[7].ToString();
-                        temp.MobilePhone3 = dtRow[8].ToString();
-                        temp.WorkEmail = dtRow[9].ToString();
-                        temp.PersonalEmail = dtRow[10].ToString();
-                        temp.BusinessUnit = dtRow[11].ToString();
-                        temp.BudgetMonthStr = dtRow[12].ToString();
+                        temp.DirectLine = dtRow[6].ToString();
+                        temp.MobilePhone1 = dtRow[7].ToString();
+                        temp.MobilePhone2 = dtRow[8].ToString();
+                        temp.MobilePhone3 = dtRow[9].ToString();
+                        temp.WorkEmail = dtRow[10].ToString();
+                        temp.PersonalEmail = dtRow[11].ToString();
+                        temp.BusinessUnit = dtRow[12].ToString();
+                        temp.BudgetMonthStr = dtRow[13].ToString();
                         if (!string.IsNullOrEmpty(temp.BudgetMonthStr))
                         {
                             try
@@ -171,6 +172,7 @@ namespace PQT.Web.Models
         public string LastName { get; set; }
         public string Organisation { get; set; }
         public string Role { get; set; }
+        public string DirectLine { get; set; }
         public string MobilePhone1 { get; set; }
         public string MobilePhone2 { get; set; }
         public string MobilePhone3 { get; set; }

@@ -230,6 +230,7 @@ namespace PQT.Web.Controllers
                             m.LastName,
                             m.Organisation,
                             m.Role,
+                            m.DirectLine,
                             m.MobilePhone1,
                             m.MobilePhone2,
                             m.MobilePhone3,
@@ -256,6 +257,7 @@ namespace PQT.Web.Controllers
                     m.LastName,
                     m.Organisation,
                     m.Role,
+                    m.DirectLine,
                     m.MobilePhone1,
                     m.MobilePhone2,
                     m.MobilePhone3,
@@ -374,6 +376,7 @@ namespace PQT.Web.Controllers
                         (string.IsNullOrEmpty(name) ||
                          (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(name))) &&
                         (string.IsNullOrEmpty(mobile) ||
+                         (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(mobile)) ||
                          (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(mobile)) ||
                          (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(mobile)) ||
                          (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(mobile))
@@ -389,6 +392,7 @@ namespace PQT.Web.Controllers
                         m.LastName.ToLower().Contains(searchValue) ||
                         m.FirstName.ToLower().Contains(searchValue) ||
                         m.Role.ToLower().Contains(searchValue) ||
+                        (m.DirectLine != null && m.DirectLine.Contains(searchValue)) ||
                         (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
                         (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
                         (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
@@ -406,6 +410,7 @@ namespace PQT.Web.Controllers
                     (string.IsNullOrEmpty(name) ||
                      (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(name))) &&
                     (string.IsNullOrEmpty(mobile) ||
+                     (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(mobile)) ||
                      (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(mobile)) ||
                      (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(mobile)) ||
                      (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(mobile))
@@ -433,6 +438,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "Role":
                         audits = audits.OrderBy(s => s.Role).ThenBy(s => s.Organisation);
+                        break;
+                    case "DirectLine":
+                        audits = audits.OrderBy(s => s.DirectLine).ThenBy(s => s.Organisation);
                         break;
                     case "MobilePhone1":
                         audits = audits.OrderBy(s => s.MobilePhone1).ThenBy(s => s.Organisation);
@@ -469,6 +477,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "Role":
                         audits = audits.OrderByDescending(s => s.Role).ThenBy(s => s.Organisation);
+                        break;
+                    case "DirectLine":
+                        audits = audits.OrderByDescending(s => s.DirectLine).ThenBy(s => s.Organisation);
                         break;
                     case "MobilePhone1":
                         audits = audits.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.Organisation);
@@ -513,6 +524,7 @@ namespace PQT.Web.Controllers
                     m.LastName,
                     m.Organisation,
                     m.Role,
+                    m.DirectLine,
                     m.MobilePhone1,
                     m.MobilePhone2,
                     m.MobilePhone3,
@@ -599,6 +611,7 @@ namespace PQT.Web.Controllers
                 (string.IsNullOrEmpty(name) ||
                  (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(name))) &&
                 (string.IsNullOrEmpty(mobile) ||
+                 (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(mobile)) ||
                  (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(mobile)) ||
                  (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(mobile)) ||
                  (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(mobile))
@@ -633,6 +646,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "Role":
                         companyResources = companyResources.OrderBy(s => s.Role).ThenBy(s => s.Organisation);
+                        break;
+                    case "DirectLine":
+                        companyResources = companyResources.OrderBy(s => s.DirectLine).ThenBy(s => s.Organisation);
                         break;
                     case "MobilePhone1":
                         companyResources = companyResources.OrderBy(s => s.MobilePhone1).ThenBy(s => s.Organisation);
@@ -678,6 +694,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "Role":
                         companyResources = companyResources.OrderByDescending(s => s.Role).ThenBy(s => s.Organisation);
+                        break;
+                    case "DirectLine":
+                        companyResources = companyResources.OrderByDescending(s => s.DirectLine).ThenBy(s => s.Organisation);
                         break;
                     case "MobilePhone1":
                         companyResources = companyResources.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.Organisation);
@@ -726,6 +745,7 @@ namespace PQT.Web.Controllers
                     m.LastName,
                     m.Organisation,
                     m.Role,
+                    m.DirectLine,
                     m.MobilePhone1,
                     m.MobilePhone2,
                     m.MobilePhone3,

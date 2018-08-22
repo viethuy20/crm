@@ -5,6 +5,12 @@
 @model PQT.Web.Models.EventModel
 
 @Html.HiddenFor(m => m.Event.UserID)
+@Html.HiddenFor(m => m.Event.VenueInfoID)
+@Html.HiddenFor(m => m.Event.AccomodationInfoID)
+@Html.HiddenFor(m => m.Event.DriverInfoID)
+@Html.HiddenFor(m => m.Event.PhotographerInfoID)
+@Html.HiddenFor(m => m.Event.LocalVisaAgentInfoID)
+@Html.HiddenFor(m => m.Event.PostEventInfoID)
 <div class="card">
     <div class="card-body">
         <div class="row">

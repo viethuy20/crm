@@ -34,8 +34,8 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Event management")]
         public ActionResult Index()
         {
-            var models = _repo.GetAllEvents();
-            return View(models);
+            //var models = _repo.GetAllEvents();
+            return View(new List<Event>());
         }
         public ActionResult Detail(int id)
         {
@@ -195,6 +195,8 @@ namespace PQT.Web.Controllers
             int recordsTotal = 0;
 
             IEnumerable<Company> companies = new HashSet<Company>();
+            var countries = countryName.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
+
             Func<Company, bool> predicate = m =>
                 (m.Tier == type) &&
                 (type != 1 || !m.ManagerUsers.Any() || m.ManagerUsers.Any(s => saleIds.Contains(s.ID))) &&
@@ -202,9 +204,9 @@ namespace PQT.Web.Controllers
                  (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
                 (string.IsNullOrEmpty(productService) || (!string.IsNullOrEmpty(m.ProductOrService) &&
                                                           m.ProductOrService.ToLower().Contains(productService))) &&
-                (string.IsNullOrEmpty(countryName) ||
-                 (m.Country != null && m.Country.Code.ToLower().Contains(countryName)) ||
-                 (m.Country != null && m.Country.Name.ToLower().Contains(countryName))) &&
+                (!countries.Any() ||
+                 (m.Country != null && countries.Any(c => m.Country.Code.ToLower().Contains(c))) ||
+                 (m.Country != null && countries.Any(c => m.Country.Name.ToLower().Contains(c)))) &&
                 (string.IsNullOrEmpty(sector) ||
                  (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
                 (string.IsNullOrEmpty(industry) ||
@@ -332,10 +334,11 @@ namespace PQT.Web.Controllers
                     var existResources =
                         companyResources.Where(
                             m => m.WorkEmail == lead.WorkEmail &&
+                                 m.DirectLine == lead.DirectLine &&
                                  m.MobilePhone1 == lead.MobilePhone1 &&
                                  m.MobilePhone2 == lead.MobilePhone2 &&
                                  m.MobilePhone3 == lead.MobilePhone3);
-                    var eventCompany = _repo.GetEventCompany(lead.EventID, lead.CompanyID);
+                    //var eventCompany = _repo.GetEventCompany(lead.EventID, lead.CompanyID);
                     if (existResources.Any())
                     {
                         foreach (var item in existResources)
@@ -350,6 +353,7 @@ namespace PQT.Web.Controllers
                             item.Role = lead.JobTitle;
                             item.Salutation = lead.Salutation;
                             item.WorkEmail = lead.WorkEmail;
+                            item.DirectLine = lead.DirectLine;
                             item.MobilePhone1 = lead.MobilePhone1;
                             item.MobilePhone2 = lead.MobilePhone2;
                             item.MobilePhone3 = lead.MobilePhone3;
@@ -371,6 +375,7 @@ namespace PQT.Web.Controllers
                             Country = lead.Company.CountryName,
                             FirstName = lead.FirstName,
                             LastName = lead.LastName,
+                            DirectLine = lead.DirectLine,
                             MobilePhone1 = lead.MobilePhone1,
                             MobilePhone2 = lead.MobilePhone2,
                             MobilePhone3 = lead.MobilePhone3,
@@ -450,7 +455,8 @@ namespace PQT.Web.Controllers
                         m.DateOfConfirmationStr.Contains(searchValue) ||
                         m.ClosingDateStr.ToLower().Contains(searchValue) ||
                         m.EventStatusDisplay.ToLower().Contains(searchValue) ||
-                        (m.Location != null && m.Location.ToLower().Contains(searchValue))
+                        (m.Location != null && m.Location.ToLower().Contains(searchValue)) ||
+                        (m.HotelVenue != null && m.HotelVenue.ToLower().Contains(searchValue))
                        );
             }
             else
@@ -486,6 +492,9 @@ namespace PQT.Web.Controllers
                     case "Location":
                         events = events.OrderBy(s => s.Location).ThenBy(s => s.ID);
                         break;
+                    case "HotelVenue":
+                        events = events.OrderBy(s => s.HotelVenue).ThenBy(s => s.ID);
+                        break;
                     default:
                         events = events.OrderBy(s => s.ID);
                         break;
@@ -519,6 +528,9 @@ namespace PQT.Web.Controllers
                     case "Location":
                         events = events.OrderByDescending(s => s.Location).ThenBy(s => s.ID);
                         break;
+                    case "HotelVenue":
+                        events = events.OrderByDescending(s => s.HotelVenue).ThenBy(s => s.ID);
+                        break;
                     default:
                         events = events.OrderByDescending(s => s.ID);
                         break;
@@ -546,6 +558,7 @@ namespace PQT.Web.Controllers
                     m.EventStatusDisplay,
                     m.BackgroundColor,
                     m.Location,
+                    m.HotelVenue,
                     StartDate = m.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = m.EndDate.ToString("dd/MM/yyyy"),
                     DateOfConfirmation = m.DateOfConfirmationStr,

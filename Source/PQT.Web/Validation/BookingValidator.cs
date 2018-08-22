@@ -35,12 +35,13 @@ namespace PQT.Web.Validation
     {
         public DelegateValidator()
         {
-            RuleFor(m => m.Name).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(u => u.Mobile1).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
-            RuleFor(u => u.Mobile2).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
-            RuleFor(u => u.Mobile3).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
-            RuleFor(u => u.LandLine).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
-            RuleFor(u => u.Mail).EmailAddress().WithMessage(Resource.EmailIsInvalid);
+            RuleFor(m => m.FirstName).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
+            RuleFor(u => u.MobilePhone1).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
+            RuleFor(u => u.MobilePhone2).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
+            RuleFor(u => u.MobilePhone3).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
+            RuleFor(u => u.DirectLine).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
+            RuleFor(u => u.WorkEmail).EmailAddress().WithMessage(Resource.EmailIsInvalid);
+            RuleFor(u => u.PersonalEmail).EmailAddress().WithMessage(Resource.EmailIsInvalid);
 
         }
     }

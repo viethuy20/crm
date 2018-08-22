@@ -15,6 +15,7 @@ namespace PQT.Domain.Entities
             Delegates = new HashSet<Delegate>();
             EventSessions = new HashSet<EventSession>();
             PaymentStatus = PaymentStatus.Initial;
+            AttendanceStatus = AttendanceStatus.Initial;
         }
         public string Address { get; set; }
         public string Tel { get; set; }
@@ -39,6 +40,7 @@ namespace PQT.Domain.Entities
 
         public string Attachment { get; set; }//Signed Reg Contract
         public PaymentStatus PaymentStatus { get; set; }
+        public AttendanceStatus AttendanceStatus { get; set; }
         public string ProofOfPayment { get; set; }
         public string LetterOfUnderstaking { get; set; }
 
@@ -111,6 +113,17 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
+        public string AttendanceStatusDisplay
+        {
+            get
+            {
+                if (AttendanceStatus != null)
+                {
+                    return AttendanceStatus.DisplayName;
+                }
+                return "";
+            }
+        }
 
         public string StatusUser
         {
@@ -164,6 +177,19 @@ namespace PQT.Domain.Entities
                 return 0;
             }
         }
+
+        public int DelegateNumber
+        {
+            get
+            {
+                if (Delegates != null)
+                {
+                    return Delegates.Count;
+                }
+                return 0;
+            }
+        }
+
         public object Serializing()
         {
             return new
