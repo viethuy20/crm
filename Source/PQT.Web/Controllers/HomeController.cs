@@ -34,13 +34,15 @@ namespace PQT.Web.Controllers
 
     public class HomeController : Controller
     {
-        private readonly IMembershipService _memRepository;
+        private readonly IUserNotificationService _notificationService;
         private readonly IEventService _eventService;
+        private readonly IMembershipService _membershipService;
 
-        public HomeController(IMembershipService memRepository, IEventService eventService)
+        public HomeController(IUserNotificationService notificationService, IEventService eventService, IMembershipService membershipService)
         {
-            _memRepository = memRepository;
+            _notificationService = notificationService;
             _eventService = eventService;
+            _membershipService = membershipService;
         }
 
         public ActionResult Index()
@@ -69,7 +71,7 @@ namespace PQT.Web.Controllers
         public ActionResult GetNotifyForEvent(int eventId, int page = 1)
         {
             var notifications =
-                _memRepository.GetAllUserNotificationsByEvent(CurrentUser.Identity.ID, eventId,
+                _notificationService.GetAllUserNotificationsByEvent(CurrentUser.Identity.ID, eventId,
                     Settings.System.NotificationNumber());
             return Json(notifications, JsonRequestBehavior.AllowGet);
         }
@@ -80,7 +82,7 @@ namespace PQT.Web.Controllers
             var notify = new List<UserNotification>();
             if (CurrentUser.Identity != null)
             {
-                notify = _memRepository.GetAllUserNotifications(CurrentUser.Identity.ID, Settings.System.NotificationNumber()).ToList();
+                notify = _notificationService.GetAllUserNotifications(CurrentUser.Identity.ID, Settings.System.NotificationNumber()).ToList();
             }
             return PartialView(notify);
         }
@@ -91,7 +93,7 @@ namespace PQT.Web.Controllers
             if (CurrentUser.Identity != null)
             {
                 CurrentUser.Identity.NotifyNumber = 0;
-                _memRepository.UpdateUser(CurrentUser.Identity);
+                _membershipService.UpdateUser(CurrentUser.Identity);
             }
             return Json(true);
         }
@@ -101,7 +103,7 @@ namespace PQT.Web.Controllers
         {
             if (CurrentUser.Identity != null)
             {
-                var countSeen = _memRepository.SeenUserNotification(CurrentUser.Identity.ID, entryId, type);
+                var countSeen = _notificationService.SeenUserNotification(CurrentUser.Identity.ID, entryId, type);
                 if (countSeen > 0)
                 {
                     CurrentUser.Identity.NotifyNumber = CurrentUser.Identity.NotifyNumber - countSeen;
@@ -109,7 +111,7 @@ namespace PQT.Web.Controllers
                     {
                         CurrentUser.Identity.NotifyNumber = 0;
                     }
-                    _memRepository.UpdateUser(CurrentUser.Identity);
+                    _membershipService.UpdateUser(CurrentUser.Identity);
                 }
                 return Json(countSeen);
             }
@@ -118,7 +120,7 @@ namespace PQT.Web.Controllers
         [AjaxOnly]
         public ActionResult SeenNotify(int notifyId)
         {
-            _memRepository.SeenUserNotification(notifyId);
+            _notificationService.SeenUserNotification(notifyId);
             return Json(true);
         }
         [AjaxOnly]

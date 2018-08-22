@@ -193,10 +193,8 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
-
-            IEnumerable<Company> companies = new HashSet<Company>();
             var countries = countryName.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
-
+            IEnumerable<Company> companies = new HashSet<Company>();
             Func<Company, bool> predicate = m =>
                 (m.Tier == type) &&
                 (type != 1 || !m.ManagerUsers.Any() || m.ManagerUsers.Any(s => saleIds.Contains(s.ID))) &&
@@ -338,7 +336,7 @@ namespace PQT.Web.Controllers
                                  m.MobilePhone1 == lead.MobilePhone1 &&
                                  m.MobilePhone2 == lead.MobilePhone2 &&
                                  m.MobilePhone3 == lead.MobilePhone3);
-                    //var eventCompany = _repo.GetEventCompany(lead.EventID, lead.CompanyID);
+                    var eventCompany = _repo.GetEventCompany(lead.EventID, lead.CompanyID);
                     if (existResources.Any())
                     {
                         foreach (var item in existResources)
