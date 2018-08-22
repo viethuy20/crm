@@ -34,6 +34,7 @@
                             <th>Last Name</th>
                             <th>Company</th>
                             <th>Role</th>
+                            <th>Direct Line</th>
                             <th>Mobile Phone1</th>
                             <th>Mobile Phone2</th>
                             <th>Mobile Phone3</th>
@@ -80,6 +81,7 @@
                 { "data": "LastName", "name": "LastName", "orderable": true },
                 { "data": "Organisation", "name": "Organisation", "orderable": true },
                 { "data": "Role", "name": "Role", "orderable": true },
+                { "data": "DirectLine", "name": "DirectLine", "orderable": true },
                 { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
                 { "data": "MobilePhone2", "name": "MobilePhone2", "orderable": true },
                 { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
@@ -92,7 +94,7 @@
             "aaSorting": [[4, "asc"]],
             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                 $(nRow).attr("data-id", aData["ID"]);
-                $(nRow).find('td:eq(11)').html('<a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a> ' +
+                $(nRow).find('td:eq(12)').html('<a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a> ' +
                     '<a href="#" data-action="delete" data-id="' + aData["ID"] + '"><i class="md md-delete text-danger"></i></a>');
             },
             initComplete: function () {
@@ -185,6 +187,7 @@
                 data.LastName,
                 data.Organisation,
                 data.Role,
+                data.DirectLine,
                 data.MobilePhone1,
                 data.MobilePhone2,
                 data.MobilePhone3,
@@ -210,13 +213,14 @@
                         $(td[3]).text(data.LastName);
                         $(td[4]).text(data.Organisation);
                         $(td[5]).text(data.Role);
-                        $(td[6]).text(data.MobilePhone1);
-                        $(td[7]).text(data.MobilePhone2);
-                        $(td[8]).text(data.MobilePhone3);
-                        $(td[9]).text(data.WorkEmail);
-                        $(td[10]).text(data.PersonalEmail);
-                        $(td[11]).text(data.BusinessUnit);
-                        $(td[12]).text(data.BudgetMonthStr);
+                        $(td[6]).text(data.DirectLine);
+                        $(td[7]).text(data.MobilePhone1);
+                        $(td[8]).text(data.MobilePhone2);
+                        $(td[9]).text(data.MobilePhone3);
+                        $(td[10]).text(data.WorkEmail);
+                        $(td[11]).text(data.PersonalEmail);
+                        $(td[12]).text(data.BusinessUnit);
+                        $(td[13]).text(data.BudgetMonthStr);
                     }
                 }
             });

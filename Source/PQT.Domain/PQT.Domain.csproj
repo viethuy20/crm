@@ -152,6 +152,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Abstract\IUploadTemplateService.cs" />
+    <Compile Include="Abstract\IUserNotificationService.cs" />
     <Compile Include="Business\RuleBase.cs" />
     <Compile Include="Concrete\ConcurrentLoginTracker.cs" />
     <Compile Include="Concrete\EFAuditTracker.cs" />
@@ -170,6 +171,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Concrete\EFUploadTemplateService.cs" />
+    <Compile Include="Concrete\EFUserNotificationService.cs" />
     <Compile Include="Concrete\InMemLoginTracker.cs" />
     <Compile Include="DependencyContainer.cs" />
     <Compile Include="Entities\Audit.cs">

@@ -18,6 +18,7 @@ namespace PQT.Domain.Entities
         public string LastName { get; set; }
         public string Organisation { get; set; } //company name
         public string Role { get; set; }
+        public string DirectLine { get; set; }
         public string MobilePhone1 { get; set; }
         public string MobilePhone2 { get; set; }
         public string MobilePhone3 { get; set; }

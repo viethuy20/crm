@@ -21,6 +21,7 @@
                 <th class="nowrap">First Name</th>
                 <th class="nowrap">Last Name</th>
                 <th style="min-width:200px">Role</th>
+                <th class="nowrap">Direct Line</th>
                 <th class="nowrap">Mobile Phone1</th>
                 <th class="nowrap">Mobile Phone2</th>
                 <th class="nowrap">Mobile Phone3</th>
@@ -62,6 +63,7 @@
                  { "data": "LastName", "name": "LastName", "orderable": true },
                  //{ "data": "Organisation", "name": "Organisation", "orderable": true },
                  { "data": "Role", "name": "Role", "orderable": true },
+                 { "data": "DirectLine", "name": "DirectLine", "orderable": true },
                  { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
                  { "data": "MobilePhone2", "name": "MobilePhone2", "orderable": true },
                  { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
@@ -82,6 +84,7 @@
                  $(nRow).attr('data-lastname', aData["LastName"]);
                  $(nRow).attr('data-organisation', aData["Organisation"]);
                  $(nRow).attr('data-role', aData["Role"]);
+                 $(nRow).attr('data-directline', aData["DirectLine"]);
                  $(nRow).attr('data-mobilephone1', aData["MobilePhone1"]);
                  $(nRow).attr('data-mobilephone2', aData["MobilePhone2"]);
                  $(nRow).attr('data-mobilephone3', aData["MobilePhone3"]);
@@ -95,6 +98,7 @@
                  $(nRow).find('td:eq(7)').addClass('nowrap');
                  $(nRow).find('td:eq(8)').addClass('nowrap');
                  $(nRow).find('td:eq(9)').addClass('nowrap');
+                 $(nRow).find('td:eq(10)').addClass('nowrap');
              },
              initComplete: function() {
                  var _table = this;

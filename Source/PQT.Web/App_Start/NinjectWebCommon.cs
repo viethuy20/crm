@@ -95,6 +95,8 @@ namespace PQT.Web
             kernel.Bind<ICompanyRepository>().To<MemoryCompanyRepository>().InSingletonScope();
             kernel.Bind<EFEventService>().ToSelf();
             kernel.Bind<IEventService>().To<MemoryEventRepository>().InSingletonScope();
+            kernel.Bind<MemoryNotifyRepository>().ToSelf();
+            kernel.Bind<IUserNotificationService>().To<MemoryNotifyRepository>().InSingletonScope();
             kernel.Bind<IUnitRepository>().To<EFUnitRepository>();
             kernel.Bind<ISettingRepository>().To<EFSettingRepository>();
             kernel.Bind<ILeadService>().To<EFLeadService>();

@@ -57,6 +57,10 @@
                     @Html.Bootstrap().LabelFor(m => m.CompanyResource.Role).ShowRequiredStar(true)
                 </div>
                 <div class="form-group col-md-6">
+                    @Html.Bootstrap().TextBoxFor(m => m.CompanyResource.DirectLine).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.CompanyResource.DirectLine).ShowRequiredStar(true)
+                </div>
+                <div class="form-group col-md-6">
                     @Html.Bootstrap().TextBoxFor(m => m.CompanyResource.MobilePhone1).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.CompanyResource.MobilePhone1).ShowRequiredStar(true)
                 </div>

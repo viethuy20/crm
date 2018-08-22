@@ -28,6 +28,10 @@ namespace PQT.Web.Infrastructure.Notification
         {
             get { return DependencyResolver.Current.GetService<IMembershipService>(); }
         }
+        private static IUserNotificationService UserNotificationService
+        {
+            get { return DependencyResolver.Current.GetService<IUserNotificationService>(); }
+        }
 
         public static void NotifyUpdateNCL(int leadId, params string[] excludeIds)
         {
@@ -110,7 +114,7 @@ namespace PQT.Web.Infrastructure.Notification
                     {
                         notify.Title = title;
                     }
-                    notify = MemberService.CreateUserNotification(notify);
+                    notify = UserNotificationService.CreateUserNotification(notify);
                     user.NotifyNumber++;
                     MemberService.UpdateUser(user);
                     NotificationHub.NotifyUser(user, notify);
@@ -145,6 +149,10 @@ namespace PQT.Web.Infrastructure.Notification
         private static IEventService EventService
         {
             get { return DependencyResolver.Current.GetService<IEventService>(); }
+        }
+        private static IUserNotificationService UserNotificationService
+        {
+            get { return DependencyResolver.Current.GetService<IUserNotificationService>(); }
         }
 
         public static void NotifyEmailForUser(IEnumerable<User> users, Booking booking)
@@ -202,7 +210,7 @@ namespace PQT.Web.Infrastructure.Notification
                         {
                             notify.Title = title;
                         }
-                        notify = MemberService.CreateUserNotification(notify);
+                        notify = UserNotificationService.CreateUserNotification(notify);
                         user.NotifyNumber++;
                         MemberService.UpdateUser(user);
                         NotificationHub.NotifyUser(user, notify);
