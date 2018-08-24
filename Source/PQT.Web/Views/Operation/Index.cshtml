@@ -1,20 +1,14 @@
 ﻿@using PQT.Domain.Entities
 @using Resources
-@model IEnumerable<PQT.Domain.Entities.Event>
-
+@model System.Collections.Generic.IEnumerable<PQT.Domain.Entities.Event>
 
 @{
-    ViewBag.Title = "Events";
+    ViewBag.Title = "Events For Operation";
 }
 
 <section>
     <div class="section-header">
         <h2 class="text-primary">@ViewBag.Title</h2>
-    </div>
-    <div class="form-group row">
-        <div class="col-sm-6">
-            @Html.Bootstrap().ActionLinkButton(Resource.AddNew, "Create").PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary" })
-        </div>
     </div>
     <div class="card" style="margin-bottom: 350px">
         <div class="card-body">
@@ -23,7 +17,7 @@
                     <tr>
                         <th>@Resource.Code</th>
                         <th>Status</th>
-                        <th>Event Name</th>
+                        <th>@Resource.Name</th>
                         <th>Color</th>
                         <th>Event First Day</th>
                         <th>Event Last Day</th>
@@ -50,10 +44,10 @@
             "orderMulti": false, // for disable multiple column at once
             "stateSave": false,
             "ajax": {
-                "url": "@Url.Action("AjaxGetEventAlls","Event")",
+                "url": "@Url.Action("AjaxGetEventAlls")",
                 "type": "POST",
                 "datatype": "json",
-                "data": function (d) {
+                "data": function(d) {
                 }
             },
             "columns": [
@@ -71,36 +65,21 @@
             ],
             "iDisplayLength": 50,
             "aaSorting": [[0, "desc"]],
-            "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-
-                $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' + aData["ID"] + '">' + aData["EventCode"] + '</a>');
+            "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $(nRow).find('td:eq(0)').html('<a href="@Url.Action("OpeDetail")/' +
+                        aData["ID"] +
+                        '">' +
+                        aData["EventCode"] +
+                        '</a>');
                 $(nRow).find('td:eq(3)').html('<span class="EventColor" style="cursor: default;display: inline-block;width: 30px;height: 30px;background:' + aData["BackgroundColor"] + ';border:1px solid #c3c3c3;border-radius: 50%;">&nbsp;</span>');
-
-                @*var dropdowns = '<li><a href="@Url.Action("Detail")/' + aData["ID"] + '"><i class="fa fa-eye"> Detail</i></a></li>';
-                if ('@CurrentUser.HasPermission("Lead", "NCLForManager")' == 'True') {
-                   dropdowns += '<li class="divider"></li><li><a href="@Url.Action("NCLForManager", "Lead")/' + aData["ID"] + '"><i class="fa fa-eye"> View NCL</i></a></li>';
-                }
-                if ('@CurrentUser.HasPermission("Booking", "Index")' == 'True') {
-                    dropdowns += '<li class="divider"></li><li><a href="/Booking/Index/' + aData["ID"] + '"><i class="fa fa-eye"> View Bookings</i></a></li>';
-                }
-                if ('@CurrentUser.HasPermission("Event", "Edit")' == 'True') {
-                    dropdowns += '<li class="divider"></li><li><a href="@Url.Action("Edit")/' + aData["ID"] + '"><i class="md md-edit text-info"> Edit</i></a></li>';
-                }
-                if ('@CurrentUser.HasPermission("Event", "AssignCompany")' == 'True') {
-                    dropdowns += '<li class="divider"></li><li><a href="@Url.Action("AssignCompany")/' + aData["ID"] + '"><i class="md md-edit text-info"> Assign Company</i></a></li>';
-                }
-                if ('@CurrentUser.HasPermission("Event", "Delete")' == 'True') {
-                    dropdowns += '<li class="divider"></li><li><a href="#"  data-action="delete" data-id="' + aData["ID"] + '"><i class="md md-delete text-danger"> Delete</i></a></li>';
-                }
-                if ('@CurrentUser.HasPermission("Event", "EndEvent")' == 'True') {
-                    dropdowns += '<li class="divider"></li><li><a class="simple-ajax-popup-align-top" href="@Url.Action("EndEvent")/' + aData["ID"] + '"><i class="md md-alarm text-info"> End Event</i></a></li>';
-                }
-                if ('@CurrentUser.HasPermission("Kpi", "ImportVoIp")' == 'True') {
-                    dropdowns += '<li class="divider"></li><li><a href="@Url.Action("ImportVoIp", "Kpi")/' + aData["ID"] + '"><i class="fa fa-upload text-primary"> Import VoIP & Check KPI</i></a></li>';
+                var dropdowns = '<li><a href="@Url.Action("OpeDetail")/' + aData["ID"] + '"><i class="fa fa-eye"> Detail</i></a></li>';
+                
+                if ('@CurrentUser.HasPermission("Operation", "OpeEdit")' == 'True') {
+                    dropdowns += '<li class="divider"></li><li><a href="@Url.Action("OpeEdit")/' + aData["ID"] + '"><i class="md md-edit text-info"> Edit</i></a></li>';
                 }
                 $(nRow).find('td:eq(10)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
                     dropdowns +
-                    '</ul></div>');*@
+                    '</ul></div>');
                 $(nRow).attr("data-id", ["ID"]);
             },
             initComplete: function () {
@@ -116,31 +95,4 @@
             },
         });
 
-        $(document).on('click', '#submitEndEventBtn', function (e) {
-            e.preventDefault();
-            var msg = "Do you want to change status this event?";
-            if ($(".endStatus").val() == '@EventStatus.Completed') {
-                msg = "Do you want to end this event<br/>and copy all data to company resources?";
-            }
-            bootbox.confirm(msg, function (isOK) {
-                if (isOK) {
-                    var form = $('#submitEndEventBtn').parents("form");
-                    form.submit();
-                }
-            });
-        });
-
-        function onEndEventFail() {
-            bootbox.alert("@Resource.Error");
-        }
-        function onEndEventSuccess(data) {
-            if (data) {
-                $Table.fnFilter('');
-                $.magnificPopup.close();
-            } else {
-                bootbox.alert("@Resource.SaveFailed");
-            }
-        }
-
-        //StartConnectProgressHub();
     </script>)

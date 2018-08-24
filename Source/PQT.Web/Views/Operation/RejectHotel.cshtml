@@ -1,0 +1,35 @@
+﻿@using Resources
+@model int
+
+
+@{
+    string id = ViewBag.ID.ToString();
+    string type = ViewBag.Type.ToString();
+    var title = "Reject Info";
+}
+
+<div class="card card-underline" style="background: white; margin: auto; max-width: 600px; position: relative;">
+    <div>
+        <div class="card-head">
+            <header><b>@title</b></header>
+        </div><!--end .card-head -->
+        @using (Ajax.BeginForm("RejectHotel", "routeValues", new AjaxOptions { OnFailure = "onFailRejectAction", OnSuccess = "onSuccessRejectAction" }, new { @id = "CreateOrEditForm", @class = "form" }))
+            {
+            <div class="card-body">
+                @Html.Hidden("id", id)
+                @Html.Hidden("actType", type)
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBox("reason").Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                        @Html.Bootstrap().Label("lbreason").LabelText("Rejection reason").ShowRequiredStar(true)
+                    </div>
+                </div>
+            </div><!--end .card-body -->
+            <div class="card-actionbar">
+                <div class="card-actionbar-row">
+                    @Html.Bootstrap().SubmitButton().Text(Resource.Reject).PrependIcon("md md-done").Style(ButtonStyle.Danger)
+                </div>
+            </div>
+        }
+    </div>
+</div><!--end .card -->

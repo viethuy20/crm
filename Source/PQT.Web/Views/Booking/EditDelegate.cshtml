@@ -1,0 +1,78 @@
+﻿@using PQT.Domain.Enum
+@using Resources
+@model PQT.Domain.Entities.Delegate
+
+
+@{
+    var title = "Edit Delegate";
+}
+
+<div class="card card-underline" style="background: white; margin: auto; max-width: 600px; position: relative;">
+    <div>
+        <div class="card-head">
+            <header><b>@title</b></header>
+        </div><!--end .card-head -->
+        @using (Ajax.BeginForm("EditDelegate", "routeValues", new AjaxOptions { OnFailure = "onFailEditDelegate", OnSuccess = "onSuccessEditDelegate" }, new { @id = "CreateOrEditForm", @class = "form" }))
+        {
+            <div class="card-body">
+                @Html.HiddenFor(m => m.ID)
+                @Html.HiddenFor(m => m.LeadID)
+                @Html.HiddenFor(m => m.BookingID)
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.FullName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.FullName)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.MobilePhone1).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.MobilePhone1)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.WorkEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.WorkEmail)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group ">
+                        @Html.Bootstrap().DropDownListFor(m => m.AttendanceStatus, EnumerationHelper.ToSelectList<DelegateAttendanceStatus>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.AttendanceStatus).ShowRequiredStar(true)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextAreaFor(m => m.OverallFeedbacks).Rows(5).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.OverallFeedbacks)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <input type="text" name="@Html.NameFor(m=>m.OpTopicsInterested)" value="@Model.OpTopicsInterested" data-role="tagsinput" />
+                        @Html.ValidationMessageFor(m => m.OpTopicsInterested)
+                        @Html.Bootstrap().LabelFor(m => m.OpTopicsInterested)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.OpLocationsInterested).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.OpLocationsInterested)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.OpGoodTrainingMonth).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.OpGoodTrainingMonth)
+                    </div>
+                </div>
+            </div><!--end .card-body -->
+            <div class="card-actionbar">
+                <div class="card-actionbar-row">
+                    @Html.Bootstrap().SubmitButton().Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Primary)
+                </div>
+            </div>
+        }
+    </div>
+</div><!--end .card -->

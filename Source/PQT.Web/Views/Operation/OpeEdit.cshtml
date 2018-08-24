@@ -1,0 +1,291 @@
+@using PQT.Domain.Entities
+@using Resources
+@model PQT.Web.Models.EventModel
+@{
+    ViewBag.Title = "Edit Event";
+}
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    @Html.ValidationSummary()
+    @using (Html.BeginForm("OpeEdit", "Operation", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
+    {
+        <div class="row">
+            <div class="form-group  col-md-offset-2">
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                @Html.Bootstrap().SubmitButton().Class("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+            </div>
+        </div>
+        @Html.HiddenFor(m => m.ID)
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.EventCode).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.EventCode)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.EventStatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.EventStatus)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.BackgroundColor).HtmlAttributes(new { @style = "color:#fff;background:" + Model.Event.BackgroundColor }).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.BackgroundColor).LabelText("Event Color")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.EventName).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.EventName)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-underline">
+            <div class="card-head">
+                <header>Venue Info</header>
+            </div>
+            <div class="card-body">
+                <div class="row form">
+                    @Html.HiddenFor(m => m.VenueInfo.ID)
+                    @Html.HiddenFor(m => m.VenueInfo.HotelContract)
+                    @Html.HiddenFor(m => m.VenueInfo.EntryId)
+                    @Html.HiddenFor(m => m.VenueInfo.UserId)
+                    @Html.HiddenFor(m => m.VenueInfo.Status)
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.VenueInfo.HotelVenue).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.VenueInfo.HotelVenue)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @if (Model.VenueInfo != null && !string.IsNullOrEmpty(Model.VenueInfo.HotelContract))
+                            {
+                                <a href="@Model.VenueInfo.ContractUrl" target="_blank">@Model.VenueInfo.HotelContract</a>
+                            }
+                            @Html.Bootstrap().FileFor(m => m.VenueFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.VenueFile).LabelText("Hotel Contract")
+                        </div>
+                    </div>
+                </div>
+            </div><!--end .card-body -->
+        </div>
+        <div class="card card-underline">
+            <div class="card-head">
+                <header>Accomodation Info</header>
+            </div>
+            <div class="card-body">
+                <div class="row form">
+                    @Html.HiddenFor(m => m.AccomodationInfo.ID)
+                    @Html.HiddenFor(m => m.AccomodationInfo.HotelContract)
+                    @Html.HiddenFor(m => m.AccomodationInfo.EntryId)
+                    @Html.HiddenFor(m => m.AccomodationInfo.UserId)
+                    @Html.HiddenFor(m => m.AccomodationInfo.Status)
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.AccomodationInfo.HotelAccomodation).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.AccomodationInfo.HotelAccomodation)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @if (Model.AccomodationInfo != null && !string.IsNullOrEmpty(Model.AccomodationInfo.HotelContract))
+                            {
+                                <a href="@Model.AccomodationInfo.ContractUrl" target="_blank">@Model.AccomodationInfo.HotelContract</a>
+                            }
+                            @Html.Bootstrap().FileFor(m => m.AccomodationFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.AccomodationFile).LabelText("Hotel Contract")
+                        </div>
+                    </div>
+                </div>
+            </div><!--end .card-body -->
+        </div>
+        <div class="card card-underline">
+            <div class="card-head">
+                <header>Local Info</header>
+            </div>
+            <div class="card-body">
+                <div class="">
+                    @Html.HiddenFor(m => m.DriverInfo.ID)
+                    <div class="row form">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.DriverInfo.Name).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.DriverInfo.Name).LabelText("Driver Name")
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.DriverInfo.Contact).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.DriverInfo.Contact)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.DriverInfo.Email).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.DriverInfo.Email)
+                            </div>
+                        </div>
+                        <div class="col-sm-9">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.DriverInfo.Remarks).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.DriverInfo.Remarks)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.DriverInfo.PricingUnit).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.DriverInfo.PricingUnit)
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <div class="row form">
+                        @Html.HiddenFor(m => m.PhotographerInfo.ID)
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.PhotographerInfo.Name).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.PhotographerInfo.Name).LabelText("Photographer Name")
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.PhotographerInfo.Contact).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.PhotographerInfo.Contact)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.PhotographerInfo.Email).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.PhotographerInfo.Email)
+                            </div>
+                        </div>
+                        <div class="col-sm-9">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.PhotographerInfo.Remarks).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.PhotographerInfo.Remarks)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.PhotographerInfo.PricingUnit).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.PhotographerInfo.PricingUnit)
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <div class="row form">
+                        @Html.HiddenFor(m => m.LocalVisaAgentInfo.ID)
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.LocalVisaAgentInfo.Name).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.LocalVisaAgentInfo.Name).LabelText("Local Visa Agent Name")
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.LocalVisaAgentInfo.Contact).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.LocalVisaAgentInfo.Contact)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.LocalVisaAgentInfo.Email).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.LocalVisaAgentInfo.Email)
+                            </div>
+                        </div>
+                        <div class="col-sm-9">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.LocalVisaAgentInfo.Remarks).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.LocalVisaAgentInfo.Remarks)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.LocalVisaAgentInfo.PricingUnit).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.LocalVisaAgentInfo.PricingUnit)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!--end .card-body -->
+        </div>
+
+        <div class="card card-underline">
+            <div class="card-head">
+                <header>Post Event Info</header>
+            </div>
+            <div class="card-body">
+                <div class="row form">
+                    @Html.HiddenFor(m => m.PostEventInfo.ID)
+                    @Html.HiddenFor(m => m.PostEventInfo.AttendanceUpload)
+                    @Html.HiddenFor(m => m.PostEventInfo.FeedbackUpload)
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.PostEventInfo.DelegateAttendance).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.PostEventInfo.DelegateAttendance)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @if (Model.Event.PostEventInfo != null && !string.IsNullOrEmpty(Model.Event.PostEventInfo.AttendanceUpload))
+                                {
+                                    <a href="@Model.Event.PostEventInfo.AttendanceUrl" target="_blank">@Model.Event.PostEventInfo.AttendanceUpload</a>
+                                }
+                                @Html.Bootstrap().FileFor(m => m.AttendanceFile).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.AttendanceFile).LabelText("Attendance Upload")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.PostEventInfo.DelegateFeedback).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.PostEventInfo.DelegateFeedback)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @if (Model.PostEventInfo != null && !string.IsNullOrEmpty(Model.PostEventInfo.FeedbackUpload))
+                            {
+                                <a href="@Model.PostEventInfo.FeedbackUrl" target="_blank">@Model.PostEventInfo.FeedbackUpload</a>
+                            }
+                            @Html.Bootstrap().FileFor(m => m.FeedbackFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.FeedbackFile).LabelText("Feedback Upload")
+                        </div>
+                    </div>
+                </div>
+            </div><!--end .card-body -->
+        </div>
+        <div class="row">
+            <div class="form-group  col-md-offset-2">
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                @Html.Bootstrap().SubmitButton().Class("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+            </div>
+        </div>
+    }
+</section>
+@Html.Script(
+    @<script>
+        $(".submitbutton").on('click', function (e) {
+            e.preventDefault();
+            bootbox.confirm('@Resource.ConfirmSave', function (isOK) {
+                if (isOK) {
+
+                    var form = $('.submitbutton').parents("form");
+                    form.submit();
+                }
+            });
+        });
+    </script>)

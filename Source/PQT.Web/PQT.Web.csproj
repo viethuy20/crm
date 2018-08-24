@@ -2601,8 +2601,12 @@
     <Content Include="Views\Holiday\Index.cshtml" />
     <Content Include="Views\Account\ActiveKey.cshtml" />
     <Content Include="Views\Lead\_CompanyResourceList3.cshtml" />
+    <Content Include="Views\Operation\OpeEdit.cshtml" />
+    <Content Include="Views\Operation\OpeDetail.cshtml" />
+    <Content Include="Views\Operation\RejectHotel.cshtml" />
+    <Content Include="Views\Booking\EditDelegate.cshtml" />
+    <Content Include="Views\Booking\EditCompany.cshtml" />
     <Content Include="Views\Operation\Index.cshtml" />
-    <Content Include="Views\Operation\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

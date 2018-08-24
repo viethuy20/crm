@@ -109,5 +109,15 @@ namespace PQT.Domain.Concrete
         {
             return Delete<Booking>(id);
         }
+
+        public Entities.Delegate GetDelegate(int id)
+        {
+            return Get<Entities.Delegate>(id);
+        }
+
+        public bool UpdateDelegate(Entities.Delegate info)
+        {
+            return Update(info);
+        }
     }
 }

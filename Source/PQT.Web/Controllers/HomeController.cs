@@ -49,7 +49,7 @@ namespace PQT.Web.Controllers
         {
             var model = new HomeModel();
             if (CurrentUser.HasRole("Operation"))
-                return RedirectToAction("Index", "Operation");
+                return RedirectToAction("Index", "Event");
             if (CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("QC") || CurrentUser.HasRole("Manager"))
                 model.Events = _eventService.GetAllEvents(m => (m.EventStatus == EventStatus.Live || m.EventStatus == EventStatus.Confirmed));
             else

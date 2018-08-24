@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using NS.Helpers;
+using NS.Mvc.ActionResults;
 using PQT.Domain;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
@@ -13,7 +15,6 @@ using PQT.Web.Infrastructure.Helpers;
 using PQT.Web.Infrastructure.Notification;
 using PQT.Web.Infrastructure.Utility;
 using PQT.Web.Models;
-using Quartz;
 using Resources;
 
 namespace PQT.Web.Controllers
@@ -274,6 +275,75 @@ namespace PQT.Web.Controllers
             return PartialView(model);
         }
 
+        [DisplayName(@"Edit Delegate")]
+        public ActionResult EditDelegate(int id)
+        {
+            var delega = _bookingService.GetDelegate(id);
+            return PartialView(delega);
+        }
+
+        [DisplayName(@"Edit Delegate")]
+        [HttpPost]
+        public ActionResult EditDelegate(Domain.Entities.Delegate model)
+        {
+            var delega = _bookingService.GetDelegate(model.ID);
+            if (delega == null)
+                return Json(new { IsSuccess = false, Message = "Delegate not found" });
+            delega.OverallFeedbacks = model.OverallFeedbacks;
+            delega.OpTopicsInterested = model.OpTopicsInterested;
+            delega.OpLocationsInterested = model.OpLocationsInterested;
+            delega.OpGoodTrainingMonth = model.OpGoodTrainingMonth;
+            delega.AttendanceStatus = model.AttendanceStatus;
+            if (_bookingService.UpdateDelegate(delega))
+            {
+                return Json(new
+                {
+                    IsSuccess = true,
+                    Data = new
+                    {
+                        delega.ID,
+                        delega.OverallFeedbacks,
+                        delega.OpTopicsInterested,
+                        delega.OpLocationsInterested,
+                        delega.OpGoodTrainingMonth,
+                        delega.AttendanceStatusDisplay,
+                    }
+                });
+            }
+            return Json(new { IsSuccess = false, Message = "Update failed" });
+        }
+
+        [DisplayName(@"Edit Company")]
+        public ActionResult EditCompany(int id)
+        {
+            var delega = _bookingService.GetAllBookings(m => m.CompanyID == id).FirstOrDefault();
+            return PartialView(delega);
+        }
+
+        [DisplayName(@"Edit Company")]
+        [HttpPost]
+        public ActionResult EditCompany(int CompanyID, PaymentStatus PaymentStatus, AttendanceStatus AttendanceStatus)
+        {
+            var coms = _bookingService.GetAllBookings(m => m.CompanyID == CompanyID);
+            if (!coms.Any())
+                return Json(new { IsSuccess = false, Message = "Company not found" });
+            foreach (var booking in coms)
+            {
+                booking.PaymentStatus = PaymentStatus;
+                booking.AttendanceStatus = AttendanceStatus;
+                _bookingService.UpdateBooking(booking);
+            }
+            return Json(new
+            {
+                IsSuccess = true,
+                Data = new
+                {
+                    ID = CompanyID,
+                    PaymentStatus = PaymentStatus.DisplayName,
+                    AttendanceStatus = AttendanceStatus.DisplayName,
+                }
+            });
+        }
         [AjaxOnly]
         public ActionResult AjaxGetBookings(int eventId)
         {
@@ -963,8 +1033,14 @@ namespace PQT.Web.Controllers
                 (string.IsNullOrEmpty(name) ||
                  (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(name))) &&
                 (string.IsNullOrEmpty(email) ||
-                 (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email))||
+                 (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email)) ||
                  (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(email))) &&
+                (string.IsNullOrEmpty(role) ||
+                 (!string.IsNullOrEmpty(m.JobTitle) && m.JobTitle.ToLower().Contains(role))) &&
+                (string.IsNullOrEmpty(session) ||
+                 (!string.IsNullOrEmpty(m.Session) && m.Session.ToLower().Contains(session))) &&
+                (string.IsNullOrEmpty(status) ||
+                 (!string.IsNullOrEmpty(m.AttendanceStatusDisplay) && m.AttendanceStatusDisplay.ToLower().Contains(status))) &&
                 (string.IsNullOrEmpty(mobile) ||
                  (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(mobile)) ||
                  (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(mobile)) ||
@@ -1015,15 +1091,15 @@ namespace PQT.Web.Controllers
                     case "WorkEmail":
                         leads = leads.OrderBy(s => s.WorkEmail).ThenBy(s => s.ID);
                         break;
-                    case "Personal Email":
+                    case "PersonalEmail":
                         leads = leads.OrderBy(s => s.PersonalEmail).ThenBy(s => s.ID);
                         break;
-                    case "Job Title":
+                    case "JobTitle":
                         leads = leads.OrderBy(s => s.JobTitle).ThenBy(s => s.ID);
                         break;
-                    //case "Session":
-                    //    leads = leads.OrderBy(s => s.Session).ThenBy(s => s.ID);
-                    //    break;
+                    case "Session":
+                        leads = leads.OrderBy(s => s.Session).ThenBy(s => s.ID);
+                        break;
                     case "AttendanceStatus":
                         leads = leads.OrderBy(s => s.AttendanceStatus).ThenBy(s => s.ID);
                         break;
@@ -1084,15 +1160,15 @@ namespace PQT.Web.Controllers
                     case "WorkEmail":
                         leads = leads.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.ID);
                         break;
-                    case "Personal Email":
+                    case "PersonalEmail":
                         leads = leads.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.ID);
                         break;
-                    case "Job Title":
+                    case "JobTitle":
                         leads = leads.OrderByDescending(s => s.JobTitle).ThenBy(s => s.ID);
                         break;
-                    //case "Session":
-                    //    leads = leads.OrderByDescending(s => s.Session).ThenBy(s => s.ID);
-                    //    break;
+                    case "Session":
+                        leads = leads.OrderByDescending(s => s.Session).ThenBy(s => s.ID);
+                        break;
                     case "AttendanceStatus":
                         leads = leads.OrderByDescending(s => s.AttendanceStatus).ThenBy(s => s.ID);
                         break;
@@ -1132,13 +1208,175 @@ namespace PQT.Web.Controllers
                 {
                     m.ID,
                     CreatedTime = m.CreatedTimeStr,
-                    m.FullName,
-                    m.JobTitle,
-                    m.WorkEmail,
+                    m.Salesman,
+                    m.Country,
+                    m.Company,
+                    m.DirectLine,
+                    m.Salutation,
+                    m.FirstName,
+                    m.LastName,
                     m.MobilePhone1,
                     m.MobilePhone2,
                     m.MobilePhone3,
-                    LandLine = m.DirectLine,
+                    m.WorkEmail,
+                    m.PersonalEmail,
+                    m.JobTitle,
+                    m.Session,
+                    AttendanceStatus = m.AttendanceStatusDisplay,
+                    m.OverallFeedbacks,
+                    m.OpTopicsInterested,
+                    m.OpLocationsInterested,
+                    m.OpGoodTrainingMonth,
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [AjaxOnly]
+        public ActionResult AjaxGetCompaniesApproved(int eventId)
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+            var companyName = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("CompanyName") != null && Request.Form.GetValues("CompanyName").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                companyName = Request.Form.GetValues("CompanyName").FirstOrDefault().Trim().ToLower();
+            }
+            var countryName = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("CountryName") != null && Request.Form.GetValues("CountryName").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                countryName = Request.Form.GetValues("CountryName").FirstOrDefault().Trim().ToLower();
+            }
+            var attendanceStatus = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("AttendanceStatus") != null && Request.Form.GetValues("AttendanceStatus").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                attendanceStatus = Request.Form.GetValues("AttendanceStatus").FirstOrDefault().Trim().ToLower();
+            }
+            var paymentStatus = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("PaymentStatus") != null && Request.Form.GetValues("PaymentStatus").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                paymentStatus = Request.Form.GetValues("PaymentStatus").FirstOrDefault().Trim().ToLower();
+            }
+
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+
+            IEnumerable<Booking> bookings = _bookingService.GetAllBookings(m =>
+                m.EventID == eventId && m.BookingStatusRecord == BookingStatus.Approved &&
+                (string.IsNullOrEmpty(countryName) ||
+                 (m.Company != null && m.Company.CountryName.ToLower().Contains(countryName))) &&
+                (string.IsNullOrEmpty(companyName) ||
+                 (m.Company != null && m.Company.CompanyName.ToLower().Contains(companyName))) &&
+                (string.IsNullOrEmpty(attendanceStatus) ||
+                 (m.AttendanceStatusDisplay != null &&
+                  m.AttendanceStatusDisplay.ToLower().Contains(attendanceStatus))) &&
+                (string.IsNullOrEmpty(paymentStatus) ||
+                 (m.PaymentStatusDisplay != null && m.PaymentStatusDisplay.ToLower().Contains(paymentStatus))));
+
+            IEnumerable<Booking> companies = bookings.DistinctBy(m => m.CompanyID).ToList();
+            foreach (var company in companies)
+            {
+                var deleNo = bookings.Where(m => m.CompanyID == company.CompanyID).Sum(m => m.DelegateNumber);
+                company.DelegateNumber = deleNo;
+            }
+
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "Country":
+                        companies = companies.OrderBy(s => s.Company.CountryName).ThenBy(s => s.ID);
+                        break;
+                    case "DelegateNumber":
+                        companies = companies.OrderBy(s => s.DelegateNumber).ThenBy(s => s.ID);
+                        break;
+                    case "AttendanceStatus":
+                        companies = companies.OrderBy(s => s.AttendanceStatusDisplay).ThenBy(s => s.ID);
+                        break;
+                    case "PaymentStatus":
+                        companies = companies.OrderBy(s => s.AttendanceStatusDisplay).ThenBy(s => s.ID);
+                        break;
+                    case "CompanyName":
+                        companies = companies.OrderBy(s => s.CompanyName).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        companies = companies.OrderBy(s => s.ID);
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "Country":
+                        companies = companies.OrderByDescending(s => s.Company.CountryName).ThenBy(s => s.ID);
+                        break;
+                    case "DelegateNumber":
+                        companies = companies.OrderByDescending(s => s.DelegateNumber).ThenBy(s => s.ID);
+                        break;
+                    case "AttendanceStatus":
+                        companies = companies.OrderByDescending(s => s.AttendanceStatusDisplay).ThenBy(s => s.ID);
+                        break;
+                    case "PaymentStatus":
+                        companies = companies.OrderByDescending(s => s.PaymentStatusDisplay).ThenBy(s => s.ID);
+                        break;
+                    case "CompanyName":
+                        companies = companies.OrderByDescending(s => s.CompanyName).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        companies = companies.OrderByDescending(s => s.ID);
+                        break;
+                }
+            }
+
+
+            recordsTotal = companies.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            IEnumerable<Booking> data;
+            if (pageSize < 1)
+            {
+                data = companies.Skip(skip).ToList();
+            }
+            else
+            {
+                data = companies.Skip(skip).Take(pageSize).ToList();
+            }
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    ID = m.CompanyID,
+                    Country = m.Company.CountryName,
+                    m.CompanyName,
+                    m.DelegateNumber,
+                    AttendanceStatus = m.AttendanceStatusDisplay,
+                    PaymentStatus = m.PaymentStatusDisplay,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

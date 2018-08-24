@@ -60,5 +60,17 @@ namespace PQT.Domain.Abstract
         bool DeleteOfficeLocation(int id);
         #endregion OfficeLocation
 
+
+
+        #region VenueInfo
+        VenueInfo GetVenueInfo(int id);
+        bool UpdateVenueInfo(VenueInfo holiday);
+        #endregion VenueInfo
+
+        #region AccomodationInfo
+        AccomodationInfo GetAccomodationInfo(int id);
+        bool UpdateAccomodationInfo(AccomodationInfo holiday);
+        #endregion AccomodationInfo
+
     }
 }

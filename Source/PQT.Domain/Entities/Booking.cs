@@ -178,16 +178,23 @@ namespace PQT.Domain.Entities
             }
         }
 
+        private int _delegateNumber;
+        [NotMapped]
         public int DelegateNumber
         {
             get
             {
+                if (_delegateNumber > 0)
+                {
+                    return _delegateNumber;
+                }
                 if (Delegates != null)
                 {
                     return Delegates.Count;
                 }
                 return 0;
             }
+            set { _delegateNumber = value; }
         }
 
         public object Serializing()

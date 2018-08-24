@@ -105,6 +105,35 @@ namespace PQT.Web.Infrastructure
             _events.Add(new Event(exist));
             return true;
         }
+        public override Event UpdateEventOperation(int id, VenueInfo venueInfo, AccomodationInfo accomodationInfo, DriverInfo driverInfo, PhotographerInfo photographerInfo, LocalVisaAgentInfo localVisaAgentInfo, PostEventInfo postEventInfo)
+        {
+            var exist = EventRepository.UpdateEventOperation(id, venueInfo, accomodationInfo, driverInfo,
+                photographerInfo, localVisaAgentInfo, postEventInfo);
+            if (exist == null)
+            {
+                return null;
+            }
+
+            _events.Remove(GetEvent(id));
+            foreach (var trainer in exist.EventSessions.Where(m => m.Trainer == null).ToList())
+            {
+                trainer.Trainer = TrainerService.GetTrainer((int)trainer.TrainerID);
+            }
+            foreach (var eventCompany in exist.EventCompanies.Where(m => m.Company == null).ToList())
+            {
+                var com = CompanyRepository.GetCompany(eventCompany.CompanyID);
+                if (com != null)
+                {
+                    eventCompany.Company = com;
+                }
+                else
+                {
+                    exist.EventCompanies.Remove(eventCompany);
+                }
+            }
+            _events.Add(new Event(exist));
+            return exist;
+        }
 
         public override Event UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> groups, IEnumerable<int> users)
         {
@@ -256,6 +285,34 @@ namespace PQT.Web.Infrastructure
                 com.Remarks = info.Remarks;
                 com.ManagerUsers = info.ManagerUsers;
                 com.CreatedTime = info.CreatedTime;
+                com.UpdatedTime = info.UpdatedTime;
+            }
+        }
+        public override void UpdateVenueInfo(VenueInfo info)
+        {
+            var coms = _events.Where(m => m.VenueInfoID == info.ID).Select(m => m.VenueInfo).ToList();
+            foreach (var com in coms)
+            {
+                com.HotelVenue = info.HotelVenue;
+                com.HotelContract = info.HotelContract;
+                com.RejectMessage = info.RejectMessage;
+                com.Status = info.Status;
+                com.EntryId = info.EntryId;
+                com.UserId = info.UserId;
+                com.UpdatedTime = info.UpdatedTime;
+            }
+        }
+        public override void UpdateAccomodationInfo(AccomodationInfo info)
+        {
+            var coms = _events.Where(m => m.AccomodationInfoID == info.ID).Select(m => m.AccomodationInfo).ToList();
+            foreach (var com in coms)
+            {
+                com.HotelAccomodation = info.HotelAccomodation;
+                com.HotelContract = info.HotelContract;
+                com.RejectMessage = info.RejectMessage;
+                com.Status = info.Status;
+                com.EntryId = info.EntryId;
+                com.UserId = info.UserId;
                 com.UpdatedTime = info.UpdatedTime;
             }
         }

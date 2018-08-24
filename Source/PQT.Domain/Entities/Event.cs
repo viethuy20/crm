@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using NS;
+using PQT.Domain.Enum;
 
 namespace PQT.Domain.Entities
 {
@@ -28,7 +29,6 @@ namespace PQT.Domain.Entities
             EventCode = e.EventCode;
             EventName = e.EventName;
             BackgroundColor = e.BackgroundColor;
-            HotelVenue = e.HotelVenue;
             SalesRules = e.SalesRules;
             PrimaryJobtitleKeywords = e.PrimaryJobtitleKeywords;
             SecondaryJobtitleKeywords = e.SecondaryJobtitleKeywords;
@@ -72,7 +72,31 @@ namespace PQT.Domain.Entities
         public string EventCode { get; set; }
         public string EventName { get; set; }
         public string BackgroundColor { get; set; }
-        public string HotelVenue { get; set; }//venue of event
+
+        public string HotelVenue
+        {
+            get
+            {
+                if (VenueInfo != null && VenueInfo.Status == InfoStatus.Approved)
+                {
+                    return VenueInfo.HotelVenue;
+                }
+                return "";
+            }
+        }
+
+        public string HotelAccomodation
+        {
+            get
+            {
+                if (AccomodationInfo != null)
+                {
+                    return AccomodationInfo.HotelAccomodation;
+                }
+                return "";
+            }
+        }
+
         public string SalesRules { get; set; }//Sales Rules
         public string PrimaryJobtitleKeywords { get; set; }
         public string SecondaryJobtitleKeywords { get; set; }

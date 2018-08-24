@@ -23,12 +23,14 @@ namespace PQT.Web.Controllers
         private readonly IEventService _repo;
         private readonly ICompanyRepository _comRepo;
         private readonly ILeadService _leadService;
+        private readonly IUnitRepository _unitRepository;
 
-        public EventController(IEventService repo, ICompanyRepository comRepo, ILeadService leadService)
+        public EventController(IEventService repo, ICompanyRepository comRepo, ILeadService leadService, IUnitRepository unitRepository)
         {
             _repo = repo;
             _comRepo = comRepo;
             _leadService = leadService;
+            _unitRepository = unitRepository;
         }
 
         [DisplayName(@"Event management")]
@@ -304,6 +306,7 @@ namespace PQT.Web.Controllers
             var eve = _repo.GetEvent(id);
             return PartialView(eve);
         }
+
         [HttpPost]
         [DisplayName(@"End Event")]
         public ActionResult EndEvent(int ID, EventStatus EventStatus)
@@ -404,7 +407,6 @@ namespace PQT.Web.Controllers
             return Json(false);
         }
 
-
         [AjaxOnly]
         public ActionResult GetPossibleEvent(string q)
         {
@@ -413,7 +415,6 @@ namespace PQT.Web.Controllers
                 (m.EventCode != null && m.EventCode.ToLower().Contains(q.ToLower())));
             return Json(bookings.Select(m => new { id = m.ID, text = m.EventCode + " - " + m.EventName }), JsonRequestBehavior.AllowGet);
         }
-
 
         [AjaxOnly]
         public ActionResult AjaxGetEventAlls()
@@ -565,7 +566,6 @@ namespace PQT.Web.Controllers
             };
             return Json(json, JsonRequestBehavior.AllowGet);
         }
-
 
         [AjaxOnly]
         public ActionResult AjaxGetEventCompanies(int eventId)

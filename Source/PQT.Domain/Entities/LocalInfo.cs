@@ -29,6 +29,16 @@ namespace PQT.Domain.Entities
         public string AttendanceUpload { get; set; }
         public string DelegateFeedback { get; set; }
         public string FeedbackUpload { get; set; }
+
+
+        public string AttendanceUrl
+        {
+            get { return "/data/postevent/" + AttendanceUpload; }
+        }
+        public string FeedbackUrl
+        {
+            get { return "/data/postevent/" + FeedbackUpload; }
+        }
     }
 
 }

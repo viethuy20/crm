@@ -335,5 +335,33 @@ namespace PQT.Domain.Concrete
         }
 
         #endregion
+
+
+        #region VenueInfo
+
+        public VenueInfo GetVenueInfo(int id)
+        {
+            return Get<VenueInfo>(id);
+        }
+
+        public bool UpdateVenueInfo(VenueInfo info)
+        {
+            return Update(info);
+        }
+
+        #endregion
+
+        #region AccomodationInfo
+        public AccomodationInfo GetAccomodationInfo(int id)
+        {
+            return Get<AccomodationInfo>(id);
+        }
+
+        public bool UpdateAccomodationInfo(AccomodationInfo info)
+        {
+            return Update(info);
+        }
+
+        #endregion
     }
 }

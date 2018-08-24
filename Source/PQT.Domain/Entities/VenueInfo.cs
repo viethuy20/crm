@@ -12,22 +12,18 @@ namespace PQT.Domain.Entities
     {
         #region Factory
 
-        protected VenueInfo(int entryID, InfoStatus status, int? userId, string hotelVenue,string hotelContract)
+        public VenueInfo()
         {
-            EntryId = entryID;
-            UserId = userId;
-            Status = status;
-            HotelVenue = hotelVenue;
-            HotelContract = hotelContract;
             UpdatedTime = DateTime.Now;
+            Status = InfoStatus.Request;
         }
-
         #endregion
 
         #region Properties
 
         public string HotelVenue { get; set; }
         public string HotelContract { get; set; }
+        public string RejectMessage { get; set; }
         public int EntryId { get; set; }
         public int? UserId { get; set; }
         public DateTime UpdatedTime { get; set; }
@@ -36,7 +32,11 @@ namespace PQT.Domain.Entities
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
         #endregion
-        
+
+        public string StatusDisplay
+        {
+            get { return Status.DisplayName; }
+        }
         public string UserDisplay()
         {
             return User != null ? User.DisplayName : "";
@@ -44,6 +44,12 @@ namespace PQT.Domain.Entities
         public override string ToString()
         {
             return Status.DisplayName;
+        }
+
+
+        public string ContractUrl
+        {
+            get { return "/data/venue/" + HotelContract; }
         }
     }
 }

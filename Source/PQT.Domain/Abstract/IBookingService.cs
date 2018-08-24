@@ -19,5 +19,9 @@ namespace PQT.Domain.Abstract
         bool UpdateBooking(Booking info, BookingStatus status, int? userId, string message = "");
         bool UpdateBooking(Booking info, IEnumerable<int> sessionIds, int? userId, string message = "");
         bool DeleteBooking(int id);
+
+
+        PQT.Domain.Entities.Delegate GetDelegate(int id);
+        bool UpdateDelegate(PQT.Domain.Entities.Delegate info);
     }
 }

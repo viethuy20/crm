@@ -50,7 +50,13 @@ namespace PQT.Domain.Entities
                 return CreatedTime.ToString("dd/MM/yyyy HH:mm");
             }
         }
-
+        public string Session
+        {
+            get
+            {
+                return string.Join(", ", EventSessions.Select(m => m.SessionTitle));
+            }
+        }
         [NotMapped]
         public string Country { get; set; }
         [NotMapped]

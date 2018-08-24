@@ -1,0 +1,789 @@
+﻿@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.EventModel
+
+@{
+    ViewBag.Title = "Event Detail for Operation";
+}
+
+<style>
+    #grid_companies tbody tr {
+        cursor: pointer;
+    }
+
+        #grid_companies tbody tr.Tier1 {
+            color: #a94442;
+            background-color: #ffdad7;
+        }
+
+            #grid_companies tbody tr.Tier1.selected {
+                color: #a94442;
+                background-color: #fcaca6;
+            }
+
+        #grid_companies tbody tr.Tier2 {
+            color: #31708f;
+            background-color: #d8edff !important;
+        }
+
+            #grid_companies tbody tr.Tier2.selected {
+                color: #31708f;
+                background-color: #add9ff !important;
+            }
+
+        #grid_companies tbody tr.Tier0.selected {
+            color: #313534;
+            background-color: #e5e6e6 !important;
+        }
+
+    .card .Rejected {
+        background-color: #fad7d4 !important;
+    }
+
+        .card .Rejected input {
+            color: #a94442;
+        }
+
+    .card .Approved {
+        background-color: #d4fad6 !important;
+    }
+
+        .card .Approved input {
+            color: #3c763d;
+        }
+</style>
+<section>
+
+    <div class="row section-header" style="height: auto">
+        <h2 class="text-primary col-sm-3">@ViewBag.Title</h2>
+    </div>
+    <div class="row">
+        <div class="col-sm-12" style="padding-right: 24px; padding-bottom: 12px">
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+            @if (CurrentUser.HasPermission("Operation", "OpeEdit"))
+            {
+                @Html.Bootstrap().ActionLinkButton("Edit", "OpeEdit").RouteValues(new { id = Model.Event.ID }).Class("btn-primary").PrependIcon("md md-edit")
+            }
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body form">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.EventCode).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.EventCode)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.EventStatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.EventStatus)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.BackgroundColor).HtmlAttributes(new { @style = "color:#fff;background:" + Model.Event.BackgroundColor }).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.BackgroundColor).LabelText("Event Color")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.EventName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.EventName)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.StartDate)">
+                            @Model.Event.StartDate.ToString("dd MMM yyyy")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.StartDate).LabelText("Event First Day")
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.EndDate)">
+                            @Model.Event.EndDate.ToString("dd MMM yyyy")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.EndDate).LabelText("Event Last Day")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.DateOfConfirmation)">
+                            @(Model.Event.DateOfConfirmation != null ? Convert.ToDateTime(Model.Event.DateOfConfirmation).ToString("dd MMM yyyy") : "")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.DateOfConfirmation)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.ClosingDate)">
+                            @(Model.Event.ClosingDate != null ? Convert.ToDateTime(Model.Event.ClosingDate).ToString("dd MMM yyyy") : "")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.ClosingDate).LabelText("Date of Closing Sales")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.DateOfOpen)">
+                            @(Model.Event.DateOfOpen != null ? Convert.ToDateTime(Model.Event.DateOfOpen).ToString("dd MMM yyyy") : "")
+                        </div>
+                        @Html.Bootstrap().LabelFor(m => m.Event.DateOfOpen).LabelText("Date Of Open (Cross Sell)")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.FinanceEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.FinanceEmail).LabelText("Finance")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.OperationEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.OperationEmail).LabelText("Operation")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.ProductionEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.ProductionEmail).LabelText("Production")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.SalesEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.SalesEmail).LabelText("Sales")
+                    </div>
+                </div>
+                <div class=" col-sm-6">
+                    <div class="form-group">
+                        @if (!string.IsNullOrEmpty(Model.Event.Brochure))
+                        {
+                            @Html.Bootstrap().Link(Model.Event.Brochure, FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                        }
+                        @Html.Bootstrap().LabelFor(m => m.Event.Brochure)
+                    </div>
+                </div>
+                <div class=" col-sm-6">
+                    <div class="form-group">
+                        @if (!string.IsNullOrEmpty(Model.Event.RegContract))
+                        {
+                            @Html.Bootstrap().Link(Model.Event.RegContract, FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.RegContract)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                        }
+                        @Html.Bootstrap().LabelFor(m => m.Event.RegContract)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Event Sessions</header>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <table class="table no-margin">
+                    <thead>
+                        <tr>
+                            <th>Session Title</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Trainer Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach (var item in Model.Event.EventSessions)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.SessionTitle
+                                    </td>
+                                    <td>
+                                        @item.StartDate.ToString("dd MMM yyyy")
+                                    </td>
+                                    <td>
+                                        @item.EndDate.ToString("dd MMM yyyy")
+                                    </td>
+                                    <td>
+                                        @item.TrainerName
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div><!--end .card-body -->
+    </div>
+
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Delegate info</header>
+        </div>
+        <div class="card-body">
+            <div class="row table-responsive">
+                <table class="table no-margin" id="grid_delegates">
+                    <thead>
+                        <tr>
+                            <th style="white-space: nowrap">Created Time</th>
+                            <th>Salesman</th>
+                            <th>Country</th>
+                            <th>Company</th>
+                            <th style="white-space: nowrap">Direct Line</th>
+                            <th>Salutation</th>
+                            <th style="white-space: nowrap">First Name</th>
+                            <th style="white-space: nowrap">Last Name</th>
+                            <th style="white-space: nowrap">Mobile Phone1</th>
+                            <th style="white-space: nowrap">Mobile Phone2</th>
+                            <th style="white-space: nowrap">Mobile Phone3</th>
+                            <th style="white-space: nowrap">Work Email</th>
+                            <th style="white-space: nowrap">Personal Email</th>
+                            <th style="white-space: nowrap">Job Title</th>
+                            <th>Session</th>
+                            <th style="white-space: nowrap">Attendance Status</th>
+                            <th style="white-space: nowrap">Overall Feedbacks</th>
+                            <th style="white-space: nowrap">Op-Topics Interested</th>
+                            <th style="white-space: nowrap">Op-Locations Interested</th>
+                            <th style="white-space: nowrap">Op-Good Training Month</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="row">
+                <table class="table no-margin" id="grid_companies">
+                    <thead>
+                        <tr>
+                            <th>Country</th>
+                            <th>Company</th>
+                            <th>Delegate number</th>
+                            <th>Attendance Status</th>
+                            <th>Payment Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div><!--end .card-body -->
+    </div>
+
+    <div class="card card-underline">
+        <div class="card-head">
+            <div class="tools">
+                <div class="btn-group" style="margin-right: 15px;">
+                    @if (CurrentUser.HasPermission("Operation", "ApprovalHotel") && (Model.Event.VenueInfo != null && Model.Event.VenueInfo.Status == InfoStatus.Request))
+                    {
+                        <a href="#" data-acttype="venue" data-id="@Model.Event.VenueInfo.ID" class="btn btn-success approve_info"><i class="fa fa-check"></i> Approve</a>
+                    }
+                    @if (CurrentUser.HasPermission("Operation", "RejectHotel") && (Model.Event.VenueInfo != null && Model.Event.VenueInfo.Status == InfoStatus.Request))
+                    {
+                        <a href="@Url.Action("RejectHotel", new {id = Model.Event.VenueInfo.ID,actType="venue"})" class="btn btn-danger simple-ajax-popup-align-top"><i class="fa fa-close"></i> Reject</a>
+                    }
+                </div>
+            </div>
+            <header>Venue Info</header>
+        </div>
+        <div class="card-body @(Model.Event.VenueInfo!=null?Model.Event.VenueInfo.StatusDisplay:"")">
+            <div class="row form">
+                @if (Model.Event.VenueInfo != null)
+                {
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.VenueInfo.HotelVenue).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.VenueInfo.HotelVenue)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.VenueInfo.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.VenueInfo.Status)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <div class="form-control" readonly name="@Html.NameFor(m=>m.Event.VenueInfo.HotelContract)">
+                                <a href="@Model.Event.VenueInfo.HotelContract" target="_blank">@Model.Event.VenueInfo.HotelContract</a>
+                            </div>
+                            @Html.Bootstrap().LabelFor(m => m.Event.VenueInfo.HotelContract)
+                        </div>
+                    </div>
+                    if (!string.IsNullOrEmpty(Model.Event.AccomodationInfo.RejectMessage))
+                    {
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.Event.VenueInfo.RejectMessage).Class("form-control").Disabled().ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.Event.VenueInfo.RejectMessage)
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div><!--end .card-body -->
+    </div>
+    <div class="card card-underline">
+        <div class="card-head">
+            <div class="tools">
+                <div class="btn-group" style="margin-right: 15px;">
+                    @if (CurrentUser.HasPermission("Operation", "ApprovalHotel") && (Model.Event.AccomodationInfo != null && Model.Event.AccomodationInfo.Status == InfoStatus.Request))
+            {
+                        <a href="#" data-acttype="accomodation" data-id="@Model.Event.AccomodationInfo.ID" class="btn btn-success approve_info"><i class="fa fa-check"></i> Approve</a>
+                    }
+                    @if (CurrentUser.HasPermission("Operation", "RejectHotel") && (Model.Event.AccomodationInfo != null && Model.Event.AccomodationInfo.Status == InfoStatus.Request))
+            {
+                        <a href="@Url.Action("RejectHotel", new {id = Model.Event.AccomodationInfo.ID,actType= "accomodation" })" class="btn btn-danger simple-ajax-popup-align-top"><i class="fa fa-close"></i> Reject</a>
+                    }
+                </div>
+            </div>
+            <header>Accomodation Info</header>
+        </div>
+        <div class="card-body @(Model.Event.AccomodationInfo!=null?Model.Event.AccomodationInfo.StatusDisplay:"")">
+            <div class="row form">
+                @if (Model.Event.AccomodationInfo != null)
+                {
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.AccomodationInfo.HotelAccomodation).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.AccomodationInfo.HotelAccomodation)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.AccomodationInfo.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.AccomodationInfo.Status)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <div class="form-control" readonly name="@Html.NameFor(m => m.Event.AccomodationInfo.HotelContract)">
+                                <a href="@Model.Event.AccomodationInfo.HotelContract" target="_blank">@Model.Event.AccomodationInfo.HotelContract</a>
+                            </div>
+                            @Html.Bootstrap().LabelFor(m => m.Event.AccomodationInfo.HotelContract)
+                        </div>
+                    </div>
+                    if (!string.IsNullOrEmpty(Model.Event.AccomodationInfo.RejectMessage))
+                    {
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.Event.AccomodationInfo.RejectMessage).Class("form-control").Disabled().ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.Event.AccomodationInfo.RejectMessage)
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div><!--end .card-body -->
+    </div>
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Local Info</header>
+        </div>
+        <div class="card-body">
+            <div class="row form">
+                @if (Model.Event.DriverInfo != null)
+                {
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.DriverInfo.Name).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.DriverInfo.Name).LabelText("Driver Name")
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.DriverInfo.Contact).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.DriverInfo.Contact)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.DriverInfo.Email).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.DriverInfo.Email)
+                        </div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.DriverInfo.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.DriverInfo.Remarks)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.DriverInfo.PricingUnit).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.DriverInfo.PricingUnit)
+                        </div>
+                    </div>
+                }
+                @if (Model.Event.PhotographerInfo != null)
+                {
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.PhotographerInfo.Name).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.PhotographerInfo.Name).LabelText("Photographer Name")
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.PhotographerInfo.Contact).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.PhotographerInfo.Contact)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.PhotographerInfo.Email).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.PhotographerInfo.Email)
+                        </div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.PhotographerInfo.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.PhotographerInfo.Remarks)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.PhotographerInfo.PricingUnit).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.PhotographerInfo.PricingUnit)
+                        </div>
+                    </div>
+                }
+                @if (Model.Event.LocalVisaAgentInfo != null)
+                {
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.LocalVisaAgentInfo.Name).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.LocalVisaAgentInfo.Name).LabelText("Local Visa Agent Name")
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.LocalVisaAgentInfo.Contact).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.LocalVisaAgentInfo.Contact)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.LocalVisaAgentInfo.Email).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.LocalVisaAgentInfo.Email)
+                        </div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.LocalVisaAgentInfo.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.LocalVisaAgentInfo.Remarks)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.LocalVisaAgentInfo.PricingUnit).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.LocalVisaAgentInfo.PricingUnit)
+                        </div>
+                    </div>
+                }
+            </div>
+        </div><!--end .card-body -->
+    </div>
+
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Post Event Info</header>
+        </div>
+        <div class="card-body">
+            <div class="row form">
+                @if (Model.Event.PostEventInfo != null)
+            {
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.PostEventInfo.DelegateAttendance).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.PostEventInfo.DelegateAttendance)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <div class="form-control" readonly name="@Html.NameFor(m => m.Event.PostEventInfo.AttendanceUpload)">
+                                <a href="@Model.Event.PostEventInfo.AttendanceUrl" target="_blank">@Model.Event.PostEventInfo.AttendanceUpload</a>
+                            </div>
+                            @Html.Bootstrap().LabelFor(m => m.Event.PostEventInfo.AttendanceUpload)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.PostEventInfo.DelegateFeedback).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.PostEventInfo.DelegateFeedback)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <div class="form-control" readonly name="@Html.NameFor(m => m.Event.PostEventInfo.FeedbackUpload)">
+                                <a href="@Model.Event.PostEventInfo.FeedbackUrl" target="_blank">@Model.Event.PostEventInfo.FeedbackUpload</a>
+                            </div>
+                            @Html.Bootstrap().LabelFor(m => m.Event.PostEventInfo.FeedbackUpload)
+                        </div>
+                    </div>
+                }
+            </div>
+        </div><!--end .card-body -->
+    </div>
+
+</section>
+
+@Html.Script(
+    @<script>
+        var tableDelegates = $("#grid_delegates");
+        tableDelegates.dataTable({
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "stateSave": false,
+                "ajax": {
+                    "url": "@Url.Action("AjaxGetDelegates","Booking")?eventId=@Model.Event.ID",
+                    "type": "POST",
+                    "datatype": "json",
+                    "data": function(d) {
+                        d.Country = $('#grid_delegates_filter').find('input[name="search_country"]').val();
+                        d.Company = $('#grid_delegates_filter').find('input[name="search_company"]').val();
+                        d.Name = $('#grid_delegates_filter').find('input[name="search_name"]').val();
+                        d.Mobile = $('#grid_delegates_filter').find('input[name="search_mobile"]').val();
+                        d.Email = $('#grid_delegates_filter').find('input[name="search_email"]').val();
+                        d.Role = $('#grid_delegates_filter').find('input[name="search_role"]').val();
+                        d.Session = $('#grid_delegates_filter').find('input[name="search_session"]').val();
+                        d.Status = $('#grid_delegates_filter').find('input[name="search_status"]').val();
+                    }
+                },
+                "columns": [
+                    { "data": "CreatedTime", "name": "CreatedTime", "orderable": true },
+                    { "data": "Salesman", "name": "Salesman", "orderable": true },
+                    { "data": "Country", "name": "Country", "orderable": true },
+                    { "data": "Company", "name": "Company", "orderable": true },
+                    { "data": "DirectLine", "name": "DirectLine", "orderable": true },
+                    { "data": "Salutation", "name": "Salutation", "orderable": true },
+                    { "data": "FirstName", "name": "FirstName", "orderable": true },
+                    { "data": "LastName", "name": "LastName", "orderable": true },
+                    { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
+                    { "data": "MobilePhone2", "name": "MobilePhone2", "orderable": true },
+                    { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
+                    { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
+                    { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
+                    { "data": "JobTitle", "name": "JobTitle", "orderable": true },
+                    { "data": "Session", "name": "Session", "orderable": true },
+                    { "data": "AttendanceStatus", "name": "AttendanceStatus", "orderable": true },
+                    { "data": "OverallFeedbacks", "name": "OverallFeedbacks", "orderable": true },
+                    { "data": "OpTopicsInterested", "name": "OpTopicsInterested", "orderable": true },
+                    { "data": "OpLocationsInterested", "name": "OpLocationsInterested", "orderable": true },
+                    { "data": "OpGoodTrainingMonth", "name": "OpGoodTrainingMonth", "orderable": true },
+                    { "data": "ID", "name": "ID", "orderable": true },
+                ],
+                "iDisplayLength": 25,
+                "aaSorting": [[0, "asc"]],
+                "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    //$(nRow).addClass('Tier' + aData["Tier"]);
+                    $(nRow).attr("data-id", aData["ID"]);
+                    if ('@CurrentUser.HasPermission("Booking", "EditDelegate")' == 'True') {
+                        $(nRow).find('td:eq(20)')
+                            .html('<a class="simple-ajax-popup-align-top" href="@Url.Action("EditDelegate", "Booking")/' + aData["ID"] + '"><i class="md md-edit text-info"> Edit</i></a>');
+                    } else {
+                        $(nRow).find('td:eq(20)')
+                            .html('');
+                    }
+                },
+                initComplete: function() {
+                    var _table = this;
+                    var filter_box = _table.parent().find("#grid_delegates_filter");
+                    var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
+                    htmlFilter +='<label>Company:<input type="search" name="search_company" /></label>';
+                    htmlFilter += '<label>Name:<input type="search" name="search_name" /></label>';
+                    htmlFilter += '<label>Mobile:<input type="search" name="search_mobile" /></label>';
+                    htmlFilter += '<label>Email:<input type="search" name="search_email" /></label>';
+                    htmlFilter += '<label>Role:<input type="search" name="search_role" /></label>';
+                    htmlFilter += '<label>Session:<input type="search" name="search_session" /></label>';
+                    htmlFilter += '<label>Status:<input type="search" name="search_status" /></label>';
+                    filter_box.html(htmlFilter);
+
+                    searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
+                },
+            });
+            function searchBindingKeyUp(elementSearch,tableElement) {
+                elementSearch.unbind();
+                var timeOutTyping;
+                elementSearch.bind('keyup',
+                    function(e) {
+                        clearTimeout(timeOutTyping);
+                        timeOutTyping = setTimeout(function() {
+                            tableElement.fnFilter(elementSearch.eq(0).val());
+                            },
+                            600);
+                    });
+        }
+
+
+        $(document).on('click', '.approve_info', function (e) {
+            e.preventDefault();
+            var self = $(this);
+            bootbox.confirm("@Resource.ConfirmApprove", function (isOK) {
+                if (isOK) {
+                    $.ajax({
+                        url: '@Url.Action("ApprovalHotel")?id=' + self.data('id') + '&actType=' + self.data('acttype'),
+                        type: 'POST',
+                        success: function (data) {
+                            if (data.IsSuccess) {
+                                location.reload();
+                            } else {
+                                toastr.error(data.Message);
+                            }
+                        },
+                        error: function () {
+                            toastr.error("Approve failed");
+                        }
+                    });
+                }
+            });
+        });
+
+        function onFailRejectAction() {
+            toastr.error('@Resource.SaveError');
+        }
+        function onSuccessRejectAction(data) {
+            if (data.IsSuccess) {
+                toastr.success("Reject successful");
+                $.magnificPopup.close();
+                location.reload();
+            } else {
+                toastr.error(data.Message);
+            }
+        }
+
+
+        function onFailEditDelegate() {
+            toastr.error('@Resource.SaveError');
+        }
+        function onSuccessEditDelegate(data) {
+            if (data.IsSuccess) {
+                toastr.success("Updated successful");
+                updateDelegate(data.Data);
+                $.magnificPopup.close();
+                //location.reload();
+            } else {
+                toastr.error(data.Message);
+            }
+        }
+
+
+        function updateDelegate(data) {
+            var tr = $(tableDelegates.fnGetNodes());
+            tr.each(function (index, item) {
+                if ($(item).data('id') == data.ID) {
+                    var td = $(item).find("td");
+                    if (td.length > 0) {
+                        $(td[15]).text(data.AttendanceStatusDisplay);
+                        if (data.OverallFeedbacks!=null)
+                            $(td[16]).text(data.OverallFeedbacks);
+                        if (data.OpTopicsInterested != null)
+                            $(td[17]).text(data.OpTopicsInterested);
+                        if (data.OpLocationsInterested != null)
+                            $(td[18]).text(data.OpLocationsInterested);
+                        if (data.OpGoodTrainingMonth != null)
+                            $(td[19]).text(data.OpGoodTrainingMonth);
+                    }
+                }
+            });
+        }
+        function onFailEditCompany() {
+            toastr.error('@Resource.SaveError');
+        }
+        function onSuccessEditCompany(data) {
+            if (data.IsSuccess) {
+                toastr.success("Updated successful");
+                updateCompany(data.Data);
+                $.magnificPopup.close();
+            } else {
+                toastr.error(data.Message);
+            }
+        }
+
+
+        function updateCompany(data) {
+            var tr = $(tableCompanies.fnGetNodes());
+            tr.each(function (index, item) {
+                if ($(item).data('id') == data.ID) {
+                    var td = $(item).find("td");
+                    if (td.length > 0) {
+                        $(td[3]).text(data.PaymentStatus);
+                        $(td[4]).text(data.AttendanceStatus);
+                    }
+                }
+            });
+        }
+    </script>)
+
+
+@Html.Script(
+    @<script>
+         var tableCompanies = $("#grid_companies");
+        tableCompanies.dataTable({
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "orderMulti": false, // for disable multiple column at once
+                "stateSave": false,
+                "ajax": {
+                    "url": "@Url.Action("AjaxGetCompaniesApproved","Booking")?eventId=@Model.Event.ID",
+                    "type": "POST",
+                    "datatype": "json",
+                    "data": function (d) {
+                        d.CountryName = $('input[name="search_country"]').val();
+                        d.CompanyName = $('input[name="search_name"]').val();
+                        d.AttendanceStatus = $('input[name="search_attendance"]').val();
+                        d.PaymentStatus = $('input[name="search_payment"]').val();;
+                    }
+                },
+                "columns": [
+                    { "data": "Country", "name": "Country", "orderable": true },
+                    { "data": "CompanyName", "name": "CompanyName", "orderable": true },
+                    { "data": "DelegateNumber", "name": "DelegateNumber", "orderable": true },
+                    { "data": "AttendanceStatus", "name": "AttendanceStatus", "orderable": true },
+                    { "data": "PaymentStatus", "name": "PaymentStatus", "orderable": true },
+                    { "data": "ID", "name": "ID", "orderable": false },
+                ],
+                "iDisplayLength": 25,
+                "aaSorting": [[5, "asc"]],
+                "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                    $(nRow).addClass('Tier' + aData["Tier"]);
+                    $(nRow).attr("data-id", aData["ID"]);
+                    if ('@CurrentUser.HasPermission("Booking", "EditCompany")' == 'True') {
+                        $(nRow).find('td:eq(5)')
+                            .html(
+                                '<a class="simple-ajax-popup-align-top" href="@Url.Action("EditCompany", "Booking")/' +
+                                aData["ID"] +
+                                '"><i class="md md-edit text-info"> Edit</i></a>');
+                    } else {
+                        $(nRow).find('td:eq(5)')
+                            .html('');
+                    }
+                },
+                initComplete: function() {
+                    var _table = this;
+                    var filter_box = _table.parent().find("#grid_companies_filter");
+                    var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
+                    htmlFilter +='<label>Company:<input type="search" name="search_name" /></label>';
+                    htmlFilter +='<label>Attendance:<input type="search" name="search_attendance" /></label>';
+                    htmlFilter +='<label>Payment:<input type="search" name="search_payment" /></label>';
+                    filter_box.html(htmlFilter);
+
+                    searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
+                },
+            });
+            function searchBindingKeyUp(elementSearch,tableElement) {
+                elementSearch.unbind();
+                var timeOutTyping;
+                elementSearch.bind('keyup',
+                    function(e) {
+                        clearTimeout(timeOutTyping);
+                        timeOutTyping = setTimeout(function() {
+                            tableElement.fnFilter(elementSearch.eq(0).val());
+                            },
+                            600);
+                    });
+            }
+    </script>)

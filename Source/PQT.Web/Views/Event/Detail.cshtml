@@ -10,30 +10,30 @@
         cursor: pointer;
     }
 
-    #grid_companies tbody tr.Tier1 {
-        color: #a94442;
-        background-color: #ffdad7;
-    }
+        #grid_companies tbody tr.Tier1 {
+            color: #a94442;
+            background-color: #ffdad7;
+        }
 
-    #grid_companies tbody tr.Tier1.selected {
-        color: #a94442;
-        background-color: #fcaca6;
-    }
+            #grid_companies tbody tr.Tier1.selected {
+                color: #a94442;
+                background-color: #fcaca6;
+            }
 
-    #grid_companies tbody tr.Tier2 {
-        color: #31708f;
-        background-color: #d8edff !important;
-    }
+        #grid_companies tbody tr.Tier2 {
+            color: #31708f;
+            background-color: #d8edff !important;
+        }
 
-    #grid_companies tbody tr.Tier2.selected {
-        color: #31708f;
-        background-color: #add9ff !important;
-    }
+            #grid_companies tbody tr.Tier2.selected {
+                color: #31708f;
+                background-color: #add9ff !important;
+            }
 
-    #grid_companies tbody tr.Tier0.selected {
-        color: #313534;
-        background-color: #e5e6e6 !important;
-    }
+        #grid_companies tbody tr.Tier0.selected {
+            color: #313534;
+            background-color: #e5e6e6 !important;
+        }
 </style>
 <section>
 
@@ -95,7 +95,7 @@
                 <div class="col-sm-4">
                     <div class="form-group">
                         <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.DateOfConfirmation)">
-                            @(Model.Event.DateOfConfirmation!=null?Convert.ToDateTime(Model.Event.DateOfConfirmation).ToString("dd MMM yyyy"):"")
+                            @(Model.Event.DateOfConfirmation != null ? Convert.ToDateTime(Model.Event.DateOfConfirmation).ToString("dd MMM yyyy") : "")
                         </div>
                         @Html.Bootstrap().LabelFor(m => m.Event.DateOfConfirmation)
                     </div>
@@ -103,7 +103,7 @@
                 <div class="col-sm-4">
                     <div class="form-group">
                         <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.ClosingDate)">
-                            @(Model.Event.ClosingDate != null?Convert.ToDateTime(Model.Event.ClosingDate).ToString("dd MMM yyyy"):"")
+                            @(Model.Event.ClosingDate != null ? Convert.ToDateTime(Model.Event.ClosingDate).ToString("dd MMM yyyy") : "")
                         </div>
                         @Html.Bootstrap().LabelFor(m => m.Event.ClosingDate).LabelText("Date of Closing Sales")
                     </div>
@@ -111,7 +111,7 @@
                 <div class="col-sm-4">
                     <div class="form-group">
                         <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.DateOfOpen)">
-                            @(Model.Event.DateOfOpen != null?Convert.ToDateTime(Model.Event.DateOfOpen).ToString("dd MMM yyyy"):"")
+                            @(Model.Event.DateOfOpen != null ? Convert.ToDateTime(Model.Event.DateOfOpen).ToString("dd MMM yyyy") : "")
                         </div>
                         @Html.Bootstrap().LabelFor(m => m.Event.DateOfOpen).LabelText("Date Of Open (Cross Sell)")
                     </div>
@@ -152,10 +152,16 @@
                         @Html.Bootstrap().LabelFor(m => m.Event.SecondaryJobtitleKeywords)
                     </div>
                 </div>
-                <div class="col-sm-12">
+                <div class="col-sm-6">
                     <div class="form-group">
-                        @Html.Bootstrap().TextAreaFor(m => m.Event.HotelVenue).Rows(3).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.HotelVenue).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Event.HotelVenue)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Event.HotelAccomodation).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.HotelAccomodation)
                     </div>
                 </div>
                 <div class="col-sm-12">
@@ -247,33 +253,33 @@
             <div class="row">
                 <table class="table no-margin">
                     <thead>
-                    <tr>
-                        <th>Session Title</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Trainer Name</th>
-                    </tr>
+                        <tr>
+                            <th>Session Title</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Trainer Name</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    @{
-                        foreach (var item in Model.Event.EventSessions)
-                        {
-                            <tr>
-                                <td>
-                                    @item.SessionTitle
-                                </td>
-                                <td>
-                                    @item.StartDate.ToString("dd MMM yyyy")
-                                </td>
-                                <td>
-                                    @item.EndDate.ToString("dd MMM yyyy")
-                                </td>
-                                <td>
-                                    @item.TrainerName
-                                </td>
-                            </tr>
+                        @{
+                            foreach (var item in Model.Event.EventSessions)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.SessionTitle
+                                    </td>
+                                    <td>
+                                        @item.StartDate.ToString("dd MMM yyyy")
+                                    </td>
+                                    <td>
+                                        @item.EndDate.ToString("dd MMM yyyy")
+                                    </td>
+                                    <td>
+                                        @item.TrainerName
+                                    </td>
+                                </tr>
+                            }
                         }
-                    }
                     </tbody>
                 </table>
             </div>
@@ -288,20 +294,20 @@
             <div class="row">
                 <table class="table no-margin" id="grid_companies">
                     <thead>
-                    <tr>
-                        <th class="hide"></th>
-                        <th>Country</th>
-                        <th>Company</th>
-                        <th>Product/Service</th>
-                        <th>Sector</th>
-                        <th>Industry</th>
-                    </tr>
+                        <tr>
+                            <th class="hide"></th>
+                            <th>Country</th>
+                            <th>Company</th>
+                            <th>Product/Service</th>
+                            <th>Sector</th>
+                            <th>Industry</th>
+                        </tr>
                     </thead>
                 </table>
             </div>
         </div><!--end .card-body -->
     </div>
-    
+
 
     <div class="section-body">
         <div class="row">

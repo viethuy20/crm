@@ -1,0 +1,51 @@
+﻿@using PQT.Domain.Enum
+@using Resources
+@model PQT.Domain.Entities.Booking
+
+
+@{
+    var title = "Edit Company";
+}
+
+<div class="card card-underline" style="background: white; margin: auto; max-width: 600px; position: relative;">
+    <div>
+        <div class="card-head">
+            <header><b>@title</b></header>
+        </div><!--end .card-head -->
+        @using (Ajax.BeginForm("EditCompany", "routeValues", new AjaxOptions { OnFailure = "onFailEditCompany", OnSuccess = "onSuccessEditCompany" }, new { @id = "CreateOrEditForm", @class = "form" }))
+        {
+            <div class="card-body">
+                @Html.HiddenFor(m => m.CompanyID)
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Company.CountryName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Company.CountryName)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Company.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Company.CompanyName)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group ">
+                        @Html.Bootstrap().DropDownListFor(m => m.PaymentStatus, EnumerationHelper.ToSelectList<PaymentStatus>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.PaymentStatus).ShowRequiredStar(true)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group ">
+                        @Html.Bootstrap().DropDownListFor(m => m.AttendanceStatus, EnumerationHelper.ToSelectList<AttendanceStatus>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.AttendanceStatus).ShowRequiredStar(true)
+                    </div>
+                </div>
+            </div><!--end .card-body -->
+            <div class="card-actionbar">
+                <div class="card-actionbar-row">
+                    @Html.Bootstrap().SubmitButton().Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Primary)
+                </div>
+            </div>
+        }
+    </div>
+</div><!--end .card -->

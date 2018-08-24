@@ -74,5 +74,8 @@ namespace PQT.Web.Infrastructure.Utility
         public static readonly FileUploadType Booking = New<FileUploadType>("Booking", "Booking");
         public static readonly FileUploadType KPI = New<FileUploadType>("KPI", "KPI");
         public static readonly FileUploadType Template = New<FileUploadType>("Template", "Template");
+        public static readonly FileUploadType Venue = New<FileUploadType>("Venue", "Venue");
+        public static readonly FileUploadType Accomodation = New<FileUploadType>("Accomodation", "Accomodation");
+        public static readonly FileUploadType PostEvent = New<FileUploadType>("PostEvent", "PostEvent");
     }
 }

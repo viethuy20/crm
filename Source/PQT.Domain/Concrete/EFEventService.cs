@@ -61,6 +61,37 @@ namespace PQT.Domain.Concrete
             return Update(info);
         }
 
+        public virtual Event UpdateEventOperation(int id, VenueInfo venueInfo, AccomodationInfo accomodationInfo, DriverInfo driverInfo, PhotographerInfo photographerInfo, LocalVisaAgentInfo localVisaAgentInfo, PostEventInfo postEventInfo)
+        {
+            var exist = Get<Event>(id);
+            if (exist == null)
+            {
+                return null;
+            }
+            if (venueInfo.ID > 0) Update(venueInfo);
+            exist.VenueInfo = venueInfo;
+
+            if (accomodationInfo.ID > 0) Update(accomodationInfo);
+            exist.AccomodationInfo = accomodationInfo;
+
+            if (driverInfo.ID > 0) Update(driverInfo);
+            exist.DriverInfo = driverInfo;
+
+            if (photographerInfo.ID > 0) Update(photographerInfo);
+            exist.PhotographerInfo = photographerInfo;
+
+            if (localVisaAgentInfo.ID > 0) Update(localVisaAgentInfo);
+            exist.LocalVisaAgentInfo = localVisaAgentInfo;
+
+            if (postEventInfo.ID > 0) Update(postEventInfo);
+            exist.PostEventInfo = postEventInfo;
+
+            if (venueInfo.ID == 0 || accomodationInfo.ID == 0 || driverInfo.ID == 0 || 
+                photographerInfo.ID == 0 || localVisaAgentInfo.ID == 0 || postEventInfo.ID == 0)
+                Update(exist);
+            return exist;
+        }
+
         public virtual Event UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> groups, IEnumerable<int> users)
         {
             return TransactionWrapper.Do(() =>
@@ -158,6 +189,14 @@ namespace PQT.Domain.Concrete
         }
 
         public virtual void UpdateCompanyCache(Company info)
+        {
+
+        }
+        public virtual void UpdateVenueInfo(VenueInfo info)
+        {
+
+        }
+        public virtual void UpdateAccomodationInfo(AccomodationInfo info)
         {
 
         }
