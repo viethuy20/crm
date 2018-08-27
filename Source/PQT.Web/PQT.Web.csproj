@@ -2608,6 +2608,7 @@
     <Content Include="Views\Booking\EditCompany.cshtml" />
     <Content Include="Views\Operation\Index.cshtml" />
     <Content Include="Views\Users\_CreateOrEdit.cshtml" />
+    <Content Include="Views\Shared\Block.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

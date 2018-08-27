@@ -92,7 +92,7 @@ namespace PQT.Web.Infrastructure.Utility
                 return UnitRepository.TotalHolidays(DateTime.Today, DateTime.Today.AddDays(expiredDays),
                     CurrentUser.Identity.OfficeLocation != null
                         ? CurrentUser.Identity.OfficeLocation.CountryID
-                        : (int?) null);
+                        : (int?)null);
             }
         }
 
@@ -106,7 +106,7 @@ namespace PQT.Web.Infrastructure.Utility
             public static string[] AccessIPs()
             {
                 var value = Convert.ToString(GetSetting(Setting.ModuleType.System, Setting.ModuleKey.System.AccessIPs, typeof(string)));
-                return !String.IsNullOrEmpty(value) ? value.Split(",", StringSplitOptions.RemoveEmptyEntries) : new List<string>().ToArray();
+                return !string.IsNullOrEmpty(value) ? value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries) : new List<string>().ToArray();
             }
         }
         public class KPI

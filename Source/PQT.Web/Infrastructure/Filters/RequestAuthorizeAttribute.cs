@@ -17,17 +17,17 @@ namespace PQT.Web.Infrastructure.Filters
             string controller = rd.GetRequiredString("controller");
             string action = rd.GetRequiredString("action");
 
-            //var reqip = HttpContext.Current.Request.UserHostAddress;
-            //var accessIps = Settings.System.AccessIPs();
-            //if (accessIps.Any() && accessIps.Contains(reqip))
-            //{
-            //    filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new
-            //    {
-            //        controller = "Account",
-            //        action = "ActiveKey",
-            //        area = ""
-            //    }));
-            //}
+            var reqip = HttpContext.Current.Request.UserHostAddress;
+            if (!HttpContext.Current.Request.IsLocal)
+            {
+                var accessIps = Settings.System.AccessIPs();
+                if (accessIps.Any() && !accessIps.Contains(reqip))
+                {
+                    filterContext.HttpContext.Response.StatusCode = 403;
+                    filterContext.Result = new ViewResult { ViewName = "Block" };
+                    return;
+                }
+            }
 
             if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["SecretKey"]) &&
                 ConfigurationManager.AppSettings["ActiveKey"] != ConfigurationManager.AppSettings["SecretKey"])
