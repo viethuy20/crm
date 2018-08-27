@@ -1,0 +1,268 @@
+﻿@using PQT.Domain.Abstract
+@using PQT.Domain.Enum
+@using PQT.Web.Infrastructure
+@model PQT.Web.Models.EditUserModel
+@{
+    var unitService = DependencyHelper.GetService<IUnitRepository>();
+    var officeLocations = unitService.GetAllOfficeLocations();
+    var countries = Model.GetAllCountries();
+}
+<div class="card card-underline">
+    <div class="card-head">
+        <header>Basic Info</header>
+    </div>
+    <div class="card-body text-default-light">
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.DisplayName).HtmlAttributes(new { required = "required" }).Class("form-control text-capitalize").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.DisplayName).LabelText("Display Name").ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Email).HtmlAttributes(new { required = "required" }).Class("form-control text-lowercase").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email").ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Password).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Password).LabelText("Password").ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.BusinessPhone)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.MobilePhone)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Class("form-control text-lowercase").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.PersonalEmail)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.PassportID).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.PassportID).LabelText("Passport/ID")
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.DatePickerFor(m => m.DateOfBirth, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.DateOfBirth)
+                    @Html.Bootstrap().LabelFor(m => m.DateOfBirth)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.Nationality, countries.ToSelectList(m => m, m => m)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Nationality)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.OfficeLocationID, officeLocations.ToSelectList(m => m.ID, m => m.Name)).Class("form-control").OptionLabel("").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.OfficeLocationID).LabelText("Office Location")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card card-underline">
+    <div class="card-head">
+        <header>Department Info</header>
+    </div>
+    <div class="card-body text-default-light">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Department</label>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @foreach (var role in Model.Roles)
+                            {
+                                <div class="col-sm-3">
+                                    <div class="checkbox checkbox-styled">
+                                        <label>
+                                            <input type="checkbox" name="SelectedRoles" class="cbx-role" data-rolename="@role.Name.ToLower()" value="@role.ID" @(Model.SelectedRoles.Contains(role.ID) ? "checked" : "")>
+                                            <span>@role.Name</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 role-finance role-admin hide">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.FinanceAdminUnit, EnumerationHelper.ToSelectList<FinanceAdminUnit>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.FinanceAdminUnit).LabelText("Finance & Admin Unit")
+                </div>
+            </div>
+            <div class="col-sm-6 role-sales hide">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.BusinessDevelopmentUnit, EnumerationHelper.ToSelectList<BusinessDevelopmentUnit>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.BusinessDevelopmentUnit)
+                </div>
+            </div>
+            <div class="col-sm-6 role-sales hide">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.SalesSupervision, EnumerationHelper.ToSelectList<SalesSupervision>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.SalesSupervision).LabelText("Sales Supervision & Planning Unit")
+                </div>
+            </div>
+            <div class="col-sm-6 role-sales hide">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.SalesManagementUnit, EnumerationHelper.ToSelectList<SalesManagementUnit>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.SalesManagementUnit)
+                </div>
+            </div>
+            <div class="col-sm-6 role-production hide">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.ProductionUnit, EnumerationHelper.ToSelectList<ProductionUnit>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.ProductionUnit)
+                </div>
+            </div>
+            <div class="col-sm-6 role-operation hide">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.OperationUnit, EnumerationHelper.ToSelectList<OperationUnit>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.OperationUnit)
+                </div>
+            </div>
+            <div class="col-sm-6 role-hr hide">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.HumanResourceUnit, EnumerationHelper.ToSelectList<HumanResourceUnit>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.HumanResourceUnit)
+                </div>
+            </div>
+            <div class="col-sm-6 role-marketing hide">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.MarketingManagementUnit, EnumerationHelper.ToSelectList<MarketingManagementUnit>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.MarketingManagementUnit)
+                </div>
+            </div>
+            <div class="col-sm-6 role-procurement hide">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.ProcurementManagementUnit, EnumerationHelper.ToSelectList<ProcurementManagementUnit>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.ProcurementManagementUnit)
+                </div>
+            </div>
+            <div class="col-sm-6 role-manager hide">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.ProjectManagementUnit, EnumerationHelper.ToSelectList<ProjectManagementUnit>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.ProjectManagementUnit)
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.DirectSupervisorID, Model.Supervisors.ToSelectList(m => m.ID, m => m.DisplayName)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.DirectSupervisorID).LabelText("Direct Supervisor")
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Extension).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Extension).LabelText("Extension")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card card-underline">
+    <div class="card-head">
+        <header>Contract Info</header>
+    </div>
+    <div class="card-body text-default-light">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.DatePickerFor(m => m.EmploymentDate, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.EmploymentDate)
+                    @Html.Bootstrap().LabelFor(m => m.EmploymentDate)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.DatePickerFor(m => m.EmploymentEndDate, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.EmploymentEndDate)
+                    @Html.Bootstrap().LabelFor(m => m.EmploymentEndDate)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.DatePickerFor(m => m.FirstEvaluationDate, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.FirstEvaluationDate)
+                    @Html.Bootstrap().LabelFor(m => m.FirstEvaluationDate)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.UserStatus, EnumerationHelper.ToSelectList<UserStatus>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.UserStatus)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.BasicSalary).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.BasicSalary)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.SalaryCurrency, EnumerationHelper.ToSelectList<SalaryCurrency>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.SalaryCurrency)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                @Html.HiddenFor(m => m.SignedContract)
+                <div class="form-group ">
+                    @if (!string.IsNullOrEmpty(Model.SignedContract))
+                    {
+                        <a href="@UserPicture.GetContractUrl(Model.SignedContract)" target="_blank">@Model.SignedContract</a>
+                    }
+                    @Html.Bootstrap().FileFor(m => m.SignedContractFile).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.SignedContractFile).LabelText("Signed Contract")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@Html.Script(
+    @<script>
+
+        $(".cbx-role").on('click', function (e) {
+            var rolename = $(this).data("rolename");
+            if (this.checked) {
+                $(".role-" + rolename).removeClass('hide');
+            } else {
+                $(".role-" + rolename).addClass('hide');
+                var ddl = $(".role-" + rolename).find("select");
+                ddl.val('0').trigger("change");
+            }
+        });
+        var cbxs = $('.cbx-role');
+        $.each(cbxs, function (index, rowId) {
+            // Create a hidden element
+            var rolename = $(cbxs[index]).data("rolename");
+            if (cbxs[index].checked) {
+                $(".role-" + rolename).removeClass('hide');
+            }
+        });
+    </script>)

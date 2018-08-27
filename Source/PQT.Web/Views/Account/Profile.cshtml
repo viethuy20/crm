@@ -17,24 +17,6 @@
             @using (Html.BeginForm("Profile", "Account", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
             {
                 <div class="row">
-                    @*<div class="col-sm-12">
-                            <div class="form-group">
-                                @Html.Bootstrap().PasswordFor(m => m.OldPassword).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.OldPassword).LabelText("Current password").ShowRequiredStar(true)
-                            </div>
-                        </div>*@
-                    @*<div class="col-sm-6">
-                            <div class="form-group">
-                                @Html.Bootstrap().PasswordFor(m => m.Password).Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.Password).LabelText("New password")
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                @Html.Bootstrap().PasswordFor(m => m.ConfirmPassword).Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.ConfirmPassword).LabelText("Retype new password")
-                            </div>
-                        </div>*@
                     <div class="col-sm-6">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Username).Class("form-control").Readonly().ShowValidationMessage(true)
@@ -141,7 +123,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     @Html.Bootstrap().TextBoxFor(m => m.Roles).Readonly().Class("form-control")
-                                    @Html.Bootstrap().LabelFor(m => m.Roles).LabelText("Roles")
+                                    @Html.Bootstrap().LabelFor(m => m.Roles).LabelText("Department")
                                 </div>
                             </div>
                         </div>

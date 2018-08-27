@@ -9,7 +9,7 @@
 @Html.HiddenFor(m => m.Role.ID)
 <div class="form-group">
     @Html.Bootstrap().TextBoxFor(m => m.Role.Name).Class("form-control text-capitalize").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
-    @Html.Bootstrap().LabelFor(m => m.Role.Name).LabelText("Role Name").ShowRequiredStar(true)
+    @Html.Bootstrap().LabelFor(m => m.Role.Name).LabelText("Department Name").ShowRequiredStar(true)
 </div>
 <div class="form-group">
     @Html.Bootstrap().TextBoxFor(m => m.Role.Description).Class("form-control text-capitalize").ShowValidationMessage(true)
@@ -17,7 +17,7 @@
 </div>
 <div class="form-group">
     @Html.Bootstrap().DropDownListFor(m => m.Role.RoleLevel, EnumerationHelper.ToSelectList<RoleLevel>().Where(m => m.Value != RoleLevel.None.Value)).HtmlAttributes(new{required="required"}).OptionLabel("").Class("form-control").ShowValidationMessage(true)
-    @Html.Bootstrap().LabelFor(m => m.Role.RoleLevel).LabelText("Role Level").ShowRequiredStar(true)
+    @Html.Bootstrap().LabelFor(m => m.Role.RoleLevel).LabelText("Department Level").ShowRequiredStar(true)
 </div>
 <div class="row col-md-offset-2">
     <table class="table table-orchard">

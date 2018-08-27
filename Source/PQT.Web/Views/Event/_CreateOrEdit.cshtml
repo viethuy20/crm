@@ -114,13 +114,13 @@
                     @Html.Bootstrap().LabelFor(m => m.Event.SecondaryJobtitleKeywords)
                 </div>
             </div>
-            <div class="col-sm-6">
+            @*<div class="col-sm-6">
                 <div class="form-group ">
                     @Html.Bootstrap().TextAreaFor(m => m.Event.HotelVenue).Rows(3).Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Event.HotelVenue)
                 </div>
-            </div>
-            <div class="col-sm-6">
+            </div>*@
+            <div class="col-sm-12">
                 <div class="form-group ">
                     @Html.Bootstrap().TextAreaFor(m => m.Event.Location).Rows(3).Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Event.Location)
@@ -156,18 +156,29 @@
                     @Html.Bootstrap().LabelFor(m => m.Event.SalesEmail).LabelText("Sales")
                 </div>
             </div>
-            <div class="col-sm-6">
-                @Html.HiddenFor(m => m.Event.Brochure)
+            <div class="col-sm-4">
+                @Html.HiddenFor(m => m.Event.SalesBrochure)
                 <div class="form-group ">
-                    @if (!string.IsNullOrEmpty(Model.Event.Brochure))
+                    @if (!string.IsNullOrEmpty(Model.Event.SalesBrochure))
                     {
-                        <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)" target="_blank">@Model.Event.Brochure</a>
+                        <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.SalesBrochure)" target="_blank">@Model.Event.SalesBrochure</a>
                     }
-                    @Html.Bootstrap().FileFor(m => m.BrochureFile).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.BrochureFile).LabelText("Brochure")
+                    @Html.Bootstrap().FileFor(m => m.SalesBrochureFile).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.SalesBrochureFile).LabelText("Sales Brochure")
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
+                @Html.HiddenFor(m => m.Event.OperationBrochure)
+                <div class="form-group ">
+                    @if (!string.IsNullOrEmpty(Model.Event.OperationBrochure))
+                    {
+                        <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.OperationBrochure)" target="_blank">@Model.Event.OperationBrochure</a>
+                    }
+                    @Html.Bootstrap().FileFor(m => m.OperationBrochureFile).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.OperationBrochureFile).LabelText("Operation Brochure")
+                </div>
+            </div>
+            <div class="col-sm-4">
                 @Html.HiddenFor(m => m.Event.RegContract)
                 <div class="form-group ">
                     @if (!string.IsNullOrEmpty(Model.Event.RegContract))

@@ -249,9 +249,9 @@
                     </div>
                     <header style="line-height: 27px;">
                         <span style="font-size: 18px;"><b>Event Name: </b>@Model.Event.EventName (@Model.Event.EventCode) - <b>Event Dates: </b>@Model.Event.StartDate.ToString("dd/MM/yy") - @Model.Event.EndDate.ToString("dd/MM/yy")</span>
-                        @if (!string.IsNullOrEmpty(Model.Event.Brochure))
+                        @if (!string.IsNullOrEmpty(Model.Event.SalesBrochure))
                         {
-                            @: - <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)" target="_blank" style="font-size: 16px; margin-left: 5px;" title="Download Brochure"><i class="fa fa-download"></i> Sales Brochure</a>
+                            @: - <a href="@FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.SalesBrochure)" target="_blank" style="font-size: 16px; margin-left: 5px;" title="Download Brochure"><i class="fa fa-download"></i> Sales Brochure</a>
                         }
                         @if (!string.IsNullOrEmpty(Model.Event.RegContract))
                         {

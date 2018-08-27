@@ -12,6 +12,15 @@ namespace PQT.Domain.Entities
         {
             CreatedAt = DateTime.Now;
         }
+
+        public FinanceAdminUnit FinanceAdminUnit { get; set; }
+        public ProductionUnit ProductionUnit { get; set; }
+        public OperationUnit OperationUnit { get; set; }
+        public HumanResourceUnit HumanResourceUnit { get; set; }
+        public MarketingManagementUnit MarketingManagementUnit { get; set; }
+        public ProcurementManagementUnit ProcurementManagementUnit { get; set; }
+        public ProjectManagementUnit ProjectManagementUnit { get; set; }
+
         public BusinessDevelopmentUnit BusinessDevelopmentUnit { get; set; }
         public SalesManagementUnit SalesManagementUnit { get; set; }
         public SalesSupervision SalesSupervision { get; set; }

@@ -20,6 +20,13 @@ namespace PQT.Domain.Entities
             BusinessDevelopmentUnit = BusinessDevelopmentUnit.None;
             SalesManagementUnit = SalesManagementUnit.None;
             SalesSupervision = SalesSupervision.None;
+            FinanceAdminUnit = FinanceAdminUnit.None;
+            ProductionUnit = ProductionUnit.None;
+            OperationUnit = OperationUnit.None;
+            HumanResourceUnit = HumanResourceUnit.None;
+            MarketingManagementUnit = MarketingManagementUnit.None;
+            ProcurementManagementUnit = ProcurementManagementUnit.None;
+            ProjectManagementUnit = ProjectManagementUnit.None;
         }
 
         public User(User user)
@@ -85,6 +92,7 @@ namespace PQT.Domain.Entities
         public ICollection<UserSalaryHistory> UserSalaryHistories { get; set; }
 
         public string Ip { get; set; }
+        public string SignedContract { get; set; }
         public string Extension { get; set; }//private number for employees
 
         public int? DirectSupervisorID { get; set; }
@@ -97,6 +105,13 @@ namespace PQT.Domain.Entities
 
 
 
+        public FinanceAdminUnit FinanceAdminUnit { get; set; }
+        public ProductionUnit ProductionUnit { get; set; }
+        public OperationUnit OperationUnit { get; set; }
+        public HumanResourceUnit HumanResourceUnit { get; set; }
+        public MarketingManagementUnit MarketingManagementUnit { get; set; }
+        public ProcurementManagementUnit ProcurementManagementUnit { get; set; }
+        public ProjectManagementUnit ProjectManagementUnit { get; set; }
         #endregion
 
         #region Navigation properties

@@ -7,23 +7,18 @@ namespace PQT.Web.Infrastructure.Utility
 {
     public class UserPicture
     {
-        public static string Upload(int userId, HttpPostedFileBase file)
+        public static string UploadContract(HttpPostedFileBase file)
         {
             try
             {
                 if (file.ContentLength > 0)
                 {
-                    string fileName = userId + Path.GetExtension(file.FileName);
-                    //string thumbName = userId + "_400x400" + Path.GetExtension(file.FileName);
-
-                    string filePath = GetImagePath(userId, fileName);
-
+                    var guid = DateTime.Now.ToString("yyyyMMddHHmmss") + "_";
+                    string fileName = guid + Domain.Helpers.StringHelper.RemoveSpecialCharacters(Path.GetFileNameWithoutExtension(file.FileName)) + Path.GetExtension(file.FileName);
+                    string filePath = GetContractPath(fileName);
                     string directory = Path.GetDirectoryName(filePath);
                     if (directory != null) Directory.CreateDirectory(directory);
-
                     file.SaveAs(filePath);
-                    //if (ImageHelper.CreateImageHighQuality(GetfolderPath(userId), GetfolderPath(userId), fileName, thumbName, ImageHelper.MaxHeightUserAvatar, ImageHelper.MaxWidthUserAvatar))
-                    //    return thumbName;
                     return fileName;
                 }
             }
@@ -106,6 +101,14 @@ namespace PQT.Web.Infrastructure.Utility
         protected static string GetImagePath(int userId, string fileName)
         {
             return HttpContext.Current.Server.MapPath("~/data/user_img/" + userId + "/" + fileName);
+        }
+        protected static string GetContractPath(string fileName)
+        {
+            return HttpContext.Current.Server.MapPath("~/data/user_contract/" + fileName);
+        }
+        public static string GetContractUrl(string fileName)
+        {
+            return "/data/user_contract/" + fileName;
         }
 
         public static string GetfolderPath(int folder)

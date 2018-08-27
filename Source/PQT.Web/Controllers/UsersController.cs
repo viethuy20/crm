@@ -47,29 +47,59 @@ namespace PQT.Web.Controllers
         }
         public ActionResult Create()
         {
-            var model = new CreateUserModel
+            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
+                                                            m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                            m.ProjectManagementUnit != ProjectManagementUnit.None);
+            //var supervisors = new List<SelectListItem>();
+            //supervisors.AddRange(allSupervisors.Where(m => m.FinanceAdminUnit != FinanceAdminUnit.None).Select(m => new SelectListItem
+            //{
+            //    Value = m.ID.ToString(),
+            //    Text = m.FinanceAdminUnit.DisplayName + " | " + m.DisplayName
+            //}));
+            //supervisors.AddRange(allSupervisors.Where(m => m.SalesManagementUnit != SalesManagementUnit.None).Select(m => new SelectListItem
+            //{
+            //    Value = m.ID.ToString(),
+            //    Text = m.SalesManagementUnit.DisplayName + " | " + m.DisplayName
+            //}));
+            //supervisors.AddRange(allSupervisors.Where(m => m.ProjectManagementUnit != ProjectManagementUnit.None).Select(m => new SelectListItem
+            //{
+            //    Value = m.ID.ToString(),
+            //    Text = m.ProjectManagementUnit.DisplayName + " | " + m.DisplayName
+            //}));
+            var model = new EditUserModel
             {
-                UserRoles = new List<int>(),
+                SelectedRoles = new List<int>(),
                 Roles = _roleService.GetAllRoles(),
-                Supervisors = _membershipService.GetUsers(m => m.SalesManagementUnit != SalesManagementUnit.None)
+                Supervisors = allSupervisors
             };
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult Create(CreateUserModel model)
+        public ActionResult Create(EditUserModel model)
         {
             IEnumerable<int> userRoles = StringHelper.Ensure(Request.Form["SelectedRoles"])
                                                      .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                                                      .Select(id => Convert.ToInt32(id));
 
+            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
+                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None);
 
             if (!ModelState.IsValid)
             {
-                model.UserRoles = userRoles.ToList();
+                model.SelectedRoles = userRoles.ToList();
                 model.Roles = _roleService.GetAllRoles();
-                model.Supervisors = _membershipService.GetUsers(m => m.SalesManagementUnit != SalesManagementUnit.None);
+                model.Supervisors = allSupervisors;
                 return View(model);
+            }
+            if (model.SignedContractFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.SignedContractFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.SignedContract = uploadPicture;
+                }
             }
             var user = new User
             {
@@ -94,6 +124,13 @@ namespace PQT.Web.Controllers
                 FirstEvaluationDate = model.FirstEvaluationDate,
                 DirectSupervisorID = model.DirectSupervisorID,
                 OfficeLocationID = model.OfficeLocationID,
+                FinanceAdminUnit = model.FinanceAdminUnit,
+                ProductionUnit = model.ProductionUnit,
+                OperationUnit = model.OperationUnit,
+                HumanResourceUnit = model.HumanResourceUnit,
+                MarketingManagementUnit = model.MarketingManagementUnit,
+                ProcurementManagementUnit = model.ProcurementManagementUnit,
+                ProjectManagementUnit = model.ProjectManagementUnit
             };
 
             user = _membershipService.CreateUser(user);
@@ -107,10 +144,13 @@ namespace PQT.Web.Controllers
         public ActionResult Edit(int id)
         {
             User user = _membershipService.GetUserIncludeAll(id);
+            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
+                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None);
             var model = new EditUserModel(user)
             {
                 Roles = _roleService.GetAllRoles(),
-                Supervisors = _membershipService.GetUsers(m=>m.SalesManagementUnit != SalesManagementUnit.None)
+                Supervisors = allSupervisors
             };
             return View(model);
         }
@@ -118,7 +158,7 @@ namespace PQT.Web.Controllers
         [HttpPost]
         public ActionResult Edit(EditUserModel model)
         {
-            User user = _membershipService.GetUserByEmail(model.Email);
+            //User user = _membershipService.GetUserByEmail(model.Email);
             //if (string.IsNullOrEmpty(model.Password) && model.Password != model.ConfirmPassword)
             //    ModelState.AddModelError("User.Password", Resource.PasswordMismatch);
 
@@ -127,32 +167,51 @@ namespace PQT.Web.Controllers
                                                      .Select(id => Convert.ToInt32(id));
 
 
+            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
+                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None);
             if (!ModelState.IsValid)
             {
 
                 //var oldUser = _membershipService.GetUser(model.ID);
-                model.UserRoles = _roleService.GetAllRoles().Where(m => userRoles.Contains(m.ID));
+                model.SelectedRoles = _roleService.GetAllRoles().Where(m => userRoles.Contains(m.ID)).Select(m => m.ID).ToList();
                 model.Roles = _roleService.GetAllRoles();
-                model.Supervisors = _membershipService.GetUsers(m => m.SalesManagementUnit != SalesManagementUnit.None);
+                model.Supervisors = allSupervisors;
                 return View(model);
             }
 
-            user = _membershipService.GetUser(model.ID);
+            var user = _membershipService.GetUser(model.ID);
             //save salary history
-            if (user.BasicSalary > 0 && user.BasicSalary != model.BasicSalary)
+            if (user.BasicSalary > 0 && (user.BasicSalary != model.BasicSalary))
             {
                 user.UserSalaryHistories.Add(new UserSalaryHistory
                 {
                     BusinessDevelopmentUnit = user.BusinessDevelopmentUnit,
                     SalesManagementUnit = user.SalesManagementUnit,
                     SalesSupervision = user.SalesSupervision,
-                    EmploymentEndDate = model.EmploymentEndDate,
-                    EmploymentDate = model.EmploymentDate,
-                    UserStatus = model.UserStatus,
-                    SalaryCurrency = model.SalaryCurrency,
-                    FirstEvaluationDate = model.FirstEvaluationDate,
-                    BasicSalary = Convert.ToDecimal(user.BasicSalary)
+                    EmploymentEndDate = user.EmploymentEndDate,
+                    EmploymentDate = user.EmploymentDate,
+                    UserStatus = user.UserStatus,
+                    SalaryCurrency = user.SalaryCurrency,
+                    FirstEvaluationDate = user.FirstEvaluationDate,
+                    BasicSalary = Convert.ToDecimal(user.BasicSalary),
+                    FinanceAdminUnit = user.FinanceAdminUnit,
+                    ProductionUnit = user.ProductionUnit,
+                    OperationUnit = user.OperationUnit,
+                    HumanResourceUnit = user.HumanResourceUnit,
+                    MarketingManagementUnit = user.MarketingManagementUnit,
+                    ProcurementManagementUnit = user.ProcurementManagementUnit,
+                    ProjectManagementUnit = user.ProjectManagementUnit
                 });
+            }
+
+            if (model.SignedContractFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.SignedContractFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.SignedContract = uploadPicture;
+                }
             }
 
             user.DisplayName = model.DisplayName;
@@ -175,6 +234,14 @@ namespace PQT.Web.Controllers
             user.BasicSalary = model.BasicSalary;
             user.Extension = model.Extension;
             user.OfficeLocationID = model.OfficeLocationID;
+            user.SignedContract = model.SignedContract;
+            user.FinanceAdminUnit = model.FinanceAdminUnit;
+            user.ProductionUnit = model.ProductionUnit;
+            user.OperationUnit = model.OperationUnit;
+            user.HumanResourceUnit = model.HumanResourceUnit;
+            user.MarketingManagementUnit = model.MarketingManagementUnit;
+            user.ProcurementManagementUnit = model.ProcurementManagementUnit;
+            user.ProjectManagementUnit = model.ProjectManagementUnit;
             if (!string.IsNullOrEmpty(model.Password))
             {
                 //user.Password = EncryptHelper.EncryptPassword(model.Password);
@@ -192,6 +259,7 @@ namespace PQT.Web.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.Success = true;
+            model.Supervisors = allSupervisors;
             TempData["error"] = Resource.SaveFailed;
             return RedirectToAction("Edit", new { id = model.ID });
         }

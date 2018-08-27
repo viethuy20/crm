@@ -170,16 +170,25 @@
                         @Html.Bootstrap().LabelFor(m => m.Event.Location)
                     </div>
                 </div>
-                <div class=" col-sm-6">
+                <div class=" col-sm-4">
                     <div class="form-group">
-                        @if (!string.IsNullOrEmpty(Model.Event.Brochure))
+                        @if (!string.IsNullOrEmpty(Model.Event.SalesBrochure))
                         {
-                            @Html.Bootstrap().Link(Model.Event.Brochure, FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.Brochure)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                            @Html.Bootstrap().Link(Model.Event.SalesBrochure, FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.SalesBrochure)).Class("form-control").HtmlAttributes(new { target = "_blank" })
                         }
-                        @Html.Bootstrap().LabelFor(m => m.Event.Brochure)
+                        @Html.Bootstrap().LabelFor(m => m.Event.SalesBrochure).LabelText("Sales Brochure")
                     </div>
                 </div>
-                <div class=" col-sm-6">
+                <div class=" col-sm-4">
+                    <div class="form-group">
+                        @if (!string.IsNullOrEmpty(Model.Event.OperationBrochure))
+                        {
+                            @Html.Bootstrap().Link(Model.Event.OperationBrochure, FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.OperationBrochure)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                        }
+                        @Html.Bootstrap().LabelFor(m => m.Event.OperationBrochure)
+                    </div>
+                </div>
+                <div class=" col-sm-4">
                     <div class="form-group">
                         @if (!string.IsNullOrEmpty(Model.Event.RegContract))
                         {

@@ -34,7 +34,8 @@ namespace PQT.Domain.Entities
             SecondaryJobtitleKeywords = e.SecondaryJobtitleKeywords;
             Location = e.Location;
             Remark = e.Remark;
-            Brochure = e.Brochure;
+            SalesBrochure = e.SalesBrochure;
+            OperationBrochure = e.OperationBrochure;
             FinanceEmail = e.FinanceEmail;
             OperationEmail = e.OperationEmail;
             OperationOnsiteEmail = e.OperationOnsiteEmail;
@@ -102,7 +103,8 @@ namespace PQT.Domain.Entities
         public string SecondaryJobtitleKeywords { get; set; }
         public string Location { get; set; }
         public string Remark { get; set; }
-        public string Brochure { get; set; }
+        public string SalesBrochure { get; set; }//Sales Brochure
+        public string OperationBrochure { get; set; }//Sales Brochure
         public string FinanceEmail { get; set; }
         public string OperationEmail { get; set; }//Operation Office
         public string OperationOnsiteEmail { get; set; }

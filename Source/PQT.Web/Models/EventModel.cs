@@ -23,7 +23,8 @@ namespace PQT.Web.Models
         public List<int> CompaniesSelected { get; set; }
         public IEnumerable<SalesGroup> SalesGroups { get; set; }
         public IEnumerable<User> Users { get; set; }
-        public HttpPostedFileBase BrochureFile { get; set; }
+        public HttpPostedFileBase SalesBrochureFile { get; set; }
+        public HttpPostedFileBase OperationBrochureFile { get; set; }
         public HttpPostedFileBase RegContractFile { get; set; }
         public HttpPostedFileBase VenueFile { get; set; }
         public HttpPostedFileBase AccomodationFile { get; set; }
@@ -104,12 +105,20 @@ namespace PQT.Web.Models
         public bool Create()
         {
             var repo = DependencyHelper.GetService<IEventService>();
-            if (BrochureFile != null)
+            if (SalesBrochureFile != null)
             {
-                string uploadPicture = FileUpload.Upload(FileUploadType.Event, BrochureFile);
+                string uploadPicture = FileUpload.Upload(FileUploadType.Event, SalesBrochureFile);
                 if (!string.IsNullOrEmpty(uploadPicture))
                 {
-                    Event.Brochure = uploadPicture;
+                    Event.SalesBrochure = uploadPicture;
+                }
+            }
+            if (OperationBrochureFile != null)
+            {
+                string uploadPicture = FileUpload.Upload(FileUploadType.Event, OperationBrochureFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    Event.OperationBrochure = uploadPicture;
                 }
             }
             if (RegContractFile != null)
@@ -130,12 +139,20 @@ namespace PQT.Web.Models
         public bool Update()
         {
             var repo = DependencyHelper.GetService<IEventService>();
-            if (BrochureFile != null)
+            if (SalesBrochureFile != null)
             {
-                string uploadPicture = FileUpload.Upload(FileUploadType.Event, BrochureFile);
+                string uploadPicture = FileUpload.Upload(FileUploadType.Event, SalesBrochureFile);
                 if (!string.IsNullOrEmpty(uploadPicture))
                 {
-                    Event.Brochure = uploadPicture;
+                    Event.SalesBrochure = uploadPicture;
+                }
+            }
+            if (OperationBrochureFile != null)
+            {
+                string uploadPicture = FileUpload.Upload(FileUploadType.Event, OperationBrochureFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    Event.OperationBrochure = uploadPicture;
                 }
             }
             if (RegContractFile != null)
