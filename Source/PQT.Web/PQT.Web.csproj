@@ -359,6 +359,7 @@
     <Compile Include="Controllers\CompanyResourceController.cs" />
     <Compile Include="Controllers\CounterController.cs" />
     <Compile Include="Controllers\HolidayController.cs" />
+    <Compile Include="Controllers\InvoiceController.cs" />
     <Compile Include="Controllers\OfficeLocationController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
@@ -399,6 +400,7 @@
     <Compile Include="Models\EmailSettingModel.cs" />
     <Compile Include="Models\EventModelView.cs" />
     <Compile Include="Models\HomeSearchModel.cs" />
+    <Compile Include="Models\InvoiceModel.cs" />
     <Compile Include="Models\KPIViewModel.cs" />
     <Compile Include="Models\LeadMarkKPIModel.cs" />
     <Compile Include="Models\LeadModel.cs" />
@@ -2609,6 +2611,11 @@
     <Content Include="Views\Operation\Index.cshtml" />
     <Content Include="Views\Users\_CreateOrEdit.cshtml" />
     <Content Include="Views\Shared\Block.cshtml" />
+    <Content Include="Views\Invoice\Detail.cshtml" />
+    <Content Include="Views\Invoice\Create.cshtml" />
+    <Content Include="Views\Invoice\_CreateOrEdit.cshtml" />
+    <Content Include="Views\Invoice\Edit.cshtml" />
+    <Content Include="Views\Invoice\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -63,7 +63,7 @@ namespace PQT.Domain.Entities
 
         public virtual ICollection<Delegate> Delegates { get; set; }
         public virtual ICollection<EventSession> EventSessions { get; set; }
-
+        public string InvoiceNo { get; set; }
         [NotMapped]
         public bool ReloadTableLead { get; set; }
         public string CompanyName
@@ -156,6 +156,20 @@ namespace PQT.Domain.Entities
                     return BookingStatusRecord.UpdatedTime.ToString("dd-MMM-yyyy HH:mm:ss");
                 }
                 return "";
+            }
+        }
+        public DateTime BookingDate
+        {
+            get
+            {
+                return CreatedTime.Date;
+            }
+        }
+        public string BookingDateStr
+        {
+            get
+            {
+                return CreatedTime.ToString("dd-MMM-yyyy");
             }
         }
         public string ClassStatus

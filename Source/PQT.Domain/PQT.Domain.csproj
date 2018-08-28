@@ -138,6 +138,7 @@
     <Compile Include="Abstract\ICompanyRepository.cs" />
     <Compile Include="Abstract\IBookingService.cs" />
     <Compile Include="Abstract\IEventSessionRepository.cs" />
+    <Compile Include="Abstract\IInvoiceService.cs" />
     <Compile Include="Abstract\ILeadService.cs" />
     <Compile Include="Abstract\ILoginTracker.cs" />
     <Compile Include="Abstract\IMembershipService.cs" />
@@ -153,6 +154,7 @@
     </Compile>
     <Compile Include="Abstract\IUploadTemplateService.cs" />
     <Compile Include="Abstract\IUserNotificationService.cs" />
+    <Compile Include="Concrete\EFInvoiceService.cs" />
     <Compile Include="Business\RuleBase.cs" />
     <Compile Include="Concrete\ConcurrentLoginTracker.cs" />
     <Compile Include="Concrete\EFAuditTracker.cs" />
@@ -189,6 +191,7 @@
     </Compile>
     <Compile Include="Entities\EventCompany.cs" />
     <Compile Include="Entities\Holiday.cs" />
+    <Compile Include="Entities\Invoice.cs" />
     <Compile Include="Entities\Lead.cs" />
     <Compile Include="Entities\LeadStatusRecord.cs" />
     <Compile Include="Entities\LocalInfo.cs" />

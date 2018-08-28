@@ -104,6 +104,7 @@ namespace PQT.Web
             kernel.Bind<ITrainerService>().To<EFTrainerService>();
             kernel.Bind<IBookingService>().To<EfBookingService>();
             kernel.Bind<IUploadTemplateService>().To<EFUploadTemplateService>();
+            kernel.Bind<IInvoiceService>().To<EFInvoiceService>();
 
             // Notification services
             kernel.Bind<INotificationService<Lead>>().To<LeadNotificationService>();

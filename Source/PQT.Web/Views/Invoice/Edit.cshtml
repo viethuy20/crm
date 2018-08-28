@@ -1,0 +1,26 @@
+﻿@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.InvoiceModel
+@{
+    ViewBag.Title = "Edit Invoice";
+}
+@using (Html.BeginForm("Edit", "Invoice", FormMethod.Post, new { @class = "form", enctype = "multipart/form-data" }))
+{
+    <section>
+        <div class="section-header">
+            <h2 class="text-primary">@ViewBag.Title</h2>
+        </div>
+        <div class="card">
+            <div>
+                @Html.Partial("_CreateOrEdit", Model)
+                <div class="card-actionbar">
+                    <div class="card-actionbar-row">
+                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                        @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("createbookingbtn").PrependIcon("md md-done").Style(ButtonStyle.Success)
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+}
