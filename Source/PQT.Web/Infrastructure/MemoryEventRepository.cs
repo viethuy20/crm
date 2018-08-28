@@ -43,8 +43,8 @@ namespace PQT.Web.Infrastructure
 
         private void RetrieveCacheEvents()
         {
-            _events.Clear();
             var allEvents = EventRepository.GetAllEvents();
+            _events.Clear();
             _events.AddRange(allEvents);
         }
 
@@ -102,7 +102,14 @@ namespace PQT.Web.Infrastructure
                     exist.EventCompanies.Remove(eventCompany);
                 }
             }
-            _events.Add(new Event(exist));
+            try
+            {
+                _events.Add(new Event(exist));
+            }
+            catch (Exception e)
+            {
+                RetrieveCacheEvents();
+            }
             return true;
         }
 
@@ -127,7 +134,14 @@ namespace PQT.Web.Infrastructure
                     exist.EventCompanies.Remove(eventCompany);
                 }
             }
-            _events.Add(new Event(exist));
+            try
+            {
+                _events.Add(new Event(exist));
+            }
+            catch (Exception e)
+            {
+                RetrieveCacheEvents();
+            }
             return exist;
         }
         public override bool AssignCompany(int id, IEnumerable<int> companyIds)
@@ -153,7 +167,14 @@ namespace PQT.Web.Infrastructure
                 {
                     trainer.Trainer = TrainerService.GetTrainer((int)trainer.TrainerID);
                 }
-                _events.Add(new Event(eventExist));
+                try
+                {
+                    _events.Add(new Event(eventExist));
+                }
+                catch (Exception e)
+                {
+                    RetrieveCacheEvents();
+                }
             }
             return true;
         }
