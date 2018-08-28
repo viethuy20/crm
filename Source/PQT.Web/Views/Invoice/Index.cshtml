@@ -84,8 +84,8 @@
                      '">' +
                      aData["InvoiceNo"] +
                      '</a>');
-                 $(nRow).find('td:eq(5)').html('<a href="#" data-action="delete" data-id="' + aData["ID"] +'"><i class="md md-delete text-danger"></i></a>');
-                 $(nRow).attr("data-id", aData["ID"]);
+                 //$(nRow).find('td:eq(5)').html('<a href="#" data-action="delete" data-id="' + aData["ID"] +'"><i class="md md-delete text-danger"></i></a>');
+                 //$(nRow).attr("data-id", aData["ID"]);
              },
              initComplete: function () {
                  var _table = this;
@@ -100,7 +100,7 @@
              },
          });
         
-         $Table.on('click', '[data-action="delete"]', function (e) {
+         @*$Table.on('click', '[data-action="delete"]', function (e) {
              e.preventDefault();
              var selftr = $(this);
              bootbox.confirm("@Resource.ConfirmDelete", function (isOK) {
@@ -121,7 +121,7 @@
                      });
                  }
              });
-         });
+         });*@
     </script>
 
 )

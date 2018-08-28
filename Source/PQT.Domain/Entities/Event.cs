@@ -189,6 +189,11 @@ namespace PQT.Domain.Entities
             }
         }
 
+        public string EventDate
+        {
+            get { return StartDate.ToString("dd MMM yyyy") + " - " + EndDate.ToString("dd MMM yyyy"); }
+        }
+
     }
     public class EventStatus : Enumeration
     {

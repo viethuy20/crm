@@ -14,6 +14,11 @@ namespace PQT.Domain.Concrete
         {
 
         }
+
+        public string GetTempInvoiceNo()
+        {
+            return string.Format("VN{0}", GetNextTempCounter("Invoice", 1578));
+        }
         public IEnumerable<Invoice> GetAllInvoices()
         {
             return GetAll<Invoice>().AsEnumerable();

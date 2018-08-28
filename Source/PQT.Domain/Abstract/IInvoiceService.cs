@@ -8,6 +8,7 @@ namespace PQT.Domain.Abstract
 {
     public interface IInvoiceService
     {
+        string GetTempInvoiceNo();
         IEnumerable<Invoice> GetAllInvoices();
         Invoice GetInvoice(int id);
         Invoice GetInvoiceByBooking(int bookingId);

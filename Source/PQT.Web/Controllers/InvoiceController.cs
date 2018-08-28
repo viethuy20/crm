@@ -36,17 +36,17 @@ namespace PQT.Web.Controllers
 
         public ActionResult Detail(int id = 0)
         {
-            Invoice invoice = null;
+            var model = new InvoiceModel();
             if (id > 0)
             {
-                invoice = _invoiceService.GetInvoice(id);
+                model.Invoice = _invoiceService.GetInvoice(id);
             }
-            if (invoice == null)
+            if (model.Invoice == null)
             {
                 TempData["error"] = "Invoice not found";
                 return RedirectToAction("Index");
             }
-            return View(invoice);
+            return View(model);
         }
         public ActionResult Create(int id = 0)
         {

@@ -22,7 +22,8 @@ namespace PQT.Web.Models
         public void Prepare(int id)
         {
             var bookingRepo = DependencyHelper.GetService<IBookingService>();
-            Invoice = new Invoice();
+            var invoiceService = DependencyHelper.GetService<IInvoiceService>();
+            Invoice = new Invoice { InvoiceNo = invoiceService.GetTempInvoiceNo(),CreatedTime = DateTime.Now};
             Booking = bookingRepo.GetBooking(id);
             if (Booking != null)
                 Invoice.BookingID = Booking.ID;
@@ -34,7 +35,7 @@ namespace PQT.Web.Models
             if (Invoice != null)
                 Booking = Invoice.Booking;
         }
-        public Booking Create()
+        public Invoice Create()
         {
             var bookingService = DependencyHelper.GetService<IBookingService>();
             var invoiceService = DependencyHelper.GetService<IInvoiceService>();
@@ -51,10 +52,10 @@ namespace PQT.Web.Models
             Invoice = invoiceService.CreateInvoice(Invoice);
             if (Invoice != null)
             {
-                booking.InvoiceNo = invoice.InvoiceNo;
+                booking.InvoiceNo = Invoice.InvoiceNo;
                 bookingService.UpdateBooking(booking);
             }
-            return Booking;
+            return Invoice;
         }
 
         public bool Update()

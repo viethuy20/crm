@@ -1,26 +1,20 @@
 ﻿@using Resources
-@model PQT.Web.Models.BookingModel
+@model PQT.Web.Models.InvoiceModel
 @{
-    ViewBag.Title = "Request to Booking";
+    ViewBag.Title = "Create Invoice";
 }
 <section>
     <div class="section-header">
         <h2 class="text-primary">@ViewBag.Title</h2>
-        <div class=" pull-right">
-            <div class="form-group" style="margin-right: 20px;margin-top: -30px;">
-                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").RouteValues(new {id = Model.Event.ID}).PrependIcon("md md-arrow-back")
-                @Html.Bootstrap().SubmitButton().Text("Submit").Class("createbookingbtn").PrependIcon("md md-done").Style(ButtonStyle.Success)
-            </div>
-        </div>
     </div>
     <div class="card">
         <div>
-            @using (Html.BeginForm("Create", "Booking", FormMethod.Post, new { @class = "form", enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("Create", "Invoice", FormMethod.Post, new { @class = "form", enctype = "multipart/form-data" }))
             {
                 @Html.Partial("_CreateOrEdit",Model)
                 <div class="card-actionbar">
                     <div class="card-actionbar-row">
-                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").RouteValues(new { id = Model.Event.ID }).PrependIcon("md md-arrow-back")
+                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
                         @Html.Bootstrap().SubmitButton().Text("Submit").Class("createbookingbtn").PrependIcon("md md-done").Style(ButtonStyle.Success)
                     </div>
                 </div>
