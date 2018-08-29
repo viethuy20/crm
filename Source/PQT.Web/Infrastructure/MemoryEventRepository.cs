@@ -104,7 +104,9 @@ namespace PQT.Web.Infrastructure
             }
             try
             {
-                _events.Add(new Event(exist));
+                exist.EventCompanies = exist.EventCompanies.Where(m => m.Company != null).ToList();
+                var newCache = new Event(exist);
+                _events.Add(newCache);
             }
             catch (Exception e)
             {
@@ -136,7 +138,9 @@ namespace PQT.Web.Infrastructure
             }
             try
             {
-                _events.Add(new Event(exist));
+                exist.EventCompanies = exist.EventCompanies.Where(m => m.Company != null).ToList();
+                var newCache = new Event(exist);
+                _events.Add(newCache);
             }
             catch (Exception e)
             {
@@ -169,7 +173,9 @@ namespace PQT.Web.Infrastructure
                 }
                 try
                 {
-                    _events.Add(new Event(eventExist));
+                    eventExist.EventCompanies = eventExist.EventCompanies.Where(m => m.Company != null).ToList();
+                    var newCache = new Event(eventExist);
+                    _events.Add(newCache);
                 }
                 catch (Exception e)
                 {
