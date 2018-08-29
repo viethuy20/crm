@@ -358,6 +358,7 @@
     <Compile Include="Controllers\BookingController.cs" />
     <Compile Include="Controllers\CompanyResourceController.cs" />
     <Compile Include="Controllers\CounterController.cs" />
+    <Compile Include="Controllers\BankAccountController.cs" />
     <Compile Include="Controllers\HolidayController.cs" />
     <Compile Include="Controllers\InvoiceController.cs" />
     <Compile Include="Controllers\OfficeLocationController.cs" />
@@ -2616,6 +2617,8 @@
     <Content Include="Views\Invoice\_CreateOrEdit.cshtml" />
     <Content Include="Views\Invoice\Edit.cshtml" />
     <Content Include="Views\Invoice\Index.cshtml" />
+    <Content Include="Views\BankAccount\CreateOrEdit.cshtml" />
+    <Content Include="Views\BankAccount\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

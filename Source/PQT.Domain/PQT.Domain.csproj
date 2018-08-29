@@ -179,6 +179,7 @@
     <Compile Include="Entities\Audit.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\BankAccount.cs" />
     <Compile Include="Entities\BookingStatusRecord.cs" />
     <Compile Include="Entities\CompanyResource.cs" />
     <Compile Include="Entities\Country.cs" />

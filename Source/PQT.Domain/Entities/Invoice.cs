@@ -16,6 +16,9 @@ namespace PQT.Domain.Entities
         public int BookingID { get; set; }
         [ForeignKey("BookingID")]
         public virtual Booking Booking { get; set; }
+        public int? BankAccountID { get; set; }
+        [ForeignKey("BankAccountID")]
+        public virtual BankAccount BankAccount { get; set; }
         public string Remarks { get; set; }
         public string DeleteRemarks { get; set; }
         public DateTime InvoiceDate

@@ -42,6 +42,14 @@ namespace PQT.Domain.Concrete
                 m.ManagerUsers,
             });
         }
+        public virtual Company GetCompanyInDb(int companyID)
+        {
+            return Get<Company>(m => m.ID == companyID, m => new
+            {
+                m.Country,
+                m.ManagerUsers,
+            });
+        }
 
         public virtual Company GetCompany(string name)
         {

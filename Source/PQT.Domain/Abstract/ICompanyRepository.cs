@@ -14,6 +14,7 @@ namespace PQT.Domain.Abstract
         IEnumerable<Company> GetAllCompanies();
         IEnumerable<Company> GetAllCompanies(Func<Company, bool> predicate);
         Company GetCompany(int companyID);
+        Company GetCompanyInDb(int companyID);
         Company GetCompany(string name);
         Company CreateCompany(Company company, IEnumerable<int> users);
         //List<Company> CreateCompanies(List<Company> companies);

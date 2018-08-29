@@ -15,10 +15,24 @@
                 <div class="card-actionbar">
                     <div class="card-actionbar-row">
                         @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
-                        @Html.Bootstrap().SubmitButton().Text("Submit").Class("createbookingbtn").PrependIcon("md md-done").Style(ButtonStyle.Success)
+                        @Html.Bootstrap().SubmitButton().Text("Submit").Class("submitbutton").PrependIcon("md md-done").Style(ButtonStyle.Success)
                     </div>
                 </div>
             }
         </div>
     </div>
 </section>
+
+@Html.Script(
+    @<script>
+         $(".submitbutton").on('click', function (e) {
+             e.preventDefault();
+             bootbox.confirm('@Resource.ConfirmCreate', function (isOK) {
+                 if (isOK) {
+                     var form = $('.submitbutton').parents("form");
+                     form.submit();
+                 }
+             });
+         });
+     </script>
+    )

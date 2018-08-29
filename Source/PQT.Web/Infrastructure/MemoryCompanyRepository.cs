@@ -64,6 +64,10 @@ namespace PQT.Web.Infrastructure
         {
             return _companies.FirstOrDefault(m => m.ID == companyID);
         }
+        public override Company GetCompanyInDb(int companyID)
+        {
+            return CompanyRepository.GetCompanyInDb(companyID);
+        }
 
         public override Company GetCompany(string name)
         {

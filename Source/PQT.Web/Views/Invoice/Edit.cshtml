@@ -12,11 +12,12 @@
         </div>
         <div class="card">
             <div>
+                @Html.HiddenFor(m=>m.Invoice.ID)
                 @Html.Partial("_CreateOrEdit", Model)
                 <div class="card-actionbar">
                     <div class="card-actionbar-row">
                         @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
-                        @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("createbookingbtn").PrependIcon("md md-done").Style(ButtonStyle.Success)
+                        @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("submitbutton").PrependIcon("md md-done").Style(ButtonStyle.Success)
                     </div>
                 </div>
             </div>
@@ -24,3 +25,16 @@
         </div>
     </section>
 }
+@Html.Script(
+    @<script>
+         $(".submitbutton").on('click', function (e) {
+             e.preventDefault();
+             bootbox.confirm('@Resource.ConfirmSave', function (isOK) {
+                 if (isOK) {
+                     var form = $('.submitbutton').parents("form");
+                     form.submit();
+                 }
+             });
+         });
+    </script>
+    )

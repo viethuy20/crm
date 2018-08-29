@@ -72,5 +72,15 @@ namespace PQT.Domain.Abstract
         bool UpdateAccomodationInfo(AccomodationInfo holiday);
         #endregion AccomodationInfo
 
+
+
+        #region Bank Account
+        IEnumerable<BankAccount> GetAllBankAccounts();
+        BankAccount GetBankAccount(int id);
+        BankAccount GetBankAccount(string accountNo);
+        BankAccount CreateBankAccount(BankAccount info);
+        bool UpdateBankAccount(BankAccount info);
+        bool DeleteBankAccount(int id);
+        #endregion Bank Account
     }
 }

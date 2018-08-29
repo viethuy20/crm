@@ -336,6 +336,40 @@ namespace PQT.Domain.Concrete
 
         #endregion
 
+        #region BankAccount
+
+
+        public IEnumerable<BankAccount> GetAllBankAccounts()
+        {
+            return GetAll<BankAccount>().AsEnumerable();
+        }
+
+        public BankAccount GetBankAccount(int id)
+        {
+            return Get<BankAccount>(id);
+        }
+        public BankAccount GetBankAccount(string accountNo)
+        {
+            return Get<BankAccount>(m => m.AccountNumber.ToLower().Trim() == accountNo.ToLower().Trim());
+        }
+
+        public BankAccount CreateBankAccount(BankAccount info)
+        {
+            return Create(info);
+        }
+
+        public bool UpdateBankAccount(BankAccount holiday)
+        {
+            return Update(holiday);
+        }
+
+        public bool DeleteBankAccount(int id)
+        {
+            return Delete<BankAccount>(id);
+        }
+
+        #endregion BankAccount
+
 
         #region VenueInfo
 

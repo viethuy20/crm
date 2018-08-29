@@ -43,8 +43,8 @@ namespace PQT.Web.Infrastructure
 
         private void RetrieveCacheEvents()
         {
-            _events.Clear();
             var allEvents = EventRepository.GetAllEvents();
+            _events.Clear();
             _events.AddRange(allEvents);
         }
 
@@ -168,7 +168,7 @@ namespace PQT.Web.Infrastructure
                 _events.Remove(GetEvent(id));
                 foreach (var eventCompany in eventExist.EventCompanies.Where(m => m.Company == null).ToList())
                 {
-                    var com = CompanyRepository.GetCompany(eventCompany.CompanyID);
+                    var com = CompanyRepository.GetCompanyInDb(eventCompany.CompanyID);
                     if (com != null)
                     {
                         eventCompany.Company = com;
@@ -182,7 +182,15 @@ namespace PQT.Web.Infrastructure
                 {
                     trainer.Trainer = TrainerService.GetTrainer((int)trainer.TrainerID);
                 }
-                _events.Add(new Event(eventExist));
+                try
+                {
+                    var newCache = new Event(eventExist);
+                    _events.Add(newCache);
+                }
+                catch (Exception e)
+                {
+                    RetrieveCacheEvents();
+                }
             }
             return true;
         }

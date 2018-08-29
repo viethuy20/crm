@@ -14,13 +14,13 @@
             background-color: #f2f2f2;
         }
 </style>
-<div class="card-body">
-    <div class=" col-sm-12">
+@Html.HiddenFor(m=>m.Invoice.BookingID)
+    <div class="card-body">
         <div class="card card-underline">
             <div class="card-head">
                 <header>Attention to</header>
             </div>
-            <div class="card-body text-default-light" style="padding-bottom: 50px;">
+            <div class="card-body text-default-light">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserName).Disabled().Class("form-control text-capitalize").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserName).LabelText("Authoriser Name")
@@ -35,110 +35,132 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="card card-underline">
-        <div class="card-head">
-            <header>Invoice Info</header>
-        </div>
-        <div class="card-body text-default-light" style="padding-bottom: 50px;">
-            <div class="col-sm-4">
-                <div class="form-group ">
-                    @Html.Bootstrap().TextBoxFor(m => m.Invoice.InvoiceNo).Class("form-control").Disabled().ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Invoice.InvoiceNo)
-                </div>
+        <div class="card card-underline">
+            <div class="card-head">
+                <header>Invoice Info</header>
             </div>
-            <div class="col-sm-4">
-                <div class="form-group ">
-                    @Html.Bootstrap().TextBoxFor(m => m.Invoice.InvoiceDateStr).Class("form-control").Disabled().ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Invoice.InvoiceDate)
+            <div class="card-body text-default-light">
+                <div class="col-sm-4">
+                    <div class="form-group ">
+                        @Html.Bootstrap().TextBoxFor(m => m.Invoice.InvoiceNo).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Invoice.InvoiceNo)
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group ">
-                    @Html.Bootstrap().TextBoxFor(m => m.Booking.BookingDateStr).Class("form-control").Disabled().ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Booking.BookingDate)
+                <div class="col-sm-4">
+                    <div class="form-group ">
+                        @Html.Bootstrap().TextBoxFor(m => m.Invoice.InvoiceDateStr).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Invoice.InvoiceDate)
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group ">
-                    @Html.Bootstrap().TextBoxFor(m => m.Booking.DelegateNumber).Class("form-control").Disabled().ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Booking.DelegateNumber).LabelText("Attendee(s)")
+                <div class="col-sm-4">
+                    <div class="form-group ">
+                        @Html.Bootstrap().TextBoxFor(m => m.Booking.BookingDateStr).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Booking.BookingDate)
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group ">
-                    @Html.Bootstrap().TextBoxFor(m => m.Booking.Event.EventName).Class("form-control").Disabled().ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Booking.Event.EventName).LabelText("Program")
+                <div class="col-sm-4">
+                    <div class="form-group ">
+                        @Html.Bootstrap().TextBoxFor(m => m.Booking.DelegateNumber).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Booking.DelegateNumber).LabelText("Attendee(s)")
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group ">
-                    @Html.Bootstrap().TextBoxFor(m => m.Booking.Event.EventDate).Class("form-control").Disabled().ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Booking.Event.EndDate).LabelText("Date")
+                <div class="col-sm-4">
+                    <div class="form-group ">
+                        @Html.Bootstrap().TextBoxFor(m => m.Booking.Event.EventName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Booking.Event.EventName).LabelText("Program")
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group ">
-                    @Html.Bootstrap().TextBoxFor(m => m.Booking.Event.HotelVenue).Class("form-control").Disabled().ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Booking.Event.HotelVenue).LabelText("Venue")
+                <div class="col-sm-4">
+                    <div class="form-group ">
+                        @Html.Bootstrap().TextBoxFor(m => m.Booking.Event.EventDate).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Booking.Event.EndDate).LabelText("Date")
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    @Html.Bootstrap().DropDownListFor(m => m.Invoice.Currency, EnumerationHelper.ToSelectList<SalaryCurrency>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Invoice.Currency)
+                <div class="col-sm-4">
+                    <div class="form-group ">
+                        @Html.Bootstrap().TextBoxFor(m => m.Booking.Event.HotelVenue).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Booking.Event.HotelVenue).LabelText("Venue")
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group ">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().DropDownListFor(m => m.Invoice.Currency, EnumerationHelper.ToSelectList<SalaryCurrency>()).OptionLabel("").Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Invoice.Currency)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group ">
                         @Html.Bootstrap().TextBoxFor(m => m.Invoice.AdminCharge).Class("form-control").ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Invoice.AdminCharge)
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-4">
+                <div class="col-sm-4">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Invoice.TotalAmount).Class("form-control").ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Invoice.TotalAmount)
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group ">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().DropDownListFor(m => m.Invoice.BankAccountID, Model.BankAccounts.Where(m => m.ID == Model.Invoice.BankAccountID).ToSelectList(m => m.ID, m => m.BankNameDescription)).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Invoice.BankAccountID)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group ">
                         @Html.Bootstrap().TextAreaFor(m => m.Invoice.Remarks).Class("form-control").ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Invoice.Remarks)
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="card card-underline">
-        <div class="card-head">
-            <header>Delegates</header>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <table class="table no-margin">
-                    <thead>
-                        <tr>
-                            <th>S/No</th>
-                            <th>Full Name</th>
-                            <th>Job Title</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @{
-                            var count = 0;
-                            foreach (var phonecall in Model.Booking.Delegates)
-                            {
-                                count++;
-                                <tr>
-                                    <td>@count</td>
-                                    <td>@phonecall.FullName</td>
-                                    <td>@phonecall.JobTitle</td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
+        <div class="card card-underline">
+            <div class="card-head">
+                <header>Delegates</header>
             </div>
-        </div><!--end .card-body -->
+            <div class="card-body">
+                <div class="row">
+                    <table class="table no-margin">
+                        <thead>
+                            <tr>
+                                <th>S/No</th>
+                                <th>Full Name</th>
+                                <th>Job Title</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var count = 0;
+                                foreach (var phonecall in Model.Booking.Delegates)
+                                {
+                                    count++;
+                                    <tr>
+                                        <td>@count</td>
+                                        <td>@phonecall.FullName</td>
+                                        <td>@phonecall.JobTitle</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div><!--end .card-body -->
+        </div>
     </div>
-</div>
+    @Html.Script(
+    @<script>
+        var bankAccounts = @Html.Serialize(Model.BankAccounts);
+        var $bankAccount = $('@Html.JquerySelectorFor(m=>m.Invoice.BankAccountID)');
+        $('@Html.JquerySelectorFor(m=>m.Invoice.Currency)').on('change',
+            function() {
+                var val = $(this).val();
+                $bankAccount.empty();
+                $bankAccount.append('<option value=""></option>');
+                for (var i = 0; i < bankAccounts.length; i++) {
+                    if (bankAccounts[i].CurrencyCode == val) {
+                        $bankAccount.append('<option value="' + bankAccounts[i].CurrencyCode + '">' + bankAccounts[i].BankNameDescription +'</option>');
+                    }
+                }
+                $bankAccount.val('').trigger("change");
+            });
+    </script>)
