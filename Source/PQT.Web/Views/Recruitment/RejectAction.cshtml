@@ -1,0 +1,53 @@
+﻿@using NS
+@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.RecruitmentModel
+
+@{
+    var title = "Reject Employment";
+}
+
+<div class="card card-underline" style="background: white; margin: auto; max-width: 600px; position: relative;">
+    <div>
+        <div class="card-head">
+            <header><b>@title</b></header>
+        </div><!--end .card-head -->
+        @using (Ajax.BeginForm("RejectAction", "routeValues", new AjaxOptions { OnFailure = "onFailRejectAction", OnSuccess = "onSuccessRejectAction" }, new { @id = "CreateOrEditForm", @class = "form" }))
+            {
+            <div class="card-body">
+                @Html.HiddenFor(m => m.id)
+                @Html.HiddenFor(m => m.hubConnectionId)
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.FirstName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.FirstName)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.LastName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.LastName)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.MobileNumber).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.MobileNumber)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Reason).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Reason).LabelText("Rejection reason").ShowRequiredStar(true)
+                    </div>
+                </div>
+            </div><!--end .card-body -->
+            <div class="card-actionbar">
+                <div class="card-actionbar-row">
+                    <a href="#" class="btn btn-default" id="request_close"><i class="md md-close"></i> Close</a>
+                    @Html.Bootstrap().SubmitButton().Text(Resource.Reject).PrependIcon("md md-done").Style(ButtonStyle.Danger)
+                </div>
+            </div>
+        }
+    </div>
+</div><!--end .card -->

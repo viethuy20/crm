@@ -223,6 +223,10 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<User> GetUsersInRole(params string[] roleName)
         {
+            if (!roleName.Any())
+            {
+                return new List<User>();
+            }
             return GetAll<User>(u => u.Roles
                     .Select(r => r.Name.ToUpper())
                     .Intersect(roleName.Select(r1 => r1.ToUpper()))

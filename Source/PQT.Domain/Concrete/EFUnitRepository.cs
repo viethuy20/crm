@@ -335,6 +335,35 @@ namespace PQT.Domain.Concrete
         }
 
         #endregion
+        #region RecruitmentPosition
+
+
+        public IEnumerable<RecruitmentPosition> GetAllRecruitmentPositions()
+        {
+            return GetAll<RecruitmentPosition>().AsEnumerable();
+        }
+
+        public RecruitmentPosition GetRecruitmentPosition(int id)
+        {
+            return Get<RecruitmentPosition>(id);
+        }
+
+        public RecruitmentPosition CreateRecruitmentPosition(RecruitmentPosition info)
+        {
+            return Create(info);
+        }
+
+        public bool UpdateRecruitmentPosition(RecruitmentPosition holiday)
+        {
+            return Update(holiday);
+        }
+
+        public bool DeleteRecruitmentPosition(int id)
+        {
+            return Delete<RecruitmentPosition>(id);
+        }
+
+        #endregion RecruitmentPosition
 
         #region BankAccount
 

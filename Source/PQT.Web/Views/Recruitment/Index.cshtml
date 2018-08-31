@@ -1,0 +1,111 @@
+﻿@using PQT.Domain.Entities
+@using PQT.Domain.Enum
+@using Resources
+@model System.Collections.Generic.IEnumerable<PQT.Domain.Entities.Candidate>
+
+@{
+    ViewBag.Title = "Recruitment List";
+}
+<style>
+    #recruitmentTable td, #recruitmentTable td {
+        white-space: nowrap;
+    }
+</style>
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            @if (CurrentUser.HasPermission("Recruitment", "Create"))
+            {
+                @Html.Bootstrap().ActionLinkButton(Resource.AddNew, "Create").PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary" })
+            }
+        </div>
+    </div>
+    <div class="card" style="margin-bottom: 350px">
+        <div class="card-body">
+            <table class="table" id="recruitmentTable">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Mobile Number</th>
+                        <th>Personal Email</th>
+                        <th>Application Source</th>
+                        <th>Office Location</th>
+                        <th>PS Status</th>
+                        <th>PS Reason</th>
+                        <th>1F2F Status</th>
+                        <th>1F2F Reason</th>
+                        <th>2F2F Status</th>
+                        <th>2F2F Reason</th>
+                        @*<th>Candidate Status</th>*@
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>
+
+
+@Html.Script(
+    @<script>
+
+        var $Table = $('#recruitmentTable').dataTable({
+            "processing": true, // for show progress bar
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "stateSave": false,
+            "ajax": {
+                "url": "@Url.Action("AjaxGetAllCandidates")",
+                "type": "POST",
+                "datatype": "json",
+                "data": function(d) {
+                }
+            },
+            "columns": [
+                { "data": "FirstName", "name": "FirstName", "orderable": true },
+                { "data": "LastName", "name": "LastName", "orderable": true },
+                { "data": "MobileNumber", "name": "MobileNumber", "orderable": true },
+                { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": false },
+                { "data": "ApplicationSource", "name": "ApplicationSource", "orderable": true },
+                { "data": "OfficeLocationDisplay", "name": "OfficeLocationDisplay", "orderable": true },
+                { "data": "PsSummaryStatusDisplay", "name": "PsSummaryStatusDisplay", "orderable": true },
+                { "data": "PsSummaryStatusReason", "name": "PsSummaryStatusReason", "orderable": true },
+                { "data": "OneFaceToFaceSummaryStatusDisplay", "name": "OneFaceToFaceSummaryStatusDisplay", "orderable": true },
+                { "data": "OneFaceToFaceSummaryStatusReason", "name": "OneFaceToFaceSummaryStatusReason", "orderable": true },
+                { "data": "TwoFaceToFaceSummaryStatusDisplay", "name": "TwoFaceToFaceSummaryStatusDisplay", "orderable": true },
+                { "data": "TwoFaceToFaceSummaryStatusReason", "name": "TwoFaceToFaceSummaryStatusReason", "orderable": true },
+                { "data": "ID", "name": "ID", "orderable": true },
+            ],
+            "iDisplayLength": 50,
+            "aaSorting": [[12, "desc"]],
+            "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                var eq15Html = '<a href="@Url.Action("Detail")/' +
+                    aData["ID"] +
+                    '"><i class="fa fa-eye"> Detail</i></a>';
+                if ('@CurrentUser.HasPermission("Event", "Edit")' == 'True') {
+                    eq15Html += ' | <a href="@Url.Action("Edit")/' + aData["ID"] + '"><i class="md md-edit text-info"> Edit</i></a>';
+                }
+                $(nRow).find('td:eq(12)').html(eq15Html);
+                $(nRow).addClass(aData["ClassStatus"]);
+                $(nRow).attr("data-id", ["ID"]);
+            },
+            initComplete: function () {
+                var _table = this;
+                _table.parent().find('input[type="search"]').unbind();
+                var timeOutTyping;
+                _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                    clearTimeout(timeOutTyping);
+                    timeOutTyping = setTimeout(function () {
+                        _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                    }, 600);
+                });
+            },
+        });
+
+        //StartConnectProgressHub();
+    </script>)

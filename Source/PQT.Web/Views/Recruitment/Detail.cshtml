@@ -1,0 +1,349 @@
+﻿@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.RecruitmentModel
+
+@{
+    ViewBag.Title = "Candidate Detail";
+}
+
+<style>
+    #grid_companies tbody tr {
+        cursor: pointer;
+    }
+
+        #grid_companies tbody tr.Tier1 {
+            color: #a94442;
+            background-color: #ffdad7;
+        }
+
+            #grid_companies tbody tr.Tier1.selected {
+                color: #a94442;
+                background-color: #fcaca6;
+            }
+
+        #grid_companies tbody tr.Tier2 {
+            color: #31708f;
+            background-color: #d8edff !important;
+        }
+
+            #grid_companies tbody tr.Tier2.selected {
+                color: #31708f;
+                background-color: #add9ff !important;
+            }
+
+        #grid_companies tbody tr.Tier0.selected {
+            color: #313534;
+            background-color: #e5e6e6 !important;
+        }
+</style>
+<section>
+    <div class="row section-header" style="height: auto">
+        <h2 class="text-primary col-sm-3">@ViewBag.Title</h2>
+    </div>
+    <div class="row">
+        <div class="col-sm-12" style="padding-right: 24px; padding-bottom: 12px">
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+            @if (CurrentUser.HasPermission("Recruitment", "Edit"))
+            {
+                @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.Candidate.ID }).Class("btn-primary").PrependIcon("md md-edit")
+            }
+
+            @if (CurrentUser.HasPermission("Recruitment", "RequestAction") && (Model.Candidate.CandidateStatusRecord == CandidateStatus.Initial))
+            {
+                @Html.Bootstrap().ActionLinkButton("Request Employment", "RequestAction").Id("request_employment").Class("btn-info").PrependIcon("md md-phone-locked")
+            }
+            
+            @if (CurrentUser.HasPermission("Lead", "Delete")&& (Model.Candidate.CandidateStatusRecord == CandidateStatus.Initial))
+            {
+            @Html.Bootstrap().ActionLinkButton("Delete ", "Delete").Id("candidate_delete").Class("btn-danger").PrependIcon("md md-delete")
+            }
+
+            @if (CurrentUser.HasPermission("Recruitment", "ApprovalAction") && (Model.Candidate.CandidateStatusRecord == CandidateStatus.RequestEmployment))
+            {
+                @Html.Bootstrap().ActionLinkButton("Approve Employment", "ApprovalAction").Id("approve_action").Class("btn-success").PrependIcon("md md-done")
+            }
+
+            @if (CurrentUser.HasPermission("Recruitment", "RejectAction") && (Model.Candidate.CandidateStatusRecord == CandidateStatus.RequestEmployment))
+            {
+                @Html.Bootstrap().ActionLinkButton("Reject Employment", "RejectAction").RouteValues(new { id = Model.Candidate.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
+            }
+
+
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body form">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.FirstName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.FirstName)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.LastName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.LastName)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.EnglishName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.EnglishName)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.MobileNumber).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.MobileNumber)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.PersonalEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.PersonalEmail)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.ApplicationSource).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.ApplicationSource)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.OfficeLocationDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.OfficeLocation)
+                    </div>
+                </div>
+                <div class=" col-sm-4">
+                    <div class="form-group">
+                        @if (!string.IsNullOrEmpty(Model.Candidate.Resume))
+                        {
+                            @Html.Bootstrap().Link(Model.Candidate.Resume, FileUpload.GetImageUrl(FileUploadType.Recruitment, Model.Candidate.Resume)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                        }
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.Resume)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.RecruitmentPositionDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.RecruitmentPosition)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.Remarks)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Interview Summary</header>
+        </div>
+        <div class="card-body form">
+            @if (Model.Candidate.PsSummary != null)
+            {
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary).LabelText("PS Summary")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.DateSelectedDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.DateSelected).LabelText("Date")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.Interviewer).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.Interviewer)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.Status)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.ReasonRejected).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.ReasonRejected).LabelText("Reason")
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.Candidate.OneFaceToFaceSummary != null)
+            {
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary).LabelText("1F2F Summary")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.DateSelectedDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.DateSelected).LabelText("Date")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.Interviewer).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.Interviewer)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.Status)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.ReasonRejected).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.ReasonRejected).LabelText("Reason")
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.Candidate.TwoFaceToFaceSummary != null)
+            {
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary).LabelText("2F2F Summary")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.DateSelectedDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.DateSelected).LabelText("Date")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.Interviewer).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.Interviewer)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.Status)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.ReasonRejected).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.ReasonRejected).LabelText("Reason")
+                        </div>
+                    </div>
+                </div>
+            }
+        </div><!--end .card-body -->
+    </div>
+
+</section>
+
+@Html.Script(
+    @<script>
+
+        UpdateSeenNotify(@Model.Candidate.ID, @NotifyType.Recruitment.Value);
+
+        $(document).on('click', '#candidate_delete', function (e) {
+             e.preventDefault();
+             bootbox.confirm("Do you want to delete this candidate?", function (isOK) {
+                 if (isOK) {
+                     $.ajax({
+                         url: '@Url.Action("DeleteCandidate")?id=@Model.Candidate.ID',
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 location.reload();
+                             } else {
+                                 toastr.error(data);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Delete failed");
+                         }
+                     });
+                 }
+             });
+        });
+
+
+        $(document).on('click', '#request_employment', function (e) {
+             e.preventDefault();
+             bootbox.confirm("@Resource.ConfirmRequestNCL", function (isOK) {
+                 if (isOK) {
+                     $.ajax({
+                         url: '@Url.Action("RequestAction")?id=@Model.Candidate.ID',
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 location.reload();
+                             } else {
+                                 toastr.error(data);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Request failed");
+                         }
+                     });
+                 }
+             });
+         });
+
+         $(document).on('click', '#approve_action', function (e) {
+             e.preventDefault();
+             bootbox.confirm("@Resource.ConfirmApprove", function (isOK) {
+                 if (isOK) {
+                     $.ajax({
+                         url: '@Url.Action("ApprovalAction")?id=@Model.Candidate.ID',
+                         type: 'POST',
+                         success: function (data) {
+                             if (data.IsSuccess) {
+                                 location.reload();
+                             } else {
+                                 toastr.error(data.Message);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Cancel failed");
+                         }
+                     });
+                 }
+             });
+         });
+     </script>)
+
+
+@Html.Script(
+    @<script>
+
+         function onFailRejectAction() {
+             toastr.error('@Resource.SaveError');
+         }
+         function onSuccessRejectAction(data) {
+             if (data.IsSuccess) {
+                 toastr.success("Reject successful");
+                 $.magnificPopup.close();
+                 location.reload();
+             } else {
+                 toastr.error(data.Message);
+             }
+         }
+    </script>)
+

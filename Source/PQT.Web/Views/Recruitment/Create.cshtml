@@ -1,0 +1,37 @@
+@using Resources
+@model PQT.Web.Models.RecruitmentModel
+
+@{
+    ViewBag.Title = "Add Candidate";
+}
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    @using (Html.BeginForm("Create", "Recruitment", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
+    {
+        @Html.Partial("_CreateOrEdit", Model)
+        <div class="row">
+            <div class="form-group  col-md-offset-2">
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                @Html.Bootstrap().SubmitButton().Class("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
+            </div>
+        </div>
+    }
+</section>
+
+
+
+@Html.Script(
+    @<script>
+        $(".submitbutton").on('click', function (e) {
+            e.preventDefault();
+            bootbox.confirm('@Resource.ConfirmCreate', function (isOK) {
+                if (isOK) {
+                    var form = $('.submitbutton').parents("form");
+                    form.submit();
+                }
+            });
+        });
+    </script>
+)

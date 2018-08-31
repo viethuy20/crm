@@ -79,12 +79,13 @@
              "iDisplayLength": sizeLenght,
              "aaSorting": [[1, "desc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 $(nRow).find('td:eq(1)').html('<a href="@Url.Action("Detail")/' +
+                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
                      aData["ID"] +
                      '">' +
                      aData["InvoiceNo"] +
                      '</a>');
-                 //$(nRow).find('td:eq(5)').html('<a href="#" data-action="delete" data-id="' + aData["ID"] +'"><i class="md md-delete text-danger"></i></a>');
+                 $(nRow).find('td:eq(5)').html('<a href="@Url.Action("Edit")?id=' + aData["ID"] + '" data-action="edit"><i class="md md-edit text-info"></i></a> ' + 
+                     ' <a href="#" data-action="delete" data-id="' + aData["ID"] +'"><i class="md md-delete text-danger"></i></a>');
                  //$(nRow).attr("data-id", aData["ID"]);
              },
              initComplete: function () {
@@ -122,29 +123,5 @@
                  }
              });
          });*@
-    </script>
 
-)
-
-@Html.Script(
-    @<script>
-         $(document).on('click', '.btnApprove', function (e) {
-             e.preventDefault();
-             var $sefl = $(this);
-             bootbox.confirm("Are you sure you want to approve this booking?", function (isOK) {
-                 if (isOK) {
-                     location.href = $sefl.attr('href');
-                 }
-             });
-         });
-         $(document).on('click', '.btnReject', function (e) {
-             e.preventDefault();
-             var $sefl = $(this);
-             bootbox.confirm("Are you sure you want to reject this booking?", function (isOK) {
-                 if (isOK) {
-                     $sefl.closest('form').submit();
-                 }
-             });
-         });
-    </script>
-)
+    </script>)

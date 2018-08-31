@@ -175,7 +175,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <input type="text" name="@Html.NameFor(m=>m.TopicsInterested)" value="@Model.TopicsInterested" data-role="tagsinput" />
+                                <input type="text" name="@Html.NameFor(m=>m.TopicsInterested)" value="@Model.TopicsInterested" placeholder="                     " data-role="tagsinput" />
                                 @Html.ValidationMessageFor(m => m.TopicsInterested)
                                 @Html.Bootstrap().LabelFor(m => m.TopicsInterested)
                             </div>

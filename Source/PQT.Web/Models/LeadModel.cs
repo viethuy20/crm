@@ -134,9 +134,7 @@ namespace PQT.Web.Models
             lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, Enumeration.FromValue<LeadStatus>(requestType), currentUser.ID, fileName, "");
             if (!leadRepo.UpdateLead(lead)) return "Submit failed";
 
-            var membershipService = DependencyHelper.GetService<IMembershipService>();
-            var notiUsers = membershipService.GetUsersInRole(new string[] { "Manager", "QC" });
-            LeadNotificator.NotifyUser(notiUsers, lead.ID); // notify for manager
+            LeadNotificator.NotifyUser(NotifyAction.Request, lead.ID);
             LeadNotificator.NotifyUpdateNCL(lead.ID);
             return "";
         }
@@ -170,10 +168,7 @@ namespace PQT.Web.Models
             lead.LeadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.Initial, currentUser.ID);
             if (!leadRepo.UpdateLead(lead))
                 return "Cancel failed";
-
-            var membershipService = DependencyHelper.GetService<IMembershipService>();
-            var notiUsers = membershipService.GetUsersInRole(new string[] { "Manager", "QC" });
-            LeadNotificator.NotifyUser(notiUsers, lead.ID, titleNotify); // notify for manager
+            LeadNotificator.NotifyUser(NotifyAction.CancelRequest, lead.ID, titleNotify);
             LeadNotificator.NotifyUpdateNCL(lead.ID);
             return "";
         }

@@ -8,6 +8,7 @@ using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
 using PQT.Web.Infrastructure.Filters;
+using PQT.Web.Infrastructure.Notification;
 using PQT.Web.Models;
 
 namespace PQT.Web.Controllers
@@ -85,6 +86,7 @@ namespace PQT.Web.Controllers
                     return Json(new { IsSuccess = false, Message = "Approve failed" });
                 }
                 _repo.UpdateVenueInfo(hotel);
+                OpeEventNotificator.NotifyUser(NotifyAction.Approved, id, "Approved operation info");
             }
             else
             {
@@ -100,6 +102,7 @@ namespace PQT.Web.Controllers
                     return Json(new { IsSuccess = false, Message = "Approve failed" });
                 }
                 _repo.UpdateAccomodationInfo(hotel);
+                OpeEventNotificator.NotifyUser(NotifyAction.Approved, id, "Approved operation info");
             }
             return Json(new { IsSuccess = true });
         }
@@ -140,6 +143,7 @@ namespace PQT.Web.Controllers
                     return Json(new { IsSuccess = false, Message = "Reject failed" });
                 }
                 _repo.UpdateVenueInfo(hotel);
+                OpeEventNotificator.NotifyUser(NotifyAction.Rejected, id, "Rejected operation info");
             }
             else
             {
@@ -155,6 +159,7 @@ namespace PQT.Web.Controllers
                     return Json(new { IsSuccess = false, Message = "Reject failed" });
                 }
                 _repo.UpdateAccomodationInfo(hotel);
+                OpeEventNotificator.NotifyUser(NotifyAction.Rejected, id, "Rejected operation info");
             }
             return Json(new { IsSuccess = true });
         }

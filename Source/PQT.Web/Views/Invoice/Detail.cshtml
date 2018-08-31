@@ -54,13 +54,13 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Invoice.AdminCharge.ToString("N2")).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().TextBoxFor(m => m.Invoice.AdminCharge).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Invoice.AdminCharge)
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Invoice.TotalAmount.ToString("N2")).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().TextBoxFor(m => m.Invoice.TotalAmount).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Invoice.TotalAmount)
                     </div>
                 </div>

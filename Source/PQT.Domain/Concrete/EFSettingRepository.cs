@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
+using PQT.Domain.Enum;
 
 namespace PQT.Domain.Concrete
 {
@@ -42,5 +43,40 @@ namespace PQT.Domain.Concrete
         {
             return Delete<Setting>(settingId);
         }
+
+
+        #region NotifySetting
+
+
+        public IEnumerable<NotifySetting> GetAllNotifySettings()
+        {
+            return GetAll<NotifySetting>().AsEnumerable();
+        }
+
+        public NotifySetting GetNotifySetting(int id)
+        {
+            return Get<NotifySetting>(id);
+        }
+        public NotifySetting GetNotifySetting(NotifyType type, NotifyAction action)
+        {
+            return Get<NotifySetting>(m=>m.NotifyType == type && m.NotifyAction == action);
+        }
+        public NotifySetting CreateNotifySetting(NotifySetting info)
+        {
+            return Create(info);
+        }
+
+        public bool UpdateNotifySetting(NotifySetting holiday)
+        {
+            return Update(holiday);
+        }
+
+        public bool DeleteNotifySetting(int id)
+        {
+            return Delete<NotifySetting>(id);
+        }
+
+        #endregion NotifySetting
+
     }
 }

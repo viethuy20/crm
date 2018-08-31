@@ -60,7 +60,7 @@ namespace PQT.Domain.Concrete
         }
         public virtual int SeenUserNotification(int userId, int entryId, NotifyType type)
         {
-            var notifications = _db.Set<UserNotification>().Where(m => m.UserID == userId && m.EntryId == entryId && m.NotifyType.Value == type.Value).ToList();
+            var notifications = _db.Set<UserNotification>().Where(m => m.UserID == userId && m.EntryId == entryId && m.NotifyType.Value == type.Value && !m.Seen).ToList();
             var countSeen = 0;
             foreach (var notify in notifications)
             {

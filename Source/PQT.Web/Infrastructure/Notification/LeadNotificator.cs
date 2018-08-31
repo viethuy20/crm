@@ -28,6 +28,10 @@ namespace PQT.Web.Infrastructure.Notification
         {
             get { return DependencyResolver.Current.GetService<IMembershipService>(); }
         }
+        private static ISettingRepository SettingRepository
+        {
+            get { return DependencyResolver.Current.GetService<ISettingRepository>(); }
+        }
         private static IUserNotificationService UserNotificationService
         {
             get { return DependencyResolver.Current.GetService<IUserNotificationService>(); }
@@ -128,6 +132,20 @@ namespace PQT.Web.Infrastructure.Notification
             });
             thread.Start();
         }
+
+        public static void NotifyUser(NotifyAction notifyAction, int leadId, string title = null, bool email = false)
+        {
+            var thread = new Thread(() =>
+            {
+                var setting = SettingRepository.GetNotifySetting(NotifyType.Lead, notifyAction);
+                if (setting != null)
+                {
+                    var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
+                    NotifyUser(notiUsers, leadId, title, email);
+                }
+            });
+            thread.Start();
+        }
     }
 
 
@@ -141,6 +159,10 @@ namespace PQT.Web.Infrastructure.Notification
         private static IMembershipService MemberService
         {
             get { return DependencyResolver.Current.GetService<IMembershipService>(); }
+        }
+        private static ISettingRepository SettingRepository
+        {
+            get { return DependencyResolver.Current.GetService<ISettingRepository>(); }
         }
         private static IBookingService BookingService
         {
@@ -162,7 +184,7 @@ namespace PQT.Web.Infrastructure.Notification
             NotificationService.NotifyUser(users, booking);
         }
 
-        public static void NotifyUpdateBooking(int bookingId,bool reloadTableLead = true)
+        public static void NotifyUpdateBooking(int bookingId, bool reloadTableLead = true)
         {
             var thread = new Thread(() =>
             {
@@ -225,6 +247,105 @@ namespace PQT.Web.Infrastructure.Notification
                 //    NotificationService.NotifyUser(users, booking);
                 //}
 
+            });
+            thread.Start();
+        }
+
+
+        public static void NotifyUser(NotifyAction notifyAction, int leadId, string title = null, bool email = false)
+        {
+            var thread = new Thread(() =>
+            {
+                var setting = SettingRepository.GetNotifySetting(NotifyType.Booking, notifyAction);
+                if (setting != null)
+                {
+                    var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
+                    NotifyUser(notiUsers, leadId, title, email);
+                }
+            });
+            thread.Start();
+        }
+    }
+    public class OpeEventNotificator
+    {
+        private static IMembershipService MemberService
+        {
+            get { return DependencyResolver.Current.GetService<IMembershipService>(); }
+        }
+        private static ISettingRepository SettingRepository
+        {
+            get { return DependencyResolver.Current.GetService<ISettingRepository>(); }
+        }
+        private static IEventService EventService
+        {
+            get { return DependencyResolver.Current.GetService<IEventService>(); }
+        }
+        private static IUserNotificationService UserNotificationService
+        {
+            get { return DependencyResolver.Current.GetService<IUserNotificationService>(); }
+        }
+
+        public static void NotifyUser(IEnumerable<User> users, int eventId, string title)
+        {
+            var currentUserId = CurrentUser.Identity.ID;
+            var thread = new Thread(() =>
+            {
+                var eventData = EventService.GetEvent(eventId);
+                if (eventData == null)
+                    return;
+                foreach (var user in users)
+                {
+                    if (user == null || currentUserId == user.ID)
+                    {
+                        continue;
+                    }
+                    try
+                    {
+                        var notify = new UserNotification
+                        {
+                            UserID = user.ID,
+                            EntryId = eventData.ID,
+                            EventId = eventData.ID,
+                            NotifyType = NotifyType.OpeEvent,
+                            Title = title,
+                            EventCode = eventData.EventCode,
+                            Description = "Operation info",
+                            HighlightColor = eventData.BackgroundColor
+                        };
+                        if (!string.IsNullOrEmpty(title))
+                        {
+                            notify.Title = title;
+                        }
+                        notify = UserNotificationService.CreateUserNotification(notify);
+                        user.NotifyNumber++;
+                        MemberService.UpdateUser(user);
+                        NotificationHub.NotifyUser(user, notify);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+
+                //if (email)
+                //{
+                //    NotificationService.NotifyUser(users, booking);
+                //}
+
+            });
+            thread.Start();
+        }
+
+
+        public static void NotifyUser(NotifyAction notifyAction, int leadId,string title)
+        {
+            var thread = new Thread(() =>
+            {
+                var setting = SettingRepository.GetNotifySetting(NotifyType.OpeEvent, notifyAction);
+                if (setting != null)
+                {
+                    var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
+                    NotifyUser(notiUsers, leadId, title);
+                }
             });
             thread.Start();
         }

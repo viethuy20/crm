@@ -50,7 +50,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        <input type="text" name="@Html.NameFor(m=>m.OpTopicsInterested)" value="@Model.OpTopicsInterested" data-role="tagsinput" />
+                        <input type="text" name="@Html.NameFor(m=>m.OpTopicsInterested)" value="@Model.OpTopicsInterested"placeholder="                     " data-role="tagsinput" />
                         @Html.ValidationMessageFor(m => m.OpTopicsInterested)
                         @Html.Bootstrap().LabelFor(m => m.OpTopicsInterested)
                     </div>

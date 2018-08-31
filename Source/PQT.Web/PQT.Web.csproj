@@ -355,6 +355,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\MapperConfig.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
+    <Compile Include="Controllers\NotifySettingController.cs" />
     <Compile Include="Controllers\BookingController.cs" />
     <Compile Include="Controllers\CompanyResourceController.cs" />
     <Compile Include="Controllers\CounterController.cs" />
@@ -373,6 +374,7 @@
     <Compile Include="Controllers\MenusController.cs" />
     <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\OperationController.cs" />
+    <Compile Include="Controllers\RecruitmentController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\TrainerController.cs" />
@@ -409,6 +411,7 @@
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\MenuModel.cs" />
     <Compile Include="Models\EventModel.cs" />
+    <Compile Include="Models\RecruitmentModel.cs" />
     <Compile Include="Models\RoleModel.cs" />
     <Compile Include="Models\SalesGroupModel.cs" />
     <Compile Include="Models\SettingModel.cs" />
@@ -479,6 +482,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Validation\BookingValidator.cs" />
+    <Compile Include="Validation\CandidateValidator.cs" />
     <Compile Include="Validation\OfficeLocationValidator.cs" />
     <Compile Include="Validation\LeadValidator.cs" />
     <Compile Include="Validation\TrainerValidator.cs" />
@@ -2619,6 +2623,14 @@
     <Content Include="Views\Invoice\Index.cshtml" />
     <Content Include="Views\BankAccount\CreateOrEdit.cshtml" />
     <Content Include="Views\BankAccount\Index.cshtml" />
+    <Content Include="Views\NotifySetting\CreateOrEdit.cshtml" />
+    <Content Include="Views\NotifySetting\Index.cshtml" />
+    <Content Include="Views\Recruitment\_CreateOrEdit.cshtml" />
+    <Content Include="Views\Recruitment\Create.cshtml" />
+    <Content Include="Views\Recruitment\Edit.cshtml" />
+    <Content Include="Views\Recruitment\Detail.cshtml" />
+    <Content Include="Views\Recruitment\Index.cshtml" />
+    <Content Include="Views\Recruitment\RejectAction.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

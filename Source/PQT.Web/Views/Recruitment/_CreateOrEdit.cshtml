@@ -1,0 +1,213 @@
+﻿@using PQT.Domain.Enum
+@using NS
+@using NS.Mvc
+@using PQT.Domain.Abstract
+@using PQT.Domain.Entities
+@using Resources
+@model PQT.Web.Models.RecruitmentModel
+@{
+    var unitService = DependencyHelper.GetService<IUnitRepository>();
+    var officeLocations = unitService.GetAllOfficeLocations();
+    var recruitmentPositions = unitService.GetAllRecruitmentPositions();
+}
+@Html.HiddenFor(m => m.Candidate.UserID)
+@Html.HiddenFor(m => m.Candidate.CandidateStatusID)
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.FirstName).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.FirstName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.LastName).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.LastName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.EnglishName).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.EnglishName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.MobileNumber).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.MobileNumber)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.PersonalEmail).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.PersonalEmail)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.ApplicationSource).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.ApplicationSource)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.OfficeLocationID, officeLocations.ToSelectList(m => m.ID, m => m.Name)).Class("form-control").OptionLabel("").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.OfficeLocation)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.HiddenFor(m => m.Candidate.Resume)
+                <div class="form-group ">
+                    @if (!string.IsNullOrEmpty(Model.Candidate.Resume))
+                    {
+                        <a href="@FileUpload.GetImageUrl(FileUploadType.Recruitment, Model.Candidate.Resume)" target="_blank">@Model.Candidate.Resume</a>
+                    }
+                    @Html.Bootstrap().FileFor(m => m.ResumeFile).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.ResumeFile).LabelText("Resume")
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.RecruitmentPositionID, recruitmentPositions.ToSelectList(m => m.ID, m => m.Description)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.RecruitmentPosition)
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.Remarks).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.Remarks)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="card card-underline">
+    <div class="card-head">
+        <header>Interview Summary</header>
+    </div>
+    <div class="card-body">
+        <div class="row" style="margin-bottom: 50px;">
+            @Html.HiddenFor(m => m.Candidate.PsSummaryID)
+            @Html.HiddenFor(m => m.Candidate.PsSummary.ID)
+            @Html.HiddenFor(m => m.Candidate.PsSummary.EntryId)
+            @Html.HiddenFor(m => m.Candidate.PsSummary.UpdatedTime)
+            <div class="col-sm-8">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.Remarks).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary).LabelText("PS Summary")
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DatePickerFor(m => m.Candidate.PsSummary.DateSelected, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Candidate.PsSummary.DateSelected)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.DateSelected).LabelText("Date")
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.PsSummary.UserId, Model.Interviewers.ToSelectList(m => m.ID, m => m.DisplayName)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.Interviewer)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.PsSummary.Status, EnumerationHelper.ToSelectList<RecruitmentStatus>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.Status)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.ReasonRejected).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.ReasonRejected).LabelText("Reason")
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 50px;">
+            @Html.HiddenFor(m => m.Candidate.OneFaceToFaceSummaryID)
+            @Html.HiddenFor(m => m.Candidate.OneFaceToFaceSummary.ID)
+            @Html.HiddenFor(m => m.Candidate.OneFaceToFaceSummary.EntryId)
+            @Html.HiddenFor(m => m.Candidate.OneFaceToFaceSummary.UpdatedTime)
+            <div class="col-sm-8">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.Remarks).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary).LabelText("1F2F Summary")
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DatePickerFor(m => m.Candidate.OneFaceToFaceSummary.DateSelected, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Candidate.OneFaceToFaceSummary.DateSelected)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.DateSelected).LabelText("Date")
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.OneFaceToFaceSummary.UserId, Model.Interviewers.ToSelectList(m => m.ID, m => m.DisplayName)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.Interviewer)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.OneFaceToFaceSummary.Status, EnumerationHelper.ToSelectList<RecruitmentStatus>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.Status)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.ReasonRejected).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.ReasonRejected).LabelText("Reason")
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            @Html.HiddenFor(m => m.Candidate.TwoFaceToFaceSummaryID)
+            @Html.HiddenFor(m => m.Candidate.TwoFaceToFaceSummary.ID)
+            @Html.HiddenFor(m => m.Candidate.TwoFaceToFaceSummary.EntryId)
+            @Html.HiddenFor(m => m.Candidate.TwoFaceToFaceSummary.UpdatedTime)
+            <div class="col-sm-8">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.Remarks).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary).LabelText("2F2F Summary")
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.DatePickerFor(m => m.Candidate.TwoFaceToFaceSummary.DateSelected, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Candidate.TwoFaceToFaceSummary.DateSelected)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.DateSelected).LabelText("Date")
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.TwoFaceToFaceSummary.UserId, Model.Interviewers.ToSelectList(m => m.ID, m => m.DisplayName)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.Interviewer)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.TwoFaceToFaceSummary.Status, EnumerationHelper.ToSelectList<RecruitmentStatus>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.Status)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.ReasonRejected).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.ReasonRejected).LabelText("Reason")
+                </div>
+            </div>
+        </div>
+    </div><!--end .card-body -->
+</div>
+
+
+
+
+@Html.Script(
+    @<script>
+
+    </script>)

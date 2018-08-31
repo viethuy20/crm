@@ -145,6 +145,7 @@
     <Compile Include="Abstract\IMenuRepository.cs" />
     <Compile Include="Abstract\INotificationService.cs" />
     <Compile Include="Abstract\IEventService.cs" />
+    <Compile Include="Abstract\IRecruitmentService.cs" />
     <Compile Include="Abstract\IRoleService.cs" />
     <Compile Include="Abstract\ISalesGroupService.cs" />
     <Compile Include="Abstract\ISettingsRepository.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="Concrete\EFCompanyRepository.cs" />
     <Compile Include="Concrete\EfBookingService.cs" />
     <Compile Include="Concrete\EFEventSessionRepository.cs" />
+    <Compile Include="Concrete\EFRecruitmentService.cs" />
     <Compile Include="Concrete\EFLeadService.cs" />
     <Compile Include="Concrete\EFMembershipService.cs" />
     <Compile Include="Concrete\EFMenuRepository.cs" />
@@ -181,6 +183,7 @@
     </Compile>
     <Compile Include="Entities\BankAccount.cs" />
     <Compile Include="Entities\BookingStatusRecord.cs" />
+    <Compile Include="Entities\CandidateStatusRecord.cs" />
     <Compile Include="Entities\CompanyResource.cs" />
     <Compile Include="Entities\Country.cs" />
     <Compile Include="Entities\Company.cs" />
@@ -196,6 +199,7 @@
     <Compile Include="Entities\Lead.cs" />
     <Compile Include="Entities\LeadStatusRecord.cs" />
     <Compile Include="Entities\LocalInfo.cs" />
+    <Compile Include="Entities\NotifySetting.cs" />
     <Compile Include="Entities\OfficeLocation.cs" />
     <Compile Include="Entities\PhoneCall.cs" />
     <Compile Include="Entities\EventSession.cs" />
@@ -208,7 +212,7 @@
     <Compile Include="Entities\Event.cs" />
     <Compile Include="Entities\Booking.cs" />
     <Compile Include="Entities\Delegate.cs" />
-    <Compile Include="Entities\Recruitment.cs" />
+    <Compile Include="Entities\Candidate.cs" />
     <Compile Include="Entities\Role.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -235,6 +239,7 @@
     </Compile>
     <Compile Include="EntityBase.cs" />
     <Compile Include="Enum\BookingStatus.cs" />
+    <Compile Include="Enum\CandidateStatus.cs" />
     <Compile Include="Enum\InfoStatus.cs" />
     <Compile Include="Enum\PaymentStatus.cs" />
     <Compile Include="Enum\RecruitmentStatus.cs" />

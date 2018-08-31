@@ -60,6 +60,14 @@ namespace PQT.Domain.Abstract
         bool DeleteOfficeLocation(int id);
         #endregion OfficeLocation
 
+        #region RecruitmentPosition
+        IEnumerable<RecruitmentPosition> GetAllRecruitmentPositions();
+        RecruitmentPosition GetRecruitmentPosition(int id);
+        RecruitmentPosition CreateRecruitmentPosition(RecruitmentPosition info);
+        bool UpdateRecruitmentPosition(RecruitmentPosition holiday);
+        bool DeleteRecruitmentPosition(int id);
+        #endregion RecruitmentPosition
+
 
 
         #region VenueInfo

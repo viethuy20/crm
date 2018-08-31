@@ -28,7 +28,7 @@ namespace PQT.Web.Controllers
 
         //
         // GET: /Invoice/
-        [DisplayName(@"Booking management")]
+        [DisplayName(@"Invoice management")]
         public ActionResult Index(int id = 0)
         {
             return View();
@@ -46,6 +46,7 @@ namespace PQT.Web.Controllers
                 TempData["error"] = "Invoice not found";
                 return RedirectToAction("Index");
             }
+            model.Booking = model.Invoice.Booking;
             return View(model);
         }
         public ActionResult Create(int id = 0)

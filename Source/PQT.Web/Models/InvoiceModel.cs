@@ -70,12 +70,17 @@ namespace PQT.Web.Models
         public bool Update()
         {
             var invoiceService = DependencyHelper.GetService<IInvoiceService>();
-            Invoice = invoiceService.GetInvoice(Invoice.ID);
-            if (Invoice == null)
+            var exist = invoiceService.GetInvoice(Invoice.ID);
+            if (exist == null)
             {
                 throw new ObjectAlreadyExistsException("Invoice does not exist");
             }
-            return invoiceService.UpdateInvoice(Invoice);
+            exist.AdminCharge = Invoice.AdminCharge;
+            exist.TotalAmount = Invoice.TotalAmount;
+            exist.Currency = Invoice.Currency;
+            exist.BankAccountID = Invoice.BankAccountID;
+            exist.Remarks = Invoice.Remarks;
+            return invoiceService.UpdateInvoice(exist);
         }
 
         public bool Delete(int id, string message)

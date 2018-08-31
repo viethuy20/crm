@@ -9,6 +9,7 @@ using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
 using PQT.Web.Infrastructure;
+using PQT.Web.Infrastructure.Notification;
 using PQT.Web.Infrastructure.Utility;
 using Quartz;
 
@@ -208,8 +209,19 @@ namespace PQT.Web.Models
             {
                 AccomodationInfo.Status = InfoStatus.Request;
             }
-            return repo.UpdateEventOperation(ID, VenueInfo, AccomodationInfo, DriverInfo, PhotographerInfo,
+            var result = repo.UpdateEventOperation(ID, VenueInfo, AccomodationInfo, DriverInfo, PhotographerInfo,
                 LocalVisaAgentInfo, PostEventInfo) != null;
+            if (result)
+            {
+                if ((VenueInfo.Status == InfoStatus.Request && !string.IsNullOrEmpty(VenueInfo.HotelVenue)) ||
+                    (AccomodationInfo.Status == InfoStatus.Request && !string.IsNullOrEmpty(AccomodationInfo.HotelAccomodation))
+                    )
+                {
+                    OpeEventNotificator.NotifyUser(NotifyAction.Request, ID, "Request operation info");
+                }
+                return true;
+            }
+            return false;
         }
         public bool AssignCompany()
         {

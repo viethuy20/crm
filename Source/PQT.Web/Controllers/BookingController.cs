@@ -126,9 +126,8 @@ namespace PQT.Web.Controllers
                     var leadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.RequestBook, CurrentUser.Identity.ID);
                     lead.LeadStatusRecord = leadStatusRecord;
                     _leadService.UpdateLead(lead);
-                    var notiUsers = _membershipService.GetUsersInRole(new string[] { "Manager", "Finance", "QC" });
                     var titleNotify = "Request for booking";
-                    BookingNotificator.NotifyUser(notiUsers, model.Booking.ID, titleNotify, true);
+                    BookingNotificator.NotifyUser(NotifyAction.Request, model.Booking.ID, titleNotify, true);
                     BookingNotificator.NotifyUpdateBooking(model.Booking.ID);
                     TempData["message"] = Resource.SaveSuccessful;
                     return RedirectToAction("Index", "Lead", new { id = model.Booking.EventID });
@@ -178,9 +177,8 @@ namespace PQT.Web.Controllers
                             var leadStatusRecord = new LeadStatusRecord(lead.ID, LeadStatus.RequestBook, CurrentUser.Identity.ID);
                             lead.LeadStatusRecord = leadStatusRecord;
                             _leadService.UpdateLead(lead);
-                            var notiUsers = _membershipService.GetUsersInRole(new string[] { "Manager", "Finance", "QC" });
                             var titleNotify = "Request for booking";
-                            BookingNotificator.NotifyUser(notiUsers, model.Booking.ID, titleNotify, true);
+                            BookingNotificator.NotifyUser(NotifyAction.Request, model.Booking.ID, titleNotify, true);
                             BookingNotificator.NotifyUpdateBooking(model.Booking.ID);
                             return RedirectToAction("Index", "Lead", new { id = model.Booking.EventID });
                         }
