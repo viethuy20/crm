@@ -234,25 +234,39 @@ namespace PQT.Web.Controllers
             {
                 var currentUser = CurrentUser.Identity;
                 var daysExpired = Settings.Lead.NumberDaysExpired();
-                var leadExists = _repo.GetAllLeads(m =>
-                    m.EventID == model.EventID && m.UserID != currentUser.ID &&
-                    m.User.TransferUserID != currentUser.ID &&
-                    m.CompanyID == model.CompanyID && m.LeadStatusRecord != LeadStatus.Initial &&
-                    m.LeadStatusRecord != LeadStatus.Reject
-                    && !m.CheckNCLExpired(daysExpired));
+                var allLeads = _repo.GetAllLeads(m => m.EventID == model.EventID);
+                var leadExists = allLeads.Where(m => m.UserID != currentUser.ID &&
+                                                     m.User.TransferUserID != currentUser.ID &&
+                                                     m.CompanyID == model.CompanyID &&
+                                                     m.LeadStatusRecord != LeadStatus.Initial &&
+                                                     m.LeadStatusRecord != LeadStatus.Reject &&
+                                                     m.LeadStatusRecord != LeadStatus.Deleted &&
+                                                     !m.CheckNCLExpired(daysExpired));
                 if (leadExists.Any())
                 {
                     TempData["error"] = "Cannot process... This company is existing in NCL";
                     return RedirectToAction("Index", new { id = model.EventID });
                 }
-                var callExists = _repo.GetAllLeads(m =>
-                    m.EventID == model.EventID && (
-                        (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail == model.WorkEmail) ||
-                        (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1 == model.WorkEmail1) ||
-                        (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail == model.PersonalEmail) ||
-                        (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1 == model.MobilePhone1) ||
-                        (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2 == model.MobilePhone2) ||
-                        (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3 == model.MobilePhone3)));
+                var callExists = allLeads.Where(m => ((!string.IsNullOrEmpty(m.WorkEmail) &&
+                                                          m.WorkEmail == model.WorkEmail) ||
+                                                         (!string.IsNullOrEmpty(m.WorkEmail1) &&
+                                                          m.WorkEmail1 == model.WorkEmail1) ||
+                                                         (!string.IsNullOrEmpty(m.PersonalEmail) &&
+                                                          m.PersonalEmail == model.PersonalEmail) ||
+                                                         (!string.IsNullOrEmpty(m.DirectLine) &&
+                                                          m.MobilePhone1 == model.DirectLine) ||
+                                                         (!string.IsNullOrEmpty(m.MobilePhone1) &&
+                                                          m.MobilePhone1 == model.MobilePhone1) ||
+                                                         (!string.IsNullOrEmpty(m.MobilePhone2) &&
+                                                          m.MobilePhone2 == model.MobilePhone2) ||
+                                                         (!string.IsNullOrEmpty(m.MobilePhone3) &&
+                                                          m.MobilePhone3 == model.MobilePhone3)) &&
+                                                     ((m.UserID == currentUser.ID &&
+                                                       m.User.TransferUserID == currentUser.ID) ||
+                                                      (m.LeadStatusRecord != LeadStatus.Initial &&
+                                                       m.LeadStatusRecord != LeadStatus.Reject &&
+                                                       m.LeadStatusRecord != LeadStatus.Deleted &&
+                                                       !m.CheckNCLExpired(daysExpired))));
                 if (callExists.Any())
                 {
                     TempData["error"] = "Client contact exists in called list";
@@ -753,7 +767,7 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 leads = _repo.GetAllLeads(m => m.EventID == eventId
-                                               && m.CheckInNCL(daysExpired)&& (
+                                               && m.CheckInNCL(daysExpired) && (
                                                    m.Salesman.Contains(searchValue) ||
                                                    m.StatusUpdateTimeStr.Contains(searchValue) ||
                                                    m.StatusDisplay.Contains(searchValue) ||
@@ -1432,9 +1446,9 @@ namespace PQT.Web.Controllers
         [AjaxOnly]
         public ActionResult AjaxGetTotalCallSummary(int eventId)
         {
-            var saleId = PermissionHelper.SalesmanId();
-            var leads = _repo.GetAllLeads(m => m.EventID == eventId && (saleId == 0 || m.UserID == saleId ||
-                                                                    (m.User != null && m.User.TransferUserID == saleId)));
+            //var saleId = PermissionHelper.SalesmanId();
+            var leads = _repo.GetAllLeads(m => m.EventID == eventId);// && (saleId == 0 || m.UserID == saleId ||
+                                                                    //(m.User != null && m.User.TransferUserID == saleId)));
             var eventData = _eventService.GetEvent(eventId);
             return Json(new
             {
