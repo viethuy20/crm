@@ -38,19 +38,6 @@ namespace PQT.Domain.Abstract
 
         #endregion
 
-
-
-        #region Holiday
-        IEnumerable<Holiday> GetAllHolidays();
-        IEnumerable<Holiday> GetAllHolidays(int[] year);
-        IEnumerable<Holiday> GetAllHolidays(int year);
-        Holiday GetHoliday(int holidayID);
-        Holiday GetHoliday(DateTime startDate);
-        Holiday CreateHoliday(Holiday holiday);
-        bool DeleteHoliday(int id);
-        int TotalHolidays(DateTime start, DateTime end, int? locationID);
-        #endregion Holiday
-
         #region OfficeLocation
         IEnumerable<OfficeLocation> GetAllOfficeLocations();
         OfficeLocation GetOfficeLocation(int id);

@@ -312,7 +312,7 @@ namespace PQT.Domain.Entities
         public bool CheckNCLExpired(int daysExpired)
         {
             return LeadStatusRecord != null && (LeadStatusRecord == LeadStatus.Live || LeadStatusRecord == LeadStatus.LOI) &&
-                    LeadStatusRecord.UpdatedTime.Date < DateTime.Today.AddDays(-daysExpired);
+                    LeadStatusRecord.UpdatedTime.Date <= DateTime.Today.AddDays(-daysExpired);
         }
 
         public bool CheckInNCL(int daysExpired)

@@ -14,6 +14,21 @@ namespace PQT.Domain.Entities
         public int? CountryID { get; set; }
         [ForeignKey("CountryID")]
         public virtual Country Country { get; set; }
+        public Holiday()
+        {
+        }
+        public Holiday(Holiday c)
+        {
+            ID = c.ID;
+            StartDate = c.StartDate;
+            EndDate = c.EndDate;
+            Description = c.Description;
+            CountryID = c.CountryID;
+            Country = c.Country;
+            CreatedTime = c.CreatedTime;
+            UpdatedTime = c.UpdatedTime;
+            EntityStatus = c.EntityStatus;
+        }
         public string HolidayDate()
         {
             if (EndDate != default(DateTime) && EndDate.AddDays(-1).Date > StartDate.Date)

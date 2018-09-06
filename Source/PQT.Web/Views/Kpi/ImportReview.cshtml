@@ -18,7 +18,7 @@
             <tbody>
             @foreach (var item in Model.ImportVoIps)
             {
-                <tr>
+                <tr style="@(!string.IsNullOrEmpty(item.Error)?"background-color: #feccc7":"")">
                     <td>@item.calldate</td>                
                     <td>@item.clid</td>                          
                     <td>@item.dst</td>

@@ -16,11 +16,13 @@ namespace PQT.Web.Controllers
     {
         //
         // GET: /Holiday/
-        private readonly IUnitRepository _repo;
+        private readonly ISettingRepository _repo;
+        private readonly IUnitRepository _unitRepo;
 
-        public HolidayController(IUnitRepository repo)
+        public HolidayController(ISettingRepository repo, IUnitRepository unitRepo)
         {
             _repo = repo;
+            _unitRepo = unitRepo;
         }
         [DisplayName("Holiday management")]
         public ActionResult Index()
@@ -53,7 +55,7 @@ namespace PQT.Web.Controllers
                 var location = "";
                 if (locationid > 0)
                 {
-                    var locationData = _repo.GetOfficeLocation(locationid);
+                    var locationData = _unitRepo.GetOfficeLocation(locationid);
                     if (locationData!=null)
                     {
                         location = locationData.Name;

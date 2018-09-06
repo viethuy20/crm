@@ -15,11 +15,6 @@ namespace PQT.Web.Infrastructure.Utility
             get { return DependencyHelper.GetService<ISettingRepository>(); }
         }
 
-        private static IUnitRepository UnitRepository
-        {
-            get { return DependencyHelper.GetService<IUnitRepository>(); }
-        }
-
         #endregion
 
         /// <summary>
@@ -75,8 +70,16 @@ namespace PQT.Web.Infrastructure.Utility
             public static int NumberDaysExpired()
             {
                 var expiredDays = Convert.ToInt32(GetSetting(Setting.ModuleType.Lead, Setting.ModuleKey.Lead.NumberDaysExpired, typeof(int)));
-                var holidays = TotalHolidays(expiredDays);
-                return expiredDays + holidays;
+                var startDate = DateTime.Today.AddDays(-expiredDays);
+                var endDate = DateTime.Today;
+                var weekends = PQT.Domain.Helpers.StringHelper.CountWeekends(startDate, endDate);
+                var holidays = TotalHolidays(expiredDays + weekends);
+                if (holidays > 0)
+                {
+                    startDate = DateTime.Today.AddDays(-(expiredDays + weekends + holidays));
+                    weekends = PQT.Domain.Helpers.StringHelper.CountWeekends(startDate, endDate);
+                }
+                return expiredDays + weekends + holidays;
             }
             public static int MaxBlockeds()
             {
@@ -89,10 +92,10 @@ namespace PQT.Web.Infrastructure.Utility
 
             public static int TotalHolidays(int expiredDays)
             {
-                return UnitRepository.TotalHolidays(DateTime.Today, DateTime.Today.AddDays(expiredDays),
+                return SettingRepository.TotalHolidays(DateTime.Today.AddDays(-expiredDays), DateTime.Today,
                     CurrentUser.Identity.OfficeLocation != null
                         ? CurrentUser.Identity.OfficeLocation.CountryID
-                        : (int?) null);
+                        : (int?)null);
             }
         }
 
@@ -106,7 +109,7 @@ namespace PQT.Web.Infrastructure.Utility
             public static string[] AccessIPs()
             {
                 var value = Convert.ToString(GetSetting(Setting.ModuleType.System, Setting.ModuleKey.System.AccessIPs, typeof(string)));
-                return !String.IsNullOrEmpty(value) ? value.Split(",", StringSplitOptions.RemoveEmptyEntries) : new List<string>().ToArray();
+                return !String.IsNullOrEmpty(value) ? value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries) : new List<string>().ToArray();
             }
         }
         public class KPI
@@ -118,7 +121,7 @@ namespace PQT.Web.Infrastructure.Utility
             public static string[] ExceptCodes()
             {
                 var value = Convert.ToString(GetSetting(Setting.ModuleType.KPI, Setting.ModuleKey.KPI.ExceptCode, typeof(string)));
-                return !string.IsNullOrEmpty(value) ? value.Split(",", StringSplitOptions.RemoveEmptyEntries) : new List<string>().ToArray();
+                return !string.IsNullOrEmpty(value) ? value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries) : new List<string>().ToArray();
             }
         }
         #endregion

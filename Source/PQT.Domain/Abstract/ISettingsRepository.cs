@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PQT.Domain.Entities;
 
 namespace PQT.Domain.Abstract
@@ -10,11 +11,13 @@ namespace PQT.Domain.Abstract
         Setting GetSetting(string module, string name);
         Setting CreateSetting(Setting info);
         bool UpdateSetting(Setting info);
-        bool DeleteSetting(int settingId);
 
-        IEnumerable<Counter> GetAllCounter(string name);
-        int GetCounter(string name, int defaultValue = 1);
-        int UpdateCounter(string name, int defaultValue = 1);
-        bool UpdateCounter(Counter counter);
+        #region Holiday
+        IEnumerable<Holiday> GetAllHolidays();
+        IEnumerable<Holiday> GetAllHolidays(int[] year);
+        Holiday CreateHoliday(Holiday holiday);
+        bool DeleteHoliday(int id);
+        int TotalHolidays(DateTime start, DateTime end, int? locationID);
+        #endregion Holiday
     }
 }

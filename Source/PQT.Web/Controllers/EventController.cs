@@ -194,6 +194,8 @@ namespace PQT.Web.Controllers
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
             var countries = countryName.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
+            var sectors = sector.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
+            var industries = industry.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
             IEnumerable<Company> companies = new HashSet<Company>();
             Func<Company, bool> predicate = m =>
                 (m.Tier == type) &&
@@ -205,10 +207,10 @@ namespace PQT.Web.Controllers
                 (!countries.Any() ||
                  (m.Country != null && countries.Any(c => m.Country.Code.ToLower().Contains(c))) ||
                  (m.Country != null && countries.Any(c => m.Country.Name.ToLower().Contains(c)))) &&
-                (string.IsNullOrEmpty(sector) ||
-                 (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
-                (string.IsNullOrEmpty(industry) ||
-                 (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry)));
+                (!sectors.Any() ||
+                 (!string.IsNullOrEmpty(m.Sector) && sectors.Any(c => m.Sector.ToLower().Contains(c)))) &&
+                (!industries.Any() ||
+                 (!string.IsNullOrEmpty(m.Industry) && industries.Any(c => m.Industry.ToLower().Contains(c))));
             companies = _comRepo.GetAllCompanies(predicate).ToList();
 
             if (sortColumnDir == "asc")

@@ -140,9 +140,23 @@ namespace PQT.Web.Models
         {
             var voipBuffer = Settings.KPI.VoIpBuffer();
             var exceptCodes = Settings.KPI.ExceptCodes();
+            var eventKeyworks = new List<string>();
+            var firstLead = leads.FirstOrDefault();
+            var eventData = firstLead != null ? firstLead.Event : null;
+            if (eventData != null)
+            {
+                eventKeyworks = eventData.PrimaryJobtitleKeywords != null
+                    ? eventData.PrimaryJobtitleKeywords.Split(new[] {';', ','}, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(m => m.ToLower().Trim()).ToList()
+                    : new List<string>();
+                eventKeyworks.AddRange(eventData.SecondaryJobtitleKeywords != null
+                    ? eventData.SecondaryJobtitleKeywords.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(m => m.ToLower().Trim())
+                    : new List<string>());
+            }
             foreach (var lead in leads)
             {
-                CheckKPI(lead, voipBuffer, exceptCodes);
+                CheckKPI(lead, voipBuffer, exceptCodes, eventKeyworks.ToArray());
             }
             return leads;
         }
@@ -153,6 +167,7 @@ namespace PQT.Web.Models
             return TransactionWrapper.Do(() =>
             {
                 var leadRepo = DependencyHelper.GetService<ILeadService>();
+                var eventRepo = DependencyHelper.GetService<IEventService>();
                 var leads = leadRepo.GetAllLeads(m =>
                     (EventID == 0 || m.EventID == EventID) &&
                     //m.CreatedTime.Date >= DateFrom.Date &&
@@ -165,10 +180,23 @@ namespace PQT.Web.Models
                 var userId = CurrentUser.Identity.ID;
                 var voipBuffer = Settings.KPI.VoIpBuffer();
                 var exceptCodes = Settings.KPI.ExceptCodes();
+                var eventKeyworks = new List<string>();
+                var eventData = eventRepo.GetEvent(EventID);
+                if (eventData != null)
+                {
+                    eventKeyworks = eventData.PrimaryJobtitleKeywords != null
+                        ? eventData.PrimaryJobtitleKeywords.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim()).ToList()
+                        : new List<string>();
+                    eventKeyworks.AddRange(eventData.SecondaryJobtitleKeywords != null
+                        ? eventData.SecondaryJobtitleKeywords.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(m => m.ToLower().Trim())
+                        : new List<string>());
+                }
+
                 foreach (var lead in leads)
                 {
                     count += 1;
-                    CheckKPI(lead, voipBuffer, exceptCodes);
+                    CheckKPI(lead, voipBuffer, exceptCodes, eventKeyworks.ToArray());
                     lead.FileNameImportKPI = Path.GetFileName(FilePath);
                     leadRepo.UpdateLead(lead);
                     var json = new
@@ -182,12 +210,9 @@ namespace PQT.Web.Models
             });
         }
 
-        private void CheckKPI(Lead lead, int voipBuffer, string[] exceptCodes)
+        private void CheckKPI(Lead lead, int voipBuffer, string[] exceptCodes, string[] eventKeyworks)
         {
             var jobTitle = lead.JobTitle.ToLower().Trim();
-            var eventKeyworks = lead.Event.PrimaryJobtitleKeywords != null
-                ? lead.Event.PrimaryJobtitleKeywords.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim())
-                : new List<string>();
             if (!eventKeyworks.Any() || eventKeyworks.Any(m => m.Contains(jobTitle)) || eventKeyworks.Any(m => jobTitle.Contains(m)))
             {
                 if (!string.IsNullOrEmpty(lead.PersonalEmail) ||
@@ -200,16 +225,16 @@ namespace PQT.Web.Models
                     var directLine = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.DirectLine);
                     foreach (var exceptCode in exceptCodes)
                     {
-                        if (mobilePhone1.Substring(0, exceptCode.Length) == exceptCode)
+                        if (mobilePhone1 != null && mobilePhone1.Substring(0, exceptCode.Length) == exceptCode)
                             mobilePhone1 = mobilePhone1.Substring(exceptCode.Length);
-                        if (mobilePhone2.Substring(0, exceptCode.Length) == exceptCode)
+                        if (mobilePhone2 != null && mobilePhone2.Substring(0, exceptCode.Length) == exceptCode)
                             mobilePhone2 = mobilePhone2.Substring(exceptCode.Length);
-                        if (mobilePhone3.Substring(0, exceptCode.Length) == exceptCode)
+                        if (mobilePhone3 != null && mobilePhone3.Substring(0, exceptCode.Length) == exceptCode)
                             mobilePhone3 = mobilePhone3.Substring(exceptCode.Length);
-                        if (directLine.Substring(0, exceptCode.Length) == exceptCode)
+                        if (directLine != null && directLine.Substring(0, exceptCode.Length) == exceptCode)
                             directLine = directLine.Substring(exceptCode.Length);
                     }
-                    var voips = ImportVoIps.Where(m => m.clid == lead.User.Extension && (
+                    var voips = ImportVoIps.Where(m => m.clid == lead.User.Extension && !string.IsNullOrEmpty(m.dst) && (
                     m.dst == mobilePhone1 ||
                     m.dst == mobilePhone2 ||
                     m.dst == mobilePhone3 ||
