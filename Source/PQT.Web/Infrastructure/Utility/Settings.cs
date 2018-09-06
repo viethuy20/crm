@@ -118,10 +118,10 @@ namespace PQT.Web.Infrastructure.Utility
             public static string[] ExceptCodes()
             {
                 var value = Convert.ToString(GetSetting(Setting.ModuleType.KPI, Setting.ModuleKey.KPI.ExceptCode, typeof(string)));
-                return !string.IsNullOrEmpty(value) ? value.Split(",", StringSplitOptions.RemoveEmptyEntries) : new List<string>().ToArray();
+                return !string.IsNullOrEmpty(value) ? value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries) : new List<string>().ToArray();
             }
         }
-        #endregion
-
     }
+    #endregion
+
 }

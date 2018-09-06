@@ -200,16 +200,16 @@ namespace PQT.Web.Models
                     var directLine = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.DirectLine);
                     foreach (var exceptCode in exceptCodes)
                     {
-                        if (mobilePhone1.Substring(0, exceptCode.Length) == exceptCode)
+                        if (mobilePhone1 != null && mobilePhone1.Substring(0, exceptCode.Length) == exceptCode)
                             mobilePhone1 = mobilePhone1.Substring(exceptCode.Length);
-                        if (mobilePhone2.Substring(0, exceptCode.Length) == exceptCode)
+                        if (mobilePhone2 != null && mobilePhone2.Substring(0, exceptCode.Length) == exceptCode)
                             mobilePhone2 = mobilePhone2.Substring(exceptCode.Length);
-                        if (mobilePhone3.Substring(0, exceptCode.Length) == exceptCode)
+                        if (mobilePhone3 != null && mobilePhone3.Substring(0, exceptCode.Length) == exceptCode)
                             mobilePhone3 = mobilePhone3.Substring(exceptCode.Length);
-                        if (directLine.Substring(0, exceptCode.Length) == exceptCode)
+                        if (directLine != null && directLine.Substring(0, exceptCode.Length) == exceptCode)
                             directLine = directLine.Substring(exceptCode.Length);
                     }
-                    var voips = ImportVoIps.Where(m => m.clid == lead.User.Extension && (
+                    var voips = ImportVoIps.Where(m => m.clid == lead.User.Extension && !string.IsNullOrEmpty(m.dst) && (
                     m.dst == mobilePhone1 ||
                     m.dst == mobilePhone2 ||
                     m.dst == mobilePhone3 ||
