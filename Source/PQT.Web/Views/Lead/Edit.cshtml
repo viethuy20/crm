@@ -11,7 +11,7 @@
         <header><b>Edit Form</b></header>
     </div><!--end .card-head -->
 
-    @using (Ajax.BeginForm("Edit", "routeValues", new AjaxOptions { OnFailure = "onFailEdit", OnSuccess = "onSuccessEdit" }, new { @id = "CreateOrEditForm", @class = "form" }))
+    @using (Ajax.BeginForm("Edit", "routeValues", new AjaxOptions { HttpMethod = "Post", OnFailure = "onFailEdit", OnSuccess = "onSuccessEdit" }, new { @id = "CreateOrEditForm", @class = "form" }))
     {
         @Html.HiddenFor(m => m.LeadID)
         <div class="card-body">

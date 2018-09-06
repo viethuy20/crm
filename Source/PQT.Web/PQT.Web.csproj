@@ -355,6 +355,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\MapperConfig.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
+    <Compile Include="Controllers\RecruitmentPositionController.cs" />
     <Compile Include="Controllers\NotifySettingController.cs" />
     <Compile Include="Controllers\BookingController.cs" />
     <Compile Include="Controllers\CompanyResourceController.cs" />
@@ -2631,6 +2632,11 @@
     <Content Include="Views\Recruitment\Detail.cshtml" />
     <Content Include="Views\Recruitment\Index.cshtml" />
     <Content Include="Views\Recruitment\RejectAction.cshtml" />
+    <Content Include="Views\RecruitmentPosition\CreateOrEdit.cshtml" />
+    <Content Include="Views\RecruitmentPosition\Index.cshtml" />
+    <Content Include="Views\Recruitment\RequestAction.cshtml" />
+    <Content Include="Views\Recruitment\EditEmployment.cshtml" />
+    <Content Include="Views\Recruitment\Employees.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

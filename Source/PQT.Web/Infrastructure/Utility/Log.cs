@@ -33,7 +33,6 @@ namespace PQT.Web.Infrastructure.Utility
             //if (routeData.Values["id"] != null && int.TryParse(routeData.Values["id"].ToString(), out actionId))
             //    Info(message, controllerName, actionId);
             if (HttpContext.Current.Request.HttpMethod == "POST" &&
-                !action.ToLower().Contains("ajax") &&
                 !action.ToLower().Contains("get"))
             {
                 Info(message, controllerName, actionId);

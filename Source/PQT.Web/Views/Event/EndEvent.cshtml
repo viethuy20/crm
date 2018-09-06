@@ -8,7 +8,7 @@
         <div class="card-head">
             <header><b>End Event</b></header>
         </div><!--end .card-head -->
-        @using (Ajax.BeginForm("EndEvent", "routeValues", new AjaxOptions { OnFailure = "onEndEventFail", OnSuccess = "onEndEventSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
+        @using (Ajax.BeginForm("EndEvent", "routeValues", new AjaxOptions { HttpMethod = "Post", OnFailure = "onEndEventFail", OnSuccess = "onEndEventSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
         {
             <div class="card-body">
                 @Html.HiddenFor(m => m.ID)

@@ -174,7 +174,7 @@ namespace PQT.Domain.Concrete
                     {
                         usersResult.AddRange(usersByRole.Select(m => new { Value = StringHelper.RemoveSpecialCharacters(m.Name), Text = m.Name }));
                     }
-                    var users = GetAll<User>(m => m.Status == EntityStatus.Normal && userIds.Contains(m.ID));
+                    var users = GetAll<User>(m => m.Status == EntityUserStatus.Normal && userIds.Contains(m.ID));
                     if (users.Any())
                     {
                         usersResult.AddRange(users.Select(m => new { Value = m.ID.ToString(), Text = m.DisplayName }));
@@ -201,7 +201,7 @@ namespace PQT.Domain.Concrete
                     {
                         usersResult.AddRange(usersByRole.Select(m => new { Value = StringHelper.RemoveSpecialCharacters(m.Name), Text = m.Name }));
                     }
-                    var users = GetAll<User>(m => m.Status == EntityStatus.Normal && userIds.Contains(m.ID));
+                    var users = GetAll<User>(m => m.Status == EntityUserStatus.Normal && userIds.Contains(m.ID));
                     if (users.Any())
                     {
                         usersResult.AddRange(users.Select(m => new { Value = m.ID.ToString(), Text = m.DisplayName }));
@@ -228,7 +228,7 @@ namespace PQT.Domain.Concrete
                     {
                         usersResult.AddRange(usersByRole.Select(m => new { Value = StringHelper.RemoveSpecialCharacters(m.Name), Text = m.Name }));
                     }
-                    var users = GetAll<User>(m => m.Status == EntityStatus.Normal && userIds.Contains(m.ID));
+                    var users = GetAll<User>(m => m.Status == EntityUserStatus.Normal && userIds.Contains(m.ID));
                     if (users.Any())
                     {
                         usersResult.AddRange(users.Select(m => new { Value = m.ID.ToString(), Text = m.DisplayName }));

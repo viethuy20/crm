@@ -1,0 +1,84 @@
+﻿@using Resources
+@model List<PQT.Domain.Entities.User>
+
+@{
+    ViewBag.Title = "Employees";
+}
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="users-table" class="table">
+                    <thead>
+                        <tr>
+                            <th>S/No</th>
+                            <th>Display Name</th>
+                            <th>First Name</th>
+                            <th>Email</th>
+                            <th>Date Of Birth</th>
+                            <th>Mobile</th>
+                            <th>Department</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+@Html.Script(
+    @<script>
+
+         var $modelTable = $('#users-table').dataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             //"stateSave": true,
+             //"fixedHeader": true,
+             "ajax": {
+                 "url": "@Url.Action("AjaxGetIndexView","Users")",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function(d) {
+                     d.RoleID = 0;
+                 }
+             },
+             "columns": [
+                 { "data": "ID", "name": "ID", "orderable": false },
+                 { "data": "DisplayNameHtml", "name": "DisplayName", "orderable": true },
+                 { "data": "FirstName", "name": "FirstName", "orderable": true },
+                 { "data": "Email", "name": "Email", "orderable": true },
+                 { "data": "DateOfBirth", "name": "DateOfBirth", "orderable": true },
+                 { "data": "MobilePhone", "name": "MobilePhone", "orderable": true },
+                 { "data": "RolesHtml", "name": "RolesHtml", "orderable": true },
+                 { "data": "ID", "name": "ID", "orderable": false }
+             ],
+             "iDisplayLength": 25,
+             "aaSorting": [[0, "asc"]],
+             "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 $(nRow).find('td:eq(7)').html('<a href="@Url.Action("EditEmployment")/' +
+                     aData["ID"] +
+                     '" class="active" data-toggle="class"><i class="fa fa-pencil-square-o text-violet text-active"></i></a>');
+             },
+             initComplete: function() {
+                 var _table = this;
+                 _table.parent().find('input[type="search"]').unbind();
+                 var timeOutTyping;
+                 _table.parent().find('input[type="search"]').bind('keyup',
+                     function(e) {
+                         clearTimeout(timeOutTyping);
+                         timeOutTyping = setTimeout(function() {
+                                 _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                             },
+                             600);
+                     });
+             },
+         });
+
+    </script>
+             )

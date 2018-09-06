@@ -16,10 +16,10 @@ namespace PQT.Web.Validation
             _membershipService = membershipService;
             _roleService = roleService;
 
-            RuleFor(u => u.DisplayName).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(u => u.Email).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
+            //RuleFor(u => u.DisplayName).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
+            //RuleFor(u => u.Email).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(u => u.Email).EmailAddress().WithMessage(Resource.EmailIsInvalid);
-            RuleFor(u => u.Email).Must(BeAUniqueEmail).WithMessage(Resource.EmailExists);
+            //RuleFor(u => u.Email).Must(BeAUniqueEmail).WithMessage(Resource.EmailExists);
             RuleFor(u => u.MobilePhone).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.FormatInvalid);
             RuleFor(u => u.BusinessPhone).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.FormatInvalid);
         }

@@ -137,6 +137,7 @@ namespace PQT.Web.Controllers
         }
 
         [AjaxOnly]
+        [HttpPost]
         public ActionResult ComfirmImport(string sessionName)
         {
             if (string.IsNullOrEmpty(sessionName) || Session[sessionName] == null)

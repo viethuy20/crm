@@ -33,7 +33,7 @@ namespace PQT.Web.Controllers
         [DisplayName("User management")]
         public ActionResult Index(int role = 0)
         {
-            //IEnumerable<User> users = _membershipService.GetUsers(m => m.Status == EntityStatus.Normal);
+            //IEnumerable<User> users = _membershipService.GetUsers(m => m.Status == EntityUserStatus.Normal);
             ViewBag.roles = _roleService.GetAllRoles();
             return View(new List<User>());
         }
@@ -81,10 +81,12 @@ namespace PQT.Web.Controllers
             IEnumerable<int> userRoles = StringHelper.Ensure(Request.Form["SelectedRoles"])
                                                      .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                                                      .Select(id => Convert.ToInt32(id));
-
+            var exist = _membershipService.GetUserByEmail(model.Email);
             var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
                                                                   m.SalesManagementUnit != SalesManagementUnit.None ||
                                                                   m.ProjectManagementUnit != ProjectManagementUnit.None);
+            if (exist != null)
+                ModelState.AddModelError("Email", Resource.EmailExists);
 
             if (!ModelState.IsValid)
             {
@@ -104,6 +106,8 @@ namespace PQT.Web.Controllers
             var user = new User
             {
                 DisplayName = model.DisplayName,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 Email = model.Email,
                 Password = model.Password,
                 BusinessPhone = model.BusinessPhone,
@@ -130,7 +134,8 @@ namespace PQT.Web.Controllers
                 HumanResourceUnit = model.HumanResourceUnit,
                 MarketingManagementUnit = model.MarketingManagementUnit,
                 ProcurementManagementUnit = model.ProcurementManagementUnit,
-                ProjectManagementUnit = model.ProjectManagementUnit
+                ProjectManagementUnit = model.ProjectManagementUnit,
+                SignedContract = model.SignedContract,
             };
 
             user = _membershipService.CreateUser(user);
@@ -170,9 +175,12 @@ namespace PQT.Web.Controllers
             var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
                                                                   m.SalesManagementUnit != SalesManagementUnit.None ||
                                                                   m.ProjectManagementUnit != ProjectManagementUnit.None);
+            var exist = _membershipService.GetUserByEmail(model.Email);
+            if (exist != null && exist.ID != model.ID)
+                ModelState.AddModelError("Email", Resource.EmailExists);
+
             if (!ModelState.IsValid)
             {
-
                 //var oldUser = _membershipService.GetUser(model.ID);
                 model.SelectedRoles = _roleService.GetAllRoles().Where(m => userRoles.Contains(m.ID)).Select(m => m.ID).ToList();
                 model.Roles = _roleService.GetAllRoles();
@@ -213,8 +221,12 @@ namespace PQT.Web.Controllers
                     model.SignedContract = uploadPicture;
                 }
             }
-
+            if (user.Status == EntityUserStatus.ApprovedEmployment && (!string.IsNullOrEmpty(user.Password) ||
+                !string.IsNullOrEmpty(model.Password)))
+                user.Status = EntityUserStatus.Normal;
             user.DisplayName = model.DisplayName;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
             user.Email = model.Email;
             user.BusinessPhone = model.BusinessPhone;
             user.MobilePhone = model.MobilePhone;
@@ -263,6 +275,7 @@ namespace PQT.Web.Controllers
             TempData["error"] = Resource.SaveFailed;
             return RedirectToAction("Edit", new { id = model.ID });
         }
+
         [AjaxOnly]
         public ActionResult Delete_keeptrack(int id)
         {
@@ -339,7 +352,7 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 Func<User, bool> predicate = m =>
-                m.Status == EntityStatus.Normal &&
+                m.Status == EntityUserStatus.Normal &&
                     (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID)) &&
                     ((m.DisplayName.ToLower().Contains(searchValue)) ||
                      (m.Email != null && m.Email.ToLower().Contains(searchValue)) ||
@@ -353,7 +366,7 @@ namespace PQT.Web.Controllers
             else
             {
                 Func<User, bool> predicate = m =>
-                    m.Status == EntityStatus.Normal &&
+                    m.Status == EntityUserStatus.Normal &&
                     (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID));
                 users = _membershipService.GetUsers(predicate, sortColumnDir, sortColumn,
                     skip, pageSize);
@@ -370,9 +383,12 @@ namespace PQT.Web.Controllers
                 {
                     m.ID,
                     m.DisplayName,
+                    m.FirstName,
+                    m.LastName,
                     m.Email,
                     m.MobilePhone,
                     m.BusinessPhone,
+                    DateOfBirth = m.DateOfBirthDisplay,
                     m.Extension,
                     m.RolesHtml,
                     DisplayNameHtml = !string.IsNullOrEmpty(m.Picture) ? "<img src='/data/user_img/" + m.ID + "/" + m.Picture + "' class='img-rounded user-picture-small' style='max-width: 50px; max-height: 50px;' /> " + m.DisplayName : m.DisplayName,

@@ -26,7 +26,7 @@ namespace PQT.Domain.Concrete
             {
                 return _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).Count();
             }
-            return _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).Count();
+            return _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).Count();
         }
         public IEnumerable<User> GetUsers(Func<User, bool> predicate, string sortColumnDir, string sortColumn, int page, int pageSize)
         {
@@ -37,6 +37,12 @@ namespace PQT.Domain.Concrete
                 {
                     case "DisplayName":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.DisplayName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "FirstName":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.FirstName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "LastName":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.LastName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "Email":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.Email).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
@@ -53,6 +59,9 @@ namespace PQT.Domain.Concrete
                     case "RolesHtml":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
+                    case "DateOfBirth":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.DateOfBirth).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
                     default:
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderBy(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
@@ -64,6 +73,12 @@ namespace PQT.Domain.Concrete
                 {
                     case "DisplayName":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.DisplayName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "FirstName":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.FirstName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "LastName":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.LastName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "Email":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.Email).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
@@ -80,6 +95,9 @@ namespace PQT.Domain.Concrete
                     case "RolesHtml":
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
+                    case "DateOfBirth":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.DateOfBirth).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
                     default:
                         users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).OrderByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
@@ -95,25 +113,34 @@ namespace PQT.Domain.Concrete
                 switch (sortColumn)
                 {
                     case "DisplayName":
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderBy(s => s.DisplayName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.DisplayName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "FirstName":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.FirstName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "LastName":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.LastName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "Email":
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderBy(s => s.Email).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.Email).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "BusinessPhone":
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderBy(s => s.BusinessPhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.BusinessPhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "MobilePhone":
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderBy(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "Extension":
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderBy(s => s.Extension).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.Extension).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "RolesHtml":
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderBy(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "DateOfBirth":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.DateOfBirth).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     default:
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderBy(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                 }
             }
@@ -122,25 +149,34 @@ namespace PQT.Domain.Concrete
                 switch (sortColumn)
                 {
                     case "DisplayName":
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderByDescending(s => s.DisplayName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.DisplayName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "FirstName":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.FirstName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "LastName":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.LastName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "Email":
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderByDescending(s => s.Email).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.Email).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "BusinessPhone":
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderByDescending(s => s.BusinessPhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.BusinessPhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "MobilePhone":
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderByDescending(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "Extension":
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderByDescending(s => s.Extension).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.Extension).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     case "RolesHtml":
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderByDescending(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
+                    case "DateOfBirth":
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.DateOfBirth).ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                     default:
-                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityStatus.Normal).OrderByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        users = _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
                         break;
                 }
             }
@@ -176,6 +212,7 @@ namespace PQT.Domain.Concrete
             return Get<User>(u => u.ID == id, u => new
             {
                 u.UserSalaryHistories,
+                u.OfficeLocation,
                 Roles = u.Roles.Select(r => r.Permissions),
             });
         }
@@ -198,7 +235,7 @@ namespace PQT.Domain.Concrete
                                   u.Email.Trim().ToLower() == email.Trim().ToLower() &&
                                   u.Password == password &&
                                   u.UserStatus == UserStatus.Live &&
-                                  u.Status == EntityStatus.Normal);
+                                  u.Status == EntityUserStatus.Normal);
         }
 
         public User CreateUser(User user)
@@ -211,13 +248,13 @@ namespace PQT.Domain.Concrete
         public bool DeleteUser(int id)
         {
             var user = GetUser(id);
-            user.Status = EntityStatus.Deleted;
+            user.Status = EntityUserStatus.Deleted;
             return Update(user);
         }
         public bool ReActiveUser(int id)
         {
             var user = GetUser(id);
-            user.Status = EntityStatus.Normal;
+            user.Status = EntityUserStatus.Normal;
             return Update(user);
         }
 

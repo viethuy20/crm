@@ -13,7 +13,7 @@
         <div class="card-head">
             <header><b>@title</b></header>
         </div><!--end .card-head -->
-        @using (Ajax.BeginForm("RejectHotel", "routeValues", new AjaxOptions { OnFailure = "onFailRejectAction", OnSuccess = "onSuccessRejectAction" }, new { @id = "CreateOrEditForm", @class = "form" }))
+        @using (Ajax.BeginForm("RejectHotel", "routeValues", new AjaxOptions { HttpMethod = "Post", OnFailure = "onFailRejectAction", OnSuccess = "onSuccessRejectAction" }, new { @id = "CreateOrEditForm", @class = "form" }))
             {
             <div class="card-body">
                 @Html.Hidden("id", id)

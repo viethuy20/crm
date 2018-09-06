@@ -350,4 +350,90 @@ namespace PQT.Web.Infrastructure.Notification
             thread.Start();
         }
     }
+
+
+    public class RecruitmentNotificator
+    {
+        private static IMembershipService MemberService
+        {
+            get { return DependencyResolver.Current.GetService<IMembershipService>(); }
+        }
+        private static ISettingRepository SettingRepository
+        {
+            get { return DependencyResolver.Current.GetService<ISettingRepository>(); }
+        }
+        private static IRecruitmentService RecruitmentService
+        {
+            get { return DependencyResolver.Current.GetService<IRecruitmentService>(); }
+        }
+        private static IUserNotificationService UserNotificationService
+        {
+            get { return DependencyResolver.Current.GetService<IUserNotificationService>(); }
+        }
+
+        public static void NotifyUser(IEnumerable<User> users, int id, string title)
+        {
+            var currentUserId = CurrentUser.Identity.ID;
+            var thread = new Thread(() =>
+            {
+                var eventData = RecruitmentService.GetCandidate(id);
+                if (eventData == null)
+                    return;
+                foreach (var user in users)
+                {
+                    if (user == null || currentUserId == user.ID)
+                    {
+                        continue;
+                    }
+                    try
+                    {
+                        var notify = new UserNotification
+                        {
+                            UserID = user.ID,
+                            EntryId = eventData.ID,
+                            EventId = 0,
+                            NotifyType = NotifyType.Recruitment,
+                            Title = title,
+                            EventCode = "",
+                            Description = eventData.FullName,
+                            HighlightColor = "#000000"
+                        };
+                        if (!string.IsNullOrEmpty(title))
+                        {
+                            notify.Title = title;
+                        }
+                        notify = UserNotificationService.CreateUserNotification(notify);
+                        user.NotifyNumber++;
+                        MemberService.UpdateUser(user);
+                        NotificationHub.NotifyUser(user, notify);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+
+                //if (email)
+                //{
+                //    NotificationService.NotifyUser(users, booking);
+                //}
+
+            });
+            thread.Start();
+        }
+
+
+        public static void NotifyUser(NotifyAction notifyAction, int leadId, string title)
+        {
+            var thread = new Thread(() =>
+            {
+                var setting = SettingRepository.GetNotifySetting(NotifyType.Recruitment, notifyAction);
+                if (setting != null)
+                {
+                    var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
+                    NotifyUser(notiUsers, leadId, title);
+                }
+            });
+            thread.Start();
+        }
+    }
 }

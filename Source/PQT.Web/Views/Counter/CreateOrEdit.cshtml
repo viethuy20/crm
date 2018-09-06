@@ -20,7 +20,7 @@
                 @Html.Bootstrap().Label("error").HtmlAttributes(new { @class = "texterror" }).LabelText(Resource.SaveFailed)
             }
         </div>
-        @using (Ajax.BeginForm("CreateOrEdit", "routeValues", new AjaxOptions { OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
+        @using (Ajax.BeginForm("CreateOrEdit", "routeValues", new AjaxOptions { HttpMethod = "Post", OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
         {
             @Html.HiddenFor(m => m.ID)
 

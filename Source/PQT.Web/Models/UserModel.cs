@@ -19,6 +19,14 @@ namespace PQT.Web.Models
             BusinessDevelopmentUnit = BusinessDevelopmentUnit.None;
             SalesManagementUnit = SalesManagementUnit.None;
             SalesSupervision = SalesSupervision.None;
+            UserStatus = UserStatus.Live;
+            FinanceAdminUnit = FinanceAdminUnit.None;
+            ProductionUnit = ProductionUnit.None;
+            OperationUnit = OperationUnit.None;
+            HumanResourceUnit = HumanResourceUnit.None;
+            MarketingManagementUnit = MarketingManagementUnit.None;
+            ProcurementManagementUnit = ProcurementManagementUnit.None;
+            ProjectManagementUnit = ProjectManagementUnit.None;
         }
 
         public EditUserModel(User user)
@@ -27,6 +35,8 @@ namespace PQT.Web.Models
             {
                 ID = user.ID;
                 DisplayName = user.DisplayName;
+                LastName = user.LastName;
+                FirstName = user.FirstName;
                 Email = user.Email;
                 BusinessPhone = user.BusinessPhone;
                 Password = user.Password;
@@ -71,6 +81,8 @@ namespace PQT.Web.Models
         [HiddenInput]
         public int ID { get; set; }
 
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string DisplayName { get; set; }
 
@@ -81,7 +93,8 @@ namespace PQT.Web.Models
         //public string ConfirmPassword { get; set; }
 
         //[Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
-        //[RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheEmailAddressEnteredIsInvalid")]
+
+        [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "EmailIsInvalid")]
         public string Email { get; set; }
 
         [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
@@ -132,33 +145,6 @@ namespace PQT.Web.Models
                 return "/data/user_img/" + ID + "/" + UserPicture;
             }
         }
-
-
-        public IEnumerable<string> GetAllCountries()
-        {
-            //create a new Generic list to hold the country names returned
-            List<string> cultureList = new List<string>();
-
-            //create an array of CultureInfo to hold all the cultures found, these include the users local cluture, and all the
-            //cultures installed with the .Net Framework
-
-            var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures).Where(c => c.Name.Contains("-"));//CultureInfo.GetCultures(CultureTypes.AllCultures & CultureTypes.NeutralCultures);
-
-            //loop through all the cultures found
-            foreach (CultureInfo culture in cultures.Where(m => !string.IsNullOrEmpty(m.Name)))
-            {
-                try
-                {
-                    var region = new RegionInfo(culture.LCID);
-                    if (!(cultureList.Contains(region.EnglishName)))
-                        cultureList.Add(region.EnglishName);
-                }
-                catch (Exception)
-                {
-                }
-            }
-            return cultureList.OrderBy(m => m);
-        }
     }
     public class AccountModel
     {
@@ -169,6 +155,8 @@ namespace PQT.Web.Models
         public AccountModel(User user)
         {
             Username = user.DisplayName;
+            FirstName = user.FirstName;
+            LastName = user.LastName;
             Email = user.Email;
             MobilePhone = user.MobilePhone;
             BusinessPhone = user.BusinessPhone;
@@ -193,6 +181,8 @@ namespace PQT.Web.Models
         }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string Username { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         //[Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         //public string OldPassword { get; set; }
         public string Email { get; set; }

@@ -10,6 +10,7 @@ using PQT.Domain.Enum;
 using PQT.Web.Infrastructure.Filters;
 using PQT.Web.Infrastructure.Utility;
 using PQT.Web.Models;
+using Resources;
 
 namespace PQT.Web.Controllers
 {
@@ -19,52 +20,20 @@ namespace PQT.Web.Controllers
         // GET: /Recruitment/
         private readonly IRecruitmentService _recruitmentService;
         private readonly IMembershipService _membershipService;
-
-        public RecruitmentController(IRecruitmentService recruitmentService, IMembershipService membershipService)
+        private readonly IRoleService _roleService;
+        private readonly ILoginTracker _loginTracker;
+        public RecruitmentController(IRecruitmentService recruitmentService, IMembershipService membershipService, IRoleService roleService, ILoginTracker loginTracker)
         {
             _recruitmentService = recruitmentService;
             _membershipService = membershipService;
+            _roleService = roleService;
+            _loginTracker = loginTracker;
         }
         [DisplayName("Recruitment management")]
         public ActionResult Index()
         {
             return View();
         }
-        public ActionResult Edit(int id)
-        {
-            var model = new RecruitmentModel();
-            model.PrepareEdit(id);
-            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
-                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None);
-            model.Interviewers = allSupervisors;
-            if (model.Candidate == null)
-            {
-                TempData["error"] = "Data not found";
-            }
-            return View(model);
-        }
-
-        [HttpPost]
-        public ActionResult Edit(RecruitmentModel model)
-        {
-
-            if (ModelState.IsValid)
-            {
-                if (model.SaveEdit())
-                {
-                    TempData["message"] = "Create successful";
-                    return RedirectToAction("Detail", new { id = model.Candidate.ID });
-                }
-            }
-            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
-                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None);
-            model.Interviewers = allSupervisors;
-            TempData["error"] = "Save failed";
-            return View(model);
-        }
-
         public ActionResult Create()
         {
             var model = new RecruitmentModel();
@@ -104,6 +73,41 @@ namespace PQT.Web.Controllers
             TempData["error"] = "Save failed";
             return View(model);
         }
+        public ActionResult Edit(int id)
+        {
+            var model = new RecruitmentModel();
+            model.PrepareEdit(id);
+            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
+                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None);
+            model.Interviewers = allSupervisors;
+            if (model.Candidate == null)
+            {
+                TempData["error"] = "Data not found";
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(RecruitmentModel model)
+        {
+
+            if (ModelState.IsValid)
+            {
+                if (model.SaveEdit())
+                {
+                    TempData["message"] = "Save successful";
+                    return RedirectToAction("Detail", new { id = model.Candidate.ID });
+                }
+            }
+            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
+                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None);
+            model.Interviewers = allSupervisors;
+            TempData["error"] = "Save failed";
+            return View(model);
+        }
+
         public ActionResult Detail(int id = 0)
         {
             var model = new RecruitmentModel();
@@ -125,10 +129,51 @@ namespace PQT.Web.Controllers
         }
 
         [DisplayName(@"Request Employment")]
+        public ActionResult RequestAction(int id = 0)
+        {
+            var model = new RecruitmentModel();
+            model.PrepareEdit(id);
+            if (model.Candidate == null)
+            {
+                TempData["error"] = "Candidate not found";
+                return RedirectToAction("Index");
+            }
+            if (model.Candidate.EmployeeID > 0)
+            {
+                model.Employee = _membershipService.GetUser((int)model.Candidate.EmployeeID);
+            }
+            else
+                model.Employee = new User
+                {
+                    DisplayName = string.IsNullOrEmpty(model.Candidate.EnglishName) ? model.Candidate.FullName : model.Candidate.EnglishName,
+                    FirstName = model.Candidate.FirstName,
+                    LastName = model.Candidate.LastName,
+                    MobilePhone = model.Candidate.MobileNumber,
+                    PersonalEmail = model.Candidate.PersonalEmail,
+                    CandidateID = model.Candidate.ID
+                };
+            var role = _roleService.GetRoleByName(model.Candidate.RecruitmentPosition.Department);
+            if (role != null)
+            {
+                model.RoleID = role.ID;
+            }
+            return PartialView(model);
+        }
+        [DisplayName(@"Request Employment")]
         [HttpPost]
         public ActionResult RequestAction(RecruitmentModel model)
         {
-            return Json(model.RequestAction());
+            if (ModelState.IsValid)
+            {
+                var message = model.RequestAction();
+                if (message != "")
+                {
+                    TempData["message"] = "Save successful";
+                    return RedirectToAction("Detail", new { id = model.Candidate.ID });
+                }
+                TempData["error"] = message;
+            }
+            return View(model);
         }
 
 
@@ -161,6 +206,94 @@ namespace PQT.Web.Controllers
             return Json(model.RejectRequest());
         }
 
+        [DisplayName("Employees management")]
+        public ActionResult Employees()
+        {
+            return View(new List<User>());
+        }
+
+        [DisplayName("Edit Employee")]
+        public ActionResult EditEmployment(int id)
+        {
+            User user = _membershipService.GetUserIncludeAll(id);
+            if (user == null)
+            {
+                TempData["error"] = "Data not found";
+                return RedirectToAction("Employees");
+            }
+            var model = new EditUserModel(user);
+
+            return View(model);
+        }
+
+        [DisplayName("Edit Employee")]
+        [HttpPost]
+        public ActionResult EditEmployment(EditUserModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = _membershipService.GetUser(model.ID);
+            //save salary history
+            if (user.BasicSalary > 0 && (user.BasicSalary != model.BasicSalary))
+            {
+                user.UserSalaryHistories.Add(new UserSalaryHistory
+                {
+                    BusinessDevelopmentUnit = user.BusinessDevelopmentUnit,
+                    SalesManagementUnit = user.SalesManagementUnit,
+                    SalesSupervision = user.SalesSupervision,
+                    EmploymentEndDate = user.EmploymentEndDate,
+                    EmploymentDate = user.EmploymentDate,
+                    UserStatus = user.UserStatus,
+                    SalaryCurrency = user.SalaryCurrency,
+                    FirstEvaluationDate = user.FirstEvaluationDate,
+                    BasicSalary = Convert.ToDecimal(user.BasicSalary),
+                    FinanceAdminUnit = user.FinanceAdminUnit,
+                    ProductionUnit = user.ProductionUnit,
+                    OperationUnit = user.OperationUnit,
+                    HumanResourceUnit = user.HumanResourceUnit,
+                    MarketingManagementUnit = user.MarketingManagementUnit,
+                    ProcurementManagementUnit = user.ProcurementManagementUnit,
+                    ProjectManagementUnit = user.ProjectManagementUnit
+                });
+            }
+
+            if (model.SignedContractFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.SignedContractFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.SignedContract = uploadPicture;
+                }
+            }
+            user.DisplayName = model.DisplayName;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.BusinessPhone = model.BusinessPhone;
+            user.MobilePhone = model.MobilePhone;
+            user.PersonalEmail = model.PersonalEmail;
+            user.PassportID = model.PassportID;
+            user.DateOfBirth = model.DateOfBirth;
+            user.Nationality = model.Nationality;
+            user.OfficeLocationID = model.OfficeLocationID;
+            user.EmploymentEndDate = model.EmploymentEndDate;
+            user.EmploymentDate = model.EmploymentDate;
+            user.FirstEvaluationDate = model.FirstEvaluationDate;
+            user.BasicSalary = model.BasicSalary;
+            user.SalaryCurrency = model.SalaryCurrency;
+            user.SignedContract = model.SignedContract;
+            var success = _membershipService.UpdateUser(user);
+            _loginTracker.ReloadUser(user.Email, user);
+            if (success)
+            {
+                TempData["message"] = Resource.SaveSuccessful;
+                return RedirectToAction("Employees");
+            }
+            ViewBag.Success = true;
+            TempData["error"] = Resource.SaveFailed;
+            return RedirectToAction("EditEmployment", new { id = model.ID });
+        }
         [AjaxOnly]
         public ActionResult AjaxGetAllCandidates()
         {

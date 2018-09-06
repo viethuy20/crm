@@ -6,7 +6,7 @@
         <header>Update KPI</header>
     </div><!--end .card-head -->
 
-    @using (Ajax.BeginForm("Update", "routeValues", new AjaxOptions { OnFailure = "onUpdateFail", OnSuccess = "onUpdateSuccess" }, new { @id = "UpdateForm", @class = "form" }))
+    @using (Ajax.BeginForm("Update", "routeValues", new AjaxOptions { HttpMethod = "Post", OnFailure = "onUpdateFail", OnSuccess = "onUpdateSuccess" }, new { @id = "UpdateForm", @class = "form" }))
     {
         <div class="card-body">
             <div class="success hide">

@@ -251,6 +251,7 @@ namespace PQT.Web.Controllers
             return Json(json1, JsonRequestBehavior.AllowGet);
         }
         [AjaxOnly]
+        [HttpPost]
         public ActionResult ConfirmKPI(string session)
         {
             var model = (LeadMarkKPIModel)Session["SessionVoIpImport" + session];

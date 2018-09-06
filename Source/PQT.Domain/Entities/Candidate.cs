@@ -7,7 +7,7 @@ using PQT.Domain.Helpers;
 
 namespace PQT.Domain.Entities
 {
-    public class Candidate: Entity
+    public class Candidate : Entity
     {
         public Candidate()
         {
@@ -42,11 +42,19 @@ namespace PQT.Domain.Entities
 
         public int? RecruitmentPositionID { get; set; }
         [ForeignKey("RecruitmentPositionID")]
-        public RecruitmentPosition RecruitmentPosition { get; set; }
+        public virtual RecruitmentPosition RecruitmentPosition { get; set; }
         public int? UserID { get; set; }
         [ForeignKey("UserID")]
         public virtual User User { get; set; }
 
+        public int? EmployeeID { get; set; }
+        public string FullName
+        {
+            get
+            {
+                return FirstName + " " + LastName;
+            }
+        }
         public string OfficeLocationDisplay
         {
             get

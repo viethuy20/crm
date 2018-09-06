@@ -5,7 +5,7 @@
         <header>Edit call record</header>
     </div><!--end .card-head -->
 
-    @using (Ajax.BeginForm("EditCallRecord", "routeValues", new AjaxOptions { OnFailure = "onEditCallRecordFail", OnSuccess = "onEditCallRecordSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
+    @using (Ajax.BeginForm("EditCallRecord", "routeValues", new AjaxOptions { HttpMethod = "Post", OnFailure = "onEditCallRecordFail", OnSuccess = "onEditCallRecordSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
     {
         <div class="card-body">
             <div class="success hide">

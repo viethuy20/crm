@@ -13,7 +13,7 @@ namespace PQT.Domain.Entities
         public User()
         {
             Roles = new HashSet<Role>();
-            Status = EntityStatus.Normal;
+            Status = EntityUserStatus.Normal;
             UserStatus = UserStatus.Live;
             UserSalaryHistories = new HashSet<UserSalaryHistory>();
 
@@ -33,6 +33,8 @@ namespace PQT.Domain.Entities
         {
             ID = user.ID;
             DisplayName = user.DisplayName;
+            FirstName = user.FirstName;
+            LastName = user.LastName;
             Email = user.Email;
             BusinessPhone = user.BusinessPhone;
             MobilePhone = user.MobilePhone;
@@ -46,6 +48,14 @@ namespace PQT.Domain.Entities
             BusinessDevelopmentUnit = user.BusinessDevelopmentUnit;
             SalesManagementUnit = user.SalesManagementUnit;
             SalesSupervision = user.SalesSupervision;
+            FinanceAdminUnit = user.FinanceAdminUnit;
+            ProductionUnit = user.ProductionUnit;
+            OperationUnit = user.OperationUnit;
+            HumanResourceUnit = user.HumanResourceUnit;
+            MarketingManagementUnit = user.MarketingManagementUnit;
+            ProcurementManagementUnit = user.ProcurementManagementUnit;
+            ProjectManagementUnit = user.ProjectManagementUnit;
+
             EmploymentEndDate = user.EmploymentEndDate;
             EmploymentDate = user.EmploymentDate;
             FirstEvaluationDate = user.FirstEvaluationDate;
@@ -57,11 +67,16 @@ namespace PQT.Domain.Entities
             UserSalaryHistories = user.UserSalaryHistories;
             Extension = user.Extension;
             OfficeLocationID = user.OfficeLocationID;
+            SignedContract = user.SignedContract;
+            CandidateID = user.CandidateID;
+            NotifyNumber = user.NotifyNumber;
         }
 
         #region Primitive
 
         public string DisplayName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
         public string BusinessPhone { get; set; }
@@ -74,7 +89,7 @@ namespace PQT.Domain.Entities
         public DateTime? LastAccess { get; set; }
         public string Address { get; set; }
         public string Nationality { get; set; }
-        public EntityStatus Status { get; set; }
+        public EntityUserStatus Status { get; set; }
         public UserStatus UserStatus { get; set; }
         public SalaryCurrency SalaryCurrency { get; set; }
         public int? TransferUserID { get; set; }
@@ -104,6 +119,7 @@ namespace PQT.Domain.Entities
         public OfficeLocation OfficeLocation { get; set; }
 
 
+        public int? CandidateID { get; set; }
 
         public FinanceAdminUnit FinanceAdminUnit { get; set; }
         public ProductionUnit ProductionUnit { get; set; }
@@ -150,6 +166,14 @@ namespace PQT.Domain.Entities
         }
         #endregion
 
+        public string DateOfBirthDisplay
+        {
+            get
+            {
+                if (DateOfBirth != null) return Convert.ToDateTime(DateOfBirth).ToString("dd/MM/yyyy");
+                return "";
+            }
+        }
         public string RolesHtml
         {
             get

@@ -240,6 +240,7 @@
     <Compile Include="EntityBase.cs" />
     <Compile Include="Enum\BookingStatus.cs" />
     <Compile Include="Enum\CandidateStatus.cs" />
+    <Compile Include="Enum\EntityUserStatus.cs" />
     <Compile Include="Enum\InfoStatus.cs" />
     <Compile Include="Enum\PaymentStatus.cs" />
     <Compile Include="Enum\RecruitmentStatus.cs" />

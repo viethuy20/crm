@@ -14,7 +14,7 @@
             <header>@(Model.CompanyResource.ID > 0 ? "Edit Data" : "Add New Data")</header>
         </div><!--end .card-head -->
 
-        @using (Ajax.BeginForm("CreateOrEdit", "routeValues", new AjaxOptions { OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
+        @using (Ajax.BeginForm("CreateOrEdit", "routeValues", new AjaxOptions { HttpMethod = "Post", OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
         {
             <div class="card-body">
                 <div class="success hide">

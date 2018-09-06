@@ -156,5 +156,30 @@ namespace PQT.Web.Infrastructure.Utility
             return input1.Trim().ToUpper() == input2.Trim().ToUpper();
         }
 
+        public static IEnumerable<string> GetAllCountries()
+        {
+            //create a new Generic list to hold the country names returned
+            List<string> cultureList = new List<string>();
+
+            //create an array of CultureInfo to hold all the cultures found, these include the users local cluture, and all the
+            //cultures installed with the .Net Framework
+
+            var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures).Where(c => c.Name.Contains("-"));//CultureInfo.GetCultures(CultureTypes.AllCultures & CultureTypes.NeutralCultures);
+
+            //loop through all the cultures found
+            foreach (CultureInfo culture in cultures.Where(m => !string.IsNullOrEmpty(m.Name)))
+            {
+                try
+                {
+                    var region = new RegionInfo(culture.LCID);
+                    if (!(cultureList.Contains(region.EnglishName)))
+                        cultureList.Add(region.EnglishName);
+                }
+                catch (Exception)
+                {
+                }
+            }
+            return cultureList.OrderBy(m => m);
+        }
     }
 }

@@ -40,6 +40,7 @@ namespace PQT.Web.Controllers
         }
 
         [AjaxOnly]
+        [HttpPost]
         public string Submit(EmailSettingItem model)
         {
             //_repoUnit.DeleteEmailAllInTemplate(model.EmailReceive.Type, model.EmailReceive.TemplateName);

@@ -1,6 +1,13 @@
-﻿@using PQT.Domain.Enum
+﻿@using System.Web.Script.Serialization
+@using ColorCode.Compilation.Languages
+@using NS.Mvc
+@using PQT.Domain.Abstract
 @using Resources
-@model PQT.Domain.Entities.NotifySetting
+@model PQT.Domain.Entities.RecruitmentPosition
+    @{ 
+        var _roleService = DependencyHelper.GetService<IRoleService>();
+        var roles = _roleService.GetAllRoles();
+    }
 <div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
     <div class="card-head">
         <header>@(Model.ID > 0 ? "Edit Data" : "Add New Data")</header>
@@ -23,17 +30,12 @@
             </div>
             @Html.HiddenFor(m => m.ID)
             <div class="form-group">
-                @Html.Bootstrap().DropDownListFor(m => m.NotifyType, EnumerationHelper.ToSelectList<NotifyType>()).OptionLabel("").Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.NotifyType).ShowRequiredStar(true)
+                @Html.Bootstrap().DropDownListFor(m => m.Department, roles.ToSelectList(m => m.Name, m => m.Name)).Class("form-control text-capitalize").HtmlAttributes(new { required = "required" }).OptionLabel("").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Department).ShowRequiredStar(true)
             </div>
             <div class="form-group">
-                @Html.Bootstrap().DropDownListFor(m => m.NotifyAction, EnumerationHelper.ToSelectList<NotifyAction>()).OptionLabel("").Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.NotifyAction).ShowRequiredStar(true)
-            </div>
-            <div class="form-group">
-                <input type="text" name="@Html.NameFor(m=>m.Roles)" value="@Model.Roles" data-role="tagsinput"  placeholder="                     "/>
-                @Html.ValidationMessageFor(m => m.Roles)
-                @Html.Bootstrap().LabelFor(m => m.Roles)
+                @Html.Bootstrap().TextBoxFor(m => m.Position).Class("form-control text-capitalize").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Position).ShowRequiredStar(true)
             </div>
             <div class="form-group">
                 <div class="pull-right">
@@ -44,3 +46,4 @@
         </div><!--end .card-body -->
     }
 </div><!--end .card -->
+

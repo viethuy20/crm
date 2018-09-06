@@ -16,8 +16,8 @@ namespace PQT.Domain.Entities
         public Lead()
         {
             PhoneCalls = new HashSet<PhoneCall>();
-            FirstFollowUpStatus = FollowUpStatus.Pending;
-            FinalStatus = FinalStatus.Pending;
+            FirstFollowUpStatus = FollowUpStatus.Neutral;
+            FinalStatus = FinalStatus.Neutral;
         }
         public string DirectLine { get; set; } //Direct Line/Mobile number
         public string JobTitle { get; set; } //Client Name/Job Title

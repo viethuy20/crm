@@ -114,6 +114,7 @@ namespace PQT.Web.Controllers
         }
 
         [AjaxOnly]
+        [HttpPost]
         public ActionResult ComfirmImport(string sessionName)
         {
             if (string.IsNullOrEmpty(sessionName) || Session[sessionName] == null)
@@ -128,6 +129,7 @@ namespace PQT.Web.Controllers
             }
         }
 
+        [HttpPost]
         public ActionResult Delete(int id)
         {
             if (_unitRepo.DeleteCountry(id))

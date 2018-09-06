@@ -12,7 +12,7 @@
         <div class="card-head">
             <header><b>@title</b></header>
         </div><!--end .card-head -->
-        @using (Ajax.BeginForm("EditCompany", "routeValues", new AjaxOptions { OnFailure = "onFailEditCompany", OnSuccess = "onSuccessEditCompany" }, new { @id = "CreateOrEditForm", @class = "form" }))
+        @using (Ajax.BeginForm("EditCompany", "routeValues", new AjaxOptions { HttpMethod = "Post", OnFailure = "onFailEditCompany", OnSuccess = "onSuccessEditCompany" }, new { @id = "CreateOrEditForm", @class = "form" }))
         {
             <div class="card-body">
                 @Html.HiddenFor(m => m.CompanyID)
