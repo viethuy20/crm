@@ -243,6 +243,17 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
+        public string DialingCode
+        {
+            get
+            {
+                if (Company != null)
+                {
+                    return Company.DialingCode;
+                }
+                return "";
+            }
+        }
         public string Salesman
         {
             get

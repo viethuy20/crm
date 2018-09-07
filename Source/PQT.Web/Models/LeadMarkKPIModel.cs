@@ -146,7 +146,7 @@ namespace PQT.Web.Models
             if (eventData != null)
             {
                 eventKeyworks = eventData.PrimaryJobtitleKeywords != null
-                    ? eventData.PrimaryJobtitleKeywords.Split(new[] {';', ','}, StringSplitOptions.RemoveEmptyEntries)
+                    ? eventData.PrimaryJobtitleKeywords.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)
                         .Select(m => m.ToLower().Trim()).ToList()
                     : new List<string>();
                 eventKeyworks.AddRange(eventData.SecondaryJobtitleKeywords != null
@@ -219,31 +219,39 @@ namespace PQT.Web.Models
                     !string.IsNullOrEmpty(lead.WorkEmail) ||
                     !string.IsNullOrEmpty(lead.WorkEmail1))
                 {
-                    var mobilePhone1 = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone1);
-                    var mobilePhone2 = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone2);
-                    var mobilePhone3 = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.MobilePhone3);
-                    var directLine = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.DirectLine);
-                    foreach (var exceptCode in exceptCodes)
+                    var mobilePhone1 = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.DialingCode + lead.MobilePhone1);
+                    var mobilePhone2 = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.DialingCode + lead.MobilePhone2);
+                    var mobilePhone3 = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.DialingCode + lead.MobilePhone3);
+                    var directLine = PQT.Domain.Helpers.StringHelper.RemoveSpecialCharacters(lead.DialingCode + lead.DirectLine);
+                    //foreach (var exceptCode in exceptCodes)
+                    //{
+                    //    if (mobilePhone1 != null && mobilePhone1.Substring(0, exceptCode.Length) == exceptCode)
+                    //        mobilePhone1 = mobilePhone1.Substring(exceptCode.Length);
+                    //    if (mobilePhone2 != null && mobilePhone2.Substring(0, exceptCode.Length) == exceptCode)
+                    //        mobilePhone2 = mobilePhone2.Substring(exceptCode.Length);
+                    //    if (mobilePhone3 != null && mobilePhone3.Substring(0, exceptCode.Length) == exceptCode)
+                    //        mobilePhone3 = mobilePhone3.Substring(exceptCode.Length);
+                    //    if (directLine != null && directLine.Substring(0, exceptCode.Length) == exceptCode)
+                    //        directLine = directLine.Substring(exceptCode.Length);
+                    //}
+                    var voips = ImportVoIps.Where(m =>
+                        m.clid == lead.User.Extension && !string.IsNullOrEmpty(m.dst) && (
+                            m.dstExceptCode(exceptCodes) == directLine ||
+                            m.dstExceptCode(exceptCodes) == mobilePhone1 ||
+                            m.dstExceptCode(exceptCodes) == mobilePhone2 ||
+                            m.dstExceptCode(exceptCodes) == mobilePhone3
+                        ) && !string.IsNullOrEmpty(m.disposition) && m.disposition.Trim().ToUpper() == "ANSWERED");
+                    if (voips.Any())
                     {
-                        if (mobilePhone1 != null && mobilePhone1.Substring(0, exceptCode.Length) == exceptCode)
-                            mobilePhone1 = mobilePhone1.Substring(exceptCode.Length);
-                        if (mobilePhone2 != null && mobilePhone2.Substring(0, exceptCode.Length) == exceptCode)
-                            mobilePhone2 = mobilePhone2.Substring(exceptCode.Length);
-                        if (mobilePhone3 != null && mobilePhone3.Substring(0, exceptCode.Length) == exceptCode)
-                            mobilePhone3 = mobilePhone3.Substring(exceptCode.Length);
-                        if (directLine != null && directLine.Substring(0, exceptCode.Length) == exceptCode)
-                            directLine = directLine.Substring(exceptCode.Length);
-                    }
-                    var voips = ImportVoIps.Where(m => m.clid == lead.User.Extension && !string.IsNullOrEmpty(m.dst) && (
-                    m.dst == mobilePhone1 ||
-                    m.dst == mobilePhone2 ||
-                    m.dst == mobilePhone3 ||
-                    m.dst == directLine
-                    ) && !string.IsNullOrEmpty(m.disposition) && m.disposition.Trim().ToUpper() == "ANSWERED");
-                    if (lead.PhoneCalls.Any(m => voips.Any(v => m.StartTime.AddSeconds(-voipBuffer) <= v.CallDateTime && v.CallDateTime <= m.StartTime.AddSeconds(voipBuffer))))
-                    {
-                        lead.MarkKPI = true;
-                        lead.KPIRemarks = "";
+                        if (lead.PhoneCalls.Any(m => voips.Any(v => m.StartTime.AddSeconds(-voipBuffer) <= v.CallDateTime && v.CallDateTime <= m.StartTime.AddSeconds(voipBuffer))))
+                        {
+                            lead.MarkKPI = true;
+                            lead.KPIRemarks = "";
+                        }
+                        else
+                        {
+                            lead.KPIRemarks = "Call Time incorrect";
+                        }
                     }
                     else
                     {
@@ -272,5 +280,22 @@ namespace PQT.Web.Models
         public string duration { get; set; }
         public string disposition { get; set; } //ANSWERED, FAILED, NO ANSWER , BUSY
         public string Error { get; set; }
+        private string _dstRemoveCode;
+        public string dstExceptCode(string[] exceptCodes)
+        {
+            if (string.IsNullOrEmpty(_dstRemoveCode) && !string.IsNullOrEmpty(dst))
+            {
+                _dstRemoveCode = dst;
+                foreach (var exceptCode in exceptCodes)
+                {
+                    if (_dstRemoveCode != null && _dstRemoveCode.Length > exceptCode.Length && _dstRemoveCode.Substring(0, exceptCode.Length) == exceptCode)
+                    {
+                        _dstRemoveCode = _dstRemoveCode.Substring(exceptCode.Length);
+                        break;
+                    }
+                }
+            }
+            return _dstRemoveCode;
+        }
     }
 }
