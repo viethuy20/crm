@@ -42,5 +42,31 @@ namespace PQT.Web.Controllers
 
             return View(_settingRepo.GetSettings());
         }
+
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
+        [DisplayName(@"Setting for admin")]
+        public ActionResult EditAdmqwe()
+        {
+            return View(_settingRepo.GetSettings());
+        }
+
+        [HttpPost]
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
+        [DisplayName(@"Setting for admin")]
+        public ActionResult EditAdmqwe(SettingModel setting)
+        {
+            if (ModelState.IsValid)
+            {
+                var lstId = Request["Id"].Split(',');
+                foreach (var id in lstId)
+                {
+                    var item = _settingRepo.GetSetting(Convert.ToInt32(id));
+                    item.Value = Request[item.Name];
+                    _settingRepo.UpdateSetting(item);
+                }
+            }
+            return View(_settingRepo.GetSettings());
+        }
+
     }
 }

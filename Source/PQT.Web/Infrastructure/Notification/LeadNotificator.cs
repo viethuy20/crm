@@ -396,7 +396,7 @@ namespace PQT.Web.Infrastructure.Notification
                             Title = title,
                             EventCode = "",
                             Description = eventData.FullName,
-                            HighlightColor = "#000000"
+                            HighlightColor = "#ffffff"
                         };
                         if (!string.IsNullOrEmpty(title))
                         {

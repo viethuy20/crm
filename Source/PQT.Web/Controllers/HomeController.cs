@@ -49,7 +49,9 @@ namespace PQT.Web.Controllers
         {
             var model = new HomeModel();
             if (CurrentUser.HasRole("Operation"))
-                return RedirectToAction("Index", "Event");
+                return RedirectToAction("Index", "Operation");
+            if (CurrentUser.HasRole("HR"))
+                return RedirectToAction("Index", "Recruitment");
             if (CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("QC") || CurrentUser.HasRole("Manager"))
                 model.Events = _eventService.GetAllEvents(m => (m.EventStatus == EventStatus.Live || m.EventStatus == EventStatus.Confirmed));
             else
@@ -68,6 +70,7 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         public ActionResult GetNotifyForEvent(int eventId, int page = 1)
         {
             var notifications =
@@ -77,6 +80,7 @@ namespace PQT.Web.Controllers
         }
 
         [AjaxOnly]
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         public ActionResult PanelNotification()
         {
             var notify = new List<UserNotification>();
@@ -88,6 +92,7 @@ namespace PQT.Web.Controllers
         }
 
         [AjaxOnly]
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         public ActionResult RemoveNotifyCounter()
         {
             if (CurrentUser.Identity != null)
@@ -99,6 +104,7 @@ namespace PQT.Web.Controllers
         }
 
         [AjaxOnly]
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         public ActionResult UpdateSeenNotify(int entryId, NotifyType type)
         {
             if (CurrentUser.Identity != null)
@@ -118,6 +124,7 @@ namespace PQT.Web.Controllers
             return Json(0);
         }
         [AjaxOnly]
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         public ActionResult SeenNotify(int notifyId)
         {
             _notificationService.SeenUserNotification(notifyId);

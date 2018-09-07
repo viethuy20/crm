@@ -1,4 +1,5 @@
-﻿@using Resources
+﻿@using System.Configuration
+@using Resources
 @using StackExchange.Profiling
 @{
     var count = 0;
@@ -6,6 +7,7 @@
     {
         count = CurrentUser.Identity.NotifyNumber;
     }
+    var debugMode = ConfigurationManager.AppSettings["TEST_MODE"];
 }
 <!DOCTYPE html>
 <html lang="en" class="@ViewBag.PageClass">
@@ -15,7 +17,8 @@
     <link rel="shortcut icon" href="~/favicon.ico" type="image/x-icon">
     <link rel="icon" href="~/favicon.ico" type="image/x-icon">
     <title>
-        @(count == 0 ? "" : "(" + count + ")")
+        @(!string.IsNullOrEmpty(debugMode) ? "[" + debugMode + "]" : "")
+    @(count == 0 ? "" : "(" + count + ")")
     @(ViewBag.Title != null ? ViewBag.Title + " | Prime Quality Training" : "Prime Quality Training")
 </title>
 @RenderSection("css", required: false)
@@ -25,22 +28,22 @@
 <!--[if lt IE 9]>
     @Scripts.Render("~/js/ie9")
 <![endif]-->
-    <script>
-        var HRGLOBAL = {};
-    </script>
-    
-    <style>
-        #accordion2 .dropdown-menu {
-            display: block;
-            position: initial;
-            float: initial;
-            border: 0px
-        }
+<script>
+    var HRGLOBAL = {};
+</script>
+
+<style>
+    #accordion2 .dropdown-menu {
+        display: block;
+        position: initial;
+        float: initial;
+        border: 0px
+    }
 
         #accordion2 .dropdown-menu li a {
             padding-left: 50px;
         }
-    </style>
+</style>
 </head>
 @*@(Request.Cookies["menubar-pin"] == null || Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")*@
 <body class="header-fixed menubar-first @(Request.Cookies["menubar-pin"] != null && Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")">
