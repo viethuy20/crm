@@ -29,6 +29,10 @@ namespace PQT.Web.Infrastructure
         {
             get { return DependencyHelper.GetService<EFUserNotificationService>(); }
         }
+        public IMembershipService MembershipService
+        {
+            get { return DependencyHelper.GetService<IMembershipService>(); }
+        }
         #endregion
 
         private void RetrieveNotifyResources()
@@ -77,9 +81,9 @@ namespace PQT.Web.Infrastructure
                 if (user != null && user.NotifyNumber > 0)
                 {
                     user.NotifyNumber--;
-                    Update(user);
+                    MembershipService.UpdateUser(user);
                 }
-                return Update(notify);
+                return NotificationService.UpdateUserNotification(notify);
             }
             return true;
         }
@@ -92,7 +96,7 @@ namespace PQT.Web.Infrastructure
                 if (notify.Seen) continue;
                 notify.Seen = true;
                 countSeen++;
-                Update(notify);
+                NotificationService.UpdateUserNotification(notify);
             }
             return countSeen;
         }

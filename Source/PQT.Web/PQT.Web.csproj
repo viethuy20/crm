@@ -2609,8 +2609,8 @@
     <Content Include="Views\Holiday\Index.cshtml" />
     <Content Include="Views\Account\ActiveKey.cshtml" />
     <Content Include="Views\Lead\_CompanyResourceList3.cshtml" />
-    <Content Include="Views\Operation\OpeEdit.cshtml" />
-    <Content Include="Views\Operation\OpeDetail.cshtml" />
+    <Content Include="Views\Operation\Edit.cshtml" />
+    <Content Include="Views\Operation\Detail.cshtml" />
     <Content Include="Views\Operation\RejectHotel.cshtml" />
     <Content Include="Views\Booking\EditDelegate.cshtml" />
     <Content Include="Views\Booking\EditCompany.cshtml" />
@@ -2638,6 +2638,7 @@
     <Content Include="Views\Recruitment\EditEmployment.cshtml" />
     <Content Include="Views\Recruitment\Employees.cshtml" />
     <Content Include="Views\Settings\EditAdmqwe.cshtml" />
+    <Content Include="Views\Report\PrintConsolidateKpis.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -2645,7 +2646,6 @@
     <Folder Include="Content\js\libs\ckeditor\samples\plugins\htmlwriter\assets\" />
     <Folder Include="Content\js\libs\DataTables\extensions\FixedHeader\css\" />
     <Folder Include="Content\js\libs\jquery-validation\demo\tinymce\themes\simple\skins\" />
-    <Folder Include="Views\Report\" />
     <Folder Include="wkhtmltopdf\pdf\" />
   </ItemGroup>
   <ItemGroup>

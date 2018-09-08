@@ -240,7 +240,8 @@ namespace PQT.Domain.Concrete
 
         public User CreateUser(User user)
         {
-            user.Email = user.Email.Trim();
+            if (user.Email != null)
+                user.Email = user.Email.Trim();
             //user.Password = EncryptHelper.EncryptPassword(user.Password);
             return Create(user);
         }

@@ -31,9 +31,10 @@
     </div>
 <div class="row">
     <div class="col-sm-12" style="padding-right: 24px; padding-bottom: 12px">
+        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
         @if (CurrentUser.HasPermission("Invoice", "Edit"))
         {
-            @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.Invoice.ID }).Class(" btn-primary").PrependIcon("md md-edit")
+            @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new {id = Model.Invoice.ID}).Class(" btn-primary").PrependIcon("md md-edit")
         }
     </div>
 </div>

@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 using System.Web.Security;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
@@ -33,21 +34,29 @@ namespace PQT.Web.Infrastructure.Utility
 
         public static User RetrieveUser()
         {
-            //Log.Debug("Debug");
-            User user = LoginTracker.RetrieveUser(HttpContext.Current.Session.SessionID);
-            //Log.Debug("Debug 2");
-            // login if cookie exists
-            if (user == null && HttpContext.Current.User.Identity != null && HttpContext.Current.User.Identity.IsAuthenticated)
+            User user = null;
+            try
             {
-                LoginTracker.SignIn(HttpContext.Current.User.Identity.Name, HttpContext.Current.Session.SessionID);
-                //Log.Debug("Login by email");
+                //Log.Debug("Debug");
                 user = LoginTracker.RetrieveUser(HttpContext.Current.Session.SessionID);
-                //Log.Debug("Retrieve User");
-            }
-            else
-            {
+                //Log.Debug("Debug 2");
+                // login if cookie exists
+                if (user == null && HttpContext.Current.User.Identity != null && HttpContext.Current.User.Identity.IsAuthenticated)
+                {
+                    LoginTracker.SignIn(HttpContext.Current.User.Identity.Name, HttpContext.Current.Session.SessionID);
+                    //Log.Debug("Login by email");
+                    user = LoginTracker.RetrieveUser(HttpContext.Current.Session.SessionID);
+                    //Log.Debug("Retrieve User");
+                }
+                else
+                {
 
-            }          //Log.Debug(user==null,"User null");
+                }          //Log.Debug(user==null,"User null");
+
+            }
+            catch (Exception e)
+            {
+            }
             return user;
         }
 

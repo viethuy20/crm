@@ -10,6 +10,15 @@
     @using (Html.BeginForm("Edit", "Recruitment", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
     {
         @Html.HiddenFor(m => m.Candidate.ID)
+        @Html.HiddenFor(m => m.Candidate.PsSummary.ID)
+        @Html.HiddenFor(m => m.Candidate.OneFaceToFaceSummary.ID)
+        @Html.HiddenFor(m => m.Candidate.TwoFaceToFaceSummary.ID)
+        @Html.HiddenFor(m => m.Candidate.PsSummary.EntryId)
+        @Html.HiddenFor(m => m.Candidate.PsSummary.UpdatedTime)
+        @Html.HiddenFor(m => m.Candidate.OneFaceToFaceSummary.EntryId)
+        @Html.HiddenFor(m => m.Candidate.OneFaceToFaceSummary.UpdatedTime)
+        @Html.HiddenFor(m => m.Candidate.TwoFaceToFaceSummary.EntryId)
+        @Html.HiddenFor(m => m.Candidate.TwoFaceToFaceSummary.UpdatedTime)
         @Html.Partial("_CreateOrEdit", Model)
         <div class="row">
             <div class="form-group  col-md-offset-2">

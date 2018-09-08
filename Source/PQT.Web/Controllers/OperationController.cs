@@ -33,7 +33,7 @@ namespace PQT.Web.Controllers
             return View(new List<Event>());
         }
         [DisplayName(@"Detail")]
-        public ActionResult OpeDetail(int id)
+        public ActionResult Detail(int id)
         {
             var model = new EventModel();
             model.PrepareEdit(id);
@@ -41,7 +41,7 @@ namespace PQT.Web.Controllers
         }
 
         [DisplayName("Edit")]
-        public ActionResult OpeEdit(int id)
+        public ActionResult Edit(int id)
         {
             var model = new EventModel();
             model.PrepareOperationEdit(id);
@@ -54,14 +54,14 @@ namespace PQT.Web.Controllers
         }
         [DisplayName("Edit")]
         [HttpPost]
-        public ActionResult OpeEdit(EventModel model)
+        public ActionResult Edit(EventModel model)
         {
             if (ModelState.IsValid)
             {
                 if (model.OperationUpdate())
                 {
                     TempData["message"] = "Updated successful";
-                    return RedirectToAction("OpeEdit", new { id = model.ID });
+                    return RedirectToAction("Detail", new { id = model.ID });
                 }
             }
             model.PrepareOperationEdit(model.ID, false);
@@ -86,7 +86,7 @@ namespace PQT.Web.Controllers
                     return Json(new { IsSuccess = false, Message = "Approve failed" });
                 }
                 _repo.UpdateVenueInfo(hotel);
-                OpeEventNotificator.NotifyUser(NotifyAction.Approved, id, "Approved operation info");
+                OpeEventNotificator.NotifyUser(NotifyAction.Approved, hotel.EntryId, "Approved Venue Info");
             }
             else
             {
@@ -102,7 +102,7 @@ namespace PQT.Web.Controllers
                     return Json(new { IsSuccess = false, Message = "Approve failed" });
                 }
                 _repo.UpdateAccomodationInfo(hotel);
-                OpeEventNotificator.NotifyUser(NotifyAction.Approved, id, "Approved operation info");
+                OpeEventNotificator.NotifyUser(NotifyAction.Approved, hotel.EntryId, "Approved Accomodation Info");
             }
             return Json(new { IsSuccess = true });
         }
@@ -143,7 +143,7 @@ namespace PQT.Web.Controllers
                     return Json(new { IsSuccess = false, Message = "Reject failed" });
                 }
                 _repo.UpdateVenueInfo(hotel);
-                OpeEventNotificator.NotifyUser(NotifyAction.Rejected, id, "Rejected operation info");
+                OpeEventNotificator.NotifyUser(NotifyAction.Rejected, hotel.EntryId, "Rejected Venue Info");
             }
             else
             {
@@ -159,7 +159,7 @@ namespace PQT.Web.Controllers
                     return Json(new { IsSuccess = false, Message = "Reject failed" });
                 }
                 _repo.UpdateAccomodationInfo(hotel);
-                OpeEventNotificator.NotifyUser(NotifyAction.Rejected, id, "Rejected operation info");
+                OpeEventNotificator.NotifyUser(NotifyAction.Rejected, hotel.EntryId, "Rejected Accomodation Info");
             }
             return Json(new { IsSuccess = true });
         }

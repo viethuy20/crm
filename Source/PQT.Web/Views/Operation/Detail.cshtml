@@ -60,9 +60,9 @@
     <div class="row">
         <div class="col-sm-12" style="padding-right: 24px; padding-bottom: 12px">
             @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
-            @if (CurrentUser.HasPermission("Operation", "OpeEdit"))
+            @if (CurrentUser.HasPermission("Operation", "Edit"))
             {
-                @Html.Bootstrap().ActionLinkButton("Edit", "OpeEdit").RouteValues(new { id = Model.Event.ID }).Class("btn-primary").PrependIcon("md md-edit")
+                @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.Event.ID }).Class("btn-primary").PrependIcon("md md-edit")
             }
         </div>
     </div>
@@ -319,7 +319,7 @@
                             @Html.Bootstrap().LabelFor(m => m.Event.VenueInfo.HotelContract)
                         </div>
                     </div>
-                    if (!string.IsNullOrEmpty(Model.Event.AccomodationInfo.RejectMessage))
+                    if (!string.IsNullOrEmpty(Model.Event.VenueInfo.RejectMessage))
                     {
                         <div class="col-sm-6">
                             <div class="form-group">

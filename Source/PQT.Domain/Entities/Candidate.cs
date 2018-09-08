@@ -71,6 +71,14 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
+        public string StatusUpdateTimeStr
+        {
+            get
+            {
+                if (CandidateStatusRecord != null) return CandidateStatusRecord.UpdatedTime.ToString("dd/MM/yyyy");
+                return "";
+            }
+        }
         public string StatusCode
         {
             get

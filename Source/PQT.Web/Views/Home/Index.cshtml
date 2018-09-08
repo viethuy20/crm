@@ -17,7 +17,7 @@
     }
         .event-panel .text-xl {
             text-transform: capitalize;
-            font-size: 20px;
+            font-size: 18px;
         }
 
         .event-panel .card {
@@ -174,7 +174,7 @@
                                 notify.EventId;
                         }
                         if (notify.NotifyTypeCode == '@NotifyType.OpeEvent.Value') {
-                            url = '@Url.Action("OpeDetail", "Operation")?id=' + notify.EntryId;
+                            url = '@Url.Action("Detail", "Operation")?id=' + notify.EntryId;
                         }
                         htmlItems += '<div class="notify_item"><a class="tile-content ink-reaction" href="' +
                             url +

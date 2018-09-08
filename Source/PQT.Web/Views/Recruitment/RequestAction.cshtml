@@ -61,7 +61,7 @@
                     <div class="col-sm-6">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.Email).HtmlAttributes(new { required = "required" }).Class("form-control text-lowercase").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Employee.Email).LabelText("Email").ShowRequiredStar(true)
+                            @Html.Bootstrap().LabelFor(m => m.Employee.Email).LabelText("Email (For login to system)").ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -169,7 +169,7 @@
     @<script>
          $(".submitbutton").on('click', function (e) {
              e.preventDefault();
-             bootbox.confirm('@Resource.ConfirmSave', function (isOK) {
+             bootbox.confirm('Do you want to save this data and request employment?', function (isOK) {
                  if (isOK) {
 
                      var form = $('.submitbutton').parents("form");

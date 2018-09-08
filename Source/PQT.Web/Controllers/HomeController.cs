@@ -100,7 +100,7 @@ namespace PQT.Web.Controllers
                 CurrentUser.Identity.NotifyNumber = 0;
                 _membershipService.UpdateUser(CurrentUser.Identity);
             }
-            return Json(true);
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         [AjaxOnly]
@@ -119,16 +119,16 @@ namespace PQT.Web.Controllers
                     }
                     _membershipService.UpdateUser(CurrentUser.Identity);
                 }
-                return Json(countSeen);
+                return Json(countSeen, JsonRequestBehavior.AllowGet);
             }
-            return Json(0);
+            return Json(0,JsonRequestBehavior.AllowGet);
         }
         [AjaxOnly]
         [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         public ActionResult SeenNotify(int notifyId)
         {
             _notificationService.SeenUserNotification(notifyId);
-            return Json(true);
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
         [AjaxOnly]
         public ActionResult TestMail()

@@ -57,6 +57,13 @@
         {
             @Html.Bootstrap().ActionLinkButton("Reject Booking", "RejectBooking").RouteValues(new { id = Model.Booking.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
         }
+
+        @if (CurrentUser.HasPermission("Invoice", "Create") && 
+            Model.Booking.BookingStatusRecord == BookingStatus.Approved &&
+            string.IsNullOrEmpty(Model.Booking.InvoiceNo))
+        {
+            @Html.Bootstrap().ActionLinkButton("Create Invoice", "Create", "Invoice").RouteValues(new { id = Model.Booking.ID }).Class(" btn-success").PrependIcon("md md-add")
+        }
     </div>
 </div>
     <div class="card">

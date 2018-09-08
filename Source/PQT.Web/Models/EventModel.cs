@@ -201,11 +201,15 @@ namespace PQT.Web.Models
                     PostEventInfo.FeedbackUpload = uploadPicture;
                 }
             }
-            if (VenueInfo.Status == BookingStatus.Rejected)
+            if (!string.IsNullOrEmpty(VenueInfo.HotelVenue) &&
+                (VenueInfo.Status == InfoStatus.Rejected ||
+                 VenueInfo.Status == InfoStatus.Initial))
             {
                 VenueInfo.Status = InfoStatus.Request;
             }
-            if (AccomodationInfo.Status == BookingStatus.Rejected)
+            if (!string.IsNullOrEmpty(AccomodationInfo.HotelAccomodation) &&
+                (AccomodationInfo.Status == InfoStatus.Rejected ||
+                 AccomodationInfo.Status == InfoStatus.Initial))
             {
                 AccomodationInfo.Status = InfoStatus.Request;
             }
@@ -213,11 +217,17 @@ namespace PQT.Web.Models
                 LocalVisaAgentInfo, PostEventInfo) != null;
             if (result)
             {
-                if ((VenueInfo.Status == InfoStatus.Request && !string.IsNullOrEmpty(VenueInfo.HotelVenue)) ||
-                    (AccomodationInfo.Status == InfoStatus.Request && !string.IsNullOrEmpty(AccomodationInfo.HotelAccomodation))
-                    )
+                if (VenueInfo.Status == InfoStatus.Request && AccomodationInfo.Status == InfoStatus.Request)
                 {
-                    OpeEventNotificator.NotifyUser(NotifyAction.Request, ID, "Request operation info");
+                    OpeEventNotificator.NotifyUser(NotifyAction.Request, ID, "Request Venue And Accomodation Info");
+                }
+                else if (VenueInfo.Status == InfoStatus.Request)
+                {
+                    OpeEventNotificator.NotifyUser(NotifyAction.Request, ID, "Request Venue Info");
+                }
+                else if (AccomodationInfo.Status == InfoStatus.Request)
+                {
+                    OpeEventNotificator.NotifyUser(NotifyAction.Request, ID, "Request Accomodation Info");
                 }
                 return true;
             }

@@ -230,7 +230,7 @@ namespace PQT.Web.Models
                     IsSuccess = false
                 };
             var membershipService = DependencyHelper.GetService<IMembershipService>();
-            LeadNotificator.NotifyUser(new List<User> { lead.User.TransferUserID > 0 ? membershipService.GetUser((int)lead.User.TransferUserID) : lead.User }, lead.ID, titleNotify); // notify for manager
+            LeadNotificator.NotifyUser(currentUserId, new List<User> { lead.User.TransferUserID > 0 ? membershipService.GetUser((int)lead.User.TransferUserID) : lead.User }, lead.ID, titleNotify); // notify for manager
             LeadNotificator.NotifyUpdateNCL(lead.ID, hubConnectionId);
             return new
             {
@@ -274,7 +274,7 @@ namespace PQT.Web.Models
                     IsSuccess = false
                 };
             var membershipService = DependencyHelper.GetService<IMembershipService>();
-            LeadNotificator.NotifyUser(new List<User> { lead.User.TransferUserID > 0 ? membershipService.GetUser((int)lead.User.TransferUserID) : lead.User }, lead.ID, titleNotify); // notify for manager
+            LeadNotificator.NotifyUser(currentUserId,new List <User> { lead.User.TransferUserID > 0 ? membershipService.GetUser((int)lead.User.TransferUserID) : lead.User }, lead.ID, titleNotify); // notify for manager
             LeadNotificator.NotifyUpdateNCL(lead.ID, hubConnectionId);
 
             var daysExpired = Settings.Lead.NumberDaysExpired();

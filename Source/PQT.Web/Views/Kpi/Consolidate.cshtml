@@ -23,56 +23,62 @@
                 <div class="card-head">
                     <header><i class="fa fa-database"></i> @ViewBag.Title</header>
                 </div>
+
                 <div class="card-body">
-                    <div class="row form">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                @Html.Bootstrap().DropDownListFor(m => m.EventID, Model.Events.ToSelectList(m => m.ID, m => m.EventName)).HtmlAttributes(new { @class = "select-ajax form-control" })
-                                <label>Event</label>
+                    @using (Html.BeginForm("PrintConsolidate", "Kpi", null, FormMethod.Post, new {@class = "form no_loader"}))
+                    {
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.Bootstrap().DropDownListFor(m => m.EventID, Model.Events.ToSelectList(m => m.ID, m => m.EventName)).HtmlAttributes(new {@class = "select-ajax form-control"})
+                                    <label>Event</label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <div class="input-daterange input-group">
-                                    <div class="input-group-content">
-                                        @Html.DatePickerRangeFor(m => m.DateFrom, new { @class = "input-clear form-control" })
-                                        @Html.Bootstrap().LabelFor(m => m.DateFrom)
-                                    </div>
-                                    <span class="input-group-addon">to</span>
-                                    <div class="input-group-content">
-                                        @Html.DatePickerRangeFor(m => m.DateTo, new { @class = "input-clear form-control" })
-                                        @Html.Bootstrap().LabelFor(m => m.DateTo)
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <div class="input-daterange input-group">
+                                        <div class="input-group-content">
+                                            @Html.DatePickerRangeFor(m => m.DateFrom, new {@class = "input-clear form-control"})
+                                            @Html.Bootstrap().LabelFor(m => m.DateFrom)
+                                        </div>
+                                        <span class="input-group-addon">to</span>
+                                        <div class="input-group-content">
+                                            @Html.DatePickerRangeFor(m => m.DateTo, new {@class = "input-clear form-control"})
+                                            @Html.Bootstrap().LabelFor(m => m.DateTo)
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                @Html.Bootstrap().DropDownListFor(m => m.UserID, Model.Users.ToSelectList(m => m.ID, m => m.DisplayName)).HtmlAttributes(new { @class = "select-ajax form-control" })
-                                <label>Salesman</label>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.Bootstrap().DropDownListFor(m => m.UserID, Model.Users.ToSelectList(m => m.ID, m => m.DisplayName)).HtmlAttributes(new {@class = "select-ajax form-control"})
+                                    <label>Salesman</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-offset-4">
-                            @Html.Bootstrap().Button().Text("Clear").Id("btnClear").PrependIcon("md md-close").Size(ButtonSize.Mini).HtmlAttributes(new { @class = "btn btn-default" })
-                            @Html.Bootstrap().Button().Text("Search").Id("btnSearch").PrependIcon("md md-search").Size(ButtonSize.Mini).HtmlAttributes(new { @class = "btn btn-primary" })
+                        <div class="row">
+                            <div class="col-md-offset-4">
+                                @Html.Bootstrap().Button().Text("Clear").Id("btnClear").PrependIcon("md md-close").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-default"})
+                                @Html.Bootstrap().Button().Text("Search").Id("btnSearch").PrependIcon("md md-search").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-primary"})
+                                @Html.Bootstrap().SubmitButton().Text("Print").PrependIcon("md md-print").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-info"})
+                            </div>
                         </div>
-                    </div>
+                    }
                     <div class="table-responsive">
                         <table class="table" id="kpiTable">
                             <thead>
-                                <tr>
-                                    <th>Salesman</th>
-                                    <th>Email</th>
-                                    <th class="text-center">KPI</th>
-                                    <th class="text-center">No KPI</th>
-                                    <th class="text-center">No Check</th>
-                                </tr>
+                            <tr>
+                                <th>Salesman</th>
+                                <th>Email</th>
+                                <th class="text-center">KPI</th>
+                                <th class="text-center">No KPI</th>
+                                <th class="text-center">No Check</th>
+                            </tr>
                             </thead>
                         </table>
                     </div>
-                </div><!--end .card-body -->
+                </div>
+                <!--end .card-body -->
             </div><!--end .card -->
         </div>
     </div>
@@ -140,6 +146,7 @@
              $('@Html.JquerySelectorFor(m=>m.UserID)').val('').trigger("change");
              oTable.fnFilter('');
          });
+
 
          initAjaxDropdown($('@Html.JquerySelectorFor(m=>m.EventID)'), "@Url.Action("GetPossibleEvent", "Event")", "Search for event");
          initAjaxDropdown($('@Html.JquerySelectorFor(m=>m.UserID)'), "@Url.Action("GetPossibleSalesman", "Users")", "Search for user");

@@ -10,6 +10,14 @@ namespace PQT.Web.Models
     public class ConsolidateKPIModel
     {
         public List<ConsolidateKPI> ConsolidateKpis { get; set; }
+        public string EventName { get; set; }
+        public string Date { get; set; }
+
+        public ConsolidateKPIModel()
+        {
+            EventName = "All";
+            Date = "All";
+        }
         public void Prepare(IEnumerable<Lead> leads)
         {
             ConsolidateKpis = new List<ConsolidateKPI>();

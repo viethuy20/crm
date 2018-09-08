@@ -19,13 +19,13 @@
             <div class="col-sm-4">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.FirstName).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Candidate.FirstName)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.FirstName).ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.LastName).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Candidate.LastName)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.LastName).ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-4">
@@ -37,13 +37,13 @@
             <div class="col-sm-4">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.MobileNumber).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Candidate.MobileNumber)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.MobileNumber).ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.PersonalEmail).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Candidate.PersonalEmail)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.PersonalEmail).ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-4">
@@ -71,8 +71,8 @@
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.RecruitmentPositionID, recruitmentPositions.ToSelectList(m => m.ID, m => m.Description)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Candidate.RecruitmentPosition)
+                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.RecruitmentPositionID, recruitmentPositions.ToSelectList(m => m.ID, m => m.Description)).HtmlAttributes(new { required = "required" }).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.RecruitmentPosition).ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-12">
@@ -93,9 +93,6 @@
     <div class="card-body">
         <div class="row" style="margin-bottom: 50px;">
             @Html.HiddenFor(m => m.Candidate.PsSummaryID)
-            @Html.HiddenFor(m => m.Candidate.PsSummary.ID)
-            @Html.HiddenFor(m => m.Candidate.PsSummary.EntryId)
-            @Html.HiddenFor(m => m.Candidate.PsSummary.UpdatedTime)
             <div class="col-sm-8">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.Remarks).Class("form-control").ShowValidationMessage(true)
@@ -130,9 +127,6 @@
         </div>
         <div class="row" style="margin-bottom: 50px;">
             @Html.HiddenFor(m => m.Candidate.OneFaceToFaceSummaryID)
-            @Html.HiddenFor(m => m.Candidate.OneFaceToFaceSummary.ID)
-            @Html.HiddenFor(m => m.Candidate.OneFaceToFaceSummary.EntryId)
-            @Html.HiddenFor(m => m.Candidate.OneFaceToFaceSummary.UpdatedTime)
             <div class="col-sm-8">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.Remarks).Class("form-control").ShowValidationMessage(true)
@@ -167,9 +161,6 @@
         </div>
         <div class="row">
             @Html.HiddenFor(m => m.Candidate.TwoFaceToFaceSummaryID)
-            @Html.HiddenFor(m => m.Candidate.TwoFaceToFaceSummary.ID)
-            @Html.HiddenFor(m => m.Candidate.TwoFaceToFaceSummary.EntryId)
-            @Html.HiddenFor(m => m.Candidate.TwoFaceToFaceSummary.UpdatedTime)
             <div class="col-sm-8">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.Remarks).Class("form-control").ShowValidationMessage(true)

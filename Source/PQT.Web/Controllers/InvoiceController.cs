@@ -156,7 +156,13 @@ namespace PQT.Web.Controllers
             IEnumerable<Invoice> invoices = new HashSet<Invoice>();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                invoices = _invoiceService.GetAllInvoices();
+                invoices = _invoiceService.GetAllInvoices(m=>m.InvoiceNo.ToLower().Contains(searchValue) ||
+                                                             m.InvoiceDateStr.ToLower().Contains(searchValue) ||
+                                                             (m.Remarks !=null && m.Remarks.ToLower().Contains(searchValue)) ||
+                                                             (m.BankAccount != null && m.BankAccount.BankNameDescription.ToLower().Contains(searchValue)) ||
+                                                             (m.Booking !=null && m.Booking.CompanyName.ToLower().Contains(searchValue)) ||
+                                                             (m.Booking !=null && m.Booking.Event.EventCode.ToLower().Contains(searchValue)) ||
+                                                             (m.TotalAmount.ToString().Contains(searchValue)));
             }
             else
             {

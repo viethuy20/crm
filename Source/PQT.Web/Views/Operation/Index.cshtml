@@ -66,16 +66,16 @@
             "iDisplayLength": 50,
             "aaSorting": [[0, "desc"]],
             "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                    $(nRow).find('td:eq(0)').html('<a href="@Url.Action("OpeDetail")/' +
+                    $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
                         aData["ID"] +
                         '">' +
                         aData["EventCode"] +
                         '</a>');
                 $(nRow).find('td:eq(3)').html('<span class="EventColor" style="cursor: default;display: inline-block;width: 30px;height: 30px;background:' + aData["BackgroundColor"] + ';border:1px solid #c3c3c3;border-radius: 50%;">&nbsp;</span>');
-                var dropdowns = '<li><a href="@Url.Action("OpeDetail")/' + aData["ID"] + '"><i class="fa fa-eye"> Detail</i></a></li>';
+                var dropdowns = '<li><a href="@Url.Action("Detail")/' + aData["ID"] + '"><i class="fa fa-eye"> Detail</i></a></li>';
                 
-                if ('@CurrentUser.HasPermission("Operation", "OpeEdit")' == 'True') {
-                    dropdowns += '<li class="divider"></li><li><a href="@Url.Action("OpeEdit")/' + aData["ID"] + '"><i class="md md-edit text-info"> Edit</i></a></li>';
+                if ('@CurrentUser.HasPermission("Operation", "Edit")' == 'True') {
+                    dropdowns += '<li class="divider"></li><li><a href="@Url.Action("Edit")/' + aData["ID"] + '"><i class="md md-edit text-info"> Edit</i></a></li>';
                 }
                 $(nRow).find('td:eq(10)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
                     dropdowns +

@@ -10,6 +10,7 @@ namespace PQT.Domain.Abstract
     {
         string GetTempInvoiceNo();
         IEnumerable<Invoice> GetAllInvoices();
+        IEnumerable<Invoice> GetAllInvoices(Func<Invoice, bool> predicate);
         Invoice GetInvoice(int id);
         Invoice GetInvoiceByBooking(int bookingId);
         Invoice CreateInvoice(Invoice info);

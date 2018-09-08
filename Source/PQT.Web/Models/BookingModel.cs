@@ -170,18 +170,19 @@ namespace PQT.Web.Models
             {
                 throw new ObjectAlreadyExistsException("This call has been booked");
             }
+            var currentUserId = CurrentUser.Identity.ID;
             return TransactionWrapper.Do(() =>
             {
-                Booking.Lead.LeadStatusRecord = new LeadStatusRecord(Booking.Lead.ID, LeadStatus.Booked, CurrentUser.Identity.ID);
+                Booking.Lead.LeadStatusRecord = new LeadStatusRecord(Booking.Lead.ID, LeadStatus.Booked, currentUserId);
                 leadService.UpdateLead(Booking.Lead);
-                if (bookingService.UpdateBooking(Booking, BookingStatus.Approved, CurrentUser.Identity.ID))
+                if (bookingService.UpdateBooking(Booking, BookingStatus.Approved, currentUserId))
                 {
                     var titleNotify = "Request for booking has been approved";
                     var membershipService = DependencyHelper.GetService<IMembershipService>();
                     var leadUser = Booking.Lead.User.TransferUserID > 0
                         ? membershipService.GetUser((int)Booking.Lead.User.TransferUserID)
                         : Booking.Lead.User;
-                    BookingNotificator.NotifyUser(new List<User> { leadUser }, Booking.ID, titleNotify, true);
+                    BookingNotificator.NotifyUser(currentUserId, new List<User> { leadUser }, Booking.ID, titleNotify, true);
                     LeadNotificator.NotifyUpdateNCL(Booking.Lead.ID);
                     BookingNotificator.NotifyUpdateBooking(Booking.ID, false);
                     var com = comService.GetCompany(Booking.CompanyID);
@@ -214,18 +215,19 @@ namespace PQT.Web.Models
                 throw new ObjectAlreadyExistsException("This booking has been rejected");
             }
 
+            var currentUserId = CurrentUser.Identity.ID;
             return TransactionWrapper.Do(() =>
             {
-                Booking.Lead.LeadStatusRecord = new LeadStatusRecord(Booking.Lead.ID, LeadStatus.Reject, CurrentUser.Identity.ID);
+                Booking.Lead.LeadStatusRecord = new LeadStatusRecord(Booking.Lead.ID, LeadStatus.Reject, currentUserId);
                 leadService.UpdateLead(Booking.Lead);
-                if (bookingService.UpdateBooking(Booking, BookingStatus.Rejected, CurrentUser.Identity.ID, Message))
+                if (bookingService.UpdateBooking(Booking, BookingStatus.Rejected, currentUserId, Message))
                 {
                     var titleNotify = "Request for booking has been rejected";
                     var membershipService = DependencyHelper.GetService<IMembershipService>();
                     var leadUser = Booking.Lead.User.TransferUserID > 0
-                        ? membershipService.GetUser((int) Booking.Lead.User.TransferUserID)
+                        ? membershipService.GetUser((int)Booking.Lead.User.TransferUserID)
                         : Booking.Lead.User;
-                    BookingNotificator.NotifyUser(new List<User> { leadUser }, Booking.ID, titleNotify, true);
+                    BookingNotificator.NotifyUser(currentUserId, new List<User> { leadUser }, Booking.ID, titleNotify, true);
                     BookingNotificator.NotifyUpdateBooking(Booking.ID);
                     return true;
                 }

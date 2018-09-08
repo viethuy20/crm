@@ -1,0 +1,79 @@
+﻿@model PQT.Web.Models.ConsolidateKPIModel
+
+@{
+    Layout = null;
+}
+@Styles.Render("~/content/css/min")
+<style type="text/css">
+    #kpiTable tbody .NoKPI {
+        color: #a94442;
+        background-color: #ffdad7;
+    }
+
+    #kpiTable tbody .KPI {
+        color: #3c763d;
+        background-color: #c7fcca;
+    }
+
+    table {
+        page-break-after: auto!important;
+    }
+
+    tr {
+        page-break-inside: avoid !important;
+        page-break-after: auto !important;
+    }
+
+    td {
+        page-break-inside: avoid !important;
+        page-break-after: auto !important;
+    }
+
+    thead {
+        display: table-header-group !important;
+    }
+
+    tfoot {
+        display: table-footer-group !important;
+    }
+</style>
+    <div style="text-align: center"><h1>Consolidate KPIs</h1></div>
+    <br />
+    <table>
+        <tr>
+            <td style="width: 150px">&nbsp;Event Name: </td>
+            <td><b>@Model.EventName</b></td>
+        </tr>
+        <tr>
+            <td>&nbsp;Date: </td>
+            <td><b>@Model.Date</b></td>
+        </tr>
+        <tr>
+            <td>&nbsp;Print Time: </td>
+            <td><b>@DateTime.Today.ToString("dd/MM/yyyy HH:mm")</b></td>
+        </tr>
+    </table>
+    <br />
+    <table class="table" id="kpiTable"  style="background-color: #ffffff">
+        <thead>
+            <tr>
+                <th>Salesman</th>
+                <th>Email</th>
+                <th class="text-center">KPI</th>
+                <th class="text-center">No KPI</th>
+                <th class="text-center">No Check</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ConsolidateKpis.OrderBy(m => m.User.DisplayName))
+            {
+                <tr>
+                    <td>@item.User.DisplayName</td>
+                    <td>@item.User.Email</td>
+                    <td class="KPI" style="text-align:center">@item.KPI</td>
+                    <td class="NoKPI" style="text-align:center">@item.NoKPI</td>
+                    <td style="text-align:center">@item.NoCheck</td>
+                </tr>
+            }
+        </tbody>
+    </table>

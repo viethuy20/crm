@@ -84,8 +84,7 @@
                      '">' +
                      aData["InvoiceNo"] +
                      '</a>');
-                 $(nRow).find('td:eq(5)').html('<a href="@Url.Action("Edit")?id=' + aData["ID"] + '" data-action="edit"><i class="md md-edit text-info"></i></a> ' + 
-                     ' <a href="#" data-action="delete" data-id="' + aData["ID"] +'"><i class="md md-delete text-danger"></i></a>');
+                 $(nRow).find('td:eq(5)').html('<a href="@Url.Action("Edit")?id=' + aData["ID"] + '" data-action="edit"><i class="md md-edit text-info"></i></a> ');
                  //$(nRow).attr("data-id", aData["ID"]);
              },
              initComplete: function () {

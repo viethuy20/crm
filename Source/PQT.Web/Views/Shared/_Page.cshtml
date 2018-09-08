@@ -534,7 +534,7 @@
                         urlNotify = '@Url.Action("Detail", "Recruitment")?id=' +
                             this.notifyData.EntryId;
                     }else if (this.notifyData.NotifyTypeCode == '@NotifyType.OpeEvent.Value') {
-                        urlNotify = '@Url.Action("OpeDetail", "Operation")?id=' +
+                        urlNotify = '@Url.Action("Detail", "Operation")?id=' +
                             this.notifyData.EntryId;
                     }
                     var row =
@@ -577,6 +577,9 @@
                     if (this.notifyData.NotifyTypeCode == '@NotifyType.Booking.Value') {
                         urlNotify = '@Url.Action("Detail", "Booking")?id=' +
                             this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
+                    }else if (this.notifyData.NotifyTypeCode == '@NotifyType.OpeEvent.Value') {
+                        urlNotify = '@Url.Action("Detail", "Operation")?id=' +
+                            this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
                     }
                     var row = '<div class="notify_item dashboard_ncl_new" name="notify-' +
                         this.notifyData.ID + '">\
@@ -609,11 +612,15 @@
                 if (this.notifyData.NotifyTypeCode == '@NotifyType.Booking.Value' &&
                     location.href.toLowerCase().indexOf('booking/detail') > 1) {
                     location.reload();
-                } else if (this.notifyData.NotifyTypeCode != '@NotifyType.Booking.Value' &&
+                } else if (this.notifyData.NotifyTypeCode == '@NotifyType.Lead.Value' &&
                     location.href.toLowerCase().indexOf('lead/detail') > 1) {
                     location.reload();
-                }else if (this.notifyData.NotifyTypeCode != '@NotifyType.Recruitment.Value' &&
+                }else if (this.notifyData.NotifyTypeCode == '@NotifyType.Recruitment.Value' &&
                     location.href.toLowerCase().indexOf('recruitment/detail') > 1) {
+                    location.reload();
+                }else if (this.notifyData.NotifyTypeCode == '@NotifyType.OpeEvent.Value' &&
+                    (location.href.toLowerCase().indexOf('operation/detail') > 1 || 
+                        location.href.toLowerCase().indexOf('event/detail') > 1)) {
                     location.reload();
                 }
             };

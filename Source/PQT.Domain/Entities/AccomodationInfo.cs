@@ -15,7 +15,7 @@ namespace PQT.Domain.Entities
         public AccomodationInfo()
         {
             UpdatedTime = DateTime.Now;
-            Status = InfoStatus.Request;
+            Status = InfoStatus.Initial;
         }
         #endregion
 

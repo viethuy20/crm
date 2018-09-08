@@ -117,6 +117,8 @@ namespace PQT.Web.Controllers
                 TempData["error"] = "Candidate not found";
                 return RedirectToAction("Index");
             }
+            if (model.Candidate.EmployeeID > 0)
+                model.Employee = _membershipService.GetUser((int)model.Candidate.EmployeeID);
             return View(model);
         }
 
@@ -157,7 +159,7 @@ namespace PQT.Web.Controllers
             {
                 model.RoleID = role.ID;
             }
-            return PartialView(model);
+            return View(model);
         }
         [DisplayName(@"Request Employment")]
         [HttpPost]
@@ -166,10 +168,10 @@ namespace PQT.Web.Controllers
             if (ModelState.IsValid)
             {
                 var message = model.RequestAction();
-                if (message != "")
+                if (message == "")
                 {
                     TempData["message"] = "Save successful";
-                    return RedirectToAction("Detail", new { id = model.Candidate.ID });
+                    return RedirectToAction("Detail", new { id = model.id });
                 }
                 TempData["error"] = message;
             }
@@ -284,6 +286,7 @@ namespace PQT.Web.Controllers
             user.SalaryCurrency = model.SalaryCurrency;
             user.SignedContract = model.SignedContract;
             var success = _membershipService.UpdateUser(user);
+            _roleService.AssignRoles(user, user.Roles.Select(m => m.ID));
             _loginTracker.ReloadUser(user.Email, user);
             if (success)
             {

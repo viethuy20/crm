@@ -18,32 +18,32 @@
     <link rel="icon" href="~/favicon.ico" type="image/x-icon">
     <title>
         @(!string.IsNullOrEmpty(debugMode) ? "[" + debugMode + "]" : "")
-    @(count == 0 ? "" : "(" + count + ")")
-    @(ViewBag.Title != null ? ViewBag.Title + " | Prime Quality Training" : "Prime Quality Training")
-</title>
-@RenderSection("css", required: false)
-<!--[if lte IE 8]>
-    @Styles.Render("~/css/ie8")
-<![endif]-->
-<!--[if lt IE 9]>
-    @Scripts.Render("~/js/ie9")
-<![endif]-->
-<script>
-    var HRGLOBAL = {};
-</script>
+        @(count == 0 ? "" : "(" + count + ")")
+        @(ViewBag.Title != null ? ViewBag.Title + " | Prime Quality Training" : "Prime Quality Training")
+    </title>
+    @RenderSection("css", required: false)
+    <!--[if lte IE 8]>
+        @Styles.Render("~/css/ie8")
+    <![endif]-->
+    <!--[if lt IE 9]>
+        @Scripts.Render("~/js/ie9")
+    <![endif]-->
+    <script>
+        var HRGLOBAL = {};
+    </script>
 
-<style>
-    #accordion2 .dropdown-menu {
-        display: block;
-        position: initial;
-        float: initial;
-        border: 0px
-    }
-
-        #accordion2 .dropdown-menu li a {
-            padding-left: 50px;
+    <style>
+        #accordion2 .dropdown-menu {
+            display: block;
+            position: initial;
+            float: initial;
+            border: 0px
         }
-</style>
+
+            #accordion2 .dropdown-menu li a {
+                padding-left: 50px;
+            }
+    </style>
 </head>
 @*@(Request.Cookies["menubar-pin"] == null || Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")*@
 <body class="header-fixed menubar-first @(Request.Cookies["menubar-pin"] != null && Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")">
@@ -107,7 +107,9 @@
         });
         $("form:not([data-ajax])").submit(function (e) {
             e.preventDefault();
-            $("#dvLoading").show();
+            if (!$(this).hasClass("no_loader")) {
+                $("#dvLoading").show();
+            }
             if ($(this).valid())
                 this.submit();
             else {

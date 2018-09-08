@@ -19,7 +19,7 @@
         <div class="col-sm-6">
             @if (CurrentUser.HasPermission("Recruitment", "Create"))
             {
-                @Html.Bootstrap().ActionLinkButton(Resource.AddNew, "Create").PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary" })
+                @Html.Bootstrap().ActionLinkButton("Create Candidate", "Create").PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary" })
             }
         </div>
     </div>
@@ -41,7 +41,7 @@
                             <th>1F2F Reason</th>
                             <th>2F2F Status</th>
                             <th>2F2F Reason</th>
-                            @*<th>Candidate Status</th>*@
+                            <th>Candidate Status</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -81,18 +81,19 @@
                 { "data": "OneFaceToFaceSummaryStatusReason", "name": "OneFaceToFaceSummaryStatusReason", "orderable": true },
                 { "data": "TwoFaceToFaceSummaryStatusDisplay", "name": "TwoFaceToFaceSummaryStatusDisplay", "orderable": true },
                 { "data": "TwoFaceToFaceSummaryStatusReason", "name": "TwoFaceToFaceSummaryStatusReason", "orderable": true },
+                { "data": "StatusDisplay", "name": "StatusDisplay", "orderable": true },
                 { "data": "ID", "name": "ID", "orderable": true },
             ],
             "iDisplayLength": 50,
-            "aaSorting": [[12, "desc"]],
+            "aaSorting": [[13, "desc"]],
             "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                 var eq15Html = '<a href="@Url.Action("Detail")/' +
                     aData["ID"] +
                     '"><i class="fa fa-eye"> Detail</i></a>';
-                if ('@CurrentUser.HasPermission("Event", "Edit")' == 'True') {
+                if ('@CurrentUser.HasPermission("Recruitment", "Edit")' == 'True') {
                     eq15Html += ' | <a href="@Url.Action("Edit")/' + aData["ID"] + '"><i class="md md-edit text-info"> Edit</i></a>';
                 }
-                $(nRow).find('td:eq(12)').html(eq15Html);
+                $(nRow).find('td:eq(13)').html(eq15Html);
                 $(nRow).addClass(aData["ClassStatus"]);
                 $(nRow).attr("data-id", ["ID"]);
             },

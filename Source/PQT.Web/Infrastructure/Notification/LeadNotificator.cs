@@ -50,44 +50,12 @@ namespace PQT.Web.Infrastructure.Notification
         }
 
 
-        //public static void NotifyAll(Lead lead, bool email = false)
-        //{
-        //    var users = MemberService.GetUsers();
-        //    if (lead == null || !users.Any())
-        //        return;
-        //    foreach (var user in users)
-        //    {
-        //        if (CurrentUser.Identity.ID == user.ID)
-        //        {
-        //            continue;
-        //        }
-        //        var notify = new UserNotification
-        //        {
-        //            UserID = user.ID,
-        //            EntryId = lead.ID,
-        //            NotifyType = NotifyType.Lead,
-        //            Title = "Called by " + lead.User.DisplayName,
-        //            Description = lead.CompanyName,
-        //            HighlightColor = lead.EventColor
-        //        };
-        //        notify = MemberService.CreateUserNotification(notify);
-        //        user.NotifyNumber++;
-        //        MemberService.UpdateUser(user);
-        //        NotificationHub.Notify(notify);
-        //    }
-        //    if (email)
-        //    {
-        //        NotificationService.NotifyAll(lead);
-        //    }
-        //}
-
         private static IEventService EventService
         {
             get { return DependencyResolver.Current.GetService<IEventService>(); }
         }
-        public static void NotifyUser(IEnumerable<User> users, int leadId, string title = null, bool email = false)
+        public static void NotifyUser(int currentUserId, IEnumerable<User> users, int leadId, string title = null, bool email = false)
         {
-            var currentUserId = CurrentUser.Identity.ID;
             var thread = new Thread(() =>
             {
                 var lead = LeadRepository.GetLead(leadId);
@@ -135,13 +103,14 @@ namespace PQT.Web.Infrastructure.Notification
 
         public static void NotifyUser(NotifyAction notifyAction, int leadId, string title = null, bool email = false)
         {
+            var currentUserId = CurrentUser.Identity.ID;
             var thread = new Thread(() =>
             {
                 var setting = SettingRepository.GetNotifySetting(NotifyType.Lead, notifyAction);
                 if (setting != null)
                 {
                     var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
-                    NotifyUser(notiUsers, leadId, title, email);
+                    NotifyUser(currentUserId, notiUsers, leadId, title, email);
                 }
             });
             thread.Start();
@@ -197,9 +166,8 @@ namespace PQT.Web.Infrastructure.Notification
             });
             thread.Start();
         }
-        public static void NotifyUser(IEnumerable<User> users, int bookingId, string title = null, bool email = false)
+        public static void NotifyUser(int currentUserId, IEnumerable<User> users, int bookingId, string title = null, bool email = false)
         {
-            var currentUserId = CurrentUser.Identity.ID;
             var thread = new Thread(() =>
             {
                 var booking = BookingService.GetBooking(bookingId);
@@ -254,13 +222,14 @@ namespace PQT.Web.Infrastructure.Notification
 
         public static void NotifyUser(NotifyAction notifyAction, int leadId, string title = null, bool email = false)
         {
+            var currentUserId = CurrentUser.Identity.ID;
             var thread = new Thread(() =>
             {
                 var setting = SettingRepository.GetNotifySetting(NotifyType.Booking, notifyAction);
                 if (setting != null)
                 {
                     var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
-                    NotifyUser(notiUsers, leadId, title, email);
+                    NotifyUser(currentUserId, notiUsers, leadId, title, email);
                 }
             });
             thread.Start();
@@ -285,9 +254,8 @@ namespace PQT.Web.Infrastructure.Notification
             get { return DependencyResolver.Current.GetService<IUserNotificationService>(); }
         }
 
-        public static void NotifyUser(IEnumerable<User> users, int eventId, string title)
+        public static void NotifyUser(int currentUserId, IEnumerable<User> users, int eventId, string title)
         {
-            var currentUserId = CurrentUser.Identity.ID;
             var thread = new Thread(() =>
             {
                 var eventData = EventService.GetEvent(eventId);
@@ -336,15 +304,16 @@ namespace PQT.Web.Infrastructure.Notification
         }
 
 
-        public static void NotifyUser(NotifyAction notifyAction, int leadId,string title)
+        public static void NotifyUser(NotifyAction notifyAction, int leadId, string title)
         {
+            var currentUserId = CurrentUser.Identity.ID;
             var thread = new Thread(() =>
             {
                 var setting = SettingRepository.GetNotifySetting(NotifyType.OpeEvent, notifyAction);
                 if (setting != null)
                 {
                     var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
-                    NotifyUser(notiUsers, leadId, title);
+                    NotifyUser(currentUserId, notiUsers, leadId, title);
                 }
             });
             thread.Start();
@@ -371,9 +340,8 @@ namespace PQT.Web.Infrastructure.Notification
             get { return DependencyResolver.Current.GetService<IUserNotificationService>(); }
         }
 
-        public static void NotifyUser(IEnumerable<User> users, int id, string title)
+        public static void NotifyUser(int currentUserId, IEnumerable<User> users, int id, string title)
         {
-            var currentUserId = CurrentUser.Identity.ID;
             var thread = new Thread(() =>
             {
                 var eventData = RecruitmentService.GetCandidate(id);
@@ -424,13 +392,14 @@ namespace PQT.Web.Infrastructure.Notification
 
         public static void NotifyUser(NotifyAction notifyAction, int leadId, string title)
         {
+            var currentUserId = CurrentUser.Identity.ID;
             var thread = new Thread(() =>
             {
                 var setting = SettingRepository.GetNotifySetting(NotifyType.Recruitment, notifyAction);
                 if (setting != null)
                 {
                     var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
-                    NotifyUser(notiUsers, leadId, title);
+                    NotifyUser(currentUserId, notiUsers, leadId, title);
                 }
             });
             thread.Start();

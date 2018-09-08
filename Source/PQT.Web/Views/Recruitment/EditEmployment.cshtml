@@ -42,8 +42,14 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Email).HtmlAttributes(new { required = "required" }).Class("form-control text-lowercase").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.Email).Readonly().HtmlAttributes(new { required = "required" }).Class("form-control text-lowercase").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email").ShowRequiredStar(true)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Password).HtmlAttributes(new { required = "required" }).Class("form-control text-lowercase").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Password).ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-6">

@@ -24,6 +24,10 @@ namespace PQT.Domain.Concrete
             return GetAll<Invoice>().AsEnumerable();
         }
 
+        public IEnumerable<Invoice> GetAllInvoices(Func<Invoice, bool> predicate)
+        {
+            return GetAll(predicate).AsEnumerable();
+        }
         public Invoice GetInvoice(int id)
         {
             return Get<Invoice>(id);

@@ -164,6 +164,12 @@
                         @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.Booking.ID, leadId = Model.Booking.LeadID }).Class("btn-primary").PrependIcon("md md-edit")
                     }
                 }
+                @if (CurrentUser.HasPermission("Invoice", "Create") && 
+                    Model.Booking.BookingStatusRecord == BookingStatus.Approved &&
+                     string.IsNullOrEmpty(Model.Booking.InvoiceNo))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Create Invoice", "Create", "Invoice").RouteValues(new { id = Model.Booking.ID }).Class(" btn-success").PrependIcon("md md-add")
+                }
                 @if (Model.Booking.BookingStatusRecord.Status == BookingStatus.Initial)
                 {
                     if (CurrentUser.HasPermission("Booking", "ApproveBooking"))

@@ -174,6 +174,30 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
+        public string EmploymentDateDisplay
+        {
+            get
+            {
+                if (EmploymentDate != null) return Convert.ToDateTime(EmploymentDate).ToString("dd/MM/yyyy");
+                return "";
+            }
+        }
+        public string EmploymentEndDateDisplay
+        {
+            get
+            {
+                if (EmploymentEndDate != null) return Convert.ToDateTime(EmploymentEndDate).ToString("dd/MM/yyyy");
+                return "";
+            }
+        }
+        public string FirstEvaluationDateDisplay
+        {
+            get
+            {
+                if (FirstEvaluationDate != null) return Convert.ToDateTime(FirstEvaluationDate).ToString("dd/MM/yyyy");
+                return "";
+            }
+        }
         public string RolesHtml
         {
             get

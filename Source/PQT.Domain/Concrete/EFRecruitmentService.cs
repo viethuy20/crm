@@ -32,7 +32,13 @@ namespace PQT.Domain.Concrete
             }
             return Get<Candidate>(m => m.ID == id, u => new
             {
-                u.CandidateStatusRecord
+                u.CandidateStatusRecord,
+                u.RecruitmentPosition,
+                u.PsSummary,
+                u.OneFaceToFaceSummary,
+                u.TwoFaceToFaceSummary,
+                u.User,
+                u.OfficeLocation,
             });
         }
 

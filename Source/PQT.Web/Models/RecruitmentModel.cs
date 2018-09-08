@@ -87,6 +87,7 @@ namespace PQT.Web.Models
 
         public string RequestAction()
         {
+            var currentUserId = CurrentUser.Identity.ID;
             return TransactionWrapper.Do(() =>
             {
                 var recruitmentService = DependencyHelper.GetService<IRecruitmentService>();
@@ -113,7 +114,7 @@ namespace PQT.Web.Models
                 }
 
                 Employee.Status = EntityUserStatus.RequestEmployment;
-                if (Employee.ID > 0)
+                if (Employee.ID == 0)
                 {
                     Employee = membershipService.CreateUser(Employee);
                 }
@@ -125,7 +126,7 @@ namespace PQT.Web.Models
                     roleService.AssignRoles(Employee, new List<int> { RoleID });
 
                 candidate.EmployeeID = Employee.ID;
-                candidate.CandidateStatusRecord = new CandidateStatusRecord(candidate.ID, CandidateStatus.RequestEmployment, CurrentUser.Identity.ID, "");
+                candidate.CandidateStatusRecord = new CandidateStatusRecord(candidate.ID, CandidateStatus.RequestEmployment, currentUserId, "");
                 if (!recruitmentService.UpdateCandidate(candidate)) return "Submit failed";
                 RecruitmentNotificator.NotifyUser(NotifyAction.Request, candidate.ID, "HR Request Employment");
                 return "";
@@ -134,6 +135,7 @@ namespace PQT.Web.Models
 
         public object ApprovalRequest()
         {
+            var currentUserId = CurrentUser.Identity.ID;
             return TransactionWrapper.Do(() =>
             {
 
@@ -151,7 +153,6 @@ namespace PQT.Web.Models
                         Message = "Cannot process ... Candidate status is " + candidate.StatusDisplay,
                         IsSuccess = false
                     };
-                var currentUserId = CurrentUser.Identity.ID;
                 candidate.CandidateStatusRecord = new CandidateStatusRecord(candidate.ID, CandidateStatus.ApprovedEmployment, currentUserId);
                 var membershipService = DependencyHelper.GetService<IMembershipService>();
                 var user = membershipService.GetUser((int)candidate.EmployeeID);
@@ -166,7 +167,7 @@ namespace PQT.Web.Models
                 //var titleNotify = "Candidate has been approved";
                 //var membershipService = DependencyHelper.GetService<IMembershipService>();
                 //LeadNotificator.NotifyUser(new List<User> { candidate.User.TransferUserID > 0 ? membershipService.GetUser((int)candidate.User.TransferUserID) : candidate.User }, candidate.ID, titleNotify); // notify for manager
-                RecruitmentNotificator.NotifyUser(new List<User> { candidate.User }, candidate.ID, "Request Employment has been approved");
+                RecruitmentNotificator.NotifyUser(currentUserId, new List<User> { candidate.User }, candidate.ID, "Request Employment has been approved");
                 return new
                 {
                     Message = "",
@@ -176,6 +177,7 @@ namespace PQT.Web.Models
         }
         public object RejectRequest()
         {
+            var currentUserId = CurrentUser.Identity.ID;
             var recruitmentService = DependencyHelper.GetService<IRecruitmentService>();
             var candidate = recruitmentService.GetCandidate(id);
             if (candidate == null)
@@ -191,7 +193,6 @@ namespace PQT.Web.Models
                     IsSuccess = false
                 };
 
-            var currentUserId = CurrentUser.Identity.ID;
             candidate.CandidateStatusRecord = new CandidateStatusRecord(candidate.ID, CandidateStatus.RejectedEmployment, currentUserId, Reason);
             if (!recruitmentService.UpdateCandidate(candidate))
                 return new
@@ -203,7 +204,7 @@ namespace PQT.Web.Models
             //var membershipService = DependencyHelper.GetService<IMembershipService>();
             //LeadNotificator.NotifyUser(new List<User> { candidate.User.TransferUserID > 0 ? membershipService.GetUser((int)candidate.User.TransferUserID) : candidate.User }, candidate.ID, titleNotify); // notify for manager
             //LeadNotificator.NotifyUpdateNCL(candidate.ID, hubConnectionId);
-            RecruitmentNotificator.NotifyUser(new List<User> { candidate.User }, candidate.ID, "Request Employment has been rejected");
+            RecruitmentNotificator.NotifyUser(currentUserId, new List<User> { candidate.User }, candidate.ID, "Request Employment has been rejected");
             return new
             {
                 Message = "",

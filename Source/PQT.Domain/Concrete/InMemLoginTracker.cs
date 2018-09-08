@@ -109,7 +109,7 @@ namespace PQT.Domain.Concrete
         {
             var loginRecords =
                 LoginRecords.Where(
-                    r => r.User.ID == userInfo.ID);
+                    r => r.User.ID == userInfo.ID).ToList();
             foreach (var inMemLoginRecord in loginRecords)
             {
                 inMemLoginRecord.User = userInfo;
