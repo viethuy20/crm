@@ -174,7 +174,8 @@ namespace PQT.Web.Models
                     //m.CreatedTime.Date <= DateTo.Date &&
                     !m.MarkKPI &&
                     (m.LeadStatusRecord != LeadStatus.Reject &&
-                     m.LeadStatusRecord != LeadStatus.Initial));
+                     m.LeadStatusRecord != LeadStatus.Initial&&
+                     m.LeadStatusRecord != LeadStatus.Deleted));
                 var count = 0;
                 var totalCount = leads.Count();
                 var userId = CurrentUser.Identity.ID;

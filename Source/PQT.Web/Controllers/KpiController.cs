@@ -175,7 +175,8 @@ namespace PQT.Web.Controllers
                         (model.EventID == 0 || m.EventID == model.EventID) &&
                         !m.MarkKPI &&
                         (m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
-                         m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value)).OrderByDescending(m => m.CreatedTime).AsEnumerable();
+                         m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
+                         m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value)).OrderByDescending(m => m.CreatedTime).AsEnumerable();
                     if (!string.IsNullOrEmpty(searchValue))
                     {
                         leads = leads.Where(m =>
@@ -425,7 +426,8 @@ namespace PQT.Web.Controllers
             {
                 leads = _leadService.GetAllLeads(m =>
                     (m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
-                     m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value) &&
+                     m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
+                     m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value) &&
                     (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (eventId == 0 || m.EventID == eventId) &&
@@ -458,7 +460,8 @@ namespace PQT.Web.Controllers
             {
                 leads = _leadService.GetAllLeads(m =>
                     (m.LeadStatusRecord != LeadStatus.Reject &&
-                     m.LeadStatusRecord != LeadStatus.Initial) &&
+                     m.LeadStatusRecord != LeadStatus.Initial &&
+                     m.LeadStatusRecord != LeadStatus.Deleted) &&
                     (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (eventId == 0 || m.EventID == eventId) &&
@@ -725,7 +728,8 @@ namespace PQT.Web.Controllers
             {
                 leads = _leadService.GetAllLeads(m =>
                     (m.LeadStatusRecord != LeadStatus.Reject &&
-                     m.LeadStatusRecord != LeadStatus.Initial) &&
+                     m.LeadStatusRecord != LeadStatus.Initial &&
+                     m.LeadStatusRecord != LeadStatus.Deleted) &&
                     (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (eventId == 0 || m.EventID == eventId) &&
@@ -738,7 +742,8 @@ namespace PQT.Web.Controllers
             {
                 leads = _leadService.GetAllLeads(m =>
                     (m.LeadStatusRecord != LeadStatus.Reject &&
-                     m.LeadStatusRecord != LeadStatus.Initial) &&
+                     m.LeadStatusRecord != LeadStatus.Initial &&
+                     m.LeadStatusRecord != LeadStatus.Deleted) &&
                     (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (eventId == 0 || m.EventID == eventId) &&
@@ -820,5 +825,11 @@ namespace PQT.Web.Controllers
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
+
+        [HttpPost]
+        public ActionResult Delete(LeadModel model)
+        {
+            return Json(model.DeleteLead());
+        }
     }
 }
