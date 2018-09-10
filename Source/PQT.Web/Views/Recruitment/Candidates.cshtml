@@ -4,7 +4,7 @@
 @model System.Collections.Generic.IEnumerable<PQT.Domain.Entities.Candidate>
 
 @{
-    ViewBag.Title = "Candidates Interview On Today";
+    ViewBag.Title = "Candidate List";
 }
 <style>
     #recruitmentTable td, #recruitmentTable td {
@@ -14,6 +14,14 @@
 <section>
     <div class="section-header">
         <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            @if (CurrentUser.HasPermission("Recruitment", "Create"))
+            {
+                @Html.Bootstrap().ActionLinkButton("Create Candidate", "Create").PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary" })
+            }
+        </div>
     </div>
     <div class="card" style="margin-bottom: 350px">
         <div class="card-body">
@@ -54,7 +62,7 @@
             "orderMulti": false, // for disable multiple column at once
             "stateSave": false,
             "ajax": {
-                "url": "@Url.Action("AjaxGetAllCandidatesInterviewToday")",
+                "url": "@Url.Action("AjaxGetAllCandidates")",
                 "type": "POST",
                 "datatype": "json",
                 "data": function(d) {
