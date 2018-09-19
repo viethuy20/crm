@@ -368,6 +368,7 @@ namespace PQT.Web.Models
         public DateTime? NewDateFrom { get; set; }
         public DateTime? NewDateTo { get; set; }
         public string NewTrainingType { get; set; }
+        public string Remark { get; set; }//for new event
         public string GoodTrainingMonthStr
         {
             get
@@ -702,6 +703,7 @@ namespace PQT.Web.Models
                     NewDateFrom = lead.NewDateFrom;
                     NewDateTo = lead.NewDateTo;
                     NewTrainingType = lead.NewTrainingType;
+                    Remark = lead.Remark;
                     FinalStatus = lead.FinalStatus;
                     FirstFollowUpStatus = lead.FirstFollowUpStatus;
                     CompanyName = lead.CompanyName;
@@ -743,6 +745,7 @@ namespace PQT.Web.Models
                     NewTrainingType = NewTrainingType,
                     FinalStatus = FinalStatus,
                     FirstFollowUpStatus = FirstFollowUpStatus,
+                    Remark = Remark,
                     UserID = CurrentUser.Identity.ID
                 };
                 leadNew = leadRepo.CreateLeadNew(leadNew);
@@ -786,6 +789,7 @@ namespace PQT.Web.Models
                     LeadNew.NewTrainingType = NewTrainingType;
                     LeadNew.FinalStatus = FinalStatus;
                     LeadNew.FirstFollowUpStatus = FirstFollowUpStatus;
+                    LeadNew.Remark = Remark;
                     leadRepo.UpdateLeadNew(LeadNew);
                     return true;
                 }

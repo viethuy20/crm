@@ -74,6 +74,19 @@ namespace PQT.Web.Controllers
             return Json(notifications, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult GetNotifyForEvents(string eventIds)
+        {
+            if (string.IsNullOrEmpty(eventIds))
+            {
+                return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+            }
+            var ids = eventIds.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => Convert.ToInt32(m));
+            var notifications =
+                _notificationService.GetAllUserNotificationsByEvent(CurrentUser.Identity.ID, ids.ToArray(),
+                    Settings.System.NotificationNumber());
+            return Json(notifications, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult GetNotifyForNewEvent()
         {
             var notifications =
