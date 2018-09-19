@@ -17,17 +17,19 @@
         </div>
     </div>
     <div>
-        @using (Html.BeginForm("CallingForm", "Lead", FormMethod.Post, new { @class = "form", enctype = "multipart/form-data" }))
-            {
+        @using (Html.BeginForm("CallingForm", "Lead", FormMethod.Post, new {@class = "form", enctype = "multipart/form-data"}))
+        {
+            @Html.HiddenFor(m => m.TypeSubmit, new {@class = "typeSubmit"})
             <div class="row">
                 @Html.Partial("_CallingInfo", Model)
             </div>
-                <div class="row">
-                    <div class="col-lg-offset-4">
-                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").RouteValues(new { id = Model.EventID }).PrependIcon("md md-arrow-back")
-                        @Html.Bootstrap().SubmitButton().Text("Finish").Class("createbookingbtn").PrependIcon("md md-call-end").Style(ButtonStyle.Success)
-                    </div>
+            <div class="row">
+                <div class="col-lg-offset-4">
+                    @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").RouteValues(new {id = Model.EventID}).PrependIcon("md md-arrow-back")
+                    @Html.Bootstrap().Button().Text("Request New Event").Id("requestnewevent").PrependIcon("md md-phone-forwarded").Style(ButtonStyle.Primary)
+                    @Html.Bootstrap().Button().Text("Finish Call").Id("finishcallbtn").PrependIcon("md md-call-end").Style(ButtonStyle.Success)
                 </div>
+            </div>
         }
     </div>
 </section>
@@ -35,6 +37,25 @@
 <div id="dvLoading1"></div>
 @Html.Script(
     @<script>
+        $(document).on('click', '#finishcallbtn', function (e) {
+             e.preventDefault();
+             bootbox.confirm("Do you want to finish this call?", function (isOK) {
+                 if (isOK) {
+                     $(".typeSubmit").val("finishcall");
+                     $('#finishcallbtn').parents("form").submit();
+                 }
+             });
+         });
+         $(document).on('click', '#requestnewevent', function (e) {
+             e.preventDefault();
+             bootbox.confirm("Do you want to request new event this data?", function (isOK) {
+                 if (isOK) {
+                     $(".typeSubmit").val("requestnewevent");
+                     $('#requestnewevent').parents("form").submit();
+                 }
+             });
+        });
+
          function LoadEventCompanyInfo() {
                  $.ajax({
                      url: '@Url.Action("EventCompanyInfo")?eventId=@Model.EventID&companyID=@Model.Lead.CompanyID',

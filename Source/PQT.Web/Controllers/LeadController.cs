@@ -237,6 +237,7 @@ namespace PQT.Web.Controllers
                     ModelState.AddModelError("NewTopics", Resource.TheFieldShouldNotBeEmpty);
                 if (string.IsNullOrEmpty(model.NewLocations))
                     ModelState.AddModelError("NewLocations", Resource.TheFieldShouldNotBeEmpty);
+                TempData["error"] = "Please check your inputs";
             }
 
             if (ModelState.IsValid)
@@ -248,6 +249,7 @@ namespace PQT.Web.Controllers
                         TempData["message"] = "Request successful";
                         return RedirectToAction("Index", "NewEvent");
                     }
+                    TempData["error"] = "Request failed";
                 }
                 else
                 {
@@ -297,6 +299,7 @@ namespace PQT.Web.Controllers
                         TempData["message"] = "Call successful";
                         return RedirectToAction("Detail", new { id = model.Lead.ID });
                     }
+                    TempData["error"] = "Save failed";
                 }
             }
             if (model.Event == null)
@@ -304,7 +307,6 @@ namespace PQT.Web.Controllers
                 model.Event = _eventService.GetEvent(model.EventID);
             }
             //model.LoadCompanies(model.EventID);
-            TempData["error"] = "Save failed";
             return View(model);
         }
 
@@ -320,6 +322,41 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Call Back Form")]
         public ActionResult CallingForm(CallingModel model)
         {
+
+            if (model.TypeSubmit == "requestnewevent")
+            {
+                var errorMessage = "";
+                if (string.IsNullOrEmpty(model.NewTopics))
+                {
+                    errorMessage = "Please check your inputs";
+                    ModelState.AddModelError("NewTopics", Resource.TheFieldShouldNotBeEmpty);
+                }
+                if (string.IsNullOrEmpty(model.NewLocations))
+                {
+                    errorMessage = "Please check your inputs";
+                    ModelState.AddModelError("NewLocations", Resource.TheFieldShouldNotBeEmpty);
+                }
+
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    if (model.CreateNewEvent())
+                    {
+                        TempData["message"] = "Request successful";
+                        return RedirectToAction("Index", "NewEvent");
+                    }
+                }
+                model.PrepareCalling(model.LeadID);
+                if (model.Event == null)
+                {
+                    model.Event = _eventService.GetEvent(model.EventID);
+                }
+                if (string.IsNullOrEmpty(errorMessage))
+                    TempData["error"] = "Request failed";
+                else
+                    TempData["error"] = errorMessage;
+                return View(model);
+            }
+
             var callExists = _repo.GetAllLeads(m =>
                 m.EventID == model.EventID &&
                 m.ID != model.LeadID &&
@@ -339,6 +376,7 @@ namespace PQT.Web.Controllers
                 TempData["message"] = "Call successful";
                 return RedirectToAction("Detail", new { id = model.LeadID });
             }
+            model.PrepareCalling(model.LeadID);
             if (model.Event == null)
             {
                 model.Event = _eventService.GetEvent(model.EventID);

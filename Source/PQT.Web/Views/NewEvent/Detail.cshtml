@@ -73,7 +73,7 @@
 
                 @if (CurrentUser.HasPermission("NewEvent", "RequestBrochure"))
                 {
-                    @Html.Bootstrap().ActionLinkButton(string.IsNullOrEmpty(Model.RequestBrochure)?"Request Brochure": "Update Attachment Proof", "RequestBrochure").RouteValues(new { id = Model.ID }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
+                    @Html.Bootstrap().ActionLinkButton(string.IsNullOrEmpty(Model.RequestBrochure) ? "Request Brochure" : "Update Attachment Proof", "RequestBrochure").RouteValues(new { id = Model.ID }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
                 }
                 @if (CurrentUser.HasPermission("NewEvent", "Assign"))
                 {
@@ -340,7 +340,7 @@
                  location.reload();
              }
          }
-     </script>)
+    </script>)
 
 @Html.Script(
     @<script>

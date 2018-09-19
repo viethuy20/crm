@@ -2607,6 +2607,7 @@
     <Content Include="Views\NewEvent\Edit.cshtml" />
     <Content Include="Views\NewEvent\RequestBrochure.cshtml" />
     <Content Include="Views\NewEvent\Assign.cshtml" />
+    <Content Include="Views\NewEvent\Assigned.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

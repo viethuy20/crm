@@ -488,6 +488,7 @@ namespace PQT.Web.Models
                     FinalStatus = lead.FinalStatus;
                     FirstFollowUpStatus = lead.FirstFollowUpStatus;
                     CompanyName = lead.CompanyName;
+                    CompanyID = lead.CompanyID;
                     DialingCode = lead.Company.DialingCode;
                     BusinessUnit = lead.Company.BusinessUnit;
                     Lead = lead;

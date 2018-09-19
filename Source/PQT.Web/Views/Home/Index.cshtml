@@ -144,24 +144,6 @@
                 </div><!--end .col -->
         <!-- END ALERT - REVENUE -->
             }
-            <div class="event-panel" id="event_panel_new_event">
-                <div class="card">
-                    <div class="card-body no-padding">
-                        <div class="alert no-margin event-header" style="background: #000">
-                            @*<strong class="pull-right text-success text-lg">0,38% <i class="md md-trending-up"></i></strong>*@
-                            <strong class="text-xl">New Event</strong><br />
-                            <a href="@Url.Action("Index", "NewEvent")" class="link-event">
-                            </a>
-                        </div>
-                        <div class="notify_panel" style="height: calc(100vh - 228px);">
-                            <div id="dashboard_notify_new_event" style="display: none"></div>
-                            <div class="notify_items">
-                                <div class="notify_item text-center"><img src="~/Content/img/ajax_loader.gif" /></div>
-                            </div>
-                        </div>
-                    </div><!--end .card-body -->
-                </div><!--end .card -->
-            </div><!--end .col -->
         </div><!--end .row -->
     </div><!--end .section-body -->
 </section>
@@ -213,7 +195,7 @@
                 }
             });
         }
-        function loadNewEventNotify() {
+        @*function loadNewEventNotify() {
             $.ajax({
                 global: false,
                 url: '@Url.Action("GetNotifyForNewEvent")',
@@ -246,7 +228,7 @@
                     $("#event_panel_new_event").find(".notify_items").html('<div class="notify_item text-center notify_not_found"><span class="timestamp" >Get Notify Error</span></div>');
                 }
             });
-        }
+        }*@
 
         function LoadTotalCalledSummaryForDashboard(eventId) {
             if (eventId == 0)
@@ -273,8 +255,6 @@
                 }
             });
         }
-
-        loadNewEventNotify();
         eventItems.each(function (index, item) {
             if ($(item).data('id')) {
                 loadEventNotify($(item).data('id'));

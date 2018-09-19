@@ -1,0 +1,376 @@
+﻿@using PQT.Domain.Enum
+@using Resources
+@model dynamic
+
+
+@{
+    ViewBag.MenuBarColl = true;
+    ViewBag.Title = "Assigned New Event";
+}
+
+
+<style>
+    .table th {
+        white-space: nowrap;
+    }
+
+    .DTFC_Cloned {
+        background: #fff;
+    }
+
+        .DTFC_Cloned td {
+            background-color: #fff;
+        }
+
+        .DTFC_Cloned th {
+            background-color: #f5f5f5 !important;
+        }
+
+    #tableLead td, table th {
+        text-align: left;
+        color: #000;
+    }
+
+
+    .DTFC_Cloned td:not(.ModelColor) {
+        background-color: #eeeeee;
+    }
+
+    #tableLead tbody tr {
+        height: 78px !important;
+    }
+
+        #tableLead tbody tr.Reject td {
+            color: #8a6d3b;
+            background-color: #ffefd5;
+        }
+
+    .DTFC_Cloned tbody tr.Reject td {
+        color: #8a6d3b;
+        background-color: #fee8c7;
+    }
+
+    #tableLead tbody tr.Blocked td {
+        color: #a94442;
+        background-color: #ffdad7;
+    }
+
+    .DTFC_Cloned tbody tr.Blocked td {
+        color: #a94442;
+        background-color: #feccc7;
+    }
+
+    .DTFC_Cloned tbody tr.Initial td {
+        color: #000;
+        background-color: #f5f5f5;
+    }
+
+    #tableLead tbody tr.Live td,
+    #tableLead tbody tr.LOI td {
+        color: #31708f;
+        background-color: #d8edff !important;
+    }
+
+    .DTFC_Cloned tbody tr.Live td,
+    .DTFC_Cloned tbody tr.LOI td,
+    #tableNCList tbody tr.lead_owner td {
+        color: #31708f;
+        background-color: #c8e4fa !important;
+    }
+
+
+    #tableLead tbody tr.Booked td {
+        color: #3c763d;
+        background-color: #deffe0;
+    }
+
+    .DTFC_Cloned tbody tr.Booked td,
+    #tableNCList tbody tr.booked td {
+        color: #3c763d;
+        background-color: #c7fcca;
+    }
+
+    #tableLead tbody tr.RequestNCL td,
+    #tableLead tbody tr.RequestLOI td,
+    #tableLead tbody tr.RequestBooking td {
+        color: #a5a100;
+        background-color: #fffed5;
+    }
+
+    .DTFC_Cloned tbody tr.RequestNCL td,
+    .DTFC_Cloned tbody tr.RequestLOI td,
+    .DTFC_Cloned tbody tr.RequestBooking td {
+        color: #a5a100;
+        background-color: #fffdb7;
+    }
+
+    #tableLead tbody tr.NCLExpired td,
+    .DTFC_Cloned tbody tr.NCLExpired td {
+        color: #000;
+        background-color: #f5f5f5;
+    }
+
+    .table a {
+        text-decoration: underline;
+    }
+
+    .expired {
+        color: red;
+    }
+    /*#tableLead tbody tr td {
+        min-width: 80px;
+    }*/
+</style>
+<style>
+    .delegateItem {
+        padding: 20px;
+        border: 1px solid #e2e2e2;
+    }
+</style>
+
+<section>
+    <div class="section-header">
+        <h2>
+            <span class="text-primary"><i class="fa fa-fw fa-phone"></i> @ViewBag.Title</span>
+            @Html.Bootstrap().ActionLinkButton("Back to Dashboard", "Index", "Home").PrependIcon("md md-arrow-back").Class("")
+        </h2>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card  card-underline">
+                <div class="card-body">
+                    <table class="table" id="tableLead">
+                        <thead>
+                            <tr>
+                                <th>Created At</th>
+                                <th>Country</th>
+                                <th style="width: 150px">Company</th>
+                                <th style="width: 150px">Job Title</th>
+                                <th>Direct Line/Mobile</th>
+                                <th style="width: 150px">Sales</th>
+                                <th>Salutation</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Mobile Phone1</th>
+                                <th>Mobile Phone2</th>
+                                <th>Mobile Phone3</th>
+                                <th>Work Email</th>
+                                <th>Personal Email</th>
+                                <th>New Topics</th>
+                                <th>New Locations</th>
+                                <th>New Dates</th>
+                                <th>New Training Type</th>
+                                <th>Estimated Delegate</th>
+                                <th>Training Budget</th>
+                                <th>Good Training Month</th>
+                                <th>First Follow Up Status</th>
+                                <th>Final Status</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div><!--end .card-body -->
+            </div><!--end .card -->
+        </div>
+    </div>
+</section>
+
+@Html.Script(
+    @<script>
+         var windowW = $(window).width();
+         var windowH = $(window).height();
+         var fixedColumn = 0;
+         var sizeLenght = 50;
+
+         var tableLead = $("#tableLead");
+         tableLead.dataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "global": false,
+                 "url": "@Url.Action("AjaxGetAssignedNewEvents")",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function(d) {
+                 }
+             },
+             "columns": [
+                 { "data": "CreatedTime", "name": "CreatedTime", "orderable": true },
+                 { "data": "Country", "name": "Country", "orderable": true },
+                 { "data": "Company", "name": "Company", "orderable": true },
+                 { "data": "JobTitle", "name": "JobTitle", "orderable": true },
+                 { "data": "DirectLine", "name": "DirectLine", "orderable": true },
+                 { "data": "Sales", "name": "Sales", "orderable": true },
+                 { "data": "Salutation", "name": "Salutation", "orderable": true },
+                 { "data": "FirstName", "name": "FirstName", "orderable": true },
+                 { "data": "LastName", "name": "LastName", "orderable": true },
+                 { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
+                 { "data": "MobilePhone2", "name": "MobilePhone2", "orderable": true },
+                 { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
+                 { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
+                 { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
+                 { "data": "NewTopics", "name": "NewTopics", "orderable": true },
+                 { "data": "NewLocations", "name": "NewLocations", "orderable": true },
+                 { "data": "NewDates", "name": "NewDates", "orderable": true },
+                 { "data": "NewTrainingTypeDisplay", "name": "NewTrainingTypeDisplay", "orderable": true },
+                 { "data": "EstimatedDelegateNumber", "name": "EstimatedDelegateNumber", "orderable": true },
+                 { "data": "TrainingBudgetPerHead", "name": "TrainingBudgetPerHead", "orderable": true },
+                 { "data": "GoodTrainingMonth", "name": "GoodTrainingMonth", "orderable": true },
+                 { "data": "FirstFollowUpStatus", "name": "FirstFollowUpStatus", "orderable": true },
+                 { "data": "FinalStatus", "name": "FinalStatus", "orderable": true },
+                 { "data": "ID", "name": "ID", "orderable": false },
+             ],
+             "iDisplayLength": sizeLenght,
+             "aaSorting": [[0, "desc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
+                     aData["ID"] +
+                     '">' +
+                     aData["CreatedTime"] +
+                     '</a>');
+                 $(nRow).find('td:eq(23)').html('<a href="@Url.Action("Detail")/' +
+                     aData["ID"] +
+                     '"><span class=" text-default" style="white-space: nowrap;"><i class="fa fa-eye"></i> Detail<span></a> <br/> <a class="simple-ajax-popup-align-top" href="@Url.Action("Edit")?id=' +
+                     aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md md-edit"></i> Edit<span></a>');
+             },
+             initComplete: function () {
+                 var _table = this;
+                 _table.parent().find('input[type="search"]').unbind();
+                 var timeOutTyping;
+                 _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function () {
+                         _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                     }, 600);
+                 });
+             },
+             scrollY: false,
+             scrollX: true,
+             "bScrollCollapse": false,
+             "drawCallback": function (settings, json) {
+                 FixedTable();
+             },
+         });
+         function FixedTable() {
+             if (fixedColumn < 3) {
+                 fixedColumn ++;
+                 var fixColumn = new $.fn.dataTable.FixedColumns(tableLead, {
+                     leftColumns: 5,
+                     sHeightMatch: "auto",
+                     rightColumns: 1
+                 });
+                 var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                 if ($leftWrappers.length > 1) {
+                     $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                 }
+                 var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                 if ($rightWrappers.length > 1) {
+                     $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                 }
+             }
+         }
+         $(document).on("click", ".paginate_button", function () {
+             fixedColumn = 0;
+         });
+         $(document).on("change", "select[name=table_length]", function () {
+             fixedColumn = 0;
+         });
+
+
+         $(document).on('click', '.btnDelete', function (e) {
+             e.preventDefault();
+             var $sefl = $(this);
+             bootbox.confirm("@Resource.ConfirmDelete", function (isOK) {
+                 if (isOK) {
+                     $("#dvLoading").show();
+                     $.ajax({
+                         url: '@Url.Action("Delete")?id=' + $sefl.data('id'),
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 toastr.success("Delete successful");
+                                 tableLead.fnDeleteRow($sefl.closest('tr')[0]);
+                             } else {
+                                 toastr.error(data);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Delete failed");
+                         }
+                     });
+                 }
+             });
+         });
+    </script>
+                         )
+
+@Html.Script(
+    @<script>
+
+         $(document).on('click', '#request_close', function (e) {
+             e.preventDefault();
+             $.magnificPopup.close();
+         });
+
+         $(document).on('click', '#request_submit', function (e) {
+             e.preventDefault();
+             var formdata = new FormData();
+             formdata.append("id", $("#request_id").val());
+             formdata.append("requestType", $("#request_Type").val());
+             var getfile = $('#request-attachment')[0];
+             if (getfile) {
+                 for (var i = 0; i < getfile.files.length; i++) {
+                     if (getfile.files[i].name) {
+                         formdata.append("AttachmentFile", getfile.files[i]);
+                     }
+                 }
+             }
+             $.ajax({
+                 url: '@Url.Action("RequestBrochure")',
+                 data: formdata,
+                 contentType: false,
+                 processData: false,
+                 async: false,
+                 type: 'POST',
+                 success: function (data) {
+                     if (data == "") {
+                         toastr.success("Submit successful");
+                         location.reload();
+                     } else {
+                         toastr.error(data);
+                     }
+                 },
+                 error: function () {
+                     toastr.error("Submit failed");
+                 }
+             });
+         });
+
+     </script>)
+
+
+@Html.Script(
+    @<script>
+
+         function onFailEdit() {
+             toastr.error('@Resource.SaveError');
+         }
+         function onSuccessEdit(data) {
+             if (data.Code == 0) {
+                 if (data.Message)
+                     toastr.error(data.Message);
+                 else
+                     toastr.error('@Resource.SaveFailed');
+             } else {
+                 if (data.Code == 1) {
+                     toastr.success('@Resource.UpdateSuccessful');
+                     $.magnificPopup.close();
+                     fixedColumn = 0;
+                     tableLead.fnFilter('');
+                 }
+             }
+         }
+    </script>)
