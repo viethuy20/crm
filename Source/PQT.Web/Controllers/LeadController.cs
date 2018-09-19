@@ -14,6 +14,7 @@ using PQT.Web.Infrastructure.Helpers;
 using PQT.Web.Infrastructure.Notification;
 using PQT.Web.Infrastructure.Utility;
 using PQT.Web.Models;
+using Resources;
 
 namespace PQT.Web.Controllers
 {
@@ -230,53 +231,72 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Start Call Form")]
         public ActionResult StartCallForm(CallingModel model)
         {
+            if (model.TypeSubmit == "requestnewevent")
+            {
+                if (string.IsNullOrEmpty(model.NewTopics))
+                    ModelState.AddModelError("NewTopics", Resource.TheFieldShouldNotBeEmpty);
+                if (string.IsNullOrEmpty(model.NewLocations))
+                    ModelState.AddModelError("NewLocations", Resource.TheFieldShouldNotBeEmpty);
+            }
+
             if (ModelState.IsValid)
             {
-                var currentUser = CurrentUser.Identity;
-                var daysExpired = Settings.Lead.NumberDaysExpired();
-                var allLeads = _repo.GetAllLeads(m => m.EventID == model.EventID);
-                var leadExists = allLeads.Where(m => m.UserID != currentUser.ID &&
-                                                     m.User.TransferUserID != currentUser.ID &&
-                                                     m.CompanyID == model.CompanyID &&
-                                                     m.LeadStatusRecord != LeadStatus.Initial &&
-                                                     m.LeadStatusRecord != LeadStatus.Reject &&
-                                                     m.LeadStatusRecord != LeadStatus.Deleted &&
-                                                     !m.CheckNCLExpired(daysExpired));
-                if (leadExists.Any())
+                if (model.TypeSubmit == "requestnewevent")
                 {
-                    TempData["error"] = "Cannot process... This company is existing in NCL";
-                    return RedirectToAction("Index", new { id = model.EventID });
+                    if (model.CreateNewEvent())
+                    {
+                        TempData["message"] = "Request successful";
+                        return RedirectToAction("Index", "NewEvent");
+                    }
                 }
-                var callExists = allLeads.Where(m => ((!string.IsNullOrEmpty(m.WorkEmail) &&
-                                                          m.WorkEmail == model.WorkEmail) ||
-                                                         (!string.IsNullOrEmpty(m.WorkEmail1) &&
-                                                          m.WorkEmail1 == model.WorkEmail1) ||
-                                                         (!string.IsNullOrEmpty(m.PersonalEmail) &&
-                                                          m.PersonalEmail == model.PersonalEmail) ||
-                                                         (!string.IsNullOrEmpty(m.DirectLine) &&
-                                                          m.MobilePhone1 == model.DirectLine) ||
-                                                         (!string.IsNullOrEmpty(m.MobilePhone1) &&
-                                                          m.MobilePhone1 == model.MobilePhone1) ||
-                                                         (!string.IsNullOrEmpty(m.MobilePhone2) &&
-                                                          m.MobilePhone2 == model.MobilePhone2) ||
-                                                         (!string.IsNullOrEmpty(m.MobilePhone3) &&
-                                                          m.MobilePhone3 == model.MobilePhone3)) &&
-                                                     ((m.UserID == currentUser.ID &&
-                                                       m.User.TransferUserID == currentUser.ID) ||
-                                                      (m.LeadStatusRecord != LeadStatus.Initial &&
-                                                       m.LeadStatusRecord != LeadStatus.Reject &&
-                                                       m.LeadStatusRecord != LeadStatus.Deleted &&
-                                                       !m.CheckNCLExpired(daysExpired))));
-                if (callExists.Any())
+                else
                 {
-                    TempData["error"] = "Client contact exists in called list";
-                    return RedirectToAction("StartCallForm", new { id = model.EventID });
-                }
+                    var currentUser = CurrentUser.Identity;
+                    var daysExpired = Settings.Lead.NumberDaysExpired();
+                    var allLeads = _repo.GetAllLeads(m => m.EventID == model.EventID);
+                    var leadExists = allLeads.Where(m => m.UserID != currentUser.ID &&
+                                                         m.User.TransferUserID != currentUser.ID &&
+                                                         m.CompanyID == model.CompanyID &&
+                                                         m.LeadStatusRecord != LeadStatus.Initial &&
+                                                         m.LeadStatusRecord != LeadStatus.Reject &&
+                                                         m.LeadStatusRecord != LeadStatus.Deleted &&
+                                                         !m.CheckNCLExpired(daysExpired));
+                    if (leadExists.Any())
+                    {
+                        TempData["error"] = "Cannot process... This company is existing in NCL";
+                        return RedirectToAction("Index", new { id = model.EventID });
+                    }
+                    var callExists = allLeads.Where(m => ((!string.IsNullOrEmpty(m.WorkEmail) &&
+                                                              m.WorkEmail == model.WorkEmail) ||
+                                                             (!string.IsNullOrEmpty(m.WorkEmail1) &&
+                                                              m.WorkEmail1 == model.WorkEmail1) ||
+                                                             (!string.IsNullOrEmpty(m.PersonalEmail) &&
+                                                              m.PersonalEmail == model.PersonalEmail) ||
+                                                             (!string.IsNullOrEmpty(m.DirectLine) &&
+                                                              m.MobilePhone1 == model.DirectLine) ||
+                                                             (!string.IsNullOrEmpty(m.MobilePhone1) &&
+                                                              m.MobilePhone1 == model.MobilePhone1) ||
+                                                             (!string.IsNullOrEmpty(m.MobilePhone2) &&
+                                                              m.MobilePhone2 == model.MobilePhone2) ||
+                                                             (!string.IsNullOrEmpty(m.MobilePhone3) &&
+                                                              m.MobilePhone3 == model.MobilePhone3)) &&
+                                                         ((m.UserID == currentUser.ID &&
+                                                           m.User.TransferUserID == currentUser.ID) ||
+                                                          (m.LeadStatusRecord != LeadStatus.Initial &&
+                                                           m.LeadStatusRecord != LeadStatus.Reject &&
+                                                           m.LeadStatusRecord != LeadStatus.Deleted &&
+                                                           !m.CheckNCLExpired(daysExpired))));
+                    if (callExists.Any())
+                    {
+                        TempData["error"] = "Client contact exists in called list";
+                        return RedirectToAction("StartCallForm", new { id = model.EventID });
+                    }
 
-                if (model.Create())
-                {
-                    TempData["message"] = "Call successful";
-                    return RedirectToAction("Detail", new { id = model.Lead.ID });
+                    if (model.Create())
+                    {
+                        TempData["message"] = "Call successful";
+                        return RedirectToAction("Detail", new { id = model.Lead.ID });
+                    }
                 }
             }
             if (model.Event == null)
@@ -542,12 +562,6 @@ namespace PQT.Web.Controllers
                     case "GoodTrainingMonth":
                         leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
                         break;
-                    case "TopicsInterested":
-                        leads = leads.OrderBy(s => s.TopicsInterested).ThenBy(s => s.ID);
-                        break;
-                    case "LocationInterested":
-                        leads = leads.OrderBy(s => s.LocationInterested).ThenBy(s => s.ID);
-                        break;
                     case "StatusDisplay":
                         leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -626,12 +640,6 @@ namespace PQT.Web.Controllers
                     case "GoodTrainingMonth":
                         leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
                         break;
-                    case "TopicsInterested":
-                        leads = leads.OrderByDescending(s => s.TopicsInterested).ThenBy(s => s.ID);
-                        break;
-                    case "LocationInterested":
-                        leads = leads.OrderByDescending(s => s.LocationInterested).ThenBy(s => s.ID);
-                        break;
                     case "StatusDisplay":
                         leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -694,8 +702,6 @@ namespace PQT.Web.Controllers
                     m.EstimatedDelegateNumber,
                     TrainingBudgetPerHead = m.TrainingBudgetPerHead != null ? Convert.ToDecimal(m.TrainingBudgetPerHead).ToString("N2") : "",
                     m.GoodTrainingMonth,
-                    m.TopicsInterested,
-                    m.LocationInterested,
                     m.StatusCode,
                     m.ClassStatus,
                     m.MarkKPI,
@@ -993,12 +999,6 @@ namespace PQT.Web.Controllers
                     case "GoodTrainingMonth":
                         leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
                         break;
-                    case "TopicsInterested":
-                        leads = leads.OrderBy(s => s.TopicsInterested).ThenBy(s => s.ID);
-                        break;
-                    case "LocationInterested":
-                        leads = leads.OrderBy(s => s.LocationInterested).ThenBy(s => s.ID);
-                        break;
                     case "FirstFollowUpStatus":
                         leads = leads.OrderBy(s => s.FirstFollowUpStatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -1071,12 +1071,6 @@ namespace PQT.Web.Controllers
                     case "GoodTrainingMonth":
                         leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
                         break;
-                    case "TopicsInterested":
-                        leads = leads.OrderByDescending(s => s.TopicsInterested).ThenBy(s => s.ID);
-                        break;
-                    case "LocationInterested":
-                        leads = leads.OrderByDescending(s => s.LocationInterested).ThenBy(s => s.ID);
-                        break;
                     case "FirstFollowUpStatus":
                         leads = leads.OrderByDescending(s => s.FirstFollowUpStatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -1131,8 +1125,6 @@ namespace PQT.Web.Controllers
                     m.EstimatedDelegateNumber,
                     TrainingBudgetPerHead = m.TrainingBudgetPerHead != null ? Convert.ToDecimal(m.TrainingBudgetPerHead).ToString("N2") : "",
                     m.GoodTrainingMonth,
-                    m.TopicsInterested,
-                    m.LocationInterested,
                     m.StatusCode,
                     m.ClassStatus,
                     FirstFollowUpStatus = m.FirstFollowUpStatusDisplay,
@@ -1448,7 +1440,7 @@ namespace PQT.Web.Controllers
         {
             //var saleId = PermissionHelper.SalesmanId();
             var leads = _repo.GetAllLeads(m => m.EventID == eventId);// && (saleId == 0 || m.UserID == saleId ||
-                                                                    //(m.User != null && m.User.TransferUserID == saleId)));
+                                                                     //(m.User != null && m.User.TransferUserID == saleId)));
             var eventData = _eventService.GetEvent(eventId);
             return Json(new
             {

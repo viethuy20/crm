@@ -16,8 +16,8 @@ namespace PQT.Domain.Entities
         public Lead()
         {
             PhoneCalls = new HashSet<PhoneCall>();
-            FirstFollowUpStatus = FollowUpStatus.Pending;
-            FinalStatus = FinalStatus.Pending;
+            FirstFollowUpStatus = FollowUpStatus.Neutral;
+            FinalStatus = FinalStatus.Neutral;
         }
         public string DirectLine { get; set; } //Direct Line/Mobile number
         public string JobTitle { get; set; } //Client Name/Job Title
@@ -55,9 +55,13 @@ namespace PQT.Domain.Entities
 
         public int? EstimatedDelegateNumber { get; set; }
         public int GoodTrainingMonth { get; set; }
-        public string TopicsInterested { get; set; }
-        public string LocationInterested { get; set; }
+        
+        //public string NewTopics { get; set; }
+        //public string NewLocations { get; set; }
 
+        //public DateTime? NewDateFrom { get; set; }
+        //public DateTime? NewDateTo { get; set; }
+        //public string NewTrainingType { get; set; }
         public decimal? TrainingBudgetPerHead { get; set; }//USD
 
         public string FullName
@@ -381,8 +385,6 @@ namespace PQT.Domain.Entities
                 EstimatedDelegateNumber,
                 TrainingBudgetPerHead = TrainingBudgetPerHead != null ? Convert.ToDecimal(TrainingBudgetPerHead).ToString("N2") : "",
                 GoodTrainingMonth,
-                TopicsInterested,
-                LocationInterested,
                 StatusCode,
                 ClassStatus,
                 MarkKPI,

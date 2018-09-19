@@ -142,6 +142,7 @@
     <Compile Include="Abstract\ILoginTracker.cs" />
     <Compile Include="Abstract\IMembershipService.cs" />
     <Compile Include="Abstract\IMenuRepository.cs" />
+    <Compile Include="Abstract\ILeadNewService.cs" />
     <Compile Include="Abstract\INotificationService.cs" />
     <Compile Include="Abstract\IEventService.cs" />
     <Compile Include="Abstract\IRoleService.cs" />
@@ -163,6 +164,7 @@
     <Compile Include="Concrete\EFMembershipService.cs" />
     <Compile Include="Concrete\EFMenuRepository.cs" />
     <Compile Include="Concrete\EFEventService.cs" />
+    <Compile Include="Concrete\EFLeadNewService.cs" />
     <Compile Include="Concrete\EFRoleBasedAuthorizer.cs" />
     <Compile Include="Concrete\EFSalesGroupService.cs" />
     <Compile Include="Concrete\EFSettingRepository.cs" />
@@ -190,6 +192,7 @@
     <Compile Include="Entities\EventCompany.cs" />
     <Compile Include="Entities\Holiday.cs" />
     <Compile Include="Entities\Lead.cs" />
+    <Compile Include="Entities\LeadNew.cs" />
     <Compile Include="Entities\LeadStatusRecord.cs" />
     <Compile Include="Entities\OfficeLocation.cs" />
     <Compile Include="Entities\PhoneCall.cs" />

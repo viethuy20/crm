@@ -223,10 +223,12 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<User> GetUsersInRole(params string[] roleName)
         {
-            return GetAll<User>(u => u.Roles
-                    .Select(r => r.Name.ToUpper())
-                    .Intersect(roleName.Select(r1 => r1.ToUpper()))
-                    .Any(),
+            return GetAll<User>(u => u.Status == EntityStatus.Normal &&
+                                     u.UserStatus == UserStatus.Live &&
+                                     u.Roles
+                                         .Select(r => r.Name.ToUpper())
+                                         .Intersect(roleName.Select(r1 => r1.ToUpper()))
+                                         .Any(),
                 u => new
                 {
                     Roles = u.Roles.Select(r => r.Permissions),
@@ -234,7 +236,9 @@ namespace PQT.Domain.Concrete
         }
         public IEnumerable<User> GetUsersInRoleLevel(params string[] roleName)
         {
-            return GetAll<User>(u => u.Roles
+            return GetAll<User>(u => u.Status == EntityStatus.Normal && 
+            u.UserStatus == UserStatus.Live && 
+            u.Roles
                     .Select(r => r.RoleLevel.Value)
                     .Intersect(roleName.Select(r1 => r1.ToUpper()))
                     .Any(),
@@ -254,7 +258,8 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<User> GetAllSalesmans()
         {
-            return GetAll<User>(u => u.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel),
+            return GetAll<User>(u => u.Status==EntityStatus.Normal && u.UserStatus==UserStatus.Live &&
+            u.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel),
                     u => new
                     {
                         Roles = u.Roles.Select(r => r.Permissions),

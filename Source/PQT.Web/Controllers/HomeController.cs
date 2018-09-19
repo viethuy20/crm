@@ -74,6 +74,13 @@ namespace PQT.Web.Controllers
             return Json(notifications, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult GetNotifyForNewEvent()
+        {
+            var notifications =
+                _notificationService.GetAllUserNotificationsByNewEvent(CurrentUser.Identity.ID,Settings.System.NotificationNumber());
+            return Json(notifications, JsonRequestBehavior.AllowGet);
+        }
+
         [AjaxOnly]
         public ActionResult PanelNotification()
         {
@@ -93,7 +100,7 @@ namespace PQT.Web.Controllers
                 CurrentUser.Identity.NotifyNumber = 0;
                 _membershipService.UpdateUser(CurrentUser.Identity);
             }
-            return Json(true);
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         [AjaxOnly]
@@ -111,15 +118,15 @@ namespace PQT.Web.Controllers
                     }
                     _membershipService.UpdateUser(CurrentUser.Identity);
                 }
-                return Json(countSeen);
+                return Json(countSeen, JsonRequestBehavior.AllowGet);
             }
-            return Json(0);
+            return Json(0, JsonRequestBehavior.AllowGet);
         }
         [AjaxOnly]
         public ActionResult SeenNotify(int notifyId)
         {
             _notificationService.SeenUserNotification(notifyId);
-            return Json(true);
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
         [AjaxOnly]
         public ActionResult TestMail()

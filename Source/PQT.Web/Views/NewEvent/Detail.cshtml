@@ -1,0 +1,363 @@
+﻿@model PQT.Domain.Entities.LeadNew
+@using PQT.Domain.Enum
+@using Resources
+@{
+    ViewBag.Title = "New Event Detail";
+}
+<style>
+    .card .Reject {
+        background-color: #faebd4 !important;
+    }
+
+        .card .Reject input {
+            color: #8a6d3b;
+        }
+
+    .card .Blocked, .card .Deleted {
+        background-color: #fad7d4 !important;
+    }
+
+        .card .Blocked input, .card .Deleted input {
+            color: #a94442;
+        }
+
+    .card .LOI,
+    .card .Live {
+        background-color: #d4e9fa !important;
+    }
+
+        .card .LOI input,
+        .card .Live input {
+            color: #31708f;
+        }
+
+    .card .Booked {
+        background-color: #d4fad6 !important;
+    }
+
+        .card .Booked input {
+            color: #3c763d;
+        }
+
+    .card.RequestNCL,
+    .card.RequestLOI,
+    .card.RequestBooking {
+        background-color: #faf9d4 !important;
+    }
+
+        .card.RequestNCL input,
+        .card.RequestLOI input,
+        .card.RequestBooking input {
+            color: #a5a100;
+        }
+</style>
+<section>
+
+    <div class="row section-header" style="height: auto">
+        <h2 class="text-primary col-sm-3">@ViewBag.Title</h2>
+
+    </div>
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-12" style="padding-right: 24px;padding-bottom: 12px">
+
+                @Html.Bootstrap().ActionLinkButton("Back to list", "Index").Id("btnBacklist").RouteValues(new { id = Model.ID }).PrependIcon("md md-arrow-back")
+                @if (CurrentUser.HasPermission("NewEvent", "Edit"))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")
+                }
+                @if (Model.AssignUserID == null && CurrentUser.HasPermission("NewEvent", "Delete"))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Delete ", "Delete").Id("lead_delete").Class("btn-danger").PrependIcon("md md-delete")
+                }
+
+                @if (CurrentUser.HasPermission("NewEvent", "RequestBrochure"))
+                {
+                    @Html.Bootstrap().ActionLinkButton(string.IsNullOrEmpty(Model.RequestBrochure)?"Request Brochure": "Update Attachment Proof", "RequestBrochure").RouteValues(new { id = Model.ID }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
+                }
+                @if (CurrentUser.HasPermission("NewEvent", "Assign"))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Assign New Sales", "Assign").RouteValues(new { id = Model.ID }).Class("simple-ajax-popup-align-top btn-success").PrependIcon("md md-mail")
+                }
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body form">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.CompanyName)
+                        </div>
+                        <div class="col-sm-12" style="padding-left: 0;padding-right: 0">
+                            <div class="col-sm-8" style="padding-left: 0;">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Company.CountryName).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Company.CountryName)
+                                </div>
+                            </div>
+                            <div class="col-sm-4" style="padding-right: 0;">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.LineExtension).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.LineExtension)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.JobTitle).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.JobTitle)
+                        </div>
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.DirectLine).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.DirectLine)
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Salutation).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Salutation)
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.FirstName).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.FirstName)
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.LastName).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.LastName)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.MobilePhone1).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.MobilePhone1)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.MobilePhone2).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.MobilePhone2)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.MobilePhone3).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.MobilePhone3)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.WorkEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.WorkEmail)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.WorkEmail1).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.WorkEmail1)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.PersonalEmail)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.EstimatedDelegateNumber).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.EstimatedDelegateNumber)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.TrainingBudgetPerHead).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.TrainingBudgetPerHead)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.GoodTrainingMonthStr).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.GoodTrainingMonthStr).LabelText("Good Training Month")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.NewTopics).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.NewTopics)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.NewLocations).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.NewLocations)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.NewDatesDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.NewDatesDisplay).LabelText("New Dates")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.NewTrainingTypeDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.NewTrainingType)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @if (!string.IsNullOrEmpty(Model.RequestBrochure))
+                            {
+                                @Html.Bootstrap().Link(Model.RequestBrochure, FileUpload.GetImageUrl(FileUploadType.LeadNew, Model.RequestBrochure)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                            }
+                            @Html.Bootstrap().LabelFor(m => m.RequestBrochure).LabelText("Attach proof for request brochure")
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.AssignUserDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.AssignUser)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@Html.Script(
+    @<script>
+
+         UpdateSeenNotify(@Model.ID, @NotifyType.NewEvent.Value);
+         $(document).on('click', '#lead_delete', function (e) {
+             e.preventDefault();
+             bootbox.confirm("Do you want to delete this data?", function (isOK) {
+                 if (isOK) {
+                     $.ajax({
+                         url: '@Url.Action("Delete")?id=@Model.ID',
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 location.reload();
+                             } else {
+                                 toastr.error(data);
+                             }
+                         },
+                         error: function () {
+                             toastr.error("Delete failed");
+                         }
+                     });
+                 }
+             });
+         });
+    </script>)
+
+
+@Html.Script(
+    @<script>
+
+         $(document).on('click', '#request_close', function (e) {
+             e.preventDefault();
+             $.magnificPopup.close();
+         });
+
+         $(document).on('click', '#request_submit', function (e) {
+             e.preventDefault();
+             var formdata = new FormData();
+             formdata.append("id", $("#request_id").val());
+             formdata.append("requestType", $("#request_Type").val());
+             var getfile = $('#request-attachment')[0];
+             if (getfile) {
+                 for (var i = 0; i < getfile.files.length; i++) {
+                     if (getfile.files[i].name) {
+                         formdata.append("AttachmentFile", getfile.files[i]);
+                     }
+                 }
+             }
+             $.ajax({
+                 url: '@Url.Action("RequestBrochure")',
+                 data: formdata,
+                 contentType: false,
+                 processData: false,
+                 async: false,
+                 type: 'POST',
+                 success: function (data) {
+                     if (data == "") {
+                         toastr.success("Submit successful");
+                         $.magnificPopup.close();
+                         location.reload();
+                     } else {
+                         toastr.error(data);
+                     }
+                 },
+                 error: function () {
+                     toastr.error("Submit failed");
+                 }
+             });
+         });
+
+    </script>)
+
+@Html.Script(
+    @<script>
+
+         function onFailRejectAction() {
+             toastr.error('@Resource.SaveError');
+         }
+         function onSuccessRejectAction(data) {
+             if (data.IsSuccess) {
+                 toastr.success("Reject successful");
+                 $.magnificPopup.close();
+                 location.reload();
+             } else {
+                 toastr.error(data.Message);
+             }
+         }
+    </script>)
+
+
+@Html.Script(
+    @<script>
+
+         function onFailEdit() {
+             toastr.error('@Resource.SaveError');
+         }
+         function onSuccessEdit(data) {
+             if (data.Code == 0) {
+                 if (data.Message)
+                     toastr.error(data.Message);
+                 else
+                     toastr.error('@Resource.SaveFailed');
+             } else if (data.Code == 1) {
+                 toastr.success('@Resource.UpdateSuccessful');
+                 $.magnificPopup.close();
+                 location.reload();
+             }
+         }
+     </script>)
+
+@Html.Script(
+    @<script>
+
+         function onFailAssign() {
+             toastr.error('@Resource.SaveError');
+         }
+         function onSuccessAssign(data) {
+             if (data.Code == 0) {
+                 if (data.Message)
+                     toastr.error(data.Message);
+                 else
+                     toastr.error('@Resource.SaveFailed');
+             } else if (data.Code == 1) {
+                 toastr.success('Assign Successful');
+                 $.magnificPopup.close();
+                 location.reload();
+             }
+         }
+    </script>)

@@ -12,6 +12,7 @@ namespace PQT.Domain.Abstract
         IEnumerable<UserNotification> GetAllUserNotifications();
         IEnumerable<UserNotification> GetAllUserNotifications(int userId, int pageSize = 10, int page = 1);
         IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int eventId, int pageSize = 10, int page = 1);
+        IEnumerable<UserNotification> GetAllUserNotificationsByNewEvent(int userId, int pageSize = 10, int page = 1);
         UserNotification CreateUserNotification(UserNotification notify);
         bool UpdateUserNotification(UserNotification notify);
         bool SeenUserNotification(int notifyId);

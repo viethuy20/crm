@@ -359,6 +359,7 @@
     <Compile Include="Controllers\CompanyResourceController.cs" />
     <Compile Include="Controllers\CounterController.cs" />
     <Compile Include="Controllers\HolidayController.cs" />
+    <Compile Include="Controllers\NewEventController.cs" />
     <Compile Include="Controllers\OfficeLocationController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
@@ -2601,6 +2602,11 @@
     <Content Include="Views\Holiday\Index.cshtml" />
     <Content Include="Views\Account\ActiveKey.cshtml" />
     <Content Include="Views\Lead\_CompanyResourceList3.cshtml" />
+    <Content Include="Views\NewEvent\Index.cshtml" />
+    <Content Include="Views\NewEvent\Detail.cshtml" />
+    <Content Include="Views\NewEvent\Edit.cshtml" />
+    <Content Include="Views\NewEvent\RequestBrochure.cshtml" />
+    <Content Include="Views\NewEvent\Assign.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

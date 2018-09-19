@@ -156,4 +156,10 @@ namespace PQT.Domain.Entities
         public static readonly MonthStatus November = New<MonthStatus>(11, "November");
         public static readonly MonthStatus December = New<MonthStatus>(12, "December");
     }
+    public class NewTrainingType : Enumeration
+    {
+        public static readonly NewTrainingType None = New<NewTrainingType>(0, "None");
+        public static readonly NewTrainingType InHouse = New<NewTrainingType>(1, "In house");
+        public static readonly NewTrainingType Public = New<NewTrainingType>(2, "Public");
+    }
 }

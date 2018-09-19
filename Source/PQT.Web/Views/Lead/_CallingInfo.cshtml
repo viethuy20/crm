@@ -175,20 +175,6 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <input type="text" name="@Html.NameFor(m=>m.TopicsInterested)" value="@Model.TopicsInterested" data-role="tagsinput" />
-                                @Html.ValidationMessageFor(m => m.TopicsInterested)
-                                @Html.Bootstrap().LabelFor(m => m.TopicsInterested)
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.LocationInterested).Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.LocationInterested)
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
                                 @Html.Bootstrap().TextAreaFor(m => m.PhoneCall.Remark).Rows(5).Class("form-control").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.PhoneCall.Remark).LabelText("Call Remarks")
                             </div>
@@ -247,6 +233,53 @@
                         <div class="form-group">
                             @Html.Bootstrap().TextAreaFor(m => m.EventCompany.Remarks).Rows(5).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.EventCompany.Remarks)
+                        </div>
+                    </div>
+                </div><!--end .card -->
+            </div><!--end .form -->
+        </div><!--end .card -->
+    </div>
+    <div class="col-md-8">
+        <div class="card card-underline  form-group">
+            <div class="card-head">
+                <header><b>New Event</b></header>
+            </div><!--end .card-head -->
+            <div class="form">
+                <div class="card-body">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input type="text" name="@Html.NameFor(m=>m.NewTopics)" value="@Model.NewTopics" data-role="tagsinput" />
+                            @Html.ValidationMessageFor(m => m.NewTopics)
+                            @Html.Bootstrap().LabelFor(m => m.NewTopics)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.NewLocations).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.NewLocations)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <div class="input-daterange input-group">
+                                <div class="input-group-content">
+                                    @Html.DatePickerRangeFor(m => m.NewDateFrom, new { @class = "form-control"})
+                                    @Html.ValidationMessageFor(m => m.NewDateFrom)
+                                    @Html.Bootstrap().LabelFor(m => m.NewDateFrom)
+                                </div>
+                                <span class="input-group-addon">to</span>
+                                <div class="input-group-content">
+                                    @Html.DatePickerRangeFor(m => m.NewDateTo, new { @class = "form-control"})
+                                    @Html.ValidationMessageFor(m => m.NewDateTo)
+                                    @Html.Bootstrap().LabelFor(m => m.NewDateTo)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().DropDownListFor(m => m.NewTrainingType, EnumerationHelper.ToSelectList<NewTrainingType>()).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.NewTrainingType)
                         </div>
                     </div>
                 </div><!--end .card -->

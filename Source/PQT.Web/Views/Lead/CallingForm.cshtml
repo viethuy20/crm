@@ -55,15 +55,6 @@
         function SetEventCompanyInfo(data) {
             if (data) {
                 $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(data.ID);
-                @*$("@Html.JquerySelectorFor(m => m.EventCompany.EstimatedDelegateNumber)").val(data.EstimatedDelegateNumber);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val(data.FirstFollowUpStatus);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.FinalStatus)").val(data.FinalStatus);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val(data.DateNextFollowUp);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
-                $("@Html.JquerySelectorFor(m => m.EventCompany.GoodTrainingMonth)").val(data.GoodTrainingMonth).trigger("change");
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TopicsInterested)").val(data.TopicsInterested);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val(data.LocationInterested);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val(data.TrainingBudget);*@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
                 $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val(data.Remarks);
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
@@ -77,15 +68,6 @@
 
             } else {
                 $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(0);
-                @*$("@Html.JquerySelectorFor(m => m.EventCompany.EstimatedDelegateNumber)").val(0);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.FinalStatus)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val('').trigger("change");
-                $("@Html.JquerySelectorFor(m => m.EventCompany.GoodTrainingMonth)").val('').trigger("change");
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TopicsInterested)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val('');*@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val('').trigger("change");
                 $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val('');
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").removeAttr("readonly");

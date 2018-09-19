@@ -52,6 +52,7 @@
                     <div id="rootwizard2" class="form-wizard form-wizard-horizontal">
                         @using (Html.BeginForm("StartCallForm", "Lead", FormMethod.Post, new { @class = "form form-validation" }))
                         {
+                            @Html.HiddenFor(m=>m.TypeSubmit, new { @class = "typeSubmit" })
                             <div class="form-wizard-nav">
                                 <div class="progress">
                                     <div class="progress-bar progress-bar-primary"></div>
@@ -114,7 +115,8 @@
                             <ul class="pager wizard">
                                 <li class="previous"><a class="btn-raised"  style="position: fixed;bottom: 50px;left: 40px;display: block;z-index: 1006;" href="javascript:void(0);"><i class="md md-arrow-back"></i> Back to Companies List</a></li>
                                 <li class="next"><a class="btn-raised" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;" href="javascript:void(0);">Next Call Info <i class="md md-arrow-forward"></i></a></li>
-                                <li class="finish "><button type="submit" class="btn btn-success pull-right" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;"  id="endcall_save"><i class="md md-call-end"></i> Finish Call</button></li>
+                                <li class="finish "><button type="submit" class="btn btn-primary pull-right" style="position: fixed;bottom: 50px;right: 185px;display: block;z-index: 1006;"  id="requestnewevent"><i class="md md-phone-forwarded"></i> Request New Event</button>
+                                    <button type="submit" class="btn btn-success pull-right" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;"  id="endcall_save"><i class="md md-call-end"></i> Finish Call</button></li>
                             </ul>
                         }
                     </div><!--end .card-body -->
@@ -349,6 +351,26 @@
 
 @Html.Script(
     @<script>
+         $(document).on('click', '#endcall_save', function (e) {
+             e.preventDefault();
+            bootbox.confirm("Do you want to finish this call?", function (isOK) {
+                if (isOK) {
+                    $(".typeSubmit").val("finishcall");
+                    $('#endcall_save').parents("form").submit();
+                }
+            });
+         });
+         $(document).on('click', '#requestnewevent', function (e) {
+             e.preventDefault();
+             bootbox.confirm("Do you want to request new event this data?", function (isOK) {
+                 if (isOK) {
+                     $(".typeSubmit").val("requestnewevent");
+                     //$('#btnSaveDraft').parents("form").removeData('unobtrusiveValidation');
+                     //$('#btnSaveDraft').parents("form").removeData('validator');
+                     $('#requestnewevent').parents("form").submit();
+                 }
+             });
+         });
 
          var wizard = $('#rootwizard2').bootstrapWizard({
              onTabShow: function (tab, navigation, index) {
@@ -490,28 +512,10 @@
         function SetEventCompanyInfo(data) {
             if (data) {
                 $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(data.ID);
-                @*$("@Html.JquerySelectorFor(m => m.EventCompany.EstimatedDelegateNumber)").val(data.EstimatedDelegateNumber);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val(data.FirstFollowUpStatus);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.FinalStatus)").val(data.FinalStatus);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val(data.DateNextFollowUp);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
-                $("@Html.JquerySelectorFor(m => m.EventCompany.GoodTrainingMonth)").val(data.GoodTrainingMonth);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TopicsInterested)").val(data.TopicsInterested);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val(data.LocationInterested);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val(data.TrainingBudget);*@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
                 $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val(data.Remarks);
             } else {
                 $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(0);
-                @*$("@Html.JquerySelectorFor(m => m.EventCompany.EstimatedDelegateNumber)").val(0);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.FinalStatus)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val('').trigger("change");
-                $("@Html.JquerySelectorFor(m => m.EventCompany.GoodTrainingMonth)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TopicsInterested)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val('');*@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val('').trigger("change");
                 $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val('');
             }

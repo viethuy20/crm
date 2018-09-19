@@ -229,4 +229,63 @@ namespace PQT.Web.Infrastructure.Notification
             thread.Start();
         }
     }
+
+
+
+    public class NewEventNotificator
+    {
+        private static ILeadNewService LeadNewService
+        {
+            get { return DependencyResolver.Current.GetService<ILeadNewService>(); }
+        }
+        private static IMembershipService MemberService
+        {
+            get { return DependencyResolver.Current.GetService<IMembershipService>(); }
+        }
+        private static IUserNotificationService UserNotificationService
+        {
+            get { return DependencyResolver.Current.GetService<IUserNotificationService>(); }
+        }
+        
+        
+        public static void NotifyUser(IEnumerable<User> users, int bookingId, string title)
+        {
+            var currentUserId = CurrentUser.Identity.ID;
+            var thread = new Thread(() =>
+            {
+                var booking = LeadNewService.GetLeadNew(bookingId);
+                if (booking == null)
+                    return;
+                foreach (var user in users)
+                {
+                    if (user == null || currentUserId == user.ID)
+                    {
+                        continue;
+                    }
+                    try
+                    {
+                        var notify = new UserNotification
+                        {
+                            UserID = user.ID,
+                            EntryId = booking.ID,
+                            EventId = 0,
+                            NotifyType = NotifyType.NewEvent,
+                            Title = title,
+                            EventCode = "",
+                            Description = booking.NewTopics,
+                            HighlightColor = booking.EventColor
+                        };
+                        notify = UserNotificationService.CreateUserNotification(notify);
+                        user.NotifyNumber++;
+                        MemberService.UpdateUser(user);
+                        NotificationHub.NotifyUser(user, notify);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+            });
+            thread.Start();
+        }
+    }
 }

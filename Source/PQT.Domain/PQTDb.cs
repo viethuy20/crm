@@ -34,6 +34,7 @@ namespace PQT.Domain
         public DbSet<CompanyResource> CompanyResources { get; set; }
         public DbSet<EventCompany> EventCompanies { get; set; }
         public DbSet<UploadTemplate> UploadTemplates { get; set; }
+        public DbSet<LeadNew> LeadNews { get; set; }
         protected override void OnModelCreating(DbModelBuilder mb)
         {
             mb.Entity<Company>().HasMany(m => m.ManagerUsers).WithMany().Map(map => map.ToTable("Company_Users").MapLeftKey("Company_Id").MapRightKey("User_Id"));

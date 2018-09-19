@@ -236,8 +236,6 @@
                                 <th>Estimated Delegate</th>
                                 <th>Training Budget</th>
                                 <th>Good Training Month</th>
-                                <th>Topics Interested</th>
-                                <th>Location Interested</th>
                                 <th>First Follow Up Status</th>
                                 <th>Final Status</th>
                                 <th>Call Back Date Time</th>
@@ -338,8 +336,6 @@
                  { "data": "EstimatedDelegateNumber", "name": "EstimatedDelegateNumber", "orderable": true },
                  { "data": "TrainingBudgetPerHead", "name": "TrainingBudgetPerHead", "orderable": true },
                  { "data": "GoodTrainingMonth", "name": "GoodTrainingMonth", "orderable": true },
-                 { "data": "TopicsInterested", "name": "TopicsInterested", "orderable": true },
-                 { "data": "LocationInterested", "name": "LocationInterested", "orderable": true },
                  { "data": "FirstFollowUpStatus", "name": "FirstFollowUpStatus", "orderable": true },
                  { "data": "FinalStatus", "name": "FinalStatus", "orderable": true },
                  { "data": "CallBackDateTime", "name": "CallBackDateTime", "orderable": true },
@@ -360,20 +356,20 @@
                      '">' +
                      aData["CreatedTime"] +
                      '</a>');
-                 $(nRow).find('td:eq(24)').css("white-space", "nowrap");
+                 $(nRow).find('td:eq(22)').css("white-space", "nowrap");
                  if (aData["StatusCode"] == @LeadStatus.RequestBook || aData["StatusCode"] == @LeadStatus.Booked) {
-                     $(nRow).find('td:eq(24)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
+                     $(nRow).find('td:eq(22)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
                          aData["ID"] +
                          '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;">' + aData["StatusDisplay"]+'</span></a>');
                  }
                  if ('@eventClosed' == 'False') {
-                     $(nRow).find('td:eq(25)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
+                     $(nRow).find('td:eq(23)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
                          aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');
                  }
                  $(nRow).addClass(aData["ClassStatus"]);
                  if (aData["NCLExpired"]) {
                      $(nRow).addClass("NCLExpired");
-                     $(nRow).find('td:eq(24)')
+                     $(nRow).find('td:eq(22)')
                          .html(aData["StatusDisplay"] + '<br/><span class="expired">NCL Expired</span>');
                  }
              },

@@ -71,6 +71,7 @@ namespace PQT.Web.Infrastructure.Utility
         public static readonly FileUploadType Event = New<FileUploadType>("Event", "Event");
         public static readonly FileUploadType Trainer = New<FileUploadType>("Trainer", "Trainer");
         public static readonly FileUploadType Lead = New<FileUploadType>("Lead", "Lead");
+        public static readonly FileUploadType LeadNew = New<FileUploadType>("LeadNew", "LeadNew");
         public static readonly FileUploadType Booking = New<FileUploadType>("Booking", "Booking");
         public static readonly FileUploadType KPI = New<FileUploadType>("KPI", "KPI");
         public static readonly FileUploadType Template = New<FileUploadType>("Template", "Template");

@@ -40,8 +40,7 @@
         <div class="headerbar-right">
             <ul class="header-nav header-nav-options">
                 <li>
-                    <a 
-                       href="@Url.Action("SalesmanTemplates","UploadTemplate")" title="Templates" class="btn btn-icon-toggle btn-default simple-ajax-popup-align-top">
+                    <a href="@Url.Action("SalesmanTemplates","UploadTemplate")" title="Templates" class="btn btn-icon-toggle btn-default simple-ajax-popup-align-top">
                         <i class="fa fa-files-o"></i>
                     </a>
                 </li>
@@ -50,7 +49,7 @@
                         <i class="fa fa-bell"></i><sup class="badge style-danger count @(count == 0? "hide":"")">@(count)</sup>
                     </a>
                 </li>
-                
+
 
                 @*<li>
                         <!-- Search form -->
@@ -522,12 +521,19 @@
 
             UserNotification.prototype.notifyRequest = function() {
                 if ($notifyFlyerContent) {
+
+                    var urlLink = '@Url.Action("Detail", "Lead")';
+                    if (this.notifyData.NotifyTypeCode == '@NotifyType.Booking.Value') {
+                        urlLink = '@Url.Action("Detail", "Booking")';
+                    }else if (this.notifyData.NotifyTypeCode == '@NotifyType.NewEvent.Value') {
+                        urlLink = '@Url.Action("Detail", "NewEvent")';
+                    }
                     var row =
                         '<li class="tile" style="border-bottom: 1px solid rgba(150, 156, 156, 0.3);\
                         border-left: 4px solid ' +
                             this.notifyData.HighlightColor +
                             ';">\
-                    <a class="tile-content ink-reaction" href="@Url.Action("Detail", "Lead")?id=' +
+                    <a class="tile-content ink-reaction" href="'+ urlLink +'?id=' +
                             this.notifyData.EntryId +
                             '&eventId=' +
                             this.notifyData.EventId +
@@ -559,29 +565,25 @@
 //            $notifyFlyerContent.append(row);
                 }
 
-                var $dashboardNotify = $("#dashboard_notify_" + this.notifyData.EventId);
-                if ($dashboardNotify) {
-                    var urlNotify = '@Url.Action("Detail", "Lead")?id=' +
-                        this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
-                    if (this.notifyData.NotifyTypeCode == '@NotifyType.Booking.Value') {
-                        urlNotify = '@Url.Action("Detail", "Booking")?id=' +
-                            this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
-                    }
+                if (this.notifyData.NotifyTypeCode == '@NotifyType.NewEvent.Value') {
+                    var $dashboardNotify = $("#dashboard_notify_new_event");
+                    var urlNotify = '@Url.Action("Detail", "NewEvent")?id=' +
+                        this.notifyData.EntryId;
                     var row = '<div class="notify_item dashboard_ncl_new" name="notify-' +
                         this.notifyData.ID + '">\
-                    <a class="tile-content ink-reaction" href="'+ urlNotify +'" >\
-                    <b>' +
+                        <a class="tile-content ink-reaction" href="'+ urlNotify +'" >\
+                        <b>' +
                         this.notifyData.Description +
                         '</b> - ' +
                         this.notifyData.Title +
                         '\
-                    <br/><span class="timestamp" title="' +
+                        <br/><span class="timestamp" title="' +
                         this.notifyData.Timestamp +
                         '" data-time="' + this.notifyData.TimeToString +'">' +
                         moment(this.notifyData.TimeToString, "DDMMYYYYhhmmss").fromNow() +
                         '</span>\
-                    </a>\
-                    </div>';
+                        </a>\
+                        </div>';
                     $(row).insertAfter($dashboardNotify);
                     var notifyPanel = $dashboardNotify.parents(".notify_panel");
                     if (notifyPanel.length > 0) {
@@ -593,6 +595,42 @@
                             $('.dashboard_ncl_new').removeClass("dashboard_ncl_new");
                         },
                         30000);
+                } else {
+                    var $dashboardNotify = $("#dashboard_notify_" + this.notifyData.EventId);
+                    if ($dashboardNotify) {
+                        var urlNotify = '@Url.Action("Detail", "Lead")?id=' +
+                            this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
+                        if (this.notifyData.NotifyTypeCode == '@NotifyType.Booking.Value') {
+                            urlNotify = '@Url.Action("Detail", "Booking")?id=' +
+                                this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
+                        }
+                        var row = '<div class="notify_item dashboard_ncl_new" name="notify-' +
+                            this.notifyData.ID + '">\
+                        <a class="tile-content ink-reaction" href="'+ urlNotify +'" >\
+                        <b>' +
+                            this.notifyData.Description +
+                            '</b> - ' +
+                            this.notifyData.Title +
+                            '\
+                        <br/><span class="timestamp" title="' +
+                            this.notifyData.Timestamp +
+                            '" data-time="' + this.notifyData.TimeToString +'">' +
+                            moment(this.notifyData.TimeToString, "DDMMYYYYhhmmss").fromNow() +
+                            '</span>\
+                        </a>\
+                        </div>';
+                        $(row).insertAfter($dashboardNotify);
+                        var notifyPanel = $dashboardNotify.parents(".notify_panel");
+                        if (notifyPanel.length > 0) {
+                            notifyPanel[0].scrollTop = 0;
+                            notifyPanel.find(".notify_not_found").remove();
+                        }
+                        clearTimeout(timeOut);
+                        timeOut = setTimeout(function() {
+                                $('.dashboard_ncl_new').removeClass("dashboard_ncl_new");
+                            },
+                            30000);
+                    }
                 }
 
                 if (this.notifyData.NotifyTypeCode == '@NotifyType.Booking.Value' &&
@@ -679,7 +717,7 @@
                 $.ajax({
                     global: false,
                     url: '@Url.Action("RemoveNotifyCounter", "Home")',
-                    type: 'POST',
+                    type: 'GET',
                     success: function(data) {
                     },
                     error: function() {
@@ -692,7 +730,7 @@
             $.ajax({
                 global: false,
                 url: '@Url.Action("UpdateSeenNotify","Home")?entryId=' + entryId + '&type=' + type,
-                type: 'POST',
+                type: 'GET',
                 success: function (count) {
                     var currentNotifyCount = parseInt($notifyCounter.text());
                     if (count > 0 && currentNotifyCount > 0) {

@@ -28,7 +28,8 @@
                 @foreach (var item in Model)
                 {
                     var url = item.NotifyType == NotifyType.Booking ? Url.Action("Detail", "Booking", new {id = item.EntryId, eventId = item.EventId}) :
-                        Url.Action("Detail", "Lead", new {id = item.EntryId, eventId = item.EventId});
+                        (item.NotifyType == NotifyType.NewEvent ? Url.Action("Detail", "NewEvent", new {id = item.EntryId, eventId = item.EventId}) :
+                            Url.Action("Detail", "Lead", new {id = item.EntryId, eventId = item.EventId}));
                     <li class="tile" style="border-bottom: 1px solid rgba(150, 156, 156, 0.3);
                                        border-left: 4px solid @item.HighlightColor;">
                         <a class="tile-content ink-reaction" href="@url">

@@ -153,18 +153,42 @@
                         @Html.Bootstrap().LabelFor(m => m.FinalStatus)
                     </div>
                 </div>
-                @*<div class="col-sm-6">
+                <div class="col-sm-6">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.TopicsInterested).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.TopicsInterested)
+                        <input type="text" name="@Html.NameFor(m=>m.NewTopics)" value="@Model.NewTopics" data-role="tagsinput" />
+                        @Html.ValidationMessageFor(m => m.NewTopics)
+                        @Html.Bootstrap().LabelFor(m => m.NewTopics)
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.LocationInterested).Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.LocationInterested)
+                        @Html.Bootstrap().TextBoxFor(m => m.NewLocations).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.NewLocations)
                     </div>
-                </div>*@
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <div class="input-daterange input-group">
+                            <div class="input-group-content">
+                                @Html.DatePickerRangeFor(m => m.NewDateFrom, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.NewDateFrom)
+                                @Html.Bootstrap().LabelFor(m => m.NewDateFrom)
+                            </div>
+                            <span class="input-group-addon">to</span>
+                            <div class="input-group-content">
+                                @Html.DatePickerRangeFor(m => m.NewDateTo, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.NewDateTo)
+                                @Html.Bootstrap().LabelFor(m => m.NewDateTo)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().DropDownListFor(m => m.NewTrainingType, EnumerationHelper.ToSelectList<NewTrainingType>()).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.NewTrainingType)
+                    </div>
+                </div>
             </div>
         </div><!--end .card-body -->
         <div class="card-actionbar">
