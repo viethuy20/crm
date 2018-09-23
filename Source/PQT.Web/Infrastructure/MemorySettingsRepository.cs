@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Concrete;
 using PQT.Domain.Entities;
@@ -101,11 +102,12 @@ namespace PQT.Web.Infrastructure
         }
         public override int TotalHolidays(DateTime start, DateTime end, int? countryId)
         {
-            var holidays = _holidays.Where(m => (countryId == null || m.CountryID == countryId) &&
-                                                (m.StartDate.Month == start.Month && m.StartDate.Year == start.Year ||
-                                                 m.EndDate.Month == start.Month && m.EndDate.Year == start.Year ||
-                                                 m.StartDate.Month == end.Month && m.StartDate.Year == end.Year ||
-                                                 m.EndDate.Month == end.Month && m.EndDate.Year == end.Year))
+            var holidays = _holidays.Where(m => m.EntityStatus == EntityStatus.Normal &&
+                                                (countryId == null || m.CountryID == countryId) &&
+                                                ((m.StartDate.Month == start.Month && m.StartDate.Year == start.Year) ||
+                                                 (m.EndDate.Month == start.Month && m.EndDate.Year == start.Year) ||
+                                                 (m.StartDate.Month == end.Month && m.StartDate.Year == end.Year) ||
+                                                 (m.EndDate.Month == end.Month && m.EndDate.Year == end.Year)))
                 .AsEnumerable();
             return holidays.Sum(m => m.TotalHolidays(start, end));
         }

@@ -147,6 +147,57 @@
                 </div><!--end .col -->
         <!-- END ALERT - REVENUE -->
             }
+
+            @foreach (var item in Model.CrossSellEvents)
+            {
+        <!-- BEGIN ALERT - REVENUE -->
+                <div class="event-panel" id="event_panel_@item.ID" data-id="@item.ID">
+                    <div class="card">
+                        <div class="card-body no-padding">
+                            <div class="alert no-margin event-header" style="background: @item.BackgroundColor;">
+                                @*<strong class="pull-right text-success text-lg">0,38% <i class="md md-trending-up"></i></strong>*@
+                                <strong class="text-xl">@item.EventName</strong><br />
+                                Event Dates: @item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
+                                <br />
+                                DOC: @item.DateOfConfirmationStr - Closing Date: @item.ClosingDateStr
+                                <br />
+                                Location: @item.Location
+                                <br />
+                                Venue: @item.HotelVenue
+                                @if (CurrentUser.HasRole("Finance"))
+                                {
+                                    <a href="@Url.Action("Index", "Booking", new {id = item.ID})" class="link-event">
+                                    </a>
+                                }
+                                else if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
+                                {
+                                    <a href="@Url.Action("NCLForManager", "Lead", new {id = item.ID})" class="link-event">
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Index", "Lead", new {id = item.ID})" class="link-event">
+                                    </a>
+                                }
+                            </div>
+                            <div class="notify_panel">
+                                <div id="dashboard_notify_@item.ID" style="display: none"></div>
+                                <div class="notify_items">
+                                    <div class="notify_item text-center"><img src="~/Content/img/ajax_loader.gif" /></div>
+                                </div>
+                            </div>
+                            <div class="row no-margin event-footer">
+                                <div class="col-sm-5 text-center "><span class="text-italic text-bold">Total booked</span><br /><span class="total-booked">N.A</span></div>
+                                <div class="col-sm-7 text-center "><span class="text-italic text-bold">Companies called</span><br /><span class="totalcalled">N.A</span>/<span class="total-companies">N.A</span></div>
+                                <div class="col-sm-4  text-center col-tier1"><span class="text-italic">Tier 1</span><br /><span class="tier1">N.A</span>/<span class="total-tier1">N.A</span></div>
+                                <div class="col-sm-4  text-center col-tier2"><span class="text-italic">Tier 2</span><br /><span class="tier2">N.A</span>/<span class="total-tier2">N.A</span></div>
+                                <div class="col-sm-4  text-center col-tier3"><span class="text-italic">Tier 3</span><br /><span class="tier3">N.A</span>/<span class="total-tier3">N.A</span></div>
+                            </div>
+                        </div><!--end .card-body -->
+                    </div><!--end .card -->
+                </div><!--end .col -->
+        <!-- END ALERT - REVENUE -->
+            }
         </div><!--end .row -->
     </div><!--end .section-body -->
 </section>

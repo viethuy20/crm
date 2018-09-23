@@ -1508,13 +1508,13 @@ namespace PQT.Web.Controllers
                 var eventData = _eventService.GetEvent(id);
                 listObj.Add(new
                 {
-                    Tier3 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier3),
-                    Tier1 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier1),
-                    Tier2 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier2),
+                    Tier3 = leads.Where(m => m.EventID == id).DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier3),
+                    Tier1 = leads.Where(m => m.EventID == id).DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier1),
+                    Tier2 = leads.Where(m => m.EventID == id).DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier2),
                     TotalTier3 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier3),
                     TotalTier1 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier1),
                     TotalTier2 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier2),
-                    TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked),
+                    TotalBooked = leads.Where(m => m.EventID == id).Count(m => m.LeadStatusRecord == LeadStatus.Booked),
                     EventId = id
                 });
             }

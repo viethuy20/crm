@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 
@@ -43,7 +44,7 @@ namespace PQT.Domain.Concrete
 
         public virtual IEnumerable<Holiday> GetAllHolidays()
         {
-            return GetAll<Holiday>().ToList();
+            return GetAll<Holiday>(m => m.EntityStatus == EntityStatus.Normal).ToList();
         }
         public virtual IEnumerable<Holiday> GetAllHolidays(int[] year)
         {
