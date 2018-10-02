@@ -172,6 +172,10 @@
     .table a {
         text-decoration: underline;
     }
+    .expired {
+        color: red;
+        white-space: nowrap;
+    }
 </style>
 <section>
     <div class="section-header" style="margin-bottom: -20px;">
@@ -389,9 +393,14 @@
                  { "data": "ID", "name": "ID", "orderable": false },
              ],
              "iDisplayLength": sizeLenght,
-             "aaSorting": [[22, "asc"]],
+             "aaSorting": [[22, "desc"]],
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  updateTableRow(nRow, aData);
+                 if (aData["NCLExpired"]) {
+                     $(nRow).addClass("NCLExpired");
+                     $(nRow).find('td:eq(20)')
+                         .html(aData["StatusDisplay"] + '<br/><span class="expired">NCL Expired</span>');
+                 }
              },
              initComplete: function () {
                  var _table = this;

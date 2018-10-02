@@ -944,7 +944,10 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 leads = _repo.GetAllLeads(m => m.EventID == eventId &&
-                                               m.LeadStatusRecord != LeadStatus.Initial && (
+                                               (m.LeadStatusRecord == LeadStatus.Blocked ||
+                                                m.LeadStatusRecord == LeadStatus.Live ||
+                                                m.LeadStatusRecord == LeadStatus.LOI ||
+                                                m.LeadStatusRecord == LeadStatus.Booked) && (
                                                    m.StatusUpdateTimeStr.Contains(searchValue) ||
                                                    m.StatusDisplay.ToLower().Contains(searchValue) ||
                                                    m.CompanyName.ToLower().Contains(searchValue) ||
@@ -967,14 +970,15 @@ namespace PQT.Web.Controllers
                                                    (m.PersonalEmail != null &&
                                                     m.PersonalEmail.ToLower().Contains(searchValue)) ||
                                                    (m.FirstFollowUpStatusDisplay.ToLower().Contains(searchValue)) ||
-                                                   (m.FinalStatusDisplay.ToLower().Contains(searchValue))) &&
-                                               !m.CheckNCLExpired(daysExpired));
+                                                   (m.FinalStatusDisplay.ToLower().Contains(searchValue))));
             }
             else
             {
                 leads = _repo.GetAllLeads(m =>
-                    m.EventID == eventId && m.LeadStatusRecord != LeadStatus.Initial &&
-                    !m.CheckNCLExpired(daysExpired));
+                    m.EventID == eventId && (m.LeadStatusRecord == LeadStatus.Blocked ||
+                                             m.LeadStatusRecord == LeadStatus.Live ||
+                                             m.LeadStatusRecord == LeadStatus.LOI ||
+                                             m.LeadStatusRecord == LeadStatus.Booked));
             }
             // ReSharper disable once AssignNullToNotNullAttribute
 
@@ -987,67 +991,67 @@ namespace PQT.Web.Controllers
                         leads = leads.OrderBy(s => s.StatusUpdateTime).ThenBy(s => s.StatusCode);
                         break;
                     case "Company":
-                        leads = leads.OrderBy(s => s.Company.CompanyName).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.Company.CompanyName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "Salesman":
-                        leads = leads.OrderBy(s => s.User.DisplayName).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.User.DisplayName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "Country":
-                        leads = leads.OrderBy(s => s.Company.CountryCode).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.Company.CountryCode).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "JobTitle":
-                        leads = leads.OrderBy(s => s.JobTitle).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.JobTitle).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "DirectLine":
-                        leads = leads.OrderBy(s => s.DirectLine).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.DirectLine).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "CallBackDate":
-                        leads = leads.OrderBy(s => s.CallBackDate).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.CallBackDate).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "Salutation":
-                        leads = leads.OrderBy(s => s.Salutation).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.Salutation).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "FirstName":
-                        leads = leads.OrderBy(s => s.FirstName).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.FirstName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "LastName":
-                        leads = leads.OrderBy(s => s.LastName).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.LastName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "MobilePhone1":
-                        leads = leads.OrderBy(s => s.MobilePhone1).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.MobilePhone1).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "MobilePhone2":
-                        leads = leads.OrderBy(s => s.MobilePhone2).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.MobilePhone2).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "MobilePhone3":
-                        leads = leads.OrderBy(s => s.MobilePhone3).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.MobilePhone3).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "WorkEmail":
-                        leads = leads.OrderBy(s => s.WorkEmail).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.WorkEmail).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "PersonalEmail":
-                        leads = leads.OrderBy(s => s.PersonalEmail).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.PersonalEmail).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "EstimatedDelegateNumber":
-                        leads = leads.OrderBy(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.EstimatedDelegateNumber).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "TrainingBudgetPerHead":
-                        leads = leads.OrderBy(s => s.TrainingBudgetPerHead).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.TrainingBudgetPerHead).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "GoodTrainingMonth":
-                        leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "FirstFollowUpStatus":
-                        leads = leads.OrderBy(s => s.FirstFollowUpStatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.FirstFollowUpStatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "FinalStatus":
-                        leads = leads.OrderBy(s => s.FinalStatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.FinalStatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "StatusDisplay":
-                        leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.StatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     default:
-                        leads = leads.OrderBy(s => s.StatusCode).ThenBy(s => s.StatusUpdateTime);
+                        leads = leads.OrderBy(s => s.StatusCode).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                 }
             }
@@ -1056,70 +1060,70 @@ namespace PQT.Web.Controllers
                 switch (sortColumn)
                 {
                     case "CreatedTime":
-                        leads = leads.OrderByDescending(s => s.StatusUpdateTime).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.StatusUpdateTime).ThenBy(s => s.StatusCode);
                         break;
                     case "Company":
-                        leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "Salesman":
-                        leads = leads.OrderByDescending(s => s.User.DisplayName).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.User.DisplayName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "Country":
-                        leads = leads.OrderByDescending(s => s.Company.CountryCode).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.Company.CountryCode).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "JobTitle":
-                        leads = leads.OrderByDescending(s => s.JobTitle).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.JobTitle).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "DirectLine":
-                        leads = leads.OrderByDescending(s => s.DirectLine).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.DirectLine).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "CallBackDate":
-                        leads = leads.OrderByDescending(s => s.CallBackDate).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.CallBackDate).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "Salutation":
-                        leads = leads.OrderByDescending(s => s.Salutation).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.Salutation).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "FirstName":
-                        leads = leads.OrderByDescending(s => s.FirstName).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.FirstName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "LastName":
-                        leads = leads.OrderByDescending(s => s.LastName).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.LastName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "MobilePhone1":
-                        leads = leads.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.MobilePhone1).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "MobilePhone2":
-                        leads = leads.OrderByDescending(s => s.MobilePhone2).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.MobilePhone2).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "MobilePhone3":
-                        leads = leads.OrderByDescending(s => s.MobilePhone3).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.MobilePhone3).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "WorkEmail":
-                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "PersonalEmail":
-                        leads = leads.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.PersonalEmail).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "EstimatedDelegateNumber":
-                        leads = leads.OrderByDescending(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.EstimatedDelegateNumber).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "TrainingBudgetPerHead":
-                        leads = leads.OrderByDescending(s => s.TrainingBudgetPerHead).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.TrainingBudgetPerHead).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "GoodTrainingMonth":
-                        leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "FirstFollowUpStatus":
-                        leads = leads.OrderByDescending(s => s.FirstFollowUpStatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.FirstFollowUpStatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "FinalStatus":
-                        leads = leads.OrderByDescending(s => s.FinalStatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.FinalStatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "StatusDisplay":
-                        leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.StatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     default:
-                        leads = leads.OrderByDescending(s => s.StatusCode).ThenBy(s => s.StatusUpdateTime);
+                        leads = leads.OrderByDescending(s => s.StatusCode).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                 }
             }
@@ -1167,6 +1171,7 @@ namespace PQT.Web.Controllers
                     m.ClassStatus,
                     FirstFollowUpStatus = m.FirstFollowUpStatusDisplay,
                     FinalStatus = m.FinalStatusDisplay,
+                    NCLExpired = m.CheckNCLExpired(daysExpired),
                     actionBlock = m.LeadStatusRecord == LeadStatus.Blocked ? "Unblock" : "Block"
                 })
             };
