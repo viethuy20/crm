@@ -23,6 +23,7 @@
                 <table class="table" id="uploadsTable">
                     <thead>
                     <tr>
+                        <th>Department</th>
                         <th>Upload Time</th>
                         <th>Field Name</th>
                         <th>File Name</th>
@@ -53,6 +54,7 @@
                  }
              },
              "columns": [
+                 { "data": "Department", "name": "Department", "orderable": true },
                  { "data": "UploadTime", "name": "UploadTime", "orderable": true },
                  { "data": "GroupName", "name": "GroupName", "orderable": true },
                  { "data": "FileName", "name": "FileName", "orderable": true },
@@ -61,8 +63,8 @@
              "iDisplayLength": 50,
              "aaSorting": [[0, "desc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 $(nRow).find('td:eq(2)').html('<a href="/data/@FileUploadType.Template/' + aData["FileName"] + '" target="_blank">' + aData["FileName"] + '</a>');
-                 $(nRow).find('td:eq(3)').html('<a href="@Url.Action("Edit")?id=' + aData["ID"] + '" data-action="edit"><i class="md md-edit text-info"></i></a> ' +
+                 $(nRow).find('td:eq(3)').html('<a href="/data/@FileUploadType.Template/' + aData["FileName"] + '" target="_blank">' + aData["FileName"] + '</a>');
+                 $(nRow).find('td:eq(4)').html('<a href="@Url.Action("Edit")?id=' + aData["ID"] + '" data-action="edit"><i class="md md-edit text-info"></i></a> ' +
                  '<a href="#" data-action="delete" data-id="' + aData["ID"] + '"><i class="md md-delete text-danger"></i></a>');
              },
              initComplete: function () {

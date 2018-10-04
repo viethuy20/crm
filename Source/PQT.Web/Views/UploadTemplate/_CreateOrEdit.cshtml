@@ -5,9 +5,12 @@
 @model PQT.Domain.Entities.UploadTemplate
 @{
     var templateService = DependencyHelper.GetService<IUploadTemplateService>();
+    var roleService = DependencyHelper.GetService<IRoleService>();
     var templates = templateService.GetAllUploadTemplates().DistinctBy(m => m.GroupNameCode);
     var serializer = new JavaScriptSerializer();
     string lstGroups = serializer.Serialize(templates.Select(m => m.GroupName));
+
+    var departments = roleService.GetAllRoles();
 }
 <style>
     .autocomplete-items {
@@ -41,9 +44,15 @@
     <div class="card-body">
         <div class="row">
             <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.Department, departments.ToSelectList(m => m.Name, m => m.Name)).OptionLabel("").Class("form-control").HtmlAttributes(new { required = "required"}).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Department).ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-12">
                 <div class="form-group autocomplete">
                     @Html.Bootstrap().TextBoxFor(m => m.GroupName).Class("form-control text-capitalize").Id("groupName").HtmlAttributes(new { required = "required", autocomplete = "off" }).ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.GroupName).LabelText("Field Name").ShowRequiredStar(true)
+                    @Html.Bootstrap().LabelFor(m => m.GroupName).LabelText("Upload Name").ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-12">

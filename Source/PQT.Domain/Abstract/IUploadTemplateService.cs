@@ -9,6 +9,7 @@ namespace PQT.Domain.Abstract
     public interface IUploadTemplateService
     {
         IEnumerable<UploadTemplate> GetAllUploadTemplates();
+        IEnumerable<UploadTemplate> GetAllUploadTemplates(params string[] roleName);
         UploadTemplate GetUploadTemplate(int id);
         UploadTemplate GetUploadTemplate(string group);
         UploadTemplate CreateUploadTemplate(UploadTemplate item);

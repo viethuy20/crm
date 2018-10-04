@@ -10,6 +10,7 @@ namespace PQT.Domain.Entities
 {
     public class UploadTemplate : Entity
     {
+        public string Department { get; set; }
         public string GroupName { get; set; }
         public string FileName { get; set; }
         public bool GroupNameEquals(string group)

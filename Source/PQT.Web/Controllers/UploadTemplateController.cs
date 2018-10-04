@@ -31,7 +31,7 @@ namespace PQT.Web.Controllers
         [AjaxOnly]
         public ActionResult SalesmanTemplates()
         {
-            return PartialView(_uploadService.GetAllUploadTemplates());
+            return PartialView(_uploadService.GetAllUploadTemplates(CurrentUser.Identity.Roles.Select(m => m.Name).ToArray()));
         }
         public ActionResult Create()
         {
@@ -114,7 +114,9 @@ namespace PQT.Web.Controllers
             int recordsTotal = 0;
             //var saleId = PermissionHelper.SalesmanId();
             IEnumerable<UploadTemplate> bookings = new HashSet<UploadTemplate>();
-            bookings = !string.IsNullOrEmpty(searchValue) ? _uploadService.GetAllUploadTemplates().Where(m => m.GroupName.ToLower().Contains(searchValue)) : _uploadService.GetAllUploadTemplates();
+            bookings = !string.IsNullOrEmpty(searchValue) ?
+                _uploadService.GetAllUploadTemplates().Where(m => m.GroupName.ToLower().Contains(searchValue) || m.Department.ToLower().Contains(searchValue)) :
+                _uploadService.GetAllUploadTemplates();
             // ReSharper disable once AssignNullToNotNullAttribute
 
             #region sort
@@ -122,6 +124,9 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
+                    case "Department":
+                        bookings = bookings.OrderBy(s => s.Department).ThenBy(s => s.ID);
+                        break;
                     case "UploadTime":
                         bookings = bookings.OrderBy(s => s.UploadTime).ThenBy(s => s.ID);
                         break;
@@ -140,6 +145,9 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
+                    case "Department":
+                        bookings = bookings.OrderByDescending(s => s.Department).ThenBy(s => s.ID);
+                        break;
                     case "UploadTime":
                         bookings = bookings.OrderByDescending(s => s.UploadTime).ThenBy(s => s.ID);
                         break;
@@ -174,6 +182,7 @@ namespace PQT.Web.Controllers
                     m.ID,
                     UploadTime = m.UploadTimeStr,
                     GroupName = m.GroupName,
+                    Department = m.Department,
                     FileName = m.FileName,
                 })
             };

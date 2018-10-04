@@ -342,7 +342,7 @@ namespace PQT.Web.Controllers
                                  m.MobilePhone1 == lead.MobilePhone1 &&
                                  m.MobilePhone2 == lead.MobilePhone2 &&
                                  m.MobilePhone3 == lead.MobilePhone3);
-                    var eventCompany = _repo.GetEventCompany(lead.EventID, lead.CompanyID);
+                    //var eventCompany = _repo.GetEventCompany(lead.EventID, lead.CompanyID);
                     if (existResources.Any())
                     {
                         foreach (var item in existResources)

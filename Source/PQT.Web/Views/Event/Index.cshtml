@@ -74,14 +74,21 @@
             "iDisplayLength": 50,
             "aaSorting": [[0, "desc"]],
             "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-
+                if ('@CurrentUser.HasPermission("Lead", "Detail")' == 'True') {
                     $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
-                        aData["ID"] +
-                        '">' +
+                        aData["ID"] + '">' + aData["EventCode"] + '</a>');
+                } else if ('@CurrentUser.HasPermission("Booking", "Index")' == 'True') {
+                    $(nRow).find('td:eq(0)').html('<a href="/Booking/Index/' + aData["ID"] + '">' +
                         aData["EventCode"] +
                         '</a>');
+                } else {
+                    $(nRow).find('td:eq(0)').html(aData["EventCode"]);
+                }
                 $(nRow).find('td:eq(3)').html('<span class="EventColor" style="cursor: default;display: inline-block;width: 30px;height: 30px;background:' + aData["BackgroundColor"] + ';border:1px solid #c3c3c3;border-radius: 50%;">&nbsp;</span>');
-                var dropdowns = '<li><a href="@Url.Action("Detail")/' + aData["ID"] + '"><i class="fa fa-eye"> Detail</i></a></li>';
+                var dropdowns = '';
+                if ('@CurrentUser.HasPermission("Lead", "Detail")' == 'True') {
+                    dropdowns += '<li><a href="@Url.Action("Detail")/' + aData["ID"] + '"><i class="fa fa-eye"> Detail</i></a></li>';
+                }
                 if ('@CurrentUser.HasPermission("Lead", "NCLForManager")' == 'True') {
                    dropdowns += '<li class="divider"></li><li><a href="@Url.Action("NCLForManager", "Lead")/' + aData["ID"] + '"><i class="fa fa-eye"> View NCL</i></a></li>';
                 }

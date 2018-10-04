@@ -18,6 +18,14 @@ namespace PQT.Domain.Concrete
         {
             return GetAll<UploadTemplate>().AsEnumerable();
         }
+        public IEnumerable<UploadTemplate> GetAllUploadTemplates(params string[] roleName)
+        {
+            if (!roleName.Any())
+            {
+                return GetAll<UploadTemplate>().AsEnumerable();
+            }
+            return GetAll<UploadTemplate>(m => roleName.Select(r => r.ToLower()).Contains(m.Department.ToLower())).AsEnumerable();
+        }
 
         public UploadTemplate GetUploadTemplate(int id)
         {

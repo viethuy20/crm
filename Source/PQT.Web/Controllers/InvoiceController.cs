@@ -84,7 +84,14 @@ namespace PQT.Web.Controllers
                 }
                 catch (Exception e)
                 {
-                    TempData["error"] = e.Message;
+                    if (e.InnerException!=null)
+                    {
+                        TempData["error"] = e.Message + " >>>>> " + e.InnerException.Message;
+                    }
+                    else
+                    {
+                        TempData["error"] = e.Message;
+                    }
                 }
             }
             model.Booking = _bookingService.GetBooking(model.Invoice.BookingID);
