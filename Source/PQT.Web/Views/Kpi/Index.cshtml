@@ -145,14 +145,17 @@
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  $(nRow).addClass(aData["ClassKPIStatus"]);
                  $(nRow).attr("data-id", aData["ID"]);
+                 var htmlAction = "";
                  if ('@CurrentUser.HasPermission("KPI","Update")' == 'True') {
-                     $(nRow).find('td:eq(14)').html(
-                         '<a class="simple-ajax-popup-align-top" href="@Url.Action("Update")?id=' +
+                     htmlAction += '<a class="simple-ajax-popup-align-top" href="@Url.Action("Update")?id=' +
                          aData["ID"] +
-                         '" ><span class=" text-info" style="white-space: nowrap;"><i class="md fa-fw md-edit"></i> Update<span></a>');
-                 } else {
-                     $(nRow).find('td:eq(14)').html('');
+                         '" ><span class=" text-info" style="white-space: nowrap;"><i class="md fa-fw md-edit"></i> Update<span></a>';
                  }
+                 if (!aData["MarkKPI"] && '@CurrentUser.HasPermission("KPI","Delete")' == 'True') {
+                     htmlAction += ' <a href="#" data-action="delete" data-id="' + aData["ID"] +'">' +
+                         '<span class="text-danger" style="white-space: nowrap;"><i class="md md-delete"></i> Delete<span></a>';
+                 }
+                 $(nRow).find('td:eq(14)').html(htmlAction);
              },
              initComplete: function () {
                  var _table = this;
@@ -167,6 +170,29 @@
              },
          });
 
+         oTable.on('click', '[data-action="delete"]', function (e) {
+             e.preventDefault();
+             var selftr = $(this);
+             bootbox.confirm("Do you want to delete this data in NCL?", function (isOK) {
+                 if (isOK) {
+                     $.ajax({
+                         url: '@Url.Action("Delete")/' + selftr.data('id'),
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 oTable.fnDeleteRow(selftr.closest('tr')[0]);
+                                 toastr.success("Delete successful");
+                             } else {
+                                 bootbox.alert("@Resource.DeleteFailed");
+                             }
+                         },
+                         error: function () {
+                             bootbox.alert("@Resource.DeleteFailed");
+                         }
+                     });
+                 }
+             });
+         });
          $('#btnSearch').click(function () {
              oTable.fnFilter('');
          });

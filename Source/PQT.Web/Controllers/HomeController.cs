@@ -59,8 +59,10 @@ namespace PQT.Web.Controllers
             else
             {
                 var userId = CurrentUser.Identity.ID;
-                model.Events = _eventService.GetAllEvents().Where(m =>
-                    (m.EventStatus == EventStatus.Live || m.EventStatus == EventStatus.Confirmed) && (m.UserID == userId ||
+                var events = _eventService.GetAllEvents().Where(m =>
+                    (m.EventStatus == EventStatus.Live || m.EventStatus == EventStatus.Confirmed) &&
+                    DateTime.Today <= m.ClosingDate && 
+                    (m.UserID == userId ||
                     m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) ||
                     m.SalesGroups
                         .SelectMany(g => g.Users.Where(u => u.TransferUserID > 0).Select(u => u.TransferUserID))
@@ -68,6 +70,21 @@ namespace PQT.Web.Controllers
                     m.ManagerUsers.Select(u => u.ID).Contains(userId) ||
                     m.ManagerUsers.Where(u => u.TransferUserID > 0).Select(u => u.TransferUserID).Contains(userId) ||
                     (m.DateOfOpen <= DateTime.Today && DateTime.Today <= m.ClosingDate)));
+
+                model.Events = events.Where(m => (m.UserID == userId ||
+                                                  m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID))
+                                                      .Contains(userId) ||
+                                                  m.SalesGroups
+                                                      .SelectMany(g =>
+                                                          g.Users.Where(u => u.TransferUserID > 0)
+                                                              .Select(u => u.TransferUserID))
+                                                      .Contains(userId) ||
+                                                  m.ManagerUsers.Select(u => u.ID).Contains(userId) ||
+                                                  m.ManagerUsers.Where(u => u.TransferUserID > 0)
+                                                      .Select(u => u.TransferUserID).Contains(userId)));
+                model.CrossSellEvents = events.Where(m => !model.Events.Select(e => e.ID).Contains(m.ID) &&
+                                                          m.DateOfOpen <= DateTime.Today &&
+                                                          DateTime.Today <= m.ClosingDate);
             }
             return View(model);
         }
@@ -78,6 +95,26 @@ namespace PQT.Web.Controllers
             var notifications =
                 _notificationService.GetAllUserNotificationsByEvent(CurrentUser.Identity.ID, eventId,
                     Settings.System.NotificationNumber());
+            return Json(notifications, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetNotifyForEvents(string eventIds)
+        {
+            if (string.IsNullOrEmpty(eventIds))
+            {
+                return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+            }
+            var ids = eventIds.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => Convert.ToInt32(m));
+            var notifications =
+                _notificationService.GetAllUserNotificationsByEvent(CurrentUser.Identity.ID, ids.ToArray(),
+                    Settings.System.NotificationNumber());
+            return Json(notifications, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetNotifyForNewEvent()
+        {
+            var notifications =
+                _notificationService.GetAllUserNotificationsByNewEvent(CurrentUser.Identity.ID,Settings.System.NotificationNumber());
             return Json(notifications, JsonRequestBehavior.AllowGet);
         }
 
@@ -123,7 +160,7 @@ namespace PQT.Web.Controllers
                 }
                 return Json(countSeen, JsonRequestBehavior.AllowGet);
             }
-            return Json(0,JsonRequestBehavior.AllowGet);
+            return Json(0, JsonRequestBehavior.AllowGet);
         }
         [AjaxOnly]
         [ExcludeFilters(typeof(RequestAuthorizeAttribute))]

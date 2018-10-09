@@ -240,68 +240,6 @@ namespace PQT.Domain.Concrete
 
         #endregion
 
-
-        #region Holiday
-
-        public IEnumerable<Holiday> GetAllHolidays()
-        {
-            return GetAll<Holiday>().ToList();
-        }
-
-        public IEnumerable<Holiday> GetAllHolidays(int[] year)
-        {
-            return GetAll<Holiday>(m => year.Contains(m.StartDate.Year)).ToList();
-        }
-        public IEnumerable<Holiday> GetAllHolidays(int year)
-        {
-            return GetAll<Holiday>(m => m.StartDate.Year == year).ToList();
-        }
-
-        public Holiday GetHoliday(int holidayID)
-        {
-            return Get<Holiday>(holidayID);
-        }
-
-        public Holiday GetHoliday(DateTime startDate)
-        {
-            return Get<Holiday>(m => m.StartDate.Date <= startDate.Date && startDate.Date < m.EndDate.Date);
-        }
-
-        public Holiday CreateHoliday(Holiday holiday)
-        {
-            //Holiday holidayExist = GetHoliday(holiday.StartDate);
-            //if (holidayExist != null)
-            //{
-            //    holidayExist.Description = holiday.Description;
-            //    Update(holidayExist);
-            //    return holidayExist;
-            //}
-            return Create(holiday);
-        }
-
-        public bool UpdateHoliday(Holiday holiday)
-        {
-            return Update(holiday);
-        }
-
-        public bool DeleteHoliday(int id)
-        {
-            return Delete<Holiday>(id);
-        }
-        public int TotalHolidays(DateTime start, DateTime end, int? countryId)
-        {
-            end = end.AddDays(1);
-            var holidays = GetAll<Holiday>(m => (countryId == null || m.CountryID == countryId) &&
-                                                (m.StartDate.Month == start.Month && m.StartDate.Year == start.Year ||
-                                                 m.EndDate.Month == start.Month && m.EndDate.Year == start.Year ||
-                                                 m.StartDate.Month == end.Month && m.StartDate.Year == end.Year ||
-                                                 m.EndDate.Month == end.Month && m.EndDate.Year == end.Year))
-                .AsEnumerable();
-            return holidays.Sum(m => m.TotalHolidays(start, end));
-        }
-
-        #endregion
-
         #region Office Location
 
 

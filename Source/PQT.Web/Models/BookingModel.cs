@@ -182,7 +182,7 @@ namespace PQT.Web.Models
                     var leadUser = Booking.Lead.User.TransferUserID > 0
                         ? membershipService.GetUser((int)Booking.Lead.User.TransferUserID)
                         : Booking.Lead.User;
-                    BookingNotificator.NotifyUser(currentUserId, new List<User> { leadUser }, Booking.ID, titleNotify, true);
+                    BookingNotificator.NotifyUser(NotifyAction.Approved, new List<User> { leadUser }, Booking.ID, titleNotify, true);
                     LeadNotificator.NotifyUpdateNCL(Booking.Lead.ID);
                     BookingNotificator.NotifyUpdateBooking(Booking.ID, false);
                     var com = comService.GetCompany(Booking.CompanyID);
@@ -227,7 +227,7 @@ namespace PQT.Web.Models
                     var leadUser = Booking.Lead.User.TransferUserID > 0
                         ? membershipService.GetUser((int)Booking.Lead.User.TransferUserID)
                         : Booking.Lead.User;
-                    BookingNotificator.NotifyUser(currentUserId, new List<User> { leadUser }, Booking.ID, titleNotify, true);
+                    BookingNotificator.NotifyUser(NotifyAction.Rejected, new List<User> { leadUser }, Booking.ID, titleNotify, true);
                     BookingNotificator.NotifyUpdateBooking(Booking.ID);
                     return true;
                 }

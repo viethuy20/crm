@@ -117,22 +117,6 @@
                         @Html.Bootstrap().LabelFor(m => m.Event.DateOfConfirmation)
                     </div>
                 </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.ClosingDate)">
-                            @(Model.Event.ClosingDate != null ? Convert.ToDateTime(Model.Event.ClosingDate).ToString("dd MMM yyyy") : "")
-                        </div>
-                        @Html.Bootstrap().LabelFor(m => m.Event.ClosingDate).LabelText("Date of Closing Sales")
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.DateOfOpen)">
-                            @(Model.Event.DateOfOpen != null ? Convert.ToDateTime(Model.Event.DateOfOpen).ToString("dd MMM yyyy") : "")
-                        </div>
-                        @Html.Bootstrap().LabelFor(m => m.Event.DateOfOpen).LabelText("Date Of Open (Cross Sell)")
-                    </div>
-                </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Event.FinanceEmail).Class("form-control").Disabled().ShowValidationMessage(true)
@@ -159,29 +143,11 @@
                 </div>
                 <div class=" col-sm-4">
                     <div class="form-group">
-                        @if (!string.IsNullOrEmpty(Model.Event.SalesBrochure))
-                        {
-                            @Html.Bootstrap().Link(Model.Event.SalesBrochure, FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.SalesBrochure)).Class("form-control").HtmlAttributes(new { target = "_blank" })
-                        }
-                        @Html.Bootstrap().LabelFor(m => m.Event.SalesBrochure)
-                    </div>
-                </div>
-                <div class=" col-sm-4">
-                    <div class="form-group">
                         @if (!string.IsNullOrEmpty(Model.Event.OperationBrochure))
                         {
                             @Html.Bootstrap().Link(Model.Event.OperationBrochure, FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.OperationBrochure)).Class("form-control").HtmlAttributes(new { target = "_blank" })
                         }
                         @Html.Bootstrap().LabelFor(m => m.Event.OperationBrochure)
-                    </div>
-                </div>
-                <div class=" col-sm-4">
-                    <div class="form-group">
-                        @if (!string.IsNullOrEmpty(Model.Event.RegContract))
-                        {
-                            @Html.Bootstrap().Link(Model.Event.RegContract, FileUpload.GetImageUrl(FileUploadType.Event, Model.Event.RegContract)).Class("form-control").HtmlAttributes(new { target = "_blank" })
-                        }
-                        @Html.Bootstrap().LabelFor(m => m.Event.RegContract)
                     </div>
                 </div>
             </div>
@@ -228,6 +194,46 @@
         </div><!--end .card-body -->
     </div>
 
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Trainer Details</header>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <table class="table no-margin">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Passport</th>
+                            <th>Email</th>
+                            <th>BusinessPhone</th>
+                            <th>MobilePhone</th>
+                            <th>Address</th>
+                            <th>Nearest International Airport</th>
+                            <th>Airport IATA Code</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach (var item in Model.Event.EventSessions.Select(m=>m.Trainer))
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                    <td>@item.Passport</td>
+                                    <td>@item.Email</td>
+                                    <td>@item.BusinessPhone</td>
+                                    <td>@item.MobilePhone</td>
+                                    <td>@item.Address</td>
+                                    <td>@item.NearestInternationalAirport</td>
+                                    <td>@item.AirportIATACode</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div><!--end .card-body -->
+    </div>
     <div class="card card-underline">
         <div class="card-head">
             <header>Delegate info</header>

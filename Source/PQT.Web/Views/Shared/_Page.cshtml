@@ -43,8 +43,7 @@
         <div class="headerbar-right">
             <ul class="header-nav header-nav-options">
                 <li>
-                    <a 
-                       href="@Url.Action("SalesmanTemplates","UploadTemplate")" title="Templates" class="btn btn-icon-toggle btn-default simple-ajax-popup-align-top">
+                    <a href="@Url.Action("SalesmanTemplates","UploadTemplate")" title="Templates" class="btn btn-icon-toggle btn-default simple-ajax-popup-align-top">
                         <i class="fa fa-files-o"></i>
                     </a>
                 </li>
@@ -53,7 +52,7 @@
                         <i class="fa fa-bell"></i><sup class="badge style-danger count @(count == 0? "hide":"")">@(count)</sup>
                     </a>
                 </li>
-                
+
 
                 @*<li>
                         <!-- Search form -->
@@ -264,7 +263,7 @@
                 todayHighlight: true,
                 format: 'dd/mm/yyyy'
             }).on('changeDate',
-                function (ev) {
+                function(ev) {
                     $(this).datepicker('hide');
                 });
         }
@@ -457,10 +456,11 @@
     <script>
         function StartConnectProgressHub() {
             var progressNotifier = $.connection.progressHub;
-            progressNotifier.client.sendMessage = function (message) {
+            progressNotifier.client.sendMessage = function(message) {
                 UpdateProgress(message);
             };
         }
+
         function UpdateProgress(message) {
             var data = JSON.parse(message);
             if (data) {
@@ -488,7 +488,7 @@
             $notifyFlyerContent = $('.notify-trigger-no-content'),
             documentTitle = document.title;
 
-        notificator.client.notify = function (dataJson, dataType) {
+        notificator.client.notify = function(dataJson, dataType) {
             try {
                 var data = eval('(' + dataJson + ')');
                 new window[dataType](data).notify();
@@ -536,6 +536,8 @@
                     }else if (this.notifyData.NotifyTypeCode == '@NotifyType.OpeEvent.Value') {
                         urlNotify = '@Url.Action("Detail", "Operation")?id=' +
                             this.notifyData.EntryId;
+                    }else if (this.notifyData.NotifyTypeCode == '@NotifyType.NewEvent.Value') {
+                        urlLink = '@Url.Action("Detail", "NewEvent")';
                     }
                     var row =
                         '<li class="tile" style="border-bottom: 1px solid rgba(150, 156, 156, 0.3);\
@@ -554,8 +556,10 @@
                             '\
                         <small class="timestamp" title="' +
                             this.notifyData.Timestamp +
-                        '" data-time="' + this.notifyData.TimeToString +'">' +
-                        moment(this.notifyData.TimeToString, "DDMMYYYYhhmmss").fromNow() +
+                            '" data-time="' +
+                            this.notifyData.TimeToString +
+                            '">' +
+                            moment(this.notifyData.TimeToString, "DDMMYYYYhhmmss").fromNow() +
                             '</small>\
                     </div>\
                     </a>\
@@ -570,43 +574,82 @@
 //            $notifyFlyerContent.append(row);
                 }
 
-                var $dashboardNotify = $("#dashboard_notify_" + this.notifyData.EventId);
-                if ($dashboardNotify) {
-                    var urlNotify = '@Url.Action("Detail", "Lead")?id=' +
-                        this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
-                    if (this.notifyData.NotifyTypeCode == '@NotifyType.Booking.Value') {
-                        urlNotify = '@Url.Action("Detail", "Booking")?id=' +
-                            this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
-                    }else if (this.notifyData.NotifyTypeCode == '@NotifyType.OpeEvent.Value') {
-                        urlNotify = '@Url.Action("Detail", "Operation")?id=' +
-                            this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
+                if (this.notifyData.NotifyTypeCode == '@NotifyType.NewEvent.Value') {
+                    var $dashboardNotify = $("#dashboard_notify_new_event");
+                    if ($dashboardNotify) {
+                        var urlNotify = '@Url.Action("Detail", "NewEvent")?id=' +
+                            this.notifyData.EntryId;
+                        var row = '<div class="notify_item dashboard_ncl_new" name="notify-' +
+                            this.notifyData.ID +
+                            '">\
+                        <a class="tile-content ink-reaction" href="' +
+                            urlNotify +
+                            '" >\
+                        <b>' +
+                            this.notifyData.Description +
+                            '</b> - ' +
+                            this.notifyData.Title +
+                            '\
+                        <br/><span class="timestamp" title="' +
+                            this.notifyData.Timestamp +
+                            '" data-time="' +
+                            this.notifyData.TimeToString +
+                            '">' +
+                            moment(this.notifyData.TimeToString, "DDMMYYYYhhmmss").fromNow() +
+                            '</span>\
+                        </a>\
+                        </div>';
+                        $(row).insertAfter($dashboardNotify);
+                        var notifyPanel = $dashboardNotify.parents(".notify_panel");
+                        if (notifyPanel.length > 0) {
+                            notifyPanel[0].scrollTop = 0;
+                            notifyPanel.find(".notify_not_found").remove();
+                        }
+                        clearTimeout(timeOut);
+                        timeOut = setTimeout(function() {
+                                $('.dashboard_ncl_new').removeClass("dashboard_ncl_new");
+                            },
+                            30000);
                     }
-                    var row = '<div class="notify_item dashboard_ncl_new" name="notify-' +
-                        this.notifyData.ID + '">\
-                    <a class="tile-content ink-reaction" href="'+ urlNotify +'" >\
-                    <b>' +
-                        this.notifyData.Description +
-                        '</b> - ' +
-                        this.notifyData.Title +
-                        '\
-                    <br/><span class="timestamp" title="' +
-                        this.notifyData.Timestamp +
-                        '" data-time="' + this.notifyData.TimeToString +'">' +
-                        moment(this.notifyData.TimeToString, "DDMMYYYYhhmmss").fromNow() +
-                        '</span>\
-                    </a>\
-                    </div>';
-                    $(row).insertAfter($dashboardNotify);
-                    var notifyPanel = $dashboardNotify.parents(".notify_panel");
-                    if (notifyPanel.length > 0) {
-                        notifyPanel[0].scrollTop = 0;
-                        notifyPanel.find(".notify_not_found").remove();
+                } else {
+                    var $dashboardNotify = $("#dashboard_notify_" + this.notifyData.EventId);
+                    if ($dashboardNotify) {
+                        var urlNotify = '@Url.Action("Detail", "Lead")?id=' +
+                            this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
+                        if (this.notifyData.NotifyTypeCode == '@NotifyType.Booking.Value') {
+                            urlNotify = '@Url.Action("Detail", "Booking")?id=' +
+                                this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
+                        }else if (this.notifyData.NotifyTypeCode == '@NotifyType.OpeEvent.Value') {
+                            urlNotify = '@Url.Action("Detail", "Operation")?id=' +
+                                this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
+                        }
+                        var row = '<div class="notify_item dashboard_ncl_new" name="notify-' +
+                            this.notifyData.ID + '">\
+                        <a class="tile-content ink-reaction" href="'+ urlNotify +'" >\
+                        <b>' +
+                            this.notifyData.Description +
+                            '</b> - ' +
+                            this.notifyData.Title +
+                            '\
+                        <br/><span class="timestamp" title="' +
+                            this.notifyData.Timestamp +
+                            '" data-time="' + this.notifyData.TimeToString +'">' +
+                            moment(this.notifyData.TimeToString, "DDMMYYYYhhmmss").fromNow() +
+                            '</span>\
+                        </a>\
+                        </div>';
+                        $(row).insertAfter($dashboardNotify);
+                        var notifyPanel = $dashboardNotify.parents(".notify_panel");
+                        if (notifyPanel.length > 0) {
+                            notifyPanel[0].scrollTop = 0;
+                            notifyPanel.find(".notify_not_found").remove();
+                        }
+                        clearTimeout(timeOut);
+                        timeOut = setTimeout(function() {
+                                $('.dashboard_ncl_new').removeClass("dashboard_ncl_new");
+                            },
+                            30000);
                     }
-                    clearTimeout(timeOut);
-                    timeOut = setTimeout(function() {
-                            $('.dashboard_ncl_new').removeClass("dashboard_ncl_new");
-                        },
-                        30000);
                 }
 
                 if (this.notifyData.NotifyTypeCode == '@NotifyType.Booking.Value' &&
@@ -619,7 +662,7 @@
                     location.href.toLowerCase().indexOf('recruitment/detail') > 1) {
                     location.reload();
                 }else if (this.notifyData.NotifyTypeCode == '@NotifyType.OpeEvent.Value' &&
-                    (location.href.toLowerCase().indexOf('operation/detail') > 1 || 
+                    (location.href.toLowerCase().indexOf('operation/detail') > 1 ||
                         location.href.toLowerCase().indexOf('event/detail') > 1)) {
                     location.reload();
                 }
@@ -636,7 +679,7 @@
                 this.lead = data;
             }
 
-            Lead.prototype.notify = function () {
+            Lead.prototype.notify = function() {
                 var $eventIdNCList = $("#eventIdNCList");
                 try {
                     if ($nclTable) {
@@ -669,7 +712,7 @@
                 this.booking = data;
             }
 
-            Booking.prototype.notify = function () {
+            Booking.prototype.notify = function() {
                 var $eventIdNCList = $("#eventIdNCList");
                 try {
                     if (bookingTable) {
@@ -726,26 +769,28 @@
                         } else {
                             $notifyCounter.addClass('hide');
                             $notifyCounter.html('0');
-                            document.title = documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
+                            document.title =
+                                documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
                         }
                     }
                 },
-                error: function () {
+                error: function() {
                 }
             });
         }
 
         hubConnectionId = "";
-        $.connection.hub.start().done(function () {
+        $.connection.hub.start().done(function() {
             hubConnectionId = $.connection.hub.id;
         });
-        $.connection.hub.qs = "UserID=@(currentUser!=null?currentUser.ID.ToString():"")";
-        $.connection.hub.disconnected(function () {
-            setTimeout(function () {
-                $.connection.hub.start().done(function () {
-                    hubConnectionId = $.connection.hub.id;
-                });
-            }, 5000); // Restart connection after 5 seconds.you can set the time based your requirement
+        $.connection.hub.qs = "UserID=@(currentUser != null ? currentUser.ID.ToString() : "")";
+        $.connection.hub.disconnected(function() {
+            setTimeout(function() {
+                    $.connection.hub.start().done(function() {
+                        hubConnectionId = $.connection.hub.id;
+                    });
+                },
+                5000); // Restart connection after 5 seconds.you can set the time based your requirement
         });
     </script>
 
@@ -753,20 +798,23 @@
         //Update all .timestamp
         function UpdateTimestamp() {
             var $timestamp = $(".timestamp");
-            $timestamp.each(function (index, item) {
+            $timestamp.each(function(index, item) {
                 var time = $(item).data('time');
                 if (time && time != "") {
                     $(item).html(moment(time, "DDMMYYYYhhmmss").fromNow());
                 }
             });
-            setTimeout(function () {
-                UpdateTimestamp();
-            }, 60000);
+            setTimeout(function() {
+                    UpdateTimestamp();
+                },
+                60000);
             //console.log("Update all .timestamp length=" + $timestamp.length);
         }
-        setTimeout(function () {
-            UpdateTimestamp();
-        }, 60000);
+
+        setTimeout(function() {
+                UpdateTimestamp();
+            },
+            60000);
     </script>
 
 

@@ -128,11 +128,11 @@ namespace PQT.Domain.Helpers
                 hashmd5.Clear();
 
                 var tdes = new TripleDESCryptoServiceProvider
-                           {
-                               Key = keyArray,
-                               Mode = CipherMode.ECB,
-                               Padding = PaddingMode.PKCS7
-                           };
+                {
+                    Key = keyArray,
+                    Mode = CipherMode.ECB,
+                    Padding = PaddingMode.PKCS7
+                };
 
                 ICryptoTransform cTransform = tdes.CreateEncryptor();
                 byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
@@ -150,11 +150,11 @@ namespace PQT.Domain.Helpers
                 hashmd5.Clear();
 
                 var tdes = new TripleDESCryptoServiceProvider
-                           {
-                               Key = keyArray,
-                               Mode = CipherMode.ECB,
-                               Padding = PaddingMode.PKCS7
-                           };
+                {
+                    Key = keyArray,
+                    Mode = CipherMode.ECB,
+                    Padding = PaddingMode.PKCS7
+                };
 
                 ICryptoTransform cTransform = tdes.CreateDecryptor();
                 byte[] resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
@@ -253,7 +253,8 @@ namespace PQT.Domain.Helpers
             if (timeSpan <= TimeSpan.FromSeconds(10))
             {
                 result = "just now";
-            }else if (timeSpan <= TimeSpan.FromSeconds(60))
+            }
+            else if (timeSpan <= TimeSpan.FromSeconds(60))
             {
                 result = string.Format("{0} seconds ago", timeSpan.Seconds);
             }
@@ -287,6 +288,24 @@ namespace PQT.Domain.Helpers
             }
 
             return result;
+        }
+        public static int CountWeekends(DateTime startDate, DateTime endDate)
+        {
+            TimeSpan diff = endDate - startDate;
+            int days = diff.Days;
+            var count = 0;
+            for (var i = 0; i <= days; i++)
+            {
+                var testDate = startDate.AddDays(i);
+                switch (testDate.DayOfWeek)
+                {
+                    case DayOfWeek.Saturday:
+                    case DayOfWeek.Sunday:
+                        count++;
+                        break;
+                }
+            }
+            return count;
         }
     }
 

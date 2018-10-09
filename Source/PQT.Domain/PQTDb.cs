@@ -34,6 +34,7 @@ namespace PQT.Domain
         public DbSet<CompanyResource> CompanyResources { get; set; }
         public DbSet<EventCompany> EventCompanies { get; set; }
         public DbSet<UploadTemplate> UploadTemplates { get; set; }
+        public DbSet<LeadNew> LeadNews { get; set; }
         public DbSet<Candidate> Candidates { get; set; }
         public DbSet<RecruitmentPosition> RecruitmentPositions { get; set; }
         public DbSet<Invoice> Invoices { get; set; }

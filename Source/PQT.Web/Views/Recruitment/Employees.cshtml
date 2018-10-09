@@ -60,10 +60,17 @@
              ],
              "iDisplayLength": 25,
              "aaSorting": [[0, "asc"]],
-             "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 $(nRow).find('td:eq(7)').html('<a href="@Url.Action("EditEmployment")/' +
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 var htmlAction = '';
+                 if ('@CurrentUser.HasPermission("Recruitment", "EditEmployment")' == 'True') {
+                     htmlAction += '<a href="@Url.Action("EditEmployment")/' +
+                         aData["ID"] +
+                         '" class="active" data-toggle="class"><i class="fa fa-pencil-square-o text-primary"> Edit</i></a> ';
+                 } 
+                 htmlAction += ' <a href="@Url.Action("DetailEmployment")/' +
                      aData["ID"] +
-                     '" class="active" data-toggle="class"><i class="fa fa-pencil-square-o text-violet text-active"></i></a>');
+                     '" class="active" data-toggle="class"><i class="fa fa-eye text-default"> Detail</i></a> ';
+                 $(nRow).find('td:eq(7)').html(htmlAction);
              },
              initComplete: function() {
                  var _table = this;

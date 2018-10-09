@@ -14,6 +14,7 @@ using PQT.Web.Infrastructure.Helpers;
 using PQT.Web.Infrastructure.Notification;
 using PQT.Web.Infrastructure.Utility;
 using PQT.Web.Models;
+using Resources;
 
 namespace PQT.Web.Controllers
 {
@@ -230,39 +231,75 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Start Call Form")]
         public ActionResult StartCallForm(CallingModel model)
         {
+            if (model.TypeSubmit == "requestnewevent")
+            {
+                if (string.IsNullOrEmpty(model.NewTopics))
+                    ModelState.AddModelError("NewTopics", Resource.TheFieldShouldNotBeEmpty);
+                if (string.IsNullOrEmpty(model.NewLocations))
+                    ModelState.AddModelError("NewLocations", Resource.TheFieldShouldNotBeEmpty);
+                TempData["error"] = "Please check your inputs";
+            }
+
             if (ModelState.IsValid)
             {
-                var currentUser = CurrentUser.Identity;
-                var daysExpired = Settings.Lead.NumberDaysExpired();
-                var leadExists = _repo.GetAllLeads(m =>
-                    m.EventID == model.EventID && m.UserID != currentUser.ID &&
-                    m.User.TransferUserID != currentUser.ID &&
-                    m.CompanyID == model.CompanyID && m.LeadStatusRecord != LeadStatus.Initial &&
-                    m.LeadStatusRecord != LeadStatus.Reject
-                    && !m.CheckNCLExpired(daysExpired));
-                if (leadExists.Any())
+                if (model.TypeSubmit == "requestnewevent")
                 {
-                    TempData["error"] = "Cannot process... This company is existing in NCL";
-                    return RedirectToAction("Index", new { id = model.EventID });
+                    if (model.CreateNewEvent())
+                    {
+                        TempData["message"] = "Request successful";
+                        return RedirectToAction("Index", "NewEvent");
+                    }
+                    TempData["error"] = "Request failed";
                 }
-                var callExists = _repo.GetAllLeads(m =>
-                    m.EventID == model.EventID && (
-                        (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail == model.WorkEmail) ||
-                        (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1 == model.WorkEmail1) ||
-                        (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail == model.PersonalEmail) ||
-                        (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1 == model.MobilePhone1) ||
-                        (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2 == model.MobilePhone2) ||
-                        (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3 == model.MobilePhone3)));
-                if (callExists.Any())
+                else
                 {
-                    TempData["error"] = "Client contact exists in called list";
-                    return RedirectToAction("StartCallForm", new { id = model.EventID });
-                }
+                    var currentUser = CurrentUser.Identity;
+                    var daysExpired = Settings.Lead.NumberDaysExpired();
+                    var allLeads = _repo.GetAllLeads(m => m.EventID == model.EventID);
+                    var leadExists = allLeads.Where(m => m.UserID != currentUser.ID &&
+                                                         m.User.TransferUserID != currentUser.ID &&
+                                                         m.CompanyID == model.CompanyID &&
+                                                         m.LeadStatusRecord != LeadStatus.Initial &&
+                                                         m.LeadStatusRecord != LeadStatus.Reject &&
+                                                         m.LeadStatusRecord != LeadStatus.Deleted &&
+                                                         !m.CheckNCLExpired(daysExpired));
+                    if (leadExists.Any())
+                    {
+                        TempData["error"] = "Cannot process... This company is existing in NCL";
+                        return RedirectToAction("Index", new { id = model.EventID });
+                    }
+                    var callExists = allLeads.Where(m => ((!string.IsNullOrEmpty(m.WorkEmail) &&
+                                                              m.WorkEmail == model.WorkEmail) ||
+                                                             (!string.IsNullOrEmpty(m.WorkEmail1) &&
+                                                              m.WorkEmail1 == model.WorkEmail1) ||
+                                                             (!string.IsNullOrEmpty(m.PersonalEmail) &&
+                                                              m.PersonalEmail == model.PersonalEmail) ||
+                                                             (!string.IsNullOrEmpty(m.DirectLine) &&
+                                                              m.MobilePhone1 == model.DirectLine) ||
+                                                             (!string.IsNullOrEmpty(m.MobilePhone1) &&
+                                                              m.MobilePhone1 == model.MobilePhone1) ||
+                                                             (!string.IsNullOrEmpty(m.MobilePhone2) &&
+                                                              m.MobilePhone2 == model.MobilePhone2) ||
+                                                             (!string.IsNullOrEmpty(m.MobilePhone3) &&
+                                                              m.MobilePhone3 == model.MobilePhone3)) &&
+                                                         ((m.UserID == currentUser.ID &&
+                                                           m.User.TransferUserID == currentUser.ID) ||
+                                                          (m.LeadStatusRecord != LeadStatus.Initial &&
+                                                           m.LeadStatusRecord != LeadStatus.Reject &&
+                                                           m.LeadStatusRecord != LeadStatus.Deleted &&
+                                                           !m.CheckNCLExpired(daysExpired))));
+                    if (callExists.Any())
+                    {
+                        TempData["error"] = "Client contact exists in called list";
+                        return RedirectToAction("StartCallForm", new { id = model.EventID });
+                    }
 
-                if (model.Create())
-                {
-                    TempData["message"] = "Call successful";
-                    return RedirectToAction("Detail", new { id = model.Lead.ID });
+                    if (model.Create())
+                    {
+                        TempData["message"] = "Call successful";
+                        return RedirectToAction("Detail", new { id = model.Lead.ID });
+                    }
+                    TempData["error"] = "Save failed";
                 }
             }
             if (model.Event == null)
@@ -270,7 +307,6 @@ namespace PQT.Web.Controllers
                 model.Event = _eventService.GetEvent(model.EventID);
             }
             //model.LoadCompanies(model.EventID);
-            TempData["error"] = "Save failed";
             return View(model);
         }
 
@@ -286,6 +322,41 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Call Back Form")]
         public ActionResult CallingForm(CallingModel model)
         {
+
+            if (model.TypeSubmit == "requestnewevent")
+            {
+                var errorMessage = "";
+                if (string.IsNullOrEmpty(model.NewTopics))
+                {
+                    errorMessage = "Please check your inputs";
+                    ModelState.AddModelError("NewTopics", Resource.TheFieldShouldNotBeEmpty);
+                }
+                if (string.IsNullOrEmpty(model.NewLocations))
+                {
+                    errorMessage = "Please check your inputs";
+                    ModelState.AddModelError("NewLocations", Resource.TheFieldShouldNotBeEmpty);
+                }
+
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    if (model.CreateNewEvent())
+                    {
+                        TempData["message"] = "Request successful";
+                        return RedirectToAction("Index", "NewEvent");
+                    }
+                }
+                model.PrepareCalling(model.LeadID);
+                if (model.Event == null)
+                {
+                    model.Event = _eventService.GetEvent(model.EventID);
+                }
+                if (string.IsNullOrEmpty(errorMessage))
+                    TempData["error"] = "Request failed";
+                else
+                    TempData["error"] = errorMessage;
+                return View(model);
+            }
+
             var callExists = _repo.GetAllLeads(m =>
                 m.EventID == model.EventID &&
                 m.ID != model.LeadID &&
@@ -305,6 +376,7 @@ namespace PQT.Web.Controllers
                 TempData["message"] = "Call successful";
                 return RedirectToAction("Detail", new { id = model.LeadID });
             }
+            model.PrepareCalling(model.LeadID);
             if (model.Event == null)
             {
                 model.Event = _eventService.GetEvent(model.EventID);
@@ -528,12 +600,6 @@ namespace PQT.Web.Controllers
                     case "GoodTrainingMonth":
                         leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
                         break;
-                    case "TopicsInterested":
-                        leads = leads.OrderBy(s => s.TopicsInterested).ThenBy(s => s.ID);
-                        break;
-                    case "LocationInterested":
-                        leads = leads.OrderBy(s => s.LocationInterested).ThenBy(s => s.ID);
-                        break;
                     case "StatusDisplay":
                         leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -612,12 +678,6 @@ namespace PQT.Web.Controllers
                     case "GoodTrainingMonth":
                         leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
                         break;
-                    case "TopicsInterested":
-                        leads = leads.OrderByDescending(s => s.TopicsInterested).ThenBy(s => s.ID);
-                        break;
-                    case "LocationInterested":
-                        leads = leads.OrderByDescending(s => s.LocationInterested).ThenBy(s => s.ID);
-                        break;
                     case "StatusDisplay":
                         leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -680,8 +740,6 @@ namespace PQT.Web.Controllers
                     m.EstimatedDelegateNumber,
                     TrainingBudgetPerHead = m.TrainingBudgetPerHead != null ? Convert.ToDecimal(m.TrainingBudgetPerHead).ToString("N2") : "",
                     m.GoodTrainingMonth,
-                    m.TopicsInterested,
-                    m.LocationInterested,
                     m.StatusCode,
                     m.ClassStatus,
                     m.MarkKPI,
@@ -753,7 +811,7 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 leads = _repo.GetAllLeads(m => m.EventID == eventId
-                                               && m.CheckInNCL(daysExpired)&& (
+                                               && m.CheckInNCL(daysExpired) && (
                                                    m.Salesman.Contains(searchValue) ||
                                                    m.StatusUpdateTimeStr.Contains(searchValue) ||
                                                    m.StatusDisplay.Contains(searchValue) ||
@@ -886,7 +944,10 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 leads = _repo.GetAllLeads(m => m.EventID == eventId &&
-                                               m.LeadStatusRecord != LeadStatus.Initial && (
+                                               (m.LeadStatusRecord == LeadStatus.Blocked ||
+                                                m.LeadStatusRecord == LeadStatus.Live ||
+                                                m.LeadStatusRecord == LeadStatus.LOI ||
+                                                m.LeadStatusRecord == LeadStatus.Booked) && (
                                                    m.StatusUpdateTimeStr.Contains(searchValue) ||
                                                    m.StatusDisplay.ToLower().Contains(searchValue) ||
                                                    m.CompanyName.ToLower().Contains(searchValue) ||
@@ -909,14 +970,15 @@ namespace PQT.Web.Controllers
                                                    (m.PersonalEmail != null &&
                                                     m.PersonalEmail.ToLower().Contains(searchValue)) ||
                                                    (m.FirstFollowUpStatusDisplay.ToLower().Contains(searchValue)) ||
-                                                   (m.FinalStatusDisplay.ToLower().Contains(searchValue))) &&
-                                               !m.CheckNCLExpired(daysExpired));
+                                                   (m.FinalStatusDisplay.ToLower().Contains(searchValue))));
             }
             else
             {
                 leads = _repo.GetAllLeads(m =>
-                    m.EventID == eventId && m.LeadStatusRecord != LeadStatus.Initial &&
-                    !m.CheckNCLExpired(daysExpired));
+                    m.EventID == eventId && (m.LeadStatusRecord == LeadStatus.Blocked ||
+                                             m.LeadStatusRecord == LeadStatus.Live ||
+                                             m.LeadStatusRecord == LeadStatus.LOI ||
+                                             m.LeadStatusRecord == LeadStatus.Booked));
             }
             // ReSharper disable once AssignNullToNotNullAttribute
 
@@ -929,73 +991,67 @@ namespace PQT.Web.Controllers
                         leads = leads.OrderBy(s => s.StatusUpdateTime).ThenBy(s => s.StatusCode);
                         break;
                     case "Company":
-                        leads = leads.OrderBy(s => s.Company.CompanyName).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.Company.CompanyName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "Salesman":
-                        leads = leads.OrderBy(s => s.User.DisplayName).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.User.DisplayName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "Country":
-                        leads = leads.OrderBy(s => s.Company.CountryCode).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.Company.CountryCode).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "JobTitle":
-                        leads = leads.OrderBy(s => s.JobTitle).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.JobTitle).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "DirectLine":
-                        leads = leads.OrderBy(s => s.DirectLine).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.DirectLine).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "CallBackDate":
-                        leads = leads.OrderBy(s => s.CallBackDate).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.CallBackDate).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "Salutation":
-                        leads = leads.OrderBy(s => s.Salutation).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.Salutation).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "FirstName":
-                        leads = leads.OrderBy(s => s.FirstName).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.FirstName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "LastName":
-                        leads = leads.OrderBy(s => s.LastName).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.LastName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "MobilePhone1":
-                        leads = leads.OrderBy(s => s.MobilePhone1).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.MobilePhone1).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "MobilePhone2":
-                        leads = leads.OrderBy(s => s.MobilePhone2).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.MobilePhone2).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "MobilePhone3":
-                        leads = leads.OrderBy(s => s.MobilePhone3).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.MobilePhone3).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "WorkEmail":
-                        leads = leads.OrderBy(s => s.WorkEmail).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.WorkEmail).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "PersonalEmail":
-                        leads = leads.OrderBy(s => s.PersonalEmail).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.PersonalEmail).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "EstimatedDelegateNumber":
-                        leads = leads.OrderBy(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.EstimatedDelegateNumber).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "TrainingBudgetPerHead":
-                        leads = leads.OrderBy(s => s.TrainingBudgetPerHead).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.TrainingBudgetPerHead).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "GoodTrainingMonth":
-                        leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
-                        break;
-                    case "TopicsInterested":
-                        leads = leads.OrderBy(s => s.TopicsInterested).ThenBy(s => s.ID);
-                        break;
-                    case "LocationInterested":
-                        leads = leads.OrderBy(s => s.LocationInterested).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "FirstFollowUpStatus":
-                        leads = leads.OrderBy(s => s.FirstFollowUpStatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.FirstFollowUpStatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "FinalStatus":
-                        leads = leads.OrderBy(s => s.FinalStatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.FinalStatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "StatusDisplay":
-                        leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.StatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     default:
-                        leads = leads.OrderBy(s => s.StatusCode).ThenBy(s => s.StatusUpdateTime);
+                        leads = leads.OrderBy(s => s.StatusCode).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                 }
             }
@@ -1004,76 +1060,70 @@ namespace PQT.Web.Controllers
                 switch (sortColumn)
                 {
                     case "CreatedTime":
-                        leads = leads.OrderByDescending(s => s.StatusUpdateTime).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.StatusUpdateTime).ThenBy(s => s.StatusCode);
                         break;
                     case "Company":
-                        leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "Salesman":
-                        leads = leads.OrderByDescending(s => s.User.DisplayName).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.User.DisplayName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "Country":
-                        leads = leads.OrderByDescending(s => s.Company.CountryCode).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.Company.CountryCode).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "JobTitle":
-                        leads = leads.OrderByDescending(s => s.JobTitle).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.JobTitle).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "DirectLine":
-                        leads = leads.OrderByDescending(s => s.DirectLine).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.DirectLine).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "CallBackDate":
-                        leads = leads.OrderByDescending(s => s.CallBackDate).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.CallBackDate).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "Salutation":
-                        leads = leads.OrderByDescending(s => s.Salutation).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.Salutation).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "FirstName":
-                        leads = leads.OrderByDescending(s => s.FirstName).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.FirstName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "LastName":
-                        leads = leads.OrderByDescending(s => s.LastName).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.LastName).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "MobilePhone1":
-                        leads = leads.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.MobilePhone1).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "MobilePhone2":
-                        leads = leads.OrderByDescending(s => s.MobilePhone2).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.MobilePhone2).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "MobilePhone3":
-                        leads = leads.OrderByDescending(s => s.MobilePhone3).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.MobilePhone3).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "WorkEmail":
-                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "PersonalEmail":
-                        leads = leads.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.PersonalEmail).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "EstimatedDelegateNumber":
-                        leads = leads.OrderByDescending(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.EstimatedDelegateNumber).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "TrainingBudgetPerHead":
-                        leads = leads.OrderByDescending(s => s.TrainingBudgetPerHead).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.TrainingBudgetPerHead).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "GoodTrainingMonth":
-                        leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
-                        break;
-                    case "TopicsInterested":
-                        leads = leads.OrderByDescending(s => s.TopicsInterested).ThenBy(s => s.ID);
-                        break;
-                    case "LocationInterested":
-                        leads = leads.OrderByDescending(s => s.LocationInterested).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "FirstFollowUpStatus":
-                        leads = leads.OrderByDescending(s => s.FirstFollowUpStatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.FirstFollowUpStatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "FinalStatus":
-                        leads = leads.OrderByDescending(s => s.FinalStatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.FinalStatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     case "StatusDisplay":
-                        leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.StatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                     default:
-                        leads = leads.OrderByDescending(s => s.StatusCode).ThenBy(s => s.StatusUpdateTime);
+                        leads = leads.OrderByDescending(s => s.StatusCode).ThenByDescending(s => s.StatusUpdateTime);
                         break;
                 }
             }
@@ -1117,12 +1167,11 @@ namespace PQT.Web.Controllers
                     m.EstimatedDelegateNumber,
                     TrainingBudgetPerHead = m.TrainingBudgetPerHead != null ? Convert.ToDecimal(m.TrainingBudgetPerHead).ToString("N2") : "",
                     m.GoodTrainingMonth,
-                    m.TopicsInterested,
-                    m.LocationInterested,
                     m.StatusCode,
                     m.ClassStatus,
                     FirstFollowUpStatus = m.FirstFollowUpStatusDisplay,
                     FinalStatus = m.FinalStatusDisplay,
+                    NCLExpired = m.CheckNCLExpired(daysExpired),
                     actionBlock = m.LeadStatusRecord == LeadStatus.Blocked ? "Unblock" : "Block"
                 })
             };
@@ -1432,9 +1481,9 @@ namespace PQT.Web.Controllers
         [AjaxOnly]
         public ActionResult AjaxGetTotalCallSummary(int eventId)
         {
-            var saleId = PermissionHelper.SalesmanId();
-            var leads = _repo.GetAllLeads(m => m.EventID == eventId && (saleId == 0 || m.UserID == saleId ||
-                                                                    (m.User != null && m.User.TransferUserID == saleId)));
+            //var saleId = PermissionHelper.SalesmanId();
+            var leads = _repo.GetAllLeads(m => m.EventID == eventId);// && (saleId == 0 || m.UserID == saleId ||
+                                                                     //(m.User != null && m.User.TransferUserID == saleId)));
             var eventData = _eventService.GetEvent(eventId);
             return Json(new
             {
@@ -1446,6 +1495,35 @@ namespace PQT.Web.Controllers
                 TotalTier2 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier2),
                 TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked),
             }, JsonRequestBehavior.AllowGet);
+        }
+        [AjaxOnly]
+        public ActionResult AjaxGetTotalCallSummaries(string eventIds)
+        {
+            if (string.IsNullOrEmpty(eventIds))
+            {
+                return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+            }
+            //var saleId = PermissionHelper.SalesmanId();
+            var ids = eventIds.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => Convert.ToInt32(m));
+            var leads = _repo.GetAllLeads(m => ids.Contains(m.EventID));// && (saleId == 0 || m.UserID == saleId ||
+            //(m.User != null && m.User.TransferUserID == saleId)));
+            var listObj = new List<object>();
+            foreach (var id in ids)
+            {
+                var eventData = _eventService.GetEvent(id);
+                listObj.Add(new
+                {
+                    Tier3 = leads.Where(m => m.EventID == id).DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier3),
+                    Tier1 = leads.Where(m => m.EventID == id).DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier1),
+                    Tier2 = leads.Where(m => m.EventID == id).DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier2),
+                    TotalTier3 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier3),
+                    TotalTier1 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier1),
+                    TotalTier2 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier2),
+                    TotalBooked = leads.Where(m => m.EventID == id).Count(m => m.LeadStatusRecord == LeadStatus.Booked),
+                    EventId = id
+                });
+            }
+            return Json(listObj, JsonRequestBehavior.AllowGet);
         }
     }
 }

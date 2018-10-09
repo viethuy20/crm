@@ -194,6 +194,94 @@ namespace PQT.Web.Controllers
                         (m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
                          m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
                          m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value)).OrderByDescending(m => m.CreatedTime).AsEnumerable();
+                    if (!string.IsNullOrEmpty(searchValue))
+                    {
+                        leads = leads.Where(m =>
+                                m.CompanyName.ToLower().Contains(searchValue) ||
+                                m.DirectLine.ToLower().Contains(searchValue) ||
+                                m.JobTitle.ToLower().Contains(searchValue) ||
+                                m.FirstName.ToLower().Contains(searchValue) ||
+                                m.LastName.ToLower().Contains(searchValue) ||
+                                (m.MobilePhone1 != null && m.MobilePhone1.ToLower().Contains(searchValue)) ||
+                                (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue)) ||
+                                (m.WorkEmail != null && m.WorkEmail.ToLower().Contains(searchValue)) ||
+                                (m.KPIRemarks != null && m.KPIRemarks.ToLower().Contains(searchValue))
+                            );
+                    }
+                    leads = model.MarkKPI(leads);
+                    if (sortColumnDir == "asc")
+                    {
+                        switch (sortColumn)
+                        {
+                            case "CompanyName":
+                                leads = leads.OrderBy(s => s.CompanyName).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "DirectLine":
+                                leads = leads.OrderBy(s => s.DirectLine).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "JobTitle":
+                                leads = leads.OrderBy(s => s.JobTitle).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "FirstName":
+                                leads = leads.OrderBy(s => s.FirstName).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "LastName":
+                                leads = leads.OrderBy(s => s.LastName).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "MobilePhone1":
+                                leads = leads.OrderBy(s => s.MobilePhone1).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "PersonalEmail":
+                                leads = leads.OrderBy(s => s.PersonalEmail).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "WorkEmail":
+                                leads = leads.OrderBy(s => s.WorkEmail).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "KPIRemarks":
+                                leads = leads.OrderBy(s => s.KPIRemarks).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            default:
+                                leads = leads.OrderBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (sortColumn)
+                        {
+                            case "CompanyName":
+                                leads = leads.OrderByDescending(s => s.CompanyName).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "DirectLine":
+                                leads = leads.OrderByDescending(s => s.DirectLine).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "JobTitle":
+                                leads = leads.OrderByDescending(s => s.JobTitle).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "FirstName":
+                                leads = leads.OrderByDescending(s => s.FirstName).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "LastName":
+                                leads = leads.OrderByDescending(s => s.LastName).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "MobilePhone1":
+                                leads = leads.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "PersonalEmail":
+                                leads = leads.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "WorkEmail":
+                                leads = leads.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            case "KPIRemarks":
+                                leads = leads.OrderByDescending(s => s.KPIRemarks).ThenBy(s => s.CreatedTime).AsEnumerable();
+                                break;
+                            default:
+                                leads = leads.OrderByDescending(s => s.CreatedTime).AsEnumerable();
+                                break;
+                        }
+                    }
+
                     recordsTotal = leads.Count();
                     if (pageSize > recordsTotal)
                     {
@@ -201,7 +289,6 @@ namespace PQT.Web.Controllers
                     }
 
                     leads = leads.Skip(skip).Take(pageSize).ToList();
-                    leads = model.MarkKPI(leads);
                     var json = new
                     {
                         draw = draw,
@@ -211,9 +298,9 @@ namespace PQT.Web.Controllers
                         {
                             m.ID,
                             CreatedTime = m.CreatedTime.ToString("dd/MM/yyyy HH:mm"),
-                            UserName = m.User.DisplayName,
+                            UserName = m.User != null ? m.User.DisplayName : "",
                             m.CompanyName,
-                            m.DirectLine,
+                            DirectLine = "(" + m.DialingCode + ")" + m.DirectLine,
                             m.JobTitle,
                             m.Salutation,
                             m.FirstName,
@@ -226,8 +313,6 @@ namespace PQT.Web.Controllers
                             m.EstimatedDelegateNumber,
                             m.TrainingBudgetPerHead,
                             m.GoodTrainingMonth,
-                            m.TopicsInterested,
-                            m.LocationInterested,
                             m.MarkKPI,
                             m.KPIRemarks,
                         })
@@ -245,7 +330,7 @@ namespace PQT.Web.Controllers
                 {
                     m.ID,
                     CreatedTime = m.CreatedTime.ToString("dd/MM/yyyy HH:mm"),
-                    UserName = m.User.DisplayName,
+                    UserName = m.User != null ? m.User.DisplayName : "",
                     m.CompanyName,
                     m.DirectLine,
                     m.JobTitle,
@@ -260,8 +345,6 @@ namespace PQT.Web.Controllers
                     m.EstimatedDelegateNumber,
                     m.TrainingBudgetPerHead,
                     m.GoodTrainingMonth,
-                    m.TopicsInterested,
-                    m.LocationInterested,
                     m.MarkKPI,
                     m.KPIRemarks,
                 })
@@ -460,12 +543,6 @@ namespace PQT.Web.Controllers
                     case "GoodTrainingMonth":
                         leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
                         break;
-                    case "TopicsInterested":
-                        leads = leads.OrderBy(s => s.TopicsInterested).ThenBy(s => s.ID);
-                        break;
-                    case "LocationInterested":
-                        leads = leads.OrderBy(s => s.LocationInterested).ThenBy(s => s.ID);
-                        break;
                     case "UserName":
                         leads = leads.OrderBy(s => s.User.DisplayName).ThenBy(s => s.ID);
                         break;
@@ -529,12 +606,6 @@ namespace PQT.Web.Controllers
                     case "GoodTrainingMonth":
                         leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
                         break;
-                    case "TopicsInterested":
-                        leads = leads.OrderByDescending(s => s.TopicsInterested).ThenBy(s => s.ID);
-                        break;
-                    case "LocationInterested":
-                        leads = leads.OrderByDescending(s => s.LocationInterested).ThenBy(s => s.ID);
-                        break;
                     case "UserName":
                         leads = leads.OrderByDescending(s => s.User.DisplayName).ThenBy(s => s.ID);
                         break;
@@ -579,8 +650,6 @@ namespace PQT.Web.Controllers
                     m.EstimatedDelegateNumber,
                     m.TrainingBudgetPerHead,
                     m.GoodTrainingMonth,
-                    m.TopicsInterested,
-                    m.LocationInterested,
                     m.MarkKPI,
                     m.KPIRemarks,
                     m.ClassKPIStatus,
@@ -756,5 +825,11 @@ namespace PQT.Web.Controllers
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
+
+        [HttpPost]
+        public ActionResult Delete(LeadModel model)
+        {
+            return Json(model.DeleteLead());
+        }
     }
 }

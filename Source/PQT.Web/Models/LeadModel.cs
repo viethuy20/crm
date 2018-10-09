@@ -25,6 +25,7 @@ namespace PQT.Web.Models
         public HttpPostedFileBase AttachmentFile { get; set; }
         public string Reason { get; set; }
         public Lead Lead { get; set; }
+        public LeadNew LeadNew { get; set; }
 
         public LeadModel()
         {
@@ -230,7 +231,7 @@ namespace PQT.Web.Models
                     IsSuccess = false
                 };
             var membershipService = DependencyHelper.GetService<IMembershipService>();
-            LeadNotificator.NotifyUser(currentUserId, new List<User> { lead.User.TransferUserID > 0 ? membershipService.GetUser((int)lead.User.TransferUserID) : lead.User }, lead.ID, titleNotify); // notify for manager
+            LeadNotificator.NotifyUser(NotifyAction.Approved, new List<User> { lead.User.TransferUserID > 0 ? membershipService.GetUser((int)lead.User.TransferUserID) : lead.User }, lead.ID, titleNotify); // notify for manager
             LeadNotificator.NotifyUpdateNCL(lead.ID, hubConnectionId);
             return new
             {
@@ -274,7 +275,7 @@ namespace PQT.Web.Models
                     IsSuccess = false
                 };
             var membershipService = DependencyHelper.GetService<IMembershipService>();
-            LeadNotificator.NotifyUser(currentUserId,new List <User> { lead.User.TransferUserID > 0 ? membershipService.GetUser((int)lead.User.TransferUserID) : lead.User }, lead.ID, titleNotify); // notify for manager
+            LeadNotificator.NotifyUser(NotifyAction.Rejected, new List<User> { lead.User.TransferUserID > 0 ? membershipService.GetUser((int)lead.User.TransferUserID) : lead.User }, lead.ID, titleNotify); // notify for manager
             LeadNotificator.NotifyUpdateNCL(lead.ID, hubConnectionId);
 
             var daysExpired = Settings.Lead.NumberDaysExpired();
@@ -285,60 +286,34 @@ namespace PQT.Web.Models
                 IsSuccess = true
             };
         }
-    }
-    public class CallSheetModel
-    {
-        public Lead Lead { get; set; }
-        public string TypeSubmit { get; set; }
-        public IEnumerable<Company> Companies { get; set; }
-        public CallSheetModel()
+
+
+        public string RequestBrochure()
         {
+            var leadRepo = DependencyHelper.GetService<ILeadNewService>();
+            var lead = leadRepo.GetLeadNew(id);
+            if (lead == null) return "Submit failed";
 
+            if (AttachmentFile == null) return "Please attach proof of Topic Probing Questions";
+            string uploadPicture = FileUpload.Upload(FileUploadType.LeadNew, AttachmentFile);
+            if (string.IsNullOrEmpty(uploadPicture)) return "Please attach proof of Topic Probing Questions";
+            lead.RequestBrochure = uploadPicture;
+            if (!leadRepo.UpdateLeadNew(lead))
+                return "Update failed";
+
+            NewEventNotificator.NotifyUser(NotifyAction.Request, lead.ID, "Request Brochure"); // notify for manager
+            return "";
         }
-        //public CallSheetModel(int eventId)
-        //{
-        //    Lead = new Lead { EventID = eventId, UserID = CurrentUser.Identity.ID };
-        //    var eventRepo = DependencyHelper.GetService<IEventService>();
-        //    var eventLead = eventRepo.GetEvent(eventId);
-        //    if (eventLead != null)
-        //    {
-        //        var daysExpired = Settings.Lead.NumberDaysExpired();
-        //        var leadRepo = DependencyHelper.GetService<ILeadService>();
-        //        var companyIds = leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
-        //            m.UserID != CurrentUser.Identity.ID &&
-        //            m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
-        //            && !m.CheckNCLExpired(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
-        //        Companies = eventLead.EventCompanies.Where(m => !companyIds.Contains(m.CompanyID)).Select(m => m.Company);
-        //    }
-        //    else
-        //    {
-        //        Companies = new List<Company>();
-        //    }
-        //}
 
-        public bool Save()
+        public string DeleteLeadNew()
         {
-            return TransactionWrapper.Do(() =>
-            {
-                var leadRepo = DependencyHelper.GetService<ILeadService>();
-                var eventRepo = DependencyHelper.GetService<IEventService>();
-                var comRepo = DependencyHelper.GetService<ICompanyRepository>();
-
-                var result = leadRepo.CreateLead(Lead);
-                if (result != null)
-                {
-                    result.LeadStatusRecord = new LeadStatusRecord(result.ID, LeadStatus.Initial, CurrentUser.Identity.ID);
-                    leadRepo.UpdateLead(result);
-                    result.Company = comRepo.GetCompany(result.CompanyID);
-                    result.Event = eventRepo.GetEvent(result.EventID);
-                    Lead = result;
-                    //LeadNotificator.NotifyUser(result.Event.Users, result);
-                    //LeadNotificator.NotifyUser(result.Event.SalesGroups.SelectMany(m => m.Users), result);
-                    return true;
-                }
-                return false;
-            });
+            var leadRepo = DependencyHelper.GetService<ILeadNewService>();
+            var lead = leadRepo.GetLeadNew(id);
+            if (lead.AssignUserID > 0)
+                return "Cannot process ... Event has been assigned to sales";
+            return leadRepo.DeleteLeadNew(id) ? "" : "Delete failed";
         }
+
     }
     public class CallingModel
     {
@@ -381,9 +356,12 @@ namespace PQT.Web.Models
         public int GoodTrainingMonth { get; set; }
         public FollowUpStatus FirstFollowUpStatus { get; set; }
         public FinalStatus FinalStatus { get; set; }
-        public string TopicsInterested { get; set; }
-        public string LocationInterested { get; set; }
-
+        public string NewTopics { get; set; }
+        public string NewLocations { get; set; }
+        public DateTime? NewDateFrom { get; set; }
+        public DateTime? NewDateTo { get; set; }
+        public string NewTrainingType { get; set; }
+        public string Remark { get; set; }//for new event
         public string GoodTrainingMonthStr
         {
             get
@@ -396,19 +374,24 @@ namespace PQT.Web.Models
         public string TypeSubmit { get; set; }
         public PhoneCall PhoneCall { get; set; }
         public Lead Lead { get; set; }
+        public LeadNew LeadNew { get; set; }
         public EventCompany EventCompany { get; set; }
+
+
+        public int AssignSales { get; set; }
+        public IEnumerable<User> Sales { get; set; }
         public CallingModel()
         {
             PhoneCall = new PhoneCall();
             EventCompany = new EventCompany();
-            FirstFollowUpStatus = FollowUpStatus.Pending;
-            FinalStatus = FinalStatus.Pending;
+            FirstFollowUpStatus = FollowUpStatus.Neutral;
+            FinalStatus = FinalStatus.Neutral;
         }
         public void PrepareCall(int eventId, int resourceId)
         {
             EventID = eventId;
-            FirstFollowUpStatus = FollowUpStatus.Pending;
-            FinalStatus = FinalStatus.Pending;
+            FirstFollowUpStatus = FollowUpStatus.Neutral;
+            FinalStatus = FinalStatus.Neutral;
             PhoneCall = new PhoneCall();
             var evetnRepo = DependencyHelper.GetService<IEventService>();
             Event = evetnRepo.GetEvent(eventId);
@@ -462,13 +445,12 @@ namespace PQT.Web.Models
         public void PrepareCalling(int leadId)
         {
 
-            FirstFollowUpStatus = FollowUpStatus.Pending;
-            FinalStatus = FinalStatus.Pending;
+            FirstFollowUpStatus = FollowUpStatus.Neutral;
+            FinalStatus = FinalStatus.Neutral;
             LeadID = leadId;
             if (leadId > 0)
             {
                 var leadRepo = DependencyHelper.GetService<ILeadService>();
-                var eventRepo = DependencyHelper.GetService<IEventService>();
                 var lead = leadRepo.GetLead(leadId);
                 PhoneCall = new PhoneCall { LeadID = leadId };
                 if (lead != null)
@@ -492,11 +474,15 @@ namespace PQT.Web.Models
                     EstimatedDelegateNumber = lead.EstimatedDelegateNumber;
                     TrainingBudgetPerHead = lead.TrainingBudgetPerHead;
                     GoodTrainingMonth = lead.GoodTrainingMonth;
-                    TopicsInterested = lead.TopicsInterested;
-                    LocationInterested = lead.LocationInterested;
+                    //NewTopics = lead.NewTopics;
+                    //NewLocations = lead.NewLocations;
+                    //NewDateFrom = lead.NewDateFrom;
+                    //NewDateTo = lead.NewDateTo;
+                    //NewTrainingType = lead.NewTrainingType;
                     FinalStatus = lead.FinalStatus;
                     FirstFollowUpStatus = lead.FirstFollowUpStatus;
                     CompanyName = lead.CompanyName;
+                    CompanyID = lead.CompanyID;
                     DialingCode = lead.Company.DialingCode;
                     BusinessUnit = lead.Company.BusinessUnit;
                     Lead = lead;
@@ -550,8 +536,11 @@ namespace PQT.Web.Models
                     Lead.EstimatedDelegateNumber = EstimatedDelegateNumber;
                     Lead.TrainingBudgetPerHead = TrainingBudgetPerHead;
                     Lead.GoodTrainingMonth = GoodTrainingMonth;
-                    Lead.TopicsInterested = TopicsInterested;
-                    Lead.LocationInterested = LocationInterested;
+                    //Lead.NewLocations = NewLocations;
+                    //Lead.NewTopics = NewTopics;
+                    //Lead.NewDateFrom = NewDateFrom;
+                    //Lead.NewDateTo = NewDateTo;
+                    //Lead.NewTrainingType = NewTrainingType;
                     Lead.FinalStatus = FinalStatus;
                     Lead.FirstFollowUpStatus = FirstFollowUpStatus;
                     leadRepo.UpdateLead(Lead);
@@ -587,8 +576,11 @@ namespace PQT.Web.Models
                     EstimatedDelegateNumber = EstimatedDelegateNumber,
                     TrainingBudgetPerHead = TrainingBudgetPerHead,
                     GoodTrainingMonth = GoodTrainingMonth,
-                    TopicsInterested = TopicsInterested,
-                    LocationInterested = LocationInterested,
+                    //NewLocations = NewLocations,
+                    //NewTopics = NewTopics,
+                    //NewDateFrom = NewDateFrom,
+                    //NewDateTo = NewDateTo,
+                    //NewTrainingType = NewTrainingType,
                     FinalStatus = FinalStatus,
                     FirstFollowUpStatus = FirstFollowUpStatus,
                     UserID = CurrentUser.Identity.ID
@@ -623,12 +615,12 @@ namespace PQT.Web.Models
                 return false;
             });
         }
+
         public bool Save()
         {
             return TransactionWrapper.Do(() =>
             {
                 var leadRepo = DependencyHelper.GetService<ILeadService>();
-                var eventRepo = DependencyHelper.GetService<IEventService>();
                 var comRepo = DependencyHelper.GetService<ICompanyRepository>();
                 PhoneCall.EndTime = DateTime.Now;
                 var result = leadRepo.CreatePhoneCall(PhoneCall);
@@ -651,8 +643,11 @@ namespace PQT.Web.Models
                     Lead.EstimatedDelegateNumber = EstimatedDelegateNumber;
                     Lead.TrainingBudgetPerHead = TrainingBudgetPerHead;
                     Lead.GoodTrainingMonth = GoodTrainingMonth;
-                    Lead.TopicsInterested = TopicsInterested;
-                    Lead.LocationInterested = LocationInterested;
+                    //Lead.NewTopics = NewTopics;
+                    //Lead.NewLocations = NewLocations;
+                    //Lead.NewDateFrom = NewDateFrom;
+                    //Lead.NewDateTo = NewDateTo;
+                    //Lead.NewTrainingType = NewTrainingType;
                     Lead.FirstFollowUpStatus = FirstFollowUpStatus;
                     Lead.FinalStatus = FinalStatus;
                     leadRepo.UpdateLead(Lead);
@@ -664,6 +659,151 @@ namespace PQT.Web.Models
                         comRepo.UpdateCompany(Lead.Company);
                     }
                     return true;
+                }
+                return false;
+            });
+        }
+
+        public void PrepareNewEvent(int leadId)
+        {
+            LeadID = leadId;
+            if (leadId > 0)
+            {
+                var leadRepo = DependencyHelper.GetService<ILeadNewService>();
+                var lead = leadRepo.GetLeadNew(leadId);
+                if (lead != null)
+                {
+                    LeadID = leadId;
+                    EventID = lead.EventID;
+                    Event = lead.Event;
+                    JobTitle = lead.JobTitle;
+                    LineExtension = lead.LineExtension;
+                    DirectLine = lead.DirectLine;
+                    Salutation = lead.Salutation;
+                    FirstName = lead.FirstName;
+                    LastName = lead.LastName;
+                    MobilePhone1 = lead.MobilePhone1;
+                    MobilePhone2 = lead.MobilePhone2;
+                    MobilePhone3 = lead.MobilePhone3;
+                    WorkEmail = lead.WorkEmail;
+                    WorkEmail1 = lead.WorkEmail1;
+                    PersonalEmail = lead.PersonalEmail;
+                    EstimatedDelegateNumber = lead.EstimatedDelegateNumber;
+                    TrainingBudgetPerHead = lead.TrainingBudgetPerHead;
+                    GoodTrainingMonth = lead.GoodTrainingMonth;
+                    NewTopics = lead.NewTopics;
+                    NewLocations = lead.NewLocations;
+                    NewDateFrom = lead.NewDateFrom;
+                    NewDateTo = lead.NewDateTo;
+                    NewTrainingType = lead.NewTrainingType;
+                    Remark = lead.Remark;
+                    FinalStatus = lead.FinalStatus;
+                    FirstFollowUpStatus = lead.FirstFollowUpStatus;
+                    CompanyName = lead.CompanyName;
+                    DialingCode = lead.Company.DialingCode;
+                    BusinessUnit = lead.Company.BusinessUnit;
+                    LeadNew = lead;
+                }
+            }
+        }
+
+        public bool CreateNewEvent()
+        {
+            return TransactionWrapper.Do(() =>
+            {
+                var leadRepo = DependencyHelper.GetService<ILeadNewService>();
+                var leadNew = new LeadNew
+                {
+                    EventID = EventID,
+                    CompanyID = (int)CompanyID,
+                    JobTitle = JobTitle,
+                    LineExtension = LineExtension,
+                    DirectLine = DirectLine,
+                    Salutation = Salutation,
+                    FirstName = FirstName,
+                    LastName = LastName,
+                    MobilePhone1 = MobilePhone1,
+                    MobilePhone2 = MobilePhone2,
+                    MobilePhone3 = MobilePhone3,
+                    WorkEmail = WorkEmail,
+                    WorkEmail1 = WorkEmail1,
+                    PersonalEmail = PersonalEmail,
+                    EstimatedDelegateNumber = EstimatedDelegateNumber,
+                    TrainingBudgetPerHead = TrainingBudgetPerHead,
+                    GoodTrainingMonth = GoodTrainingMonth,
+                    NewLocations = NewLocations,
+                    NewTopics = NewTopics,
+                    NewDateFrom = NewDateFrom,
+                    NewDateTo = NewDateTo,
+                    NewTrainingType = NewTrainingType,
+                    FinalStatus = FinalStatus,
+                    FirstFollowUpStatus = FirstFollowUpStatus,
+                    Remark = Remark,
+                    UserID = CurrentUser.Identity.ID
+                };
+                leadNew = leadRepo.CreateLeadNew(leadNew);
+                if (leadNew != null)
+                {
+                    NewEventNotificator.NotifyUser(NotifyAction.Request, leadNew.ID, "Request New Event"); // notify for manager
+                    return true;
+                }
+                return false;
+            });
+        }
+        public bool SaveEditNewEvent()
+        {
+            return TransactionWrapper.Do(() =>
+            {
+                var leadRepo = DependencyHelper.GetService<ILeadNewService>();
+                LeadNew = leadRepo.GetLeadNew(LeadID);
+                if (LeadNew != null)
+                {
+                    LeadNew.JobTitle = JobTitle;
+                    LeadNew.LineExtension = LineExtension;
+                    LeadNew.DirectLine = DirectLine;
+                    LeadNew.Salutation = Salutation;
+                    LeadNew.FirstName = FirstName;
+                    LeadNew.LastName = LastName;
+                    LeadNew.MobilePhone1 = MobilePhone1;
+                    LeadNew.MobilePhone2 = MobilePhone2;
+                    LeadNew.MobilePhone3 = MobilePhone3;
+                    LeadNew.WorkEmail = WorkEmail;
+                    LeadNew.WorkEmail1 = WorkEmail1;
+                    LeadNew.PersonalEmail = PersonalEmail;
+                    LeadNew.EstimatedDelegateNumber = EstimatedDelegateNumber;
+                    LeadNew.TrainingBudgetPerHead = TrainingBudgetPerHead;
+                    LeadNew.GoodTrainingMonth = GoodTrainingMonth;
+                    LeadNew.NewLocations = NewLocations;
+                    LeadNew.NewTopics = NewTopics;
+                    LeadNew.NewDateFrom = NewDateFrom;
+                    LeadNew.NewDateTo = NewDateTo;
+                    LeadNew.NewTrainingType = NewTrainingType;
+                    LeadNew.FinalStatus = FinalStatus;
+                    LeadNew.FirstFollowUpStatus = FirstFollowUpStatus;
+                    LeadNew.Remark = Remark;
+                    leadRepo.UpdateLeadNew(LeadNew);
+                    return true;
+                }
+                return false;
+            });
+        }
+
+        public bool AssignSalesNewEvent()
+        {
+            return TransactionWrapper.Do(() =>
+            {
+                var leadRepo = DependencyHelper.GetService<ILeadNewService>();
+                LeadNew = leadRepo.GetLeadNew(LeadID);
+                if (LeadNew != null)
+                {
+                    LeadNew.AssignUserID = AssignSales;
+                    if (leadRepo.UpdateLeadNew(LeadNew))
+                    {
+                        var membershipService = DependencyHelper.GetService<IMembershipService>();
+                        var notiUser = membershipService.GetUser(AssignSales);
+                        NewEventNotificator.NotifyUser(NotifyAction.Assign, new List<User> { notiUser }, LeadID, "Assign New Event"); // notify for manager
+                        return true;
+                    }
                 }
                 return false;
             });

@@ -102,7 +102,16 @@ namespace PQT.Web.Infrastructure
                     exist.EventCompanies.Remove(eventCompany);
                 }
             }
-            _events.Add(new Event(exist));
+            try
+            {
+                exist.EventCompanies = exist.EventCompanies.Where(m => m.Company != null).ToList();
+                var newCache = new Event(exist);
+                _events.Add(newCache);
+            }
+            catch (Exception e)
+            {
+                RetrieveCacheEvents();
+            }
             return true;
         }
         public override Event UpdateEventOperation(int id, VenueInfo venueInfo, AccomodationInfo accomodationInfo, DriverInfo driverInfo, PhotographerInfo photographerInfo, LocalVisaAgentInfo localVisaAgentInfo, PostEventInfo postEventInfo)
@@ -156,7 +165,16 @@ namespace PQT.Web.Infrastructure
                     exist.EventCompanies.Remove(eventCompany);
                 }
             }
-            _events.Add(new Event(exist));
+            try
+            {
+                exist.EventCompanies = exist.EventCompanies.Where(m => m.Company != null).ToList();
+                var newCache = new Event(exist);
+                _events.Add(newCache);
+            }
+            catch (Exception e)
+            {
+                RetrieveCacheEvents();
+            }
             return exist;
         }
         public override bool AssignCompany(int id, IEnumerable<int> companyIds)
@@ -184,6 +202,7 @@ namespace PQT.Web.Infrastructure
                 }
                 try
                 {
+                    eventExist.EventCompanies = eventExist.EventCompanies.Where(m => m.Company != null).ToList();
                     var newCache = new Event(eventExist);
                     _events.Add(newCache);
                 }

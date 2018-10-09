@@ -760,6 +760,13 @@ namespace PQT.Web.Controllers
             // ReSharper disable once AssignNullToNotNullAttribute
             var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
 
+            var companyId = 0;
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("CompanyId") != null && !string.IsNullOrEmpty(Request.Form.GetValues("CompanyId").FirstOrDefault()))
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                companyId = Convert.ToInt32(Request.Form.GetValues("CompanyId").FirstOrDefault().Trim().ToLower());
+            }
             var name = "";
             // ReSharper disable once AssignNullToNotNullAttribute
             if (Request.Form.GetValues("Name") != null && !string.IsNullOrEmpty(Request.Form.GetValues("Name").FirstOrDefault()))
@@ -797,7 +804,7 @@ namespace PQT.Web.Controllers
             IEnumerable<Lead> leads = new HashSet<Lead>();
 
             Func<Lead, bool> predicate = m =>
-            m.UserID == currentUser.ID &&
+            m.UserID == currentUser.ID && m.CompanyID == companyId &&
                 (string.IsNullOrEmpty(name) ||
                  (!string.IsNullOrEmpty(m.Name) && m.Name.ToLower().Contains(name))) &&
                 (string.IsNullOrEmpty(designation) ||

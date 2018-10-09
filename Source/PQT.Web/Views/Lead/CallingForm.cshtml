@@ -17,17 +17,19 @@
         </div>
     </div>
     <div>
-        @using (Html.BeginForm("CallingForm", "Lead", FormMethod.Post, new { @class = "form", enctype = "multipart/form-data" }))
-            {
+        @using (Html.BeginForm("CallingForm", "Lead", FormMethod.Post, new {@class = "form", enctype = "multipart/form-data"}))
+        {
+            @Html.HiddenFor(m => m.TypeSubmit, new {@class = "typeSubmit"})
             <div class="row">
                 @Html.Partial("_CallingInfo", Model)
             </div>
-                <div class="row">
-                    <div class="col-lg-offset-4">
-                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").RouteValues(new { id = Model.EventID }).PrependIcon("md md-arrow-back")
-                        @Html.Bootstrap().SubmitButton().Text("Finish").Class("createbookingbtn").PrependIcon("md md-call-end").Style(ButtonStyle.Success)
-                    </div>
+            <div class="row">
+                <div class="col-lg-offset-4">
+                    @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index", "Lead").RouteValues(new {id = Model.EventID}).PrependIcon("md md-arrow-back")
+                    @Html.Bootstrap().Button().Text("Request New Event").Id("requestnewevent").PrependIcon("md md-phone-forwarded").Style(ButtonStyle.Primary)
+                    @Html.Bootstrap().Button().Text("Finish Call").Id("finishcallbtn").PrependIcon("md md-call-end").Style(ButtonStyle.Success)
                 </div>
+            </div>
         }
     </div>
 </section>
@@ -35,6 +37,25 @@
 <div id="dvLoading1"></div>
 @Html.Script(
     @<script>
+        $(document).on('click', '#finishcallbtn', function (e) {
+             e.preventDefault();
+             bootbox.confirm("Do you want to finish this call?", function (isOK) {
+                 if (isOK) {
+                     $(".typeSubmit").val("finishcall");
+                     $('#finishcallbtn').parents("form").submit();
+                 }
+             });
+         });
+         $(document).on('click', '#requestnewevent', function (e) {
+             e.preventDefault();
+             bootbox.confirm("Do you want to request new event this data?", function (isOK) {
+                 if (isOK) {
+                     $(".typeSubmit").val("requestnewevent");
+                     $('#requestnewevent').parents("form").submit();
+                 }
+             });
+        });
+
          function LoadEventCompanyInfo() {
                  $.ajax({
                      url: '@Url.Action("EventCompanyInfo")?eventId=@Model.EventID&companyID=@Model.Lead.CompanyID',
@@ -55,15 +76,6 @@
         function SetEventCompanyInfo(data) {
             if (data) {
                 $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(data.ID);
-                @*$("@Html.JquerySelectorFor(m => m.EventCompany.EstimatedDelegateNumber)").val(data.EstimatedDelegateNumber);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val(data.FirstFollowUpStatus);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.FinalStatus)").val(data.FinalStatus);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val(data.DateNextFollowUp);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
-                $("@Html.JquerySelectorFor(m => m.EventCompany.GoodTrainingMonth)").val(data.GoodTrainingMonth).trigger("change");
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TopicsInterested)").val(data.TopicsInterested);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val(data.LocationInterested);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val(data.TrainingBudget);*@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
                 $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val(data.Remarks);
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
@@ -77,15 +89,6 @@
 
             } else {
                 $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(0);
-                @*$("@Html.JquerySelectorFor(m => m.EventCompany.EstimatedDelegateNumber)").val(0);
-                $("@Html.JquerySelectorFor(m => m.EventCompany.FirstFollowUpStatus)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.FinalStatus)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.DateNextFollowUp)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val('').trigger("change");
-                $("@Html.JquerySelectorFor(m => m.EventCompany.GoodTrainingMonth)").val('').trigger("change");
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TopicsInterested)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.LocationInterested)").val('');
-                $("@Html.JquerySelectorFor(m => m.EventCompany.TrainingBudget)").val('');*@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val('').trigger("change");
                 $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val('');
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").removeAttr("readonly");

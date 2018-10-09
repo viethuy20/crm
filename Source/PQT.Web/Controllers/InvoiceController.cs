@@ -94,7 +94,7 @@ namespace PQT.Web.Controllers
                     }
                 }
             }
-            model.Booking = _bookingService.GetBooking(model.Invoice.BookingID);
+            model.Prepare(model.Invoice.BookingID);
             return View(model);
         }
 

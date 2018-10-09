@@ -55,9 +55,13 @@ namespace PQT.Domain.Entities
 
         public int? EstimatedDelegateNumber { get; set; }
         public int GoodTrainingMonth { get; set; }
-        public string TopicsInterested { get; set; }
-        public string LocationInterested { get; set; }
+        
+        //public string NewTopics { get; set; }
+        //public string NewLocations { get; set; }
 
+        //public DateTime? NewDateFrom { get; set; }
+        //public DateTime? NewDateTo { get; set; }
+        //public string NewTrainingType { get; set; }
         public decimal? TrainingBudgetPerHead { get; set; }//USD
 
         public string FullName
@@ -244,6 +248,17 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
+        public string DialingCode
+        {
+            get
+            {
+                if (Company != null)
+                {
+                    return Company.DialingCode;
+                }
+                return "";
+            }
+        }
         public string Salesman
         {
             get
@@ -313,7 +328,7 @@ namespace PQT.Domain.Entities
         public bool CheckNCLExpired(int daysExpired)
         {
             return LeadStatusRecord != null && (LeadStatusRecord == LeadStatus.Live || LeadStatusRecord == LeadStatus.LOI) &&
-                    LeadStatusRecord.UpdatedTime.Date < DateTime.Today.AddDays(-daysExpired);
+                    LeadStatusRecord.UpdatedTime.Date <= DateTime.Today.AddDays(-daysExpired);
         }
 
         public bool CheckInNCL(int daysExpired)
@@ -371,8 +386,6 @@ namespace PQT.Domain.Entities
                 EstimatedDelegateNumber,
                 TrainingBudgetPerHead = TrainingBudgetPerHead != null ? Convert.ToDecimal(TrainingBudgetPerHead).ToString("N2") : "",
                 GoodTrainingMonth,
-                TopicsInterested,
-                LocationInterested,
                 StatusCode,
                 ClassStatus,
                 MarkKPI,

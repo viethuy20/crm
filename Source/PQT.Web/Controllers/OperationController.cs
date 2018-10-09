@@ -17,11 +17,13 @@ namespace PQT.Web.Controllers
     {
         private readonly IEventService _repo;
         private readonly IUnitRepository _unitRepository;
+        private readonly IBookingService _bookingService;
 
-        public OperationController(IEventService repo, IUnitRepository unitRepository)
+        public OperationController(IEventService repo, IUnitRepository unitRepository, IBookingService bookingService)
         {
             _repo = repo;
             _unitRepository = unitRepository;
+            _bookingService = bookingService;
         }
 
         //
@@ -191,6 +193,8 @@ namespace PQT.Web.Controllers
             int recordsTotal = 0;
 
             IEnumerable<Event> events = new HashSet<Event>();
+            var bookings = _bookingService.GetAllBookings(m => m.BookingStatusRecord == BookingStatus.Approved);
+
             if (!string.IsNullOrEmpty(searchValue))
             {
                 if (!string.IsNullOrEmpty(searchValue))
@@ -200,7 +204,6 @@ namespace PQT.Web.Controllers
                         m.StartDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
                         m.EndDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
                         m.DateOfConfirmationStr.Contains(searchValue) ||
-                        m.ClosingDateStr.ToLower().Contains(searchValue) ||
                         m.EventStatusDisplay.ToLower().Contains(searchValue) ||
                         (m.Location != null && m.Location.ToLower().Contains(searchValue)) ||
                         (m.HotelVenue != null && m.HotelVenue.ToLower().Contains(searchValue))
@@ -209,6 +212,13 @@ namespace PQT.Web.Controllers
             else
             {
                 events = _repo.GetAllEvents();
+            }
+
+
+
+            foreach (var item in events)
+            {
+                item.TotalDelegates = bookings.Where(m => m.EventID == item.ID).Sum(m => m.Delegates.Count);
             }
 
             if (sortColumnDir == "asc")
@@ -235,6 +245,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "ClosingDate":
                         events = events.OrderBy(s => s.ClosingDate).ThenBy(s => s.ID);
+                        break;
+                    case "TotalDelegates":
+                        events = events.OrderBy(s => s.TotalDelegates).ThenBy(s => s.ID);
                         break;
                     case "Location":
                         events = events.OrderBy(s => s.Location).ThenBy(s => s.ID);
@@ -272,6 +285,9 @@ namespace PQT.Web.Controllers
                     case "ClosingDate":
                         events = events.OrderByDescending(s => s.ClosingDate).ThenBy(s => s.ID);
                         break;
+                    case "TotalDelegates":
+                        events = events.OrderByDescending(s => s.TotalDelegates).ThenBy(s => s.ID);
+                        break;
                     case "Location":
                         events = events.OrderByDescending(s => s.Location).ThenBy(s => s.ID);
                         break;
@@ -306,6 +322,7 @@ namespace PQT.Web.Controllers
                     m.BackgroundColor,
                     m.Location,
                     m.HotelVenue,
+                    m.TotalDelegates,
                     StartDate = m.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = m.EndDate.ToString("dd/MM/yyyy"),
                     DateOfConfirmation = m.DateOfConfirmationStr,

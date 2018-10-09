@@ -22,7 +22,7 @@
                         <th>Event First Day</th>
                         <th>Event Last Day</th>
                         <th>Date Of Confirmation</th>
-                        <th>Date Of Closing Sales</th>
+                        <th>Total Delegates</th>
                         <th>Location</th>
                         <th>Hotel Venue</th>
                         <th></th>
@@ -58,7 +58,7 @@
                 { "data": "StartDate", "name": "StartDate", "orderable": true },
                 { "data": "EndDate", "name": "EndDate", "orderable": true },
                 { "data": "DateOfConfirmation", "name": "DateOfConfirmation", "orderable": true },
-                { "data": "ClosingDate", "name": "ClosingDate", "orderable": true },
+                { "data": "TotalDelegates", "name": "TotalDelegates", "orderable": true },
                 { "data": "Location", "name": "Location", "orderable": true },
                 { "data": "HotelVenue", "name": "HotelVenue", "orderable": true },
                 { "data": "ID", "name": "ID", "orderable": false },
@@ -66,12 +66,14 @@
             "iDisplayLength": 50,
             "aaSorting": [[0, "desc"]],
             "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                    $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
-                        aData["ID"] +
-                        '">' +
-                        aData["EventCode"] +
-                        '</a>');
+                $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
+                    aData["ID"] +
+                    '">' +
+                    aData["EventCode"] +
+                    '</a>');
                 $(nRow).find('td:eq(3)').html('<span class="EventColor" style="cursor: default;display: inline-block;width: 30px;height: 30px;background:' + aData["BackgroundColor"] + ';border:1px solid #c3c3c3;border-radius: 50%;">&nbsp;</span>');
+
+                $(nRow).find('td:eq(7)').css("text-align", "center");
                 var dropdowns = '<li><a href="@Url.Action("Detail")/' + aData["ID"] + '"><i class="fa fa-eye"> Detail</i></a></li>';
                 
                 if ('@CurrentUser.HasPermission("Operation", "Edit")' == 'True') {

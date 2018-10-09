@@ -363,6 +363,7 @@
     <Compile Include="Controllers\BankAccountController.cs" />
     <Compile Include="Controllers\HolidayController.cs" />
     <Compile Include="Controllers\InvoiceController.cs" />
+    <Compile Include="Controllers\NewEventController.cs" />
     <Compile Include="Controllers\OfficeLocationController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
@@ -386,6 +387,7 @@
     <Compile Include="Hubs\ProgressHub.cs" />
     <Compile Include="Infrastructure\Helpers\ImageHelper.cs" />
     <Compile Include="Infrastructure\Helpers\LeadHelper.cs" />
+    <Compile Include="Infrastructure\MemorySettingsRepository.cs" />
     <Compile Include="Infrastructure\MemoryNotifyRepository.cs" />
     <Compile Include="Infrastructure\MemoryEventRepository.cs" />
     <Compile Include="Infrastructure\MemoryCompanyRepository.cs" />
@@ -2640,6 +2642,13 @@
     <Content Include="Views\Settings\EditAdmqwe.cshtml" />
     <Content Include="Views\Report\PrintConsolidateKpis.cshtml" />
     <Content Include="Views\Recruitment\Candidates.cshtml" />
+    <Content Include="Views\NewEvent\Index.cshtml" />
+    <Content Include="Views\NewEvent\Detail.cshtml" />
+    <Content Include="Views\NewEvent\Edit.cshtml" />
+    <Content Include="Views\NewEvent\RequestBrochure.cshtml" />
+    <Content Include="Views\NewEvent\Assign.cshtml" />
+    <Content Include="Views\NewEvent\Assigned.cshtml" />
+    <Content Include="Views\Recruitment\DetailEmployment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

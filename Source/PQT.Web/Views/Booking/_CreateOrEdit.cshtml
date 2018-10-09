@@ -13,6 +13,17 @@
         #calltable tbody tr:hover {
             background-color: #f2f2f2;
         }
+    .delegateItem {
+        margin-bottom: 5px;
+        padding: 0px;
+    }
+    .delegateItem .form-control {
+        height: 25px;
+    }
+    .delegateItem .form-group {
+        position: relative;
+        margin-bottom: 10px;
+    }
 </style>
 <div class="card-body">
     <div class=" col-sm-12">
@@ -123,7 +134,7 @@
                 <header>Delegates <span class="required">*</span></header>
                 @Html.ValidationMessageFor(m => m.Booking.Delegates)
             </div>
-            <div class="card-body text-default-light" id="delegateContain">
+            <div class="card-body text-default-light" id="delegateContain" style="padding: 5px;">
                 @Html.CollectionEditorFor(m => m.Booking.Delegates)
                 @Html.JqueryTemplateFor(m => m.Booking.Delegates, "sub-tmpl")
             </div><!--end .card-body -->
@@ -368,6 +379,7 @@
                      d.Designation = $('#calltable_filter').find('input[name="search_designation"]').val();
                      d.Email = $('#calltable_filter').find('input[name="search_email"]').val();
                      d.Mobile = $('#calltable_filter').find('input[name="search_mobile"]').val();
+                     d.CompanyId = @Model.Booking.CompanyID;
                  }
              },
              "columns": [

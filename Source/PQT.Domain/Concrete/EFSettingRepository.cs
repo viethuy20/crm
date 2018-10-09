@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
@@ -14,64 +15,97 @@ namespace PQT.Domain.Concrete
         {
         }
 
-        public IEnumerable<Setting> GetSettings()
+        public virtual IEnumerable<Setting> GetSettings()
         {
             return GetAll<Setting>().AsEnumerable();
         }
 
-        public Setting GetSetting(int settingId)
+        public virtual Setting GetSetting(int settingId)
         {
             return Get<Setting>(i => i.ID == settingId);
         }
 
-        public Setting GetSetting(string module, string name)
+        public virtual Setting GetSetting(string module, string name)
         {
             return Get<Setting>(i => i.Module == module && i.Name == name);
         }
 
-        public Setting CreateSetting(Setting info)
+        public virtual Setting CreateSetting(Setting info)
         {
             return Create(info);
         }
 
-        public bool UpdateSetting(Setting info)
+        public virtual bool UpdateSetting(Setting info)
         {
             return Update(info);
         }
 
-        public bool DeleteSetting(int settingId)
+
+        #region Holiday
+
+        public virtual IEnumerable<Holiday> GetAllHolidays()
         {
-            return Delete<Setting>(settingId);
+            return GetAll<Holiday>(m => m.EntityStatus == EntityStatus.Normal).ToList();
         }
+        public virtual IEnumerable<Holiday> GetAllHolidays(int[] year)
+        {
+            return GetAll<Holiday>(m => year.Contains(m.StartDate.Year)).ToList();
+        }
+
+        public virtual Holiday CreateHoliday(Holiday holiday)
+        {
+            holiday = Create(holiday);
+            if (holiday != null && holiday.CountryID > 0)
+            {
+                holiday.Country = Get<Country>((int)holiday.CountryID);
+            }
+            return holiday;
+        }
+
+        public virtual bool DeleteHoliday(int id)
+        {
+            return Delete<Holiday>(id);
+        }
+        public virtual int TotalHolidays(DateTime start, DateTime end, int? countryId)
+        {
+            var holidays = GetAll<Holiday>(m => (countryId == null || m.CountryID == countryId) &&
+                                                (m.StartDate.Month == start.Month && m.StartDate.Year == start.Year ||
+                                                 m.EndDate.Month == start.Month && m.EndDate.Year == start.Year ||
+                                                 m.StartDate.Month == end.Month && m.StartDate.Year == end.Year ||
+                                                 m.EndDate.Month == end.Month && m.EndDate.Year == end.Year))
+                .AsEnumerable();
+            return holidays.Sum(m => m.TotalHolidays(start, end));
+        }
+        #endregion Holiday
 
 
         #region NotifySetting
 
 
-        public IEnumerable<NotifySetting> GetAllNotifySettings()
+        public virtual IEnumerable<NotifySetting> GetAllNotifySettings()
         {
             return GetAll<NotifySetting>().AsEnumerable();
         }
 
-        public NotifySetting GetNotifySetting(int id)
+        public virtual NotifySetting GetNotifySetting(int id)
         {
             return Get<NotifySetting>(id);
         }
-        public NotifySetting GetNotifySetting(NotifyType type, NotifyAction action)
+        public virtual NotifySetting GetNotifySetting(NotifyType type, NotifyAction action)
         {
             return Get<NotifySetting>(m=>m.NotifyType == type && m.NotifyAction == action);
         }
-        public NotifySetting CreateNotifySetting(NotifySetting info)
+        public virtual NotifySetting CreateNotifySetting(NotifySetting info)
         {
             return Create(info);
         }
 
-        public bool UpdateNotifySetting(NotifySetting holiday)
+        public virtual bool UpdateNotifySetting(NotifySetting holiday)
         {
             return Update(holiday);
         }
 
-        public bool DeleteNotifySetting(int id)
+        public virtual bool DeleteNotifySetting(int id)
         {
             return Delete<NotifySetting>(id);
         }

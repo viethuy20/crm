@@ -196,24 +196,26 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
-            var countries = countryName.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
-            var sectors = sector.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
-            var industies = industry.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
+            var countries = countryName.Split(new[] { ",", ";" }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
+            var productServices = productService.Split(new[] { ",", ";" }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
+            var sectors = sector.Split(new[] { ",", ";" }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
+            var industries = industry.Split(new[] { ",", ";" }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
             IEnumerable<Company> companies = new HashSet<Company>();
             Func<Company, bool> predicate = m =>
                 (m.Tier == type) &&
                 (type != 1 || !m.ManagerUsers.Any() || m.ManagerUsers.Any(s => saleIds.Contains(s.ID))) &&
                 (string.IsNullOrEmpty(companyName) ||
                  (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
-                (string.IsNullOrEmpty(productService) || (!string.IsNullOrEmpty(m.ProductOrService) &&
-                                                          m.ProductOrService.ToLower().Contains(productService))) &&
                 (!countries.Any() ||
                  (m.Country != null && countries.Any(c => m.Country.Code.ToLower().Contains(c))) ||
                  (m.Country != null && countries.Any(c => m.Country.Name.ToLower().Contains(c)))) &&
+                (!productServices.Any() ||
+                 (!string.IsNullOrEmpty(m.ProductOrService) &&
+                  productServices.Any(c => m.ProductOrService.ToLower().Contains(c)))) &&
                 (!sectors.Any() ||
                  (!string.IsNullOrEmpty(m.Sector) && sectors.Any(c => m.Sector.ToLower().Contains(c)))) &&
-                (!industies.Any() ||
-                 (!string.IsNullOrEmpty(m.Industry) && industies.Any(c => m.Industry.ToLower().Contains(c))));
+                (!industries.Any() ||
+                 (!string.IsNullOrEmpty(m.Industry) && industries.Any(c => m.Industry.ToLower().Contains(c))));
             companies = _comRepo.GetAllCompanies(predicate).ToList();
 
             if (sortColumnDir == "asc")

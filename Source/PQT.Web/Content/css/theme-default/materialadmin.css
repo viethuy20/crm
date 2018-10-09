@@ -9717,3 +9717,6 @@ li.L8 {
         color: #0aa89e
     }
 
+.DTFC_Cloned td:not(.ModelColor) {
+    background-color: #eeeeee;
+}

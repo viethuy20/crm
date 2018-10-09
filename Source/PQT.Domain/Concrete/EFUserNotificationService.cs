@@ -30,6 +30,16 @@ namespace PQT.Domain.Concrete
             return GetAll<UserNotification>(m => m.UserID == userId && m.EventId == eventId).OrderByDescending(m => m.CreatedTime)
                 .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
         }
+        public virtual IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int[] eventId, int pageSize = 10, int page = 1)
+        {
+            return GetAll<UserNotification>(m => m.UserID == userId && eventId.Contains(m.EventId)).OrderByDescending(m => m.CreatedTime)
+                .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
+        }
+        public virtual IEnumerable<UserNotification> GetAllUserNotificationsByNewEvent(int userId, int pageSize = 10, int page = 1)
+        {
+            return GetAll<UserNotification>(m => m.UserID == userId && m.NotifyType == NotifyType.NewEvent).OrderByDescending(m => m.CreatedTime)
+                .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
+        }
         public virtual UserNotification CreateUserNotification(UserNotification notify)
         {
             return Create(notify);

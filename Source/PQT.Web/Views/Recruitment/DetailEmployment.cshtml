@@ -1,0 +1,143 @@
+﻿@using PQT.Domain.Enum
+@using Resources
+@model PQT.Domain.Entities.User
+
+@{
+    ViewBag.Title = "Employees Profile";
+}
+
+<section>
+    <div class="row section-header" style="height: auto">
+        <h2 class="text-primary col-sm-3">@ViewBag.Title</h2>
+    </div>
+    <div class="row">
+        <div class="col-sm-12" style="padding-right: 24px; padding-bottom: 12px">
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Employees").PrependIcon("md md-arrow-back")
+        </div>
+    </div>
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Basic Info</header>
+        </div>
+        <div class="card-body form">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.DisplayName).Disabled().Class("form-control text-capitalize").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.DisplayName).LabelText("Display Name").ShowRequiredStar(true)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.FirstName).Disabled().Class("form-control text-capitalize").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.FirstName).ShowRequiredStar(true)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.LastName).Disabled().Class("form-control text-capitalize").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.LastName).ShowRequiredStar(true)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Email).Disabled().Class("form-control text-lowercase").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Email).ShowRequiredStar(true)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Disabled().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.BusinessPhone)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Disabled().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.MobilePhone)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Disabled().Class("form-control text-lowercase").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.PersonalEmail)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.PassportID).Disabled().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.PassportID).LabelText("Passport/ID")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.DateOfBirth).Disabled().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.DateOfBirth)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Nationality).Disabled().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Nationality)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.OfficeLocation.Name).Disabled().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.OfficeLocationID).LabelText("Office Location")
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Contract Info</header>
+        </div>
+        <div class="card-body text-default-light form">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EmploymentDate).Disabled().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EmploymentDate)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EmploymentEndDate).Disabled().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EmploymentEndDate)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.FirstEvaluationDate).Disabled().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.FirstEvaluationDate)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.BasicSalary).Disabled().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.BasicSalary)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.SalaryCurrency.DisplayName).Disabled().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.SalaryCurrency)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    @Html.HiddenFor(m => m.SignedContract)
+                    <div class="form-group ">
+                        @if (!string.IsNullOrEmpty(Model.SignedContract))
+                        {
+                            <a href="@UserPicture.GetContractUrl(Model.SignedContract)" target="_blank">@Model.SignedContract</a>
+                        }
+                        @Html.Bootstrap().LabelFor(m => m.SignedContract).LabelText("Signed Contract")
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

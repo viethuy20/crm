@@ -167,7 +167,7 @@ namespace PQT.Web.Models
                 //var titleNotify = "Candidate has been approved";
                 //var membershipService = DependencyHelper.GetService<IMembershipService>();
                 //LeadNotificator.NotifyUser(new List<User> { candidate.User.TransferUserID > 0 ? membershipService.GetUser((int)candidate.User.TransferUserID) : candidate.User }, candidate.ID, titleNotify); // notify for manager
-                RecruitmentNotificator.NotifyUser(currentUserId, new List<User> { candidate.User }, candidate.ID, "Request Employment has been approved");
+                RecruitmentNotificator.NotifyUser(NotifyAction.Approved, new List<User> { candidate.User }, candidate.ID, "Request Employment has been approved");
                 return new
                 {
                     Message = "",
@@ -204,7 +204,7 @@ namespace PQT.Web.Models
             //var membershipService = DependencyHelper.GetService<IMembershipService>();
             //LeadNotificator.NotifyUser(new List<User> { candidate.User.TransferUserID > 0 ? membershipService.GetUser((int)candidate.User.TransferUserID) : candidate.User }, candidate.ID, titleNotify); // notify for manager
             //LeadNotificator.NotifyUpdateNCL(candidate.ID, hubConnectionId);
-            RecruitmentNotificator.NotifyUser(currentUserId, new List<User> { candidate.User }, candidate.ID, "Request Employment has been rejected");
+            RecruitmentNotificator.NotifyUser(NotifyAction.Rejected, new List<User> { candidate.User }, candidate.ID, "Request Employment has been rejected");
             return new
             {
                 Message = "",

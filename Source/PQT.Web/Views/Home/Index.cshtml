@@ -15,6 +15,7 @@
         min-height: 1px;
         padding-left: 12px;
     }
+
         .event-panel .text-xl {
             text-transform: capitalize;
             font-size: 18px;
@@ -46,7 +47,7 @@
     }
 
     .notify_panel {
-        height: calc(100vh - 437px);
+        height: calc(100vh - 460px);
         overflow-y: auto;
     }
 
@@ -76,9 +77,11 @@
     .col-tier3, .col-tier1, .col-tier2, .total-booked, .totalcalled, .total-companies {
         font-weight: bold;
     }
+
     .text-bold {
         font-weight: bold;
     }
+
     .text-italic {
         font-style: italic;
     }
@@ -104,7 +107,7 @@
                                 @*<strong class="pull-right text-success text-lg">0,38% <i class="md md-trending-up"></i></strong>*@
                                 <strong class="text-xl">@item.EventName</strong><br />
                                 Event Dates: @item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
-                                <br/>
+                                <br />
                                 DOC: @item.DateOfConfirmationStr - Closing Date: @item.ClosingDateStr
                                 <br />
                                 Location: @item.Location
@@ -133,7 +136,58 @@
                                 </div>
                             </div>
                             <div class="row no-margin event-footer">
-                                <div class="col-sm-5 text-center "><span class="text-italic text-bold">Total booked</span><br/><span class="total-booked">N.A</span></div>
+                                <div class="col-sm-5 text-center "><span class="text-italic text-bold">Total booked</span><br /><span class="total-booked">N.A</span></div>
+                                <div class="col-sm-7 text-center "><span class="text-italic text-bold">Companies called</span><br /><span class="totalcalled">N.A</span>/<span class="total-companies">N.A</span></div>
+                                <div class="col-sm-4  text-center col-tier1"><span class="text-italic">Tier 1</span><br /><span class="tier1">N.A</span>/<span class="total-tier1">N.A</span></div>
+                                <div class="col-sm-4  text-center col-tier2"><span class="text-italic">Tier 2</span><br /><span class="tier2">N.A</span>/<span class="total-tier2">N.A</span></div>
+                                <div class="col-sm-4  text-center col-tier3"><span class="text-italic">Tier 3</span><br /><span class="tier3">N.A</span>/<span class="total-tier3">N.A</span></div>
+                            </div>
+                        </div><!--end .card-body -->
+                    </div><!--end .card -->
+                </div><!--end .col -->
+        <!-- END ALERT - REVENUE -->
+            }
+
+            @foreach (var item in Model.CrossSellEvents)
+            {
+        <!-- BEGIN ALERT - REVENUE -->
+                <div class="event-panel" id="event_panel_@item.ID" data-id="@item.ID">
+                    <div class="card">
+                        <div class="card-body no-padding">
+                            <div class="alert no-margin event-header" style="background: @item.BackgroundColor;">
+                                @*<strong class="pull-right text-success text-lg">0,38% <i class="md md-trending-up"></i></strong>*@
+                                <strong class="text-xl">@item.EventName</strong><br />
+                                Event Dates: @item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
+                                <br />
+                                DOC: @item.DateOfConfirmationStr - Closing Date: @item.ClosingDateStr
+                                <br />
+                                Location: @item.Location
+                                <br />
+                                Venue: @item.HotelVenue
+                                @if (CurrentUser.HasRole("Finance"))
+                                {
+                                    <a href="@Url.Action("Index", "Booking", new {id = item.ID})" class="link-event">
+                                    </a>
+                                }
+                                else if (CurrentUser.HasRoleLevel(RoleLevel.ManagerLevel))
+                                {
+                                    <a href="@Url.Action("NCLForManager", "Lead", new {id = item.ID})" class="link-event">
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Index", "Lead", new {id = item.ID})" class="link-event">
+                                    </a>
+                                }
+                            </div>
+                            <div class="notify_panel">
+                                <div id="dashboard_notify_@item.ID" style="display: none"></div>
+                                <div class="notify_items">
+                                    <div class="notify_item text-center"><img src="~/Content/img/ajax_loader.gif" /></div>
+                                </div>
+                            </div>
+                            <div class="row no-margin event-footer">
+                                <div class="col-sm-5 text-center "><span class="text-italic text-bold">Total booked</span><br /><span class="total-booked">N.A</span></div>
                                 <div class="col-sm-7 text-center "><span class="text-italic text-bold">Companies called</span><br /><span class="totalcalled">N.A</span>/<span class="total-companies">N.A</span></div>
                                 <div class="col-sm-4  text-center col-tier1"><span class="text-italic">Tier 1</span><br /><span class="tier1">N.A</span>/<span class="total-tier1">N.A</span></div>
                                 <div class="col-sm-4  text-center col-tier2"><span class="text-italic">Tier 2</span><br /><span class="tier2">N.A</span>/<span class="total-tier2">N.A</span></div>
@@ -150,85 +204,107 @@
 
 @Html.Script(
     @<script>
-        var eventItems = $(document).find(".event-panel");
-        function loadEventNotify(eventId) {
-            if (eventId == 0)
-                return;
-            $.ajax({
-                global: false,
-                url: '@Url.Action("GetNotifyForEvent")?eventId=' + eventId,
-                type: 'POST',
-                success: function (notifications) {
-                    var htmlItems = '';
-                    for (var i = 0; i < notifications.length; i++) {
-                        var notify = notifications[i];
+         var eventItems = $(document).find(".event-panel");
 
-                        var url = '@Url.Action("Detail", "Lead")?id=' +
-                            notify.EntryId +
-                            '&eventId=' +
-                            notify.EventId;
-                        if (notify.NotifyTypeCode == '@NotifyType.Booking.Value') {
-                            url = '@Url.Action("Detail", "Booking")?id=' +
-                                notify.EntryId +
-                                '&eventId=' +
-                                notify.EventId;
+         function loadEventNotify() {
+             if (!eventItems || eventItems.length == 0)
+                 return;
+             var idsStr = "";
+             for (var i = 0; i < eventItems.length; i++)
+                 idsStr += $(eventItems[i]).data('id') + ",";
+             $.ajax({
+                 global: false,
+                 url: '@Url.Action("GetNotifyForEvents")?eventIds=' + idsStr,
+                 type: 'POST',
+                 success: function(notifications) {
+                     for (var j = 0; j < eventItems.length; j++) {
+                         var eventId = $(eventItems[j]).data('id');
+                         var notifyOfEvent = notifications.filter(m => m.EventId == eventId);
+                         var htmlItems = '';
+                         for (var i = 0; i < notifyOfEvent.length; i++) {
+                             var notify = notifyOfEvent[i];
+
+                             var url = '@Url.Action("Detail", "Lead")?id=' +
+                                 notify.EntryId +
+                                 '&eventId=' +
+                                 notify.EventId;
+                             if (notify.NotifyTypeCode == '@NotifyType.Booking.Value') {
+                                 url = '@Url.Action("Detail", "Booking")?id=' +
+                                     notify.EntryId +
+                                     '&eventId=' +
+                                     notify.EventId;
+                             } else if (notify.NotifyTypeCode == '@NotifyType.OpeEvent.Value') {
+                                 url = '@Url.Action("Detail", "Operation")?id=' + notify.EntryId;
+                            }
+                            htmlItems += '<div class="notify_item"><a class="tile-content ink-reaction" href="' +
+                                url +
+                                '">' +
+                                (notify.Seen
+                                    ? notify.Description + ' - ' + notify.Title
+                                    : '<b>' + notify.Description + ' - ' + notify.Title + '</b>') +
+                                '<br /><span class="timestamp" title="' +
+                                notify.Timestamp +
+                                '" data-time="' + notify.TimeToString +'">' +
+                                moment(notify.TimeToString, "DDMMYYYYhhmmss").fromNow() +
+                                '</span></a></div>';
                         }
-                        if (notify.NotifyTypeCode == '@NotifyType.OpeEvent.Value') {
-                            url = '@Url.Action("Detail", "Operation")?id=' + notify.EntryId;
+                        if (htmlItems=='') {
+                            htmlItems = '<div class="notify_item text-center notify_not_found"><span class="timestamp">Notify not found</span></div>';
                         }
-                        htmlItems += '<div class="notify_item"><a class="tile-content ink-reaction" href="' +
-                            url +
-                            '">' +
-                            (notify.Seen
-                                ? notify.Description + ' - ' + notify.Title
-                                : '<b>' + notify.Description + ' - ' + notify.Title + '</b>') +
-                            '<br /><span class="timestamp" title="' +
-                            notify.Timestamp +
-                            '" data-time="' + notify.TimeToString +'">' +
-                            moment(notify.TimeToString, "DDMMYYYYhhmmss").fromNow() +
-                            '</span></a></div>';
-                    }
-                    if (htmlItems=='') {
-                        htmlItems = '<div class="notify_item text-center notify_not_found"><span class="timestamp">Notify not found</span></div>';
-                    }
-                    $("#event_panel_" + eventId).find(".notify_items").html(htmlItems);
+                        $("#event_panel_" + eventId).find(".notify_items").html(htmlItems);
+                         }
                 },
-                error: function () {
-                    $("#event_panel_" + eventId).find(".notify_items").html('<div class="notify_item text-center notify_not_found"><span class="timestamp" >Get Notify Error</span></div>');
+                    error: function () {
+                        for (var i = 0; i < eventItems.length; i++)
+                        $("#event_panel_" + $(eventItems[i]).data('id')).find(".notify_items").html('<div class="notify_item text-center notify_not_found"><span class="timestamp" >Get Notify Error</span></div>');
                 }
             });
         }
 
-        function LoadTotalCalledSummaryForDashboard(eventId) {
-            if (eventId == 0)
+        function LoadTotalCalledSummaryForDashboard() {
+            if (!eventItems || eventItems.length == 0)
                 return;
+            var idsStr = "";
+            for (var i = 0; i < eventItems.length; i++)
+                idsStr += $(eventItems[i]).data('id') + ",";
             $.ajax({
                 global: false,
-                url: '@Url.Action("AjaxGetTotalCallSummary", "Lead")?eventId=' + eventId,
+                url: '@Url.Action("AjaxGetTotalCallSummaries", "Lead")?eventIds=' + idsStr,
                 type: 'POST',
-                success: function (data) {
-                    var $eventFooter = $("#event_panel_" + eventId).find(".event-footer");
-                    if ($eventFooter) {
-                        $eventFooter.find(".tier3").html(data.Tier3);
-                        $eventFooter.find(".total-tier3").html(data.TotalTier3);
-                        $eventFooter.find(".tier1").html(data.Tier1);
-                        $eventFooter.find(".total-tier1").html(data.TotalTier1);
-                        $eventFooter.find(".tier2").html(data.Tier2);
-                        $eventFooter.find(".total-tier2").html(data.TotalTier2);
-                        $eventFooter.find(".total-booked").html(data.TotalBooked);
-                        $eventFooter.find(".totalcalled").html(data.Tier1 + data.Tier2 + data.Tier3);
-                        $eventFooter.find(".total-companies").html(data.TotalTier1 + data.TotalTier2 + data.TotalTier3);
+                success: function (datas) {
+                    for (var j = 0; j < eventItems.length; j++) {
+                        var eventId = $(eventItems[j]).data('id');
+                        var dataOfEvent = datas.filter(m => m.EventId == eventId);
+                        if (dataOfEvent.length > 0) {
+                            var data = dataOfEvent[0];
+                            var $eventFooter = $("#event_panel_" + eventId).find(".event-footer");
+                            if ($eventFooter) {
+                                $eventFooter.find(".tier3").html(data.Tier3);
+                                $eventFooter.find(".total-tier3").html(data.TotalTier3);
+                                $eventFooter.find(".tier1").html(data.Tier1);
+                                $eventFooter.find(".total-tier1").html(data.TotalTier1);
+                                $eventFooter.find(".tier2").html(data.Tier2);
+                                $eventFooter.find(".total-tier2").html(data.TotalTier2);
+                                $eventFooter.find(".total-booked").html(data.TotalBooked);
+                                $eventFooter.find(".totalcalled").html(data.Tier1 + data.Tier2 + data.Tier3);
+                                $eventFooter.find(".total-companies").html(data.TotalTier1 + data.TotalTier2 + data.TotalTier3);
+                            }
+                        }
                     }
                 },
                 error: function () {
                 }
             });
-        }
+         }
 
-        eventItems.each(function (index, item) {
-            loadEventNotify($(item).data('id'));
-            LoadTotalCalledSummaryForDashboard($(item).data('id'));
-        });
+         loadEventNotify();
+         LoadTotalCalledSummaryForDashboard();
+        //eventItems.each(function (index, item) {
+        //    if ($(item).data('id')) {
+        //        loadEventNotify($(item).data('id'));
+        //        LoadTotalCalledSummaryForDashboard($(item).data('id'));
+        //    }
+        //});
 
     </script>
     )

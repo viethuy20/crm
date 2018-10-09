@@ -1,0 +1,68 @@
+﻿@using NS
+@using PQT.Domain.Entities
+@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.CallingModel
+
+@{
+}
+<div class="card card-underline" style="background: white; margin: auto; max-width: 900px; position: relative;">
+    <div class="card-head">
+        <header><b>Assign New Sales</b></header>
+    </div><!--end .card-head -->
+
+    @using (Ajax.BeginForm("Assign", "routeValues", new AjaxOptions { OnFailure = "onFailAssign", OnSuccess = "onSuccessAssign" }, new { @id = "CreateOrEditForm", @class = "form" }))
+    {
+        @Html.HiddenFor(m => m.LeadID)
+        <div class="card-body">
+            <div class="row" style="margin-top: 30px;">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.NewTopics).Class("form-control").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.NewTopics)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.NewLocations).Class("form-control").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.NewLocations)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <div class="input-daterange input-group">
+                            <div class="input-group-content">
+                                @Html.DatePickerRangeFor(m => m.NewDateFrom, new { @class = "form-control", @disabled = "disabled" })
+                                @Html.ValidationMessageFor(m => m.NewDateFrom)
+                                @Html.Bootstrap().LabelFor(m => m.NewDateFrom)
+                            </div>
+                            <span class="input-group-addon">to</span>
+                            <div class="input-group-content">
+                                @Html.DatePickerRangeFor(m => m.NewDateTo, new { @class = "form-control",@disabled="disabled" })
+                                @Html.ValidationMessageFor(m => m.NewDateTo)
+                                @Html.Bootstrap().LabelFor(m => m.NewDateTo)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().DropDownListFor(m => m.NewTrainingType, EnumerationHelper.ToSelectList<NewTrainingType>()).Disabled().HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.NewTrainingType)
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        @Html.Bootstrap().DropDownListFor(m => m.AssignSales, Model.Sales.ToSelectList(m => m.ID, m => m.DisplayName)).OptionLabel("").HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.AssignSales).LabelText("Assign Sales").ShowRequiredStar(true)
+                    </div>
+                </div>
+            </div>
+        </div><!--end .card-body -->
+        <div class="card-actionbar">
+            <div class="card-actionbar-row">
+                <button type="submit" class="btn btn-primary"><i class="md md-done"></i> Assign</button>
+            </div>
+        </div>
+    }
+</div><!--end .card -->
