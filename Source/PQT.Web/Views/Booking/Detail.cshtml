@@ -189,65 +189,63 @@
                         <div class="card-head">
                             <header>Delegates</header>
                         </div>
-                        <div class="card-body text-default-light" id="delegateContain">
+                        <div class="card-body text-default-light" id="delegateContain"  style="padding: 5px;">
                             @{
                                 var current = 1;
                             }
                             @foreach (var item in Model.Booking.Delegates)
                             {
-                                <div class="delegateItem col-sm-6">
-                                    <div style="border: 1px solid #e1e1e1;padding: 20px;margin-bottom: 10px;">
+                                <div class="delegateItem col-sm-12">
+                                    <div style="border: 1px solid #e1e1e1;padding: 10px;padding-bottom: 5px;">
                                         <div class="row">
-                                            <div class="col-sm-12">
+                                            <div class="col-sm-4">
                                                 <div class="form-group">
                                                     @Html.Bootstrap().TextBox("Delegate" + item.ID).Value(item.FullName).Disabled().Class("form-control").ShowValidationMessage(true)
                                                     <label>Delegate @current</label>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    @Html.Bootstrap().TextBox("JobTitle" + item.ID).Value(item.JobTitle).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                    <label>Designation</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.Bootstrap().TextBox("WorkEmail" + item.ID).Value(item.WorkEmail).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                    <label>Work Email</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.Bootstrap().TextBox("PersonalEmail" + item.ID).Value(item.PersonalEmail).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                    <label>Personal Email</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-2">
                                                 <div class="form-group">
                                                     @Html.Bootstrap().TextBox("DirectLine" + item.ID).Value(item.DirectLine).Disabled().Class("form-control").ShowValidationMessage(true)
                                                     <label>Direct Line</label>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-2">
                                                 <div class="form-group">
                                                     @Html.Bootstrap().TextBox("MobilePhone1_" + item.ID).Value(item.MobilePhone1).Disabled().Class("form-control").ShowValidationMessage(true)
                                                     <label>Mobile1</label>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-2">
                                                 <div class="form-group">
                                                     @Html.Bootstrap().TextBox("MobilePhone2_" + item.ID).Value(item.MobilePhone2).Disabled().Class("form-control").ShowValidationMessage(true)
                                                     <label>Mobile2</label>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-2">
                                                 <div class="form-group">
                                                     @Html.Bootstrap().TextBox("MobilePhone3_" + item.ID).Value(item.MobilePhone3).Disabled().Class("form-control").ShowValidationMessage(true)
                                                     <label>Mobile3</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <div class="form-group">
+                                                    @Html.Bootstrap().TextBox("JobTitle" + item.ID).Value(item.JobTitle).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                    <label>JobTitle</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    @Html.Bootstrap().TextBox("WorkEmail" + item.ID).Value(item.WorkEmail).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                    <label>Work Email</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    @Html.Bootstrap().TextBox("PersonalEmail" + item.ID).Value(item.PersonalEmail).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                    <label>Personal Email</label>
                                                 </div>
                                             </div>
                                         </div>

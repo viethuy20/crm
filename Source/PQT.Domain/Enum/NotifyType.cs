@@ -13,7 +13,7 @@ namespace PQT.Domain.Enum
         public static readonly NotifyType Invoice = New<NotifyType>(3, "Invoice");
         public static readonly NotifyType Recruitment = New<NotifyType>(4, "Recruitment");
         public static readonly NotifyType OpeEvent = New<NotifyType>(5, "Ope Event");
-        public static readonly NotifyType NewEvent = New<NotifyType>(3, "New Event");
+        public static readonly NotifyType NewEvent = New<NotifyType>(6, "New Event");
     }
     public class NotifyAction : Enumeration
     {

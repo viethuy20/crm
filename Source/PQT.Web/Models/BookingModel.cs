@@ -41,7 +41,7 @@ namespace PQT.Web.Models
             var settingRepo = DependencyHelper.GetService<ISettingRepository>();
 
             var lead = leadRepo.GetLead(leadId);
-            Event = eventRepo.GetEvent(lead.EventID);
+            Event = lead.Event ?? eventRepo.GetEvent(lead.EventID);
             //Companies = companyRepo.GetAllCompanies();
             var discountSetting = settingRepo.GetSetting("Lead", "DiscountPercent");
             Booking = new Booking()
@@ -51,7 +51,7 @@ namespace PQT.Web.Models
                 Address = lead.Company.Address,
                 Tel = lead.Company.Tel,
                 Fax = lead.Company.Fax,
-                EventID = Event.ID,
+                EventID = lead.EventID,
                 LeadID = leadId,
                 SalesmanID = CurrentUser.Identity.ID,
                 DiscountPercent = Convert.ToInt32(discountSetting.Value),
