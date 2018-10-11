@@ -55,7 +55,7 @@ namespace PQT.Domain.Entities
 
         public int? EstimatedDelegateNumber { get; set; }
         public int GoodTrainingMonth { get; set; }
-        
+
         //public string NewTopics { get; set; }
         //public string NewLocations { get; set; }
 
@@ -180,6 +180,17 @@ namespace PQT.Domain.Entities
                     return FirstFollowUpStatus.DisplayName;
                 }
                 return "";
+            }
+        }
+        public string FirstFollowUpStatusClass
+        {
+            get
+            {
+                if (FirstFollowUpStatusDisplay.IndexOf("|", StringComparison.Ordinal) > 0)
+                {
+                    return StringHelper.RemoveSpecialCharacters(FirstFollowUpStatusDisplay.Substring(0, FirstFollowUpStatusDisplay.IndexOf("|", StringComparison.Ordinal))).ToLower();
+                }
+                return StringHelper.RemoveSpecialCharacters(FirstFollowUpStatusDisplay).ToLower();
             }
         }
         public string FinalStatusDisplay

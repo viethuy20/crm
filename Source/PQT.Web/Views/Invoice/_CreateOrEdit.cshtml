@@ -130,12 +130,10 @@
                         </thead>
                         <tbody>
                             @{
-                                var count = 0;
                                 foreach (var phonecall in Model.Booking.Delegates)
                                 {
-                                    count++;
                                     <tr>
-                                        <td>@count</td>
+                                        <td>@phonecall.Order</td>
                                         <td>@phonecall.FullName</td>
                                         <td>@phonecall.JobTitle</td>
                                     </tr>

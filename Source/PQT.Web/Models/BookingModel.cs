@@ -58,7 +58,7 @@ namespace PQT.Web.Models
                 SenderName = lead.FullName,
                 SenderDestination = lead.JobTitle,
                 SenderMail = lead.WorkEmail,
-                SenderTel = lead.MobilePhone1
+                SenderTel = lead.DirectLine
             };
         }
 

@@ -42,7 +42,7 @@ namespace PQT.Web.Models
                 Password = user.Password;
                 //ConfirmPassword = user.Password;
                 MobilePhone = user.MobilePhone;
-                SelectedRoles = user.Roles.Select(m=>m.ID).ToList();
+                SelectedRoles = user.Roles.Select(m => m.ID).ToList();
                 UserPicture = user.Picture;
                 LastAccess = user.LastAccess;
                 Address = user.Address;
@@ -97,11 +97,11 @@ namespace PQT.Web.Models
         [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "EmailIsInvalid")]
         public string Email { get; set; }
 
-        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9]*$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "PhoneNumberIsInvalid")]
         public string MobilePhone { get; set; }
 
 
-        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9]*$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "PhoneNumberIsInvalid")]
         public string BusinessPhone { get; set; }
         [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "EmailIsInvalid")]
         public string PersonalEmail { get; set; }
@@ -187,9 +187,9 @@ namespace PQT.Web.Models
         //public string OldPassword { get; set; }
         public string Email { get; set; }
 
-        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9]*$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "PhoneNumberIsInvalid")]
         public string MobilePhone { get; set; }
-        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9]*$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "PhoneNumberIsInvalid")]
         public string BusinessPhone { get; set; }
         [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "EmailIsInvalid")]
         public string PersonalEmail { get; set; }

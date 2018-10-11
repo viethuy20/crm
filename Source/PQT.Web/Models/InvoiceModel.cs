@@ -8,6 +8,7 @@ using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
 using PQT.Web.Infrastructure;
+using PQT.Web.Infrastructure.Notification;
 using PQT.Web.Infrastructure.Utility;
 using Quartz;
 
@@ -61,6 +62,7 @@ namespace PQT.Web.Models
             Invoice = invoiceService.CreateInvoice(Invoice);
             if (Invoice != null)
             {
+                InvoiceNotificator.NotifyUser(NotifyAction.Request, Invoice.ID, "New Invoice Created"); // notify for manager
                 booking.InvoiceNo = Invoice.InvoiceNo;
                 bookingService.UpdateBooking(booking);
             }

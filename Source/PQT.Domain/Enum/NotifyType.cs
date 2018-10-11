@@ -18,7 +18,7 @@ namespace PQT.Domain.Enum
     public class NotifyAction : Enumeration
     {
         public static readonly NotifyAction Alert = New<NotifyAction>(1, "Alert");
-        public static readonly NotifyAction Confirm = New<NotifyAction>(2, "Alert");
+        public static readonly NotifyAction Confirm = New<NotifyAction>(2, "Confirm");
         public static readonly NotifyAction Request = New<NotifyAction>(3, "Request");
         public static readonly NotifyAction CancelRequest = New<NotifyAction>(4, "Cancel Request");
         public static readonly NotifyAction Approved = New<NotifyAction>(5, "Approved");

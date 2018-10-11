@@ -94,8 +94,9 @@
             "iDisplayLength": 50,
             "aaSorting": [[2, "asc"]],
             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                $(nRow).find('td:eq(8)').html('<a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info"></i></a> ' + 
-                    ' <a href="#" data-action="delete" data-id="' + aData["ID"] +'"><i class="md md-delete text-danger"></i></a>');
+                $(nRow).find('td:eq(8)').html('<a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info" style="white-space:nowrap">  Edit</i></a> ' +
+                    ' <a href="#" data-action="delete" data-id="' + aData["ID"] +'"><i class="md md-delete text-danger"  style="white-space:nowrap"> Delete</i></a> ' +
+                    '<a href="@Url.Action("Merge")?id=' + aData["ID"] + '" data-action="merge" class="simple-ajax-popup-align-top"><i class="md md-merge-type text-primary"  style="white-space:nowrap"> Merge</i></a> ');
                 $(nRow).attr("data-id", aData["ID"]);
                 $(nRow).addClass("tier" + aData["Tier"]);
             },
@@ -150,6 +151,34 @@
             });
         });
 
+        function onMergeFail() {
+            $(".error").removeClass('hide');
+            $(".success").addClass('hide');
+            $(".texterror").text("@Resource.Error");
+        }
+        function onMergeSuccess(data) {
+            $(".error").addClass('hide');
+            $(".success").addClass('hide');
+
+            if (data.Code == 1 || data.Code == 3) {
+                $(".success").removeClass('hide');
+                if (data.Code == 1) {
+                    $.magnificPopup.close();
+                    $("textsuccess").data('@Resource.SaveSuccessful');
+                    updateItem(data.Model);
+                }
+            } else {
+                if (data.Code == 2)
+                    $(".texterror").text('@Resource.AddError');
+                if (data.Code == 4)
+                    $(".texterror").text('@Resource.SaveError');
+                if (data.Code == 5)
+                    $(".texterror").text("@Resource.DataInvalid");
+                if (data.Code == 6)
+                    $(".texterror").text(data.error);
+                $(".error").removeClass('hide');
+            }
+        }
         function onFail() {
             $(".error").removeClass('hide');
             $(".success").addClass('hide');
@@ -203,7 +232,7 @@
             $Table.fnFilter('');
         }
         function updateItem(data) {
-            
+
             $Table.fnFilter('');
         }
     </script>)

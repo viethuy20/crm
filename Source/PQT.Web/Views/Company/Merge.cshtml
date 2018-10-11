@@ -1,0 +1,59 @@
+﻿@using PQT.Domain.Enum
+@using NS
+@using PQT.Domain.Abstract
+@using PQT.Domain.Entities
+@using PQT.Web.Infrastructure
+@using Resources
+@model PQT.Web.Models.CompanyModel
+@{
+}
+<div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
+    <div class="card-head">
+        <header>Merge Data</header>
+    </div><!--end .card-head -->
+    @using (Ajax.BeginForm("Merge", "routeValues", new AjaxOptions { HttpMethod = "Post", OnFailure = "onMergeFail", OnSuccess = "onMergeSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
+    {
+        <div class="card-body">
+            <div class="success hide">
+                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Success).Closeable()))
+                {
+                    @Html.Bootstrap().Label("success").HtmlAttributes(new { @class = "textsuccess" }).LabelText(Resource.SaveSuccessful)
+                }
+            </div>
+            <div class="error hide alert-danger">
+                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Error).Closeable()))
+                {
+                    @Html.Bootstrap().Label("error").HtmlAttributes(new { @class = "texterror" }).LabelText(Resource.SaveFailed)
+                }
+            </div>
+            <div class="form-group col-md-12">
+                @Html.Bootstrap().TextBoxFor(m => m.CompanyID).Readonly().Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.CompanyID).LabelText("Company ID").ShowRequiredStar(true)
+            </div>
+            <div class="form-group col-md-12">
+                @Html.Bootstrap().TextBoxFor(m => m.Company.CompanyName).Disabled().Class("form-control text-capitalize").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Company.CompanyName).LabelText("Company Name").ShowRequiredStar(true)@*(This company will be deleted after merger)*@
+            </div>
+            <div class="form-group col-md-12">
+                @Html.Bootstrap().DropDownListFor(m => m.MergeCompanyID, new List<SelectListItem>()).Class("form-control select-ajax").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.MergeCompanyID).LabelText("Merge To Company").ShowRequiredStar(true)
+            </div>
+        </div><!--end .card-body -->
+
+        <div class="card-actionbar">
+            <div class="card-actionbar-row">
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("submitbutton").PrependIcon("md md-done").Style(ButtonStyle.Success)
+            </div>
+        </div>
+    }
+</div><!--end .card -->
+
+<text>
+    <script>
+        var $bookingID = $('@Html.JquerySelectorFor(m => m.MergeCompanyID)');
+        var bookingUrl = "@Url.Action("GetCompaniesForAjaxDropdown")?id=@Model.CompanyID";
+        var placeholder = "Search Company";
+        initAjaxDropdown($bookingID, bookingUrl, placeholder);
+    </script>
+</text>

@@ -153,7 +153,6 @@ namespace PQT.Domain.Entities
         public virtual ICollection<User> ManagerUsers { get; set; }
         public virtual ICollection<EventCompany> EventCompanies { get; set; }
         //public virtual ICollection<Trainer> Trainers { get; set; }
-
         public string DateOfConfirmationStr
         {
             get

@@ -78,6 +78,18 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
+        public string EventCode
+        {
+            get
+            {
+                if (Event != null)
+                {
+                    return Event.EventCode;
+                }
+
+                return "";
+            }
+        }
         public string EventColor
         {
             get

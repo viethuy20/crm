@@ -20,8 +20,8 @@ namespace PQT.Web.Validation
             //RuleFor(u => u.Email).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(u => u.Email).EmailAddress().WithMessage(Resource.EmailIsInvalid);
             //RuleFor(u => u.Email).Must(BeAUniqueEmail).WithMessage(Resource.EmailExists);
-            RuleFor(u => u.MobilePhone).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.FormatInvalid);
-            RuleFor(u => u.BusinessPhone).Matches(new Regex(@"^[0-9\+\-\()\ ]*$")).WithMessage(Resource.FormatInvalid);
+            RuleFor(u => u.MobilePhone).Matches(new Regex(@"^[0-9]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
+            RuleFor(u => u.BusinessPhone).Matches(new Regex(@"^[0-9]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
         }
 
         private bool BeAUniqueEmail(User user, string email)

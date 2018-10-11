@@ -2649,6 +2649,9 @@
     <Content Include="Views\NewEvent\Assign.cshtml" />
     <Content Include="Views\NewEvent\Assigned.cshtml" />
     <Content Include="Views\Recruitment\DetailEmployment.cshtml" />
+    <Content Include="Views\Report\PrintInvoice.cshtml" />
+    <Content Include="Views\Operation\EditorTemplates\EventSession.cshtml" />
+    <Content Include="Views\Company\Merge.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

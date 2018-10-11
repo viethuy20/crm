@@ -745,6 +745,7 @@ namespace PQT.Web.Controllers
                     m.MarkKPI,
                     m.KPIRemarks,
                     FirstFollowUpStatus = m.FirstFollowUpStatusDisplay,
+                    m.FirstFollowUpStatusClass,
                     FinalStatus = m.FinalStatusDisplay,
                     CallBackDateTime = m.CallBackDateTimeDisplay,
                     NCLExpired = m.CheckNCLExpired(daysExpired),

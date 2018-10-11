@@ -78,9 +78,9 @@ namespace PQT.Web.Controllers
             {
                 var hotel = _unitRepository.GetVenueInfo(id);
                 if (hotel == null)
-                    return Json(new { IsSuccess = false, Message = "data not found" });
+                    return Json(new { IsSuccess = false, Message = "Data not found" });
                 if (hotel.Status != InfoStatus.Request)
-                    return Json(new { IsSuccess = false, Message = "data has " + hotel.Status.DisplayName });
+                    return Json(new { IsSuccess = false, Message = "Data has " + hotel.Status.DisplayName });
                 hotel.Status = InfoStatus.Approved;
                 hotel.RejectMessage = "";
                 if (!_unitRepository.UpdateVenueInfo(hotel))
@@ -88,15 +88,15 @@ namespace PQT.Web.Controllers
                     return Json(new { IsSuccess = false, Message = "Approve failed" });
                 }
                 _repo.UpdateVenueInfo(hotel);
-                OpeEventNotificator.NotifyUser(NotifyAction.Approved, hotel.EntryId, "Approved Venue Info");
+                OpeEventNotificator.NotifyUser(NotifyAction.Approved, hotel.EntryId, "Hotel For Venue has been approved");
             }
             else
             {
                 var hotel = _unitRepository.GetAccomodationInfo(id);
                 if (hotel == null)
-                    return Json(new { IsSuccess = false, Message = "data not found" });
+                    return Json(new { IsSuccess = false, Message = "Data not found" });
                 if (hotel.Status != InfoStatus.Request)
-                    return Json(new { IsSuccess = false, Message = "data has " + hotel.Status.DisplayName });
+                    return Json(new { IsSuccess = false, Message = "Data has " + hotel.Status.DisplayName });
                 hotel.Status = InfoStatus.Approved;
                 hotel.RejectMessage = "";
                 if (!_unitRepository.UpdateAccomodationInfo(hotel))
@@ -104,7 +104,7 @@ namespace PQT.Web.Controllers
                     return Json(new { IsSuccess = false, Message = "Approve failed" });
                 }
                 _repo.UpdateAccomodationInfo(hotel);
-                OpeEventNotificator.NotifyUser(NotifyAction.Approved, hotel.EntryId, "Approved Accomodation Info");
+                OpeEventNotificator.NotifyUser(NotifyAction.Approved, hotel.EntryId, "Hotel For Accomodation has been approved");
             }
             return Json(new { IsSuccess = true });
         }
@@ -134,9 +134,9 @@ namespace PQT.Web.Controllers
             {
                 var hotel = _unitRepository.GetVenueInfo(id);
                 if (hotel == null)
-                    return Json(new { IsSuccess = false, Message = "data not found" });
+                    return Json(new { IsSuccess = false, Message = "Data not found" });
                 if (hotel.Status != InfoStatus.Request)
-                    return Json(new { IsSuccess = false, Message = "data has " + hotel.Status.DisplayName });
+                    return Json(new { IsSuccess = false, Message = "Data has " + hotel.Status.DisplayName });
 
                 hotel.RejectMessage = reason;
                 hotel.Status = InfoStatus.Rejected;
@@ -145,15 +145,15 @@ namespace PQT.Web.Controllers
                     return Json(new { IsSuccess = false, Message = "Reject failed" });
                 }
                 _repo.UpdateVenueInfo(hotel);
-                OpeEventNotificator.NotifyUser(NotifyAction.Rejected, hotel.EntryId, "Rejected Venue Info");
+                OpeEventNotificator.NotifyUser(NotifyAction.Rejected, hotel.EntryId, "Hotel For Venue has been rejected");
             }
             else
             {
                 var hotel = _unitRepository.GetAccomodationInfo(id);
                 if (hotel == null)
-                    return Json(new { IsSuccess = false, Message = "data not found" });
+                    return Json(new { IsSuccess = false, Message = "Data not found" });
                 if (hotel.Status != InfoStatus.Request)
-                    return Json(new { IsSuccess = false, Message = "data has " + hotel.Status.DisplayName });
+                    return Json(new { IsSuccess = false, Message = "Data has " + hotel.Status.DisplayName });
                 hotel.RejectMessage = reason;
                 hotel.Status = InfoStatus.Rejected;
                 if (!_unitRepository.UpdateAccomodationInfo(hotel))
@@ -161,7 +161,7 @@ namespace PQT.Web.Controllers
                     return Json(new { IsSuccess = false, Message = "Reject failed" });
                 }
                 _repo.UpdateAccomodationInfo(hotel);
-                OpeEventNotificator.NotifyUser(NotifyAction.Rejected, hotel.EntryId, "Rejected Accomodation Info");
+                OpeEventNotificator.NotifyUser(NotifyAction.Rejected, hotel.EntryId, "Hotel For Accomodation has been rejected");
             }
             return Json(new { IsSuccess = true });
         }

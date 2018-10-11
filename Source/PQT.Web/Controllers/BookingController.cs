@@ -918,6 +918,7 @@ namespace PQT.Web.Controllers
                 {
                     m.ID,
                     m.Salutation,
+                    m.FullName,
                     m.FirstName,
                     m.LastName,
                     m.JobTitle,

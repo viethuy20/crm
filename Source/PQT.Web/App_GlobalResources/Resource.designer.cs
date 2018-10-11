@@ -358,7 +358,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fax number is invalid.
+        ///   Looks up a localized string similar to Fax number is invalid (digit only).
         /// </summary>
         internal static string FaxNumberIsInvalid {
             get {
@@ -457,7 +457,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Phone number is invalid.
+        ///   Looks up a localized string similar to Phone number is invalid (digit only).
         /// </summary>
         internal static string PhoneNumberIsInvalid {
             get {

@@ -61,7 +61,7 @@ namespace PQT.Domain.Concrete
             return Update(info);
         }
 
-        public virtual Event UpdateEventOperation(int id, VenueInfo venueInfo, AccomodationInfo accomodationInfo, DriverInfo driverInfo, PhotographerInfo photographerInfo, LocalVisaAgentInfo localVisaAgentInfo, PostEventInfo postEventInfo)
+        public virtual Event UpdateEventOperation(int id, VenueInfo venueInfo, AccomodationInfo accomodationInfo, DriverInfo driverInfo, PhotographerInfo photographerInfo, LocalVisaAgentInfo localVisaAgentInfo, PostEventInfo postEventInfo, IEnumerable<EventSession> eventSessions)
         {
             var exist = Get<Event>(id);
             if (exist == null)
@@ -85,8 +85,67 @@ namespace PQT.Domain.Concrete
 
             if (postEventInfo.ID > 0) Update(postEventInfo);
             exist.PostEventInfo = postEventInfo;
+            var sessionUpdated = false;
+            try
+            {
 
-            if (venueInfo.ID == 0 || accomodationInfo.ID == 0 || driverInfo.ID == 0 || 
+                foreach (var existEventSession in exist.EventSessions)
+                {
+                    var trainerUpdate = eventSessions.FirstOrDefault(m => m.ID == existEventSession.ID);
+                    if (trainerUpdate == null)
+                        continue;
+                    if (!string.IsNullOrEmpty(trainerUpdate.TrainerInvoice) && 
+                        existEventSession.TrainerInvoice != trainerUpdate.TrainerInvoice)
+                    {
+                        sessionUpdated = true;
+                        existEventSession.TrainerInvoice = trainerUpdate.TrainerInvoice;
+                    }
+                    if (!string.IsNullOrEmpty(trainerUpdate.TrainerTicket) && 
+                        existEventSession.TrainerTicket != trainerUpdate.TrainerTicket)
+                    {
+                        sessionUpdated = true;
+                        existEventSession.TrainerTicket = trainerUpdate.TrainerTicket;
+                    }
+                    if (!string.IsNullOrEmpty(trainerUpdate.TrainerVisa) && 
+                        existEventSession.TrainerVisa != trainerUpdate.TrainerVisa)
+                    {
+                        sessionUpdated = true;
+                        existEventSession.TrainerVisa = trainerUpdate.TrainerVisa;
+                    }
+                    if (!string.IsNullOrEmpty(trainerUpdate.TrainerInsurance) && 
+                        existEventSession.TrainerInsurance != trainerUpdate.TrainerInsurance)
+                    {
+                        sessionUpdated = true;
+                        existEventSession.TrainerInsurance = trainerUpdate.TrainerInsurance;
+                    }
+                    if (!string.IsNullOrEmpty(trainerUpdate.OperationTicket) && 
+                        existEventSession.OperationTicket != trainerUpdate.OperationTicket)
+                    {
+                        sessionUpdated = true;
+                        existEventSession.OperationTicket = trainerUpdate.OperationTicket;
+                    }
+                    if (!string.IsNullOrEmpty(trainerUpdate.OperationVisa) && 
+                        existEventSession.OperationVisa != trainerUpdate.OperationVisa)
+                    {
+                        sessionUpdated = true;
+                        existEventSession.OperationVisa = trainerUpdate.OperationVisa;
+                    }
+                    if (!string.IsNullOrEmpty(trainerUpdate.OperationInsurance) && 
+                        existEventSession.OperationInsurance != trainerUpdate.OperationInsurance)
+                    {
+                        sessionUpdated = true;
+                        existEventSession.OperationInsurance = trainerUpdate.OperationInsurance;
+                    }
+                }
+                if (sessionUpdated)
+                {
+                    UpdateCollection(exist, m => m.ID == exist.ID, m => m.EventSessions, m => m.ID);
+                }
+            }
+            catch (Exception e)
+            {
+            }
+            if (venueInfo.ID == 0 || accomodationInfo.ID == 0 || driverInfo.ID == 0 ||
                 photographerInfo.ID == 0 || localVisaAgentInfo.ID == 0 || postEventInfo.ID == 0)
                 Update(exist);
             return exist;

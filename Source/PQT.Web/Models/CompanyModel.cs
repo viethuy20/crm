@@ -14,6 +14,8 @@ namespace PQT.Web.Models
         public List<int> UsersSelected { get; set; }
         public IEnumerable<User> Users { get; set; }
 
+        public int CompanyID { get; set; }
+        public int MergeCompanyID { get; set; }
         public CompanyModel()
         {
             UsersSelected = new List<int>();
@@ -32,6 +34,7 @@ namespace PQT.Web.Models
             {
                 UsersSelected = Company.ManagerUsers.Select(m => m.ID).ToList();
             }
+            CompanyID = id;
         }
     }
 }

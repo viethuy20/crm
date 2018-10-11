@@ -215,17 +215,17 @@
                     </thead>
                     <tbody>
                         @{
-                            foreach (var item in Model.Event.EventSessions.Select(m=>m.Trainer))
+                            foreach (var item in Model.Event.EventSessions)
                             {
                                 <tr>
-                                    <td>@item.Name</td>
-                                    <td>@item.Passport</td>
-                                    <td>@item.Email</td>
-                                    <td>@item.BusinessPhone</td>
-                                    <td>@item.MobilePhone</td>
-                                    <td>@item.Address</td>
-                                    <td>@item.NearestInternationalAirport</td>
-                                    <td>@item.AirportIATACode</td>
+                                    <td>@item.Trainer.Name</td>
+                                    <td>@item.Trainer.Passport</td>
+                                    <td>@item.Trainer.Email</td>
+                                    <td>@item.Trainer.BusinessPhone</td>
+                                    <td>@item.Trainer.MobilePhone</td>
+                                    <td>@item.Trainer.Address</td>
+                                    <td>@item.Trainer.NearestInternationalAirport</td>
+                                    <td>@item.Trainer.AirportIATACode</td>
                                 </tr>
                             }
                         }
@@ -541,6 +541,109 @@
         </div><!--end .card-body -->
     </div>
 
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Travel Info</header>
+        </div>
+        <div class="card-body">
+            <div class="row form table-responsive">
+                <table class="table no-margin">
+                    <thead>
+                        <tr>
+                            <th>Session Title</th>
+                            <th>Trainer Invoice</th>
+                            <th>Trainer Ticket</th>
+                            <th>Trainer Visa</th>
+                            <th>Trainer Insurance</th>
+                            <th>Operation Ticket</th>
+                            <th>Operation Visa</th>
+                            <th>Operation Insurance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach (var item in Model.Event.EventSessions)
+                            {
+                                <tr>
+                                    <td style="white-space: nowrap">@item.SessionTitle</td>
+                                    <td>
+                                        @if (item.TrainerInvoice != null && !string.IsNullOrEmpty(item.TrainerInvoice))
+                {
+                                            <a href="@item.TrainerInvoiceUrl" target="_blank">@item.TrainerInvoice</a>
+                                        }
+                                        <div class="form-group">
+                                            @Html.Bootstrap().TextBoxFor(m => item.TrainerInvoiceRemark).Class("form-control")
+                                            @Html.Bootstrap().LabelFor(m => item.TrainerInvoiceRemark).LabelText("Remarks")
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (item.TrainerTicket != null && !string.IsNullOrEmpty(item.TrainerTicket))
+                {
+                                            <a href="@item.TrainerTicketUrl" target="_blank">@item.TrainerTicket</a>
+                                        }
+                                        <div class="form-group">
+                                            @Html.Bootstrap().TextBoxFor(m => item.TrainerTicketRemark).Class("form-control")
+                                            @Html.Bootstrap().LabelFor(m => item.TrainerTicketRemark).LabelText("Remarks")
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (item.TrainerVisa != null && !string.IsNullOrEmpty(item.TrainerVisa))
+                {
+                                            <a href="@item.TrainerVisaUrl" target="_blank">@item.TrainerVisa</a>
+                                        }
+                                        <div class="form-group">
+                                            @Html.Bootstrap().TextBoxFor(m => item.TrainerVisaRemark).Class("form-control")
+                                            @Html.Bootstrap().LabelFor(m => item.TrainerVisaRemark).LabelText("Remarks")
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (item.TrainerInsurance != null && !string.IsNullOrEmpty(item.TrainerInsurance))
+                {
+                                            <a href="@item.TrainerInsuranceUrl" target="_blank">@item.TrainerInsurance</a>
+                                        }
+                                        <div class="form-group">
+                                            @Html.Bootstrap().TextBoxFor(m => item.TrainerInsuranceRemark).Class("form-control")
+                                            @Html.Bootstrap().LabelFor(m => item.TrainerInsuranceRemark).LabelText("Remarks")
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (item.OperationTicket != null && !string.IsNullOrEmpty(item.OperationTicket))
+                {
+                                            <a href="@item.OperationTicketUrl" target="_blank">@item.OperationTicket</a>
+                                        }
+                                        <div class="form-group">
+                                            @Html.Bootstrap().TextBoxFor(m => item.OperationTicketRemark).Class("form-control")
+                                            @Html.Bootstrap().LabelFor(m => item.OperationTicketRemark).LabelText("Remarks")
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (item.OperationVisa != null && !string.IsNullOrEmpty(item.OperationVisa))
+                {
+                                            <a href="@item.OperationVisaUrl" target="_blank">@item.OperationVisa</a>
+                                        }
+                                        <div class="form-group">
+                                            @Html.Bootstrap().TextBoxFor(m => item.OperationVisaRemark).Class("form-control")
+                                            @Html.Bootstrap().LabelFor(m => item.OperationVisaRemark).LabelText("Remarks")
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (item.OperationInsurance != null && !string.IsNullOrEmpty(item.OperationInsurance))
+                {
+                                            <a href="@item.OperationInsuranceUrl" target="_blank">@item.OperationInsurance</a>
+                                        }
+                                        <div class="form-group">
+                                            @Html.Bootstrap().TextBoxFor(m => item.OperationInsuranceRemark).Class("form-control")
+                                            @Html.Bootstrap().LabelFor(m => item.OperationInsuranceRemark).LabelText("Remarks")
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div><!--end .card-body -->
+    </div>
 </section>
 
 @Html.Script(

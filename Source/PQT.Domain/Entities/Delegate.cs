@@ -12,7 +12,10 @@ namespace PQT.Domain.Entities
         public Delegate()
         {
             AttendanceStatus = DelegateAttendanceStatus.Initial;
+            Salutation = NameTitle.None;
         }
+        public int Order { get; set; }
+        public bool ToBeAdvisedLater { get; set; }
         public string Salutation { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -68,7 +71,11 @@ namespace PQT.Domain.Entities
 
         public string FullName
         {
-            get { return Salutation + " " + FirstName + " " + LastName; }
+            get
+            {
+                if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName)) return "To Be Advised Later";
+                return Salutation + " " + FirstName + " " + LastName;
+            }
         }
 
         public Delegate PassInfo(string country, string company, string salesman, IEnumerable<EventSession> eventSessions)

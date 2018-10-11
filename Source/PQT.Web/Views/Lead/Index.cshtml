@@ -38,7 +38,7 @@
         height: 78px !important;
     }
 
-        #tableLead tbody tr.Reject td {
+        /*#tableLead tbody tr.Reject td {
             color: #8a6d3b;
             background-color: #ffefd5;
         }
@@ -76,18 +76,6 @@
         background-color: #c8e4fa !important;
     }
 
-
-    #tableLead tbody tr.Booked td {
-        color: #3c763d;
-        background-color: #deffe0;
-    }
-
-    .DTFC_Cloned tbody tr.Booked td,
-    #tableNCList tbody tr.booked td {
-        color: #3c763d;
-        background-color: #c7fcca;
-    }
-
     #tableLead tbody tr.RequestNCL td,
     #tableLead tbody tr.RequestLOI td,
     #tableLead tbody tr.RequestBooking td {
@@ -100,12 +88,40 @@
     .DTFC_Cloned tbody tr.RequestBooking td {
         color: #a5a100;
         background-color: #fffdb7;
-    }
+    }*/
 
     #tableLead tbody tr.NCLExpired td,
     .DTFC_Cloned tbody tr.NCLExpired td {
         color: #000;
         background-color: #f5f5f5;
+    }
+
+    #tableLead tbody tr.follow_status_neutral td,
+    .DTFC_Cloned tbody tr.follow_status_neutral td {
+        color: #fff;
+        background-color: #60497a;
+    }
+    #tableLead tbody tr.follow_status_rejected td,
+    .DTFC_Cloned tbody tr.follow_status_rejected td {
+        color: #fff;
+        background-color: #4f6228 ;
+    }
+    #tableLead tbody tr.follow_status_interests td,
+    .DTFC_Cloned tbody tr.follow_status_interests td {
+        color: #fff;
+        background-color: #974706;
+    }
+    #tableLead tbody tr.follow_status_pending td,
+    .DTFC_Cloned tbody tr.follow_status_pending td {
+        color: #fff;
+        background-color: #c00000;
+    }
+
+    #tableLead tbody tr.Booked td,
+    .DTFC_Cloned tbody tr.Booked td,
+    #tableNCList tbody tr.booked td {
+        color: #000;
+        background-color: #00b0f0 !important;
     }
 
     .table a {
@@ -123,6 +139,15 @@
     .delegateItem {
         padding: 20px;
         border: 1px solid #e2e2e2;
+    }
+    .color_status {
+        cursor: default;
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        border: 1px solid #c3c3c3;
+        border-radius: 50%;
+        margin-top: 7px;
     }
 </style>
 
@@ -199,7 +224,7 @@
                                 <a href="@Url.Action("StartCallForm", new {id = Model.Event.ID})" class="btn ink-reaction btn-floating-action btn-success" title="Start New Call"><i class="fa fa-phone fa-2x"></i></a>
                             }
                             @*<a class="btn btn-icon-toggle btn-Expand"><i class="fa fa-expand"></i></a>*@
-                        </div>
+    </div>
                     </div>
                     <header style="line-height: 27px;">
                         <span style="font-size: 18px;"><b>Event Name: </b>@Model.Event.EventName (@Model.Event.EventCode) - <b>Event Dates: </b>@Model.Event.StartDate.ToString("dd/MM/yy") - @Model.Event.EndDate.ToString("dd/MM/yy")</span>
@@ -218,34 +243,58 @@
                 <div class="card-body">
                     <table class="table" id="tableLead">
                         <thead>
-                            <tr>
-                                <th></th>
-                                <th>Time Updated</th>
-                                <th>Country</th>
-                                <th style="width: 150px">Company</th>
-                                <th style="width: 150px">Job Title</th>
-                                <th>Direct Line/Mobile</th>
-                                <th>Salutation</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Mobile Phone1</th>
-                                <th>Mobile Phone2</th>
-                                <th>Mobile Phone3</th>
-                                <th>Work Email</th>
-                                <th>Personal Email</th>
-                                <th>Estimated Delegate</th>
-                                <th>Training Budget</th>
-                                <th>Good Training Month</th>
-                                <th>First Follow Up Status</th>
-                                <th>Final Status</th>
-                                <th>Call Back Date Time</th>
-                                <th>KPI</th>
-                                <th>KPI Remarks</th>
-                                <th>Status</th>
-                                <th>&nbsp;</th>
-                            </tr>
+                        <tr>
+                            <th></th>
+                            <th>Time Updated</th>
+                            <th>Country</th>
+                            <th style="width: 150px">Company</th>
+                            <th style="width: 150px">Job Title</th>
+                            <th>Direct Line/Mobile</th>
+                            <th>Salutation</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Mobile Phone1</th>
+                            <th>Mobile Phone2</th>
+                            <th>Mobile Phone3</th>
+                            <th>Work Email</th>
+                            <th>Personal Email</th>
+                            <th>Estimated Delegate</th>
+                            <th>Training Budget</th>
+                            <th>Good Training Month</th>
+                            <th>First Follow Up Status</th>
+                            <th>Final Status</th>
+                            <th>Call Back Date Time</th>
+                            <th>KPI</th>
+                            <th>KPI Remarks</th>
+                            <th>Status</th>
+                            <th>&nbsp;</th>
+                        </tr>
                         </thead>
                     </table>
+                    
+                    <div class="row">
+                        <table>
+                            <tr>
+                                <td colspan="14"><b>First Follow Up Status</b></td>
+                            </tr>
+                            <tr>
+                                <td><span class="color_status" style="background: #60497a;">&nbsp;</span></td>
+                                <td>&nbsp;Neutral</td>
+                                <td style="width: 20px"></td>
+                                <td><span class="color_status" style="background: #4f6228;">&nbsp;</span></td>
+                                <td>&nbsp;Rejected</td>
+                                <td style="width: 20px"></td>
+                                <td><span class="color_status" style="background: #974706;">&nbsp;</span></td>
+                                <td>&nbsp;Interest</td>
+                                <td style="width: 20px"></td>
+                                <td><span class="color_status" style="background: #c00000;">&nbsp;</span></td>
+                                <td>&nbsp;Pending</td>
+                                <td style="width: 20px"></td>
+                                <td><span class="color_status" style="background: #00b0f0;">&nbsp;</span></td>
+                                <td>&nbsp;Booked</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div><!--end .card-body -->
             </div><!--end .card -->
         </div>
@@ -360,18 +409,21 @@
                  if (aData["StatusCode"] == @LeadStatus.RequestBook || aData["StatusCode"] == @LeadStatus.Booked) {
                      $(nRow).find('td:eq(22)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
                          aData["ID"] +
-                         '&eventId=@Model.Event.ID"><span class=" text-default"  style="white-space: nowrap;">' + aData["StatusDisplay"]+'</span></a>');
+                         '&eventId=@Model.Event.ID"><span style="white-space: nowrap; color:#fff;">' + aData["StatusDisplay"]+'</span></a>');
                  }
                  if ('@eventClosed' == 'False') {
                      $(nRow).find('td:eq(23)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
                          aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');
                  }
                  $(nRow).addClass(aData["ClassStatus"]);
+                 $(nRow).addClass("follow_status_"+aData["FirstFollowUpStatusClass"]);
                  if (aData["NCLExpired"]) {
                      $(nRow).addClass("NCLExpired");
                      $(nRow).find('td:eq(22)')
                          .html(aData["StatusDisplay"] + '<br/><span class="expired">NCL Expired</span>');
                  }
+
+                 //$(nRow).find('td:eq(22)').addClass(aData["ClassStatus"]);
              },
              initComplete: function () {
                  var _table = this;

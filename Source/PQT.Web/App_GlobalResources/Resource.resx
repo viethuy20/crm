@@ -220,10 +220,10 @@
     <value>Format invalid</value>
   </data>
   <data name="PhoneNumberIsInvalid" xml:space="preserve">
-    <value>Phone number is invalid</value>
+    <value>Phone number is invalid (digit only)</value>
   </data>
   <data name="FaxNumberIsInvalid" xml:space="preserve">
-    <value>Fax number is invalid</value>
+    <value>Fax number is invalid (digit only)</value>
   </data>
   <data name="ImportFromExcel" xml:space="preserve">
     <value>Import From Excel</value>

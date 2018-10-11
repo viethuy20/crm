@@ -14,7 +14,7 @@ namespace PQT.Domain.Abstract
         Event GetEvent(string code);
         Event CreateEvent(Event info, IEnumerable<int> groups, IEnumerable<int> users);
         bool UpdateEvent(Event info);
-        Event UpdateEventOperation(int id,VenueInfo venueInfo, AccomodationInfo accomodationInfo, DriverInfo driverInfo, PhotographerInfo photographerInfo, LocalVisaAgentInfo localVisaAgentInfo, PostEventInfo postEventInfo);
+        Event UpdateEventOperation(int id,VenueInfo venueInfo, AccomodationInfo accomodationInfo, DriverInfo driverInfo, PhotographerInfo photographerInfo, LocalVisaAgentInfo localVisaAgentInfo, PostEventInfo postEventInfo,IEnumerable<EventSession> eventSessions);
         Event UpdateEventIncludeUpdateCollection(Event info, IEnumerable<int> groups, IEnumerable<int> users);
         bool AssignCompany(int id, IEnumerable<int> companies);
         bool DeleteEvent(int id);

@@ -190,18 +190,21 @@
                             <header>Delegates</header>
                         </div>
                         <div class="card-body text-default-light" id="delegateContain"  style="padding: 5px;">
-                            @{
-                                var current = 1;
-                            }
-                            @foreach (var item in Model.Booking.Delegates)
+                            @foreach (var item in Model.Booking.Delegates.OrderBy(m=>m.Order))
                             {
                                 <div class="delegateItem col-sm-12">
                                     <div style="border: 1px solid #e1e1e1;padding: 10px;padding-bottom: 5px;">
                                         <div class="row">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-1">
+                                                <div class="form-group">
+                                                    @Html.Bootstrap().TextBox("Order" + item.ID).Value(item.Order).Disabled().Class("form-control").ShowValidationMessage(true)
+                                                    <label>S/No</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-5">
                                                 <div class="form-group">
                                                     @Html.Bootstrap().TextBox("Delegate" + item.ID).Value(item.FullName).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                    <label>Delegate @current</label>
+                                                    <label>Delegate Name</label>
                                                 </div>
                                             </div>
                                             <div class="col-sm-2">
@@ -222,14 +225,14 @@
                                                     <label>Mobile2</label>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm-2">
                                                 <div class="form-group">
                                                     @Html.Bootstrap().TextBox("MobilePhone3_" + item.ID).Value(item.MobilePhone3).Disabled().Class("form-control").ShowValidationMessage(true)
                                                     <label>Mobile3</label>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
                                             <div class="col-sm-4">
                                                 <div class="form-group">
                                                     @Html.Bootstrap().TextBox("JobTitle" + item.ID).Value(item.JobTitle).Disabled().Class("form-control").ShowValidationMessage(true)
@@ -251,7 +254,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                current++;
                             }
                         </div>
                     </div>

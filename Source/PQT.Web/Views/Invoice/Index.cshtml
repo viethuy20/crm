@@ -84,7 +84,14 @@
                      '">' +
                      aData["InvoiceNo"] +
                      '</a>');
-                 $(nRow).find('td:eq(5)').html('<a href="@Url.Action("Edit")?id=' + aData["ID"] + '" data-action="edit"><i class="md md-edit text-info"></i></a> ');
+                 
+                 if ('@CurrentUser.HasPermission("Invoice", "Edit")' == 'True') {
+                     $(nRow).find('td:eq(5)').html('<a href="@Url.Action("Edit")?id=' +
+                         aData["ID"] +
+                         '" data-action="edit"><i class="md md-edit text-info"></i></a> ');
+                 } else {
+                     $(nRow).find('td:eq(5)').html('');
+                 }
                  //$(nRow).attr("data-id", aData["ID"]);
              },
              initComplete: function () {

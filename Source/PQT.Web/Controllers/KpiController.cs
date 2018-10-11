@@ -18,12 +18,14 @@ namespace PQT.Web.Controllers
         //
         // GET: /Kpi/
         private readonly ILeadService _leadService;
+        private readonly ILeadNewService _leadNewService;
         private readonly IEventService _eventService;
 
-        public KpiController(ILeadService leadService, IEventService eventService)
+        public KpiController(ILeadService leadService, IEventService eventService, ILeadNewService leadNewService)
         {
             _leadService = leadService;
             _eventService = eventService;
+            _leadNewService = leadNewService;
         }
 
         [DisplayName(@"Enquire KPIs")]
@@ -724,12 +726,22 @@ namespace PQT.Web.Controllers
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
             IEnumerable<Lead> leads = new HashSet<Lead>();
+            IEnumerable<LeadNew> leadNews = new HashSet<LeadNew>();
             if (!string.IsNullOrEmpty(searchValue))
             {
                 leads = _leadService.GetAllLeads(m =>
                     (m.LeadStatusRecord != LeadStatus.Reject &&
                      m.LeadStatusRecord != LeadStatus.Initial &&
                      m.LeadStatusRecord != LeadStatus.Deleted) &&
+                    (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                    (eventId == 0 || m.EventID == eventId) &&
+                    (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
+                    ((m.User != null && m.User.Email.Contains(searchValue)) ||
+                        m.SalesmanName.Contains(searchValue))
+                );
+                leadNews = _leadNewService.GetAllLeadNews(m =>
+                    (m.AssignUserID >0) &&
                     (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (eventId == 0 || m.EventID == eventId) &&
@@ -749,16 +761,26 @@ namespace PQT.Web.Controllers
                     (eventId == 0 || m.EventID == eventId) &&
                     (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
                 );
+                leadNews = _leadNewService.GetAllLeadNews(m =>
+                    (m.AssignUserID > 0) &&
+                    (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                    (eventId == 0 || m.EventID == eventId) &&
+                    (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
+                );
             }
             // ReSharper disable once AssignNullToNotNullAttribute
             var model = new ConsolidateKPIModel();
-            model.Prepare(leads);
+            model.Prepare(leads, leadNews);
 
             #region sort
             if (sortColumnDir == "asc")
             {
                 switch (sortColumn)
                 {
+                    case "NewEventRequest":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.NewEventRequest).ThenBy(s => s.User.ID).ToList();
+                        break;
                     case "KPI":
                         model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.KPI).ThenBy(s => s.User.ID).ToList();
                         break;
@@ -780,6 +802,9 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
+                    case "NewEventRequest":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.NewEventRequest).ThenBy(s => s.User.ID).ToList();
+                        break;
                     case "KPI":
                         model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.KPI).ThenBy(s => s.User.ID).ToList();
                         break;
@@ -817,6 +842,7 @@ namespace PQT.Web.Controllers
                     UserID = m.User.ID,
                     UserName = m.User.DisplayName,
                     UserEmail = m.User.Email,
+                    m.NewEventRequest,
                     m.KPI,
                     m.NoKPI,
                     m.NoCheck,

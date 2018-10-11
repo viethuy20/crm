@@ -296,7 +296,7 @@ namespace PQT.Web.Infrastructure.Notification
                             NotifyType = NotifyType.OpeEvent,
                             Title = title,
                             EventCode = eventData.EventCode,
-                            Description = "Operation info",
+                            Description = "",
                             HighlightColor = eventData.BackgroundColor
                         };
                         if (!string.IsNullOrEmpty(title))
@@ -514,6 +514,92 @@ namespace PQT.Web.Infrastructure.Notification
             var thread = new Thread(() =>
             {
                 var setting = SettingRepository.GetNotifySetting(NotifyType.NewEvent, notifyAction);
+                if (setting != null)
+                {
+                    var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
+                    NotifyUser(currentUserId, notiUsers, leadId, title);
+                }
+            });
+            thread.Start();
+        }
+    }
+    public class InvoiceNotificator
+    {
+        private static IInvoiceService InvoiceService
+        {
+            get { return DependencyResolver.Current.GetService<IInvoiceService>(); }
+        }
+        private static IMembershipService MemberService
+        {
+            get { return DependencyResolver.Current.GetService<IMembershipService>(); }
+        }
+        private static IUserNotificationService UserNotificationService
+        {
+            get { return DependencyResolver.Current.GetService<IUserNotificationService>(); }
+        }
+        private static ISettingRepository SettingRepository
+        {
+            get { return DependencyResolver.Current.GetService<ISettingRepository>(); }
+        }
+        private static void NotifyUser(int currentUserId, IEnumerable<User> users, int invoiceId, string title)
+        {
+            var thread = new Thread(() =>
+            {
+                var invoice = InvoiceService.GetInvoice(invoiceId);
+                if (invoice == null)
+                    return;
+                foreach (var user in users)
+                {
+                    if (user == null || currentUserId == user.ID)
+                    {
+                        continue;
+                    }
+                    try
+                    {
+                        var notify = new UserNotification
+                        {
+                            UserID = user.ID,
+                            EntryId = invoice.ID,
+                            EventId = invoice.Booking.EventID,
+                            NotifyType = NotifyType.Invoice,
+                            Title = title,
+                            EventCode = invoice.Booking.EventCode,
+                            Description = invoice.InvoiceNo,
+                            HighlightColor = invoice.Booking.EventColor
+                        };
+                        notify = UserNotificationService.CreateUserNotification(notify);
+                        user.NotifyNumber++;
+                        MemberService.UpdateUser(user);
+                        NotificationHub.NotifyUser(user, notify);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+            });
+            thread.Start();
+        }
+        public static void NotifyUser(NotifyAction notifyAction, List<User> users, int leadId, string title)
+        {
+            var currentUserId = CurrentUser.Identity.ID;
+            var thread = new Thread(() =>
+            {
+                var setting = SettingRepository.GetNotifySetting(NotifyType.Invoice, notifyAction);
+                if (setting != null)
+                {
+                    var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
+                    users.AddRange(notiUsers);
+                }
+                NotifyUser(currentUserId, users, leadId, title);
+            });
+            thread.Start();
+        }
+        public static void NotifyUser(NotifyAction notifyAction, int leadId, string title)
+        {
+            var currentUserId = CurrentUser.Identity.ID;
+            var thread = new Thread(() =>
+            {
+                var setting = SettingRepository.GetNotifySetting(NotifyType.Invoice, notifyAction);
                 if (setting != null)
                 {
                     var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);

@@ -15,12 +15,16 @@ namespace PQT.Web.Controllers
     {
         private readonly IUnitRepository _unitRepo;
         private readonly ILeadService _leadService;
+        private readonly ILeadNewService _leadNewService;
         private readonly IEventService _eventService;
-        public ReportController(IUnitRepository unitRepo, ILeadService leadService, IEventService eventService)
+        private readonly IInvoiceService _invoiceService;
+        public ReportController(IUnitRepository unitRepo, ILeadService leadService, IEventService eventService, ILeadNewService leadNewService, IInvoiceService invoiceService)
         {
             _unitRepo = unitRepo;
             _leadService = leadService;
             _eventService = eventService;
+            _leadNewService = leadNewService;
+            _invoiceService = invoiceService;
         }
 
 
@@ -59,6 +63,7 @@ namespace PQT.Web.Controllers
                 if (eventData != null)
                     model.EventName = eventData.EventName + " (" + eventData.EventCode + ")";
             }
+            IEnumerable<LeadNew> leadNews = new HashSet<LeadNew>();
             IEnumerable<Lead> leads = new HashSet<Lead>();
             leads = _leadService.GetAllLeads(m =>
                 (m.LeadStatusRecord != LeadStatus.Reject &&
@@ -69,8 +74,23 @@ namespace PQT.Web.Controllers
                 (eventId == 0 || m.EventID == eventId) &&
                 (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
             );
-            model.Prepare(leads);
+            leadNews = _leadNewService.GetAllLeadNews(m =>
+                (m.AssignUserID > 0) &&
+                (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                (eventId == 0 || m.EventID == eventId) &&
+                (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
+            );
+            model.Prepare(leads, leadNews);
             return View(model);
         }
+
+
+        public ActionResult PrintInvoice(int id)
+        {
+            var invoice = _invoiceService.GetInvoice(id);
+            return View(invoice);
+        }
+
     }
 }

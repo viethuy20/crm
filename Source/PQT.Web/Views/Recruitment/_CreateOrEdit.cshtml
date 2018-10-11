@@ -54,8 +54,8 @@
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.OfficeLocationID, officeLocations.ToSelectList(m => m.ID, m => m.Name)).Class("form-control").OptionLabel("").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Candidate.OfficeLocation)
+                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.OfficeLocationID, officeLocations.ToSelectList(m => m.ID, m => m.Name)).HtmlAttributes(new { required = "required" }).Class("form-control").OptionLabel("").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.OfficeLocation).ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-4">
@@ -65,8 +65,8 @@
                     {
                         <a href="@FileUpload.GetImageUrl(FileUploadType.Recruitment, Model.Candidate.Resume)" target="_blank">@Model.Candidate.Resume</a>
                     }
-                    @Html.Bootstrap().FileFor(m => m.ResumeFile).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.ResumeFile).LabelText("Resume")
+                    @Html.Bootstrap().FileFor(m => m.ResumeFile).Class("form-control").ShowValidationMessage(true).HtmlAttributes(new { required = "required" })
+                    @Html.Bootstrap().LabelFor(m => m.ResumeFile).LabelText("Resume").ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-4">

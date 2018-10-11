@@ -39,7 +39,8 @@ namespace PQT.Web.Models
         public PhotographerInfo PhotographerInfo { get; set; }
         public LocalVisaAgentInfo LocalVisaAgentInfo { get; set; }
         public PostEventInfo PostEventInfo { get; set; }
-
+    
+        public ICollection<EventSession> EventSessions { get; set; }
         public EventModel()
         {
             GroupsSelected = new List<int>();
@@ -86,6 +87,7 @@ namespace PQT.Web.Models
                 PhotographerInfo = Event.PhotographerInfo;
                 LocalVisaAgentInfo = Event.LocalVisaAgentInfo;
                 PostEventInfo = Event.PostEventInfo;
+                EventSessions = Event.EventSessions;
             }
             if (VenueInfo == null) VenueInfo = new VenueInfo { EntryId = ID, UserId = currentUser.ID };
             if (AccomodationInfo == null) AccomodationInfo = new AccomodationInfo { EntryId = ID, UserId = currentUser.ID };
@@ -201,6 +203,65 @@ namespace PQT.Web.Models
                     PostEventInfo.FeedbackUpload = uploadPicture;
                 }
             }
+            foreach (var eventSession in EventSessions)
+            {
+                if (eventSession.TrainerInvoiceFile != null)
+                {
+                    string uploadPicture = FileUpload.Upload(FileUploadType.Trainer, eventSession.TrainerInvoiceFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        eventSession.TrainerInvoice = uploadPicture;
+                    }
+                }
+                if (eventSession.TrainerTicketFile != null)
+                {
+                    string uploadPicture = FileUpload.Upload(FileUploadType.Trainer, eventSession.TrainerTicketFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        eventSession.TrainerTicket = uploadPicture;
+                    }
+                }
+                if (eventSession.TrainerVisaFile != null)
+                {
+                    string uploadPicture = FileUpload.Upload(FileUploadType.Trainer, eventSession.TrainerVisaFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        eventSession.TrainerVisa = uploadPicture;
+                    }
+                }
+                if (eventSession.TrainerInsuranceFile != null)
+                {
+                    string uploadPicture = FileUpload.Upload(FileUploadType.Trainer, eventSession.TrainerInsuranceFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        eventSession.TrainerInsurance = uploadPicture;
+                    }
+                }
+                if (eventSession.OperationTicketFile != null)
+                {
+                    string uploadPicture = FileUpload.Upload(FileUploadType.Trainer, eventSession.OperationTicketFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        eventSession.OperationTicket = uploadPicture;
+                    }
+                }
+                if (eventSession.OperationVisaFile != null)
+                {
+                    string uploadPicture = FileUpload.Upload(FileUploadType.Trainer, eventSession.OperationVisaFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        eventSession.OperationVisa = uploadPicture;
+                    }
+                }
+                if (eventSession.OperationInsuranceFile != null)
+                {
+                    string uploadPicture = FileUpload.Upload(FileUploadType.Trainer, eventSession.OperationInsuranceFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        eventSession.OperationInsurance = uploadPicture;
+                    }
+                }
+            }
             if (!string.IsNullOrEmpty(VenueInfo.HotelVenue) &&
                 (VenueInfo.Status == InfoStatus.Rejected ||
                  VenueInfo.Status == InfoStatus.Initial))
@@ -214,20 +275,20 @@ namespace PQT.Web.Models
                 AccomodationInfo.Status = InfoStatus.Request;
             }
             var result = repo.UpdateEventOperation(ID, VenueInfo, AccomodationInfo, DriverInfo, PhotographerInfo,
-                LocalVisaAgentInfo, PostEventInfo) != null;
+                LocalVisaAgentInfo, PostEventInfo, EventSessions) != null;
             if (result)
             {
                 if (VenueInfo.Status == InfoStatus.Request && AccomodationInfo.Status == InfoStatus.Request)
                 {
-                    OpeEventNotificator.NotifyUser(NotifyAction.Request, ID, "Request Venue And Accomodation Info");
+                    OpeEventNotificator.NotifyUser(NotifyAction.Request, ID, "Operation Request Hotel");
                 }
                 else if (VenueInfo.Status == InfoStatus.Request)
                 {
-                    OpeEventNotificator.NotifyUser(NotifyAction.Request, ID, "Request Venue Info");
+                    OpeEventNotificator.NotifyUser(NotifyAction.Request, ID, "Operation Request Hotel");
                 }
                 else if (AccomodationInfo.Status == InfoStatus.Request)
                 {
-                    OpeEventNotificator.NotifyUser(NotifyAction.Request, ID, "Request Accomodation Info");
+                    OpeEventNotificator.NotifyUser(NotifyAction.Request, ID, "Operation Request Hotel");
                 }
                 return true;
             }

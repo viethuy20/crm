@@ -114,19 +114,22 @@ namespace PQT.Web.Infrastructure
             }
             return true;
         }
-        public override Event UpdateEventOperation(int id, VenueInfo venueInfo, AccomodationInfo accomodationInfo, DriverInfo driverInfo, PhotographerInfo photographerInfo, LocalVisaAgentInfo localVisaAgentInfo, PostEventInfo postEventInfo)
+        public override Event UpdateEventOperation(int id, VenueInfo venueInfo, AccomodationInfo accomodationInfo, DriverInfo driverInfo, PhotographerInfo photographerInfo, LocalVisaAgentInfo localVisaAgentInfo, PostEventInfo postEventInfo, IEnumerable<EventSession> eventSessions)
         {
             var exist = EventRepository.UpdateEventOperation(id, venueInfo, accomodationInfo, driverInfo,
-                photographerInfo, localVisaAgentInfo, postEventInfo);
+                photographerInfo, localVisaAgentInfo, postEventInfo,eventSessions);
             if (exist == null)
             {
                 return null;
             }
 
             _events.Remove(GetEvent(id));
-            foreach (var trainer in exist.EventSessions.Where(m => m.Trainer == null).ToList())
+            foreach (var trainer in exist.EventSessions.ToList())
             {
-                trainer.Trainer = TrainerService.GetTrainer((int)trainer.TrainerID);
+                if (trainer.Trainer == null)
+                {
+                    trainer.Trainer = TrainerService.GetTrainer((int)trainer.TrainerID);
+                }
             }
             foreach (var eventCompany in exist.EventCompanies.Where(m => m.Company == null).ToList())
             {

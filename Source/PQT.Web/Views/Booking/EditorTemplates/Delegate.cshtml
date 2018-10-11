@@ -3,15 +3,20 @@
 
 @using (Html.BeginCollectionItem())
 {
-    <div class="delegateItem col-sm-12">
+    <div class="delegateItem col-sm-12 delegateItem_@(Model.ID)" data-id="@Model.ID">
         <div style="border: 1px solid #e1e1e1;padding: 10px;padding-bottom: 5px;">
             <div class="row">
                 @Html.HiddenFor(m => m.ID)
-
-                <div class="col-sm-4">
+                <div class="col-sm-1">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Order).Class("form-control").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Order).LabelText("S/No")
+                    </div>
+                </div>
+                <div class="col-sm-5">
                     <div class="col-sm-2">
                         <div class="form-group">
-                            @Html.Bootstrap().DropDownListFor(m => m.Salutation, EnumerationHelper.ToSelectList<NameTitle>()).HtmlAttributes(new { required = "required" }).Class("form-control").Readonly().ShowValidationMessage(true)
+                            @Html.Bootstrap().DropDownListFor(m => m.Salutation, EnumerationHelper.ToSelectList<NameTitle>()).Class("form-control").Readonly().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Salutation)
                         </div>
                     </div>
@@ -46,32 +51,50 @@
                         @Html.Bootstrap().LabelFor(m => m.MobilePhone2)
                     </div>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-sm-2">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.MobilePhone3).Class("form-control").Readonly().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.MobilePhone3)
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-5">
+                <div class="col-sm-3">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.JobTitle).Class("form-control").Readonly().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.JobTitle)
                     </div>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.WorkEmail).Class("form-control").Readonly().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.WorkEmail)
                     </div>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Class("form-control").Readonly().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.PersonalEmail)
                     </div>
                 </div>
+                <div class="col-sm-1">
+                    <div class="form-group">
+                        <div class="checkbox checkbox-styled">
+                            <label>
+                                <input type="checkbox" class="cbx-sign" id="@Html.IdFor(m => m.ToBeAdvisedLater)" name="@Html.NameFor(m => m.ToBeAdvisedLater)" value="@(Model.ToBeAdvisedLater?"true":"false")" @(Model.ToBeAdvisedLater ? "checked" : "")>
+                                <span>To Be Advised Later</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                @if (Model.ToBeAdvisedLater)
+                {
+                    <div class="col-sm-1">
+                        <div class="form-group">
+                            @Html.Bootstrap().Button().Text("Update").HtmlAttributes(new { @class = "btn_update_delegate" }).Size(ButtonSize.Mini).Style(ButtonStyle.Primary).PrependIcon("md md-done")
+                        </div>
+                    </div>
+                }
                 <div class="col-sm-1">
                     @Html.HiddenFor(m => m.LeadID)
                     @Html.HiddenFor(m => m.BookingID)

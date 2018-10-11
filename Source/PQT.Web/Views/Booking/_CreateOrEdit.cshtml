@@ -29,7 +29,7 @@
     <div class=" col-sm-12">
         <div class="card card-underline">
             <div class="card-head">
-                <header>Sessions</header>
+                <header>Sessions <span class="required">*</span></header>
                 @Html.ValidationMessageFor(m => m.Event.EventSessions)
             </div>
             <div class="card-body text-default-light">
@@ -193,7 +193,14 @@
             {
                 @Html.Bootstrap().Link(Model.Booking.Attachment, FileUpload.GetImageUrl(FileUploadType.Booking, Model.Booking.Attachment)).Class("form-control").HtmlAttributes(new { target = "_blank" })
             }
-            @Html.Bootstrap().FileFor(m => m.AttachmentFile).ShowValidationMessage(true).HtmlAttributes(new { @style = "margin-top: 15px", required = "required" })
+            @if (Model.Booking != null && Model.Booking.ID > 0)
+            {
+                @Html.Bootstrap().FileFor(m => m.AttachmentFile).ShowValidationMessage(true).HtmlAttributes(new {@style = "margin-top: 15px"})
+            }
+            else
+            {
+                @Html.Bootstrap().FileFor(m => m.AttachmentFile).ShowValidationMessage(true).HtmlAttributes(new {@style = "margin-top: 15px", required = "required"})
+            }
             @Html.Bootstrap().LabelFor(m => m.Booking.Attachment).LabelText("Signed Reg Contract").ShowRequiredStar(true)
         </div>
     </div>
@@ -313,6 +320,7 @@
             </div>
             <div class="card-actionbar">
                 <div class="card-actionbar-row">
+                    @Html.Bootstrap().Button().Text("To Be Advised Later").Id("btn_to_be_advised_later").Style(ButtonStyle.Primary).PrependIcon("md md-done")
                     @if (CurrentUser.HasPermission("Lead", "StartCallForm") && (Model.Event.ClosingDate == null || Model.Event.ClosingDate >= DateTime.Today))
                     {
                         @Html.Bootstrap().ActionLinkButton("Add New", "StartCallForm", "Lead").Id("btn_add_new_call").RouteValues(new { id = Model.Event.ID }).HtmlAttributes(new { @target = "_blank" }).Style(ButtonStyle.Success).PrependIcon("md md-add")
@@ -336,6 +344,7 @@
             //},
             remove: function (sender) {
                 $(sender).closest('.delegateItem').remove();
+                OrderAllDelegate();
             },
 
             _generateGuid: function () {
@@ -399,6 +408,7 @@
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  $(nRow).attr('data-id', aData["ID"]);
                  $(nRow).attr('data-salutation', aData["Salutation"]);
+                 $(nRow).attr('data-fullname', aData["FullName"]);
                  $(nRow).attr('data-firstname', aData["FirstName"]);
                  $(nRow).attr('data-lastname', aData["LastName"]);
                  $(nRow).attr('data-jobtitle', aData["JobTitle"]);
@@ -440,6 +450,7 @@
                 e.preventDefault();
                 if (typefill != "authorisation") {
                     typefill = "authorisation";
+                    $("#btn_to_be_advised_later").addClass("hide");
                     reloadSelectData();
                 }
                 $.magnificPopup.open({
@@ -457,6 +468,7 @@
                 e.preventDefault();
                 if (typefill != "sender") {
                     typefill = "sender";
+                    $("#btn_to_be_advised_later").addClass("hide");
                     reloadSelectData();
                 }
                 $.magnificPopup.open({
@@ -474,8 +486,29 @@
                 e.preventDefault();
                 if (typefill != "delegate") {
                     typefill = "delegate";
+                    $("#btn_to_be_advised_later").removeClass("hide");
                     reloadSelectData();
                 }
+                $.magnificPopup.open({
+                    items: [
+                        {
+                            src: '#select_form',
+                            type: 'inline'
+                        }
+                    ],
+                    showCloseBtn: true,
+                });
+            });
+        var updateDelegateId = 0;
+        $(".btn_update_delegate").on("click",
+            function (e) {
+                e.preventDefault();
+                if (typefill != "update_delegate") {
+                    typefill = "update_delegate";
+                    $("#btn_to_be_advised_later").addClass("hide");
+                    reloadSelectData();
+                }
+                updateDelegateId = $(this).parents(".delegateItem").data("id");
                 $.magnificPopup.open({
                     items: [
                         {
@@ -489,19 +522,20 @@
         $(document).on('click', '#calltable tbody tr', function () {
             $.magnificPopup.close();
             if (typefill == "sender") {
-                $("@Html.JquerySelectorFor(m => m.Booking.SenderName)").val($(this).data("name"));
+                $("@Html.JquerySelectorFor(m => m.Booking.SenderName)").val($(this).data("fullname"));
                 $("@Html.JquerySelectorFor(m => m.Booking.SenderDestination)").val($(this).data("jobtitle"));
-                $("@Html.JquerySelectorFor(m => m.Booking.SenderMail)").val($(this).data("email"));
-                $("@Html.JquerySelectorFor(m => m.Booking.SenderTel)").val($(this).data("mobile1"));
+                $("@Html.JquerySelectorFor(m => m.Booking.SenderMail)").val($(this).data("workemail"));
+                $("@Html.JquerySelectorFor(m => m.Booking.SenderTel)").val($(this).data("directline"));
             } else if (typefill == "authorisation") {
-                $("@Html.JquerySelectorFor(m => m.Booking.AuthoriserName)").val($(this).data("name"));
+                $("@Html.JquerySelectorFor(m => m.Booking.AuthoriserName)").val($(this).data("fullname"));
                 $("@Html.JquerySelectorFor(m => m.Booking.AuthoriserDestination)").val($(this).data("jobtitle"));
-                $("@Html.JquerySelectorFor(m => m.Booking.AuthoriserMail)").val($(this).data("email"));
-                $("@Html.JquerySelectorFor(m => m.Booking.AuthoriserTel)").val($(this).data("mobile1"));
+                $("@Html.JquerySelectorFor(m => m.Booking.AuthoriserMail)").val($(this).data("workemail"));
+                $("@Html.JquerySelectorFor(m => m.Booking.AuthoriserTel)").val($(this).data("directline"));
             } else if (typefill == "delegate") {
                 var guid = sub._generateGuid();
                 $('#sub-tmpl').tmpl({ index: guid }).appendTo('#delegateContain');
                 ReValidateForm();
+                $("#Booking_Delegates_" + guid + "__Order").val(0);
                 $("#Booking_Delegates_" + guid + "__LeadID").val($(this).data("id"));
                 $("#Booking_Delegates_" + guid + "__Salutation").val($(this).data("salutation").toUpperCase()).trigger("change");
                 $("#Booking_Delegates_" + guid + "__FirstName").val($(this).data("firstname"));
@@ -513,8 +547,41 @@
                 $("#Booking_Delegates_" + guid + "__MobilePhone3").val($(this).data("mobilephone3"));
                 $("#Booking_Delegates_" + guid + "__WorkEmail").val($(this).data("workemail"));
                 $("#Booking_Delegates_" + guid + "__PersonalEmail").val($(this).data("personalemail"));
+                OrderAllDelegate();
+            } else if (typefill == "update_delegate") {
+                var delegateItem = $(".delegateItem_" + updateDelegateId);
+                delegateItem.find("input[name*='LeadID']").val($(this).data("id"));
+                delegateItem.find("select[name*='Salutation']").val($(this).data("salutation").toUpperCase()).trigger("change");
+                delegateItem.find("input[name*='FirstName']").val($(this).data("firstname"));
+                delegateItem.find("input[name*='LastName']").val($(this).data("lastname"));
+                delegateItem.find("input[name*='JobTitle']").val($(this).data("jobtitle"));
+                delegateItem.find("input[name*='DirectLine']").val($(this).data("directline"));
+                delegateItem.find("input[name*='MobilePhone1']").val($(this).data("mobilephone1"));
+                delegateItem.find("input[name*='MobilePhone2']").val($(this).data("mobilephone2"));
+                delegateItem.find("input[name*='MobilePhone3']").val($(this).data("mobilephone3"));
+                delegateItem.find("input[name*='WorkEmail']").val($(this).data("workemail"));
+                delegateItem.find("input[name*='PersonalEmail']").val($(this).data("personalemail"));
             }
         });
+        $("#btn_to_be_advised_later").on('click', function () {
+            $.magnificPopup.close();
+            if (typefill == "delegate") {
+                var guid = sub._generateGuid();
+                $('#sub-tmpl').tmpl({ index: guid }).appendTo('#delegateContain');
+                $("#Booking_Delegates_" + guid + "__Order").val(0);
+                $("#Booking_Delegates_" + guid + "__ToBeAdvisedLater").attr("checked", "checked");
+                $("#Booking_Delegates_" + guid + "__ToBeAdvisedLater").val(true);
+                OrderAllDelegate();
+            }
+        });
+
+        function OrderAllDelegate() {
+            var allOrderElements =
+                $("#delegateContain").find("input[id*='Order']");
+            allOrderElements.each(function (index, item) {
+                $(item).val(index + 1);
+            });
+        }
         var isReloadSelectData = false;
         $("#btn_add_new_call").on("click",
             function() {

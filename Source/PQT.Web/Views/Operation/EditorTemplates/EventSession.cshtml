@@ -1,0 +1,94 @@
+﻿@using PQT.Domain.Enum
+@model PQT.Domain.Entities.EventSession
+
+@using (Html.BeginCollectionItem())
+{
+    <tr>
+        @Html.HiddenFor(m => m.ID)
+        <td style="white-space: nowrap">@Model.SessionTitle</td>
+        <td>
+            @if (Model.TrainerInvoice != null && !string.IsNullOrEmpty(Model.TrainerInvoice))
+                {
+                <a href="@Model.TrainerInvoiceUrl" target="_blank">@Model.TrainerInvoice</a>
+            }
+            @Html.Bootstrap().FileFor(m => m.TrainerInvoiceFile).ShowValidationMessage(true)
+            <br />
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.TrainerInvoiceRemark).Class("form-control")
+                @Html.Bootstrap().LabelFor(m => m.TrainerInvoiceRemark).LabelText("Remarks")
+            </div>
+        </td>
+        <td>
+            @if (Model.TrainerTicket != null && !string.IsNullOrEmpty(Model.TrainerTicket))
+                {
+                <a href="@Model.TrainerTicketUrl" target="_blank">@Model.TrainerTicket</a>
+            }
+            @Html.Bootstrap().FileFor(m => m.TrainerTicketFile)
+            <br />
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.TrainerTicketRemark).Class("form-control")
+                @Html.Bootstrap().LabelFor(m => m.TrainerTicketRemark).LabelText("Remarks")
+            </div>
+        </td>
+        <td>
+            @if (Model.TrainerVisa != null && !string.IsNullOrEmpty(Model.TrainerVisa))
+                {
+                <a href="@Model.TrainerVisaUrl" target="_blank">@Model.TrainerVisa</a>
+            }
+            @Html.Bootstrap().FileFor(m => m.TrainerVisaFile)
+            <br />
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.TrainerVisaRemark).Class("form-control")
+                @Html.Bootstrap().LabelFor(m => m.TrainerVisaRemark).LabelText("Remarks")
+            </div>
+        </td>
+        <td>
+            @if (Model.TrainerInsurance != null && !string.IsNullOrEmpty(Model.TrainerInsurance))
+                {
+                <a href="@Model.TrainerInsuranceUrl" target="_blank">@Model.TrainerInsurance</a>
+            }
+            @Html.Bootstrap().FileFor(m => m.TrainerInsuranceFile)
+            <br />
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.TrainerInsuranceRemark).Class("form-control")
+                @Html.Bootstrap().LabelFor(m => m.TrainerInsuranceRemark).LabelText("Remarks")
+            </div>
+        </td>
+        <td>
+            @if (Model.OperationTicket != null && !string.IsNullOrEmpty(Model.OperationTicket))
+                {
+                <a href="@Model.OperationTicketUrl" target="_blank">@Model.OperationTicket</a>
+            }
+            @Html.Bootstrap().FileFor(m => m.OperationTicketFile)
+            <br />
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.OperationTicketRemark).Class("form-control")
+                @Html.Bootstrap().LabelFor(m => m.OperationTicketRemark).LabelText("Remarks")
+            </div>
+        </td>
+        <td>
+            @if (Model.OperationVisa != null && !string.IsNullOrEmpty(Model.OperationVisa))
+                {
+                <a href="@Model.OperationVisaUrl" target="_blank">@Model.OperationVisa</a>
+            }
+            @Html.Bootstrap().FileFor(m => m.OperationVisaFile)
+            <br />
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.OperationVisaRemark).Class("form-control")
+                @Html.Bootstrap().LabelFor(m => m.OperationVisaRemark).LabelText("Remarks")
+            </div>
+        </td>
+        <td>
+            @if (Model.OperationInsurance != null && !string.IsNullOrEmpty(Model.OperationInsurance))
+                {
+                <a href="@Model.OperationInsuranceUrl" target="_blank">@Model.OperationInsurance</a>
+            }
+            @Html.Bootstrap().FileFor(m => m.OperationInsuranceFile)
+            <br />
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.OperationInsuranceRemark).Class("form-control")
+                @Html.Bootstrap().LabelFor(m => m.OperationInsuranceRemark).LabelText("Remarks")
+            </div>
+        </td>
+    </tr>
+}

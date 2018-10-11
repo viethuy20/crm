@@ -20,6 +20,7 @@ namespace PQT.Domain.Abstract
         //List<Company> CreateCompanies(List<Company> companies);
         bool UpdateCompany(Company company);
         Company UpdateCompany(Company company, IEnumerable<int> users);
+        Company MergeCompany(int companyID, int mergeCompanyID);
         bool DeleteCompany(int companyID);
         #endregion Company
 

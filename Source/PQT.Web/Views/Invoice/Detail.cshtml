@@ -36,6 +36,7 @@
         {
             @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new {id = Model.Invoice.ID}).Class(" btn-primary").PrependIcon("md md-edit")
         }
+        @Html.Bootstrap().ActionLinkButton("Print Invoice", "PublishToPdfWithURL", "ExportToPDF").RouteValues(new { path = Url.Action("PrintInvoice", "Report") + "?id=" + Model.Invoice.ID, name = "Invoice_" + Model.Invoice.InvoiceNo }).PrependIcon("md md-print").Style(ButtonStyle.Info)
     </div>
 </div>
     <div class="card">
@@ -165,9 +166,7 @@
                             <header>Delegates</header>
                         </div>
                         <div class="card-body text-default-light" id="delegateContain">
-                            @{
-                                var current = 1;
-                            }
+                            
                             @foreach (var item in Model.Booking.Delegates)
                             {
                                 <div class="delegateItem col-sm-6">
@@ -176,7 +175,7 @@
                                             <div class="col-sm-12">
                                                 <div class="form-group">
                                                     @Html.Bootstrap().TextBox("Delegate" + item.ID).Value(item.FullName).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                    <label>Delegate @current</label>
+                                                    <label>Delegate @item.Order</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -210,25 +209,24 @@
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     @Html.Bootstrap().TextBox("MobilePhone1_" + item.ID).Value(item.MobilePhone1).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                    <label>Mobile1</label>
+                                                    <label>Tel 1</label>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     @Html.Bootstrap().TextBox("MobilePhone2_" + item.ID).Value(item.MobilePhone2).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                    <label>Mobile2</label>
+                                                    <label>Tel 2</label>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     @Html.Bootstrap().TextBox("MobilePhone3_" + item.ID).Value(item.MobilePhone3).Disabled().Class("form-control").ShowValidationMessage(true)
-                                                    <label>Mobile3</label>
+                                                    <label>Tel 3</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                current++;
                             }
                         </div>
                     </div>

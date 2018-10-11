@@ -1,0 +1,256 @@
+﻿@using Microsoft.Ajax.Utilities
+@using NS.Mvc
+@model PQT.Domain.Entities.Invoice
+@{
+    Layout = null;
+}
+
+<style>
+    .thinv {
+        width: 1000px;
+        margin: auto;
+    }
+
+        .thinv h3,
+        .thinv h1,
+        .thinv h4 {
+            margin: 0;
+        }
+
+        .thinv > p {
+            margin: 2px 0;
+        }
+
+        .thinv table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .thinv table tr td {
+                vertical-align: top;
+            }
+
+        .thinv > .thinvinfo {
+            border-left: 1px solid #000;
+            border-top: 1px solid #000;
+        }
+
+        .thinv .thinvinfo table tr td {
+            line-height: 22px;
+        }
+
+        .thinv > .thinvinfo > tbody > tr > td {
+            border-right: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+
+        .thinv > .thinvprice {
+            border: 1px solid #000;
+            margin-top: 10px;
+        }
+
+            .thinv > .thinvprice tr td {
+                line-height: 25px;
+            }
+
+        .thinv .thinvprice tr:last-child > td {
+            text-align: center !important;
+        }
+
+        .thinv > .thinvprice > tbody > tr > td:not(:last-child) {
+            border-right: 1px solid #000;
+        }
+
+        .thinv .checkbox {
+            width: 23px;
+        }
+
+        .thinv .bordertr td {
+            border-bottom: 1px solid #000;
+        }
+
+        .thinv .bordertd {
+            border-bottom: 1px solid #000;
+        }
+
+        .thinv .thinvprice tr td {
+            text-align: right;
+        }
+
+        .thinv > .thinvprice > tbody > tr:first-child > td {
+            text-align: center;
+            border-bottom: 1px solid #000;
+        }
+
+        .thinv .thinvprice tr td:nth-child(0n+2) {
+            text-align: center;
+        }
+
+        .thinv .thinvprice tr td:first-child {
+            text-align: left;
+        }
+
+        .thinv .thinvprice p {
+            margin: 5px 0 5px 50px;
+        }
+
+        .thinv .left50 {
+            padding-left: 50px;
+        }
+
+        .thinv .thinvpricecontent {
+            width: 100%;
+            border: none;
+        }
+
+            .thinv .thinvpricecontent tr td {
+                border-right: 1px solid #000;
+                border-left: 0;
+            }
+
+                .thinv .thinvpricecontent tr td:last-child {
+                    border-right: 0;
+                }
+
+    table {
+        font-size: 14px !important;
+    }
+
+
+    .page-break {
+        page-break-after: always;
+    }
+</style>
+<div class="thinv">
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            <td>
+                <h1 style="margin-top: -15px;">PRIME QUALITY TRAINING</h1>
+            </td>
+            <td style="width:180px;">
+                <table>
+                    <tr>
+                        <td style="text-align: right;"><b>Tax Invoice</b></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <p>
+        9 Bukit Timah Road Singapore  Tel. (84) 1234 1234 Fax. (84) 1234 1234
+    </p>
+    <table style="margin-bottom: 10px;">
+        <tr>
+            <td>
+                Tax ID No.  M2-12345678-9
+            </td>
+            @*<td>PAGE : 1/1</td>*@
+        </tr>
+    </table>
+    <table class="thinvinfo">
+        <tr>
+            <td style="width: 55%;">
+                <table class="thinvcustomer">
+                    <tr>
+                        <td>Company Name:</td>
+                        <td>&emsp; @Model.Booking.Company.CompanyName</td>
+                    </tr>
+                    <tr>
+                        <td>Authoriser:</td>
+                        <td>&emsp;@Model.Booking.AuthoriserName</td>
+                    </tr>
+                    <tr>
+                        <td>Tel:</td>
+                        <td>&emsp; @Model.Booking.AuthoriserTel</td>
+                    </tr>
+                    <tr>
+                        <td>Mail:</td>
+                        <td>&emsp; @Model.Booking.AuthoriserMail</td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table>
+                    <tr>
+                        <td style="width: 35%;">Invoice No.</td>
+                        <td>@Model.InvoiceNo</td>
+                    </tr>
+                    <tr>
+                        <td>Date</td>
+                        <td>@Convert.ToDateTime(Model.InvoiceDate).ToString("dd/MM/yyyy")</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <table class="thinvprice" style="min-height: 400px">
+        <tr>
+            <td style="width: 70%;">Delegate</td>
+            <td style="width: 15%;">Discount</td>
+            <td style="width: 15%;">Amount</td>
+        </tr>
+        @foreach (var item in Model.Booking.Delegates)
+        {
+            <tr>
+                <td class="left50">
+                    @item.Order) @item.FullName
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        }
+        <tr>
+            <td class="left50"></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="bordertr" style="border-top: 1px solid #000;">
+            <td colspan="1" style="vertical-align: middle; text-align: center;">
+                @Model.TotalAmount.NumberToWords()
+            </td>
+            <td style="text-align: left;">Grand Total</td>
+            <td colspan="1" style="text-align: right;">@Model.TotalAmount.ToString("N2")</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <table>
+                    <tr>
+                        <td>
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                            ................................
+                            <br />Received by
+                        </td>
+                        <td>
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                            ................................
+                            <br />Collector
+                        </td>
+                        <td>
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                            ................................
+                            <br />Date
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td colspan="1">
+                <br />
+                <br />
+                <br />
+                <br />
+                ..............................
+                <br />Authorized by
+            </td>
+        </tr>
+    </table>
+</div>

@@ -118,10 +118,48 @@ namespace PQT.Web.Infrastructure
                 {
                     _companies.Add(new Company(com));
                 }
+
+                var allResources = GetAllCompanyResources(m => m.CompanyID == company.ID);
+                foreach (var companyResource in allResources)
+                {
+                    companyResource.Organisation = com.CompanyName;
+                    companyResource.CountryID = com.CountryID;
+                }
             }
             return com;
         }
 
+        public override Company MergeCompany(int companyID, int mergeCompanyID)
+        {
+
+            var com = CompanyRepository.MergeCompany(companyID, mergeCompanyID);
+            if (com != null)
+            {
+                var exist = GetCompany(mergeCompanyID);
+                if (exist != null)
+                {
+                    _companies.Remove(GetCompany(companyID));
+                    _companies.Remove(exist);
+                    var reTryCom = new Company(com);
+                    _companies.Add(reTryCom);
+                    EventService.UpdateCompanyCache(reTryCom);
+                }
+                else
+                {
+                    _companies.Remove(GetCompany(companyID));
+                    _companies.Add(new Company(com));
+                }
+
+                var allResources = GetAllCompanyResources(m => m.CompanyID == companyID || m.CompanyID == mergeCompanyID);
+                foreach (var companyResource in allResources)
+                {
+                    companyResource.CompanyID = mergeCompanyID;
+                    companyResource.Organisation = com.CompanyName;
+                    companyResource.CountryID = com.CountryID;
+                }
+            }
+            return com;
+        }
         public override bool DeleteCompany(int companyID)
         {
             if (CompanyRepository.DeleteCompany(companyID))

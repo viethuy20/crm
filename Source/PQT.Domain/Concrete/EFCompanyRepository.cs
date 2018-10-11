@@ -127,11 +127,60 @@ namespace PQT.Domain.Concrete
             if (Update(exist))
             {
                 exist.Country = Get<Country>(Convert.ToInt32(company.CountryID));
+                var allResources = GetAll<CompanyResource>(m => m.CompanyID == company.ID);
+                foreach (var companyResource in allResources)
+                {
+                    companyResource.Organisation = exist.CompanyName;
+                    companyResource.CountryID = exist.CountryID;
+                    Update(companyResource);
+                }
                 return exist;
             }
             return null;
         }
 
+        public virtual Company MergeCompany(int companyID, int mergeCompanyID)
+        {
+
+            var com = Get<Company>(companyID);
+            if (com == null) return null;
+
+            var mergeCom = Get<Company>(mergeCompanyID);
+            if (mergeCom == null) return null;
+            mergeCom.CountryID = com.CountryID;
+            mergeCom.Country = null;
+            mergeCom.CompanyName = com.CompanyName;
+            mergeCom.ProductOrService = com.ProductOrService;
+            mergeCom.Sector = com.Sector;
+            mergeCom.Industry = com.Industry;
+            mergeCom.Ownership = com.Ownership;
+            mergeCom.BusinessUnit = com.BusinessUnit;
+            mergeCom.BudgetMonth = com.BudgetMonth;
+            mergeCom.BudgetPerHead = com.BudgetPerHead;
+            mergeCom.FinancialYear = com.FinancialYear;
+            mergeCom.Tier = com.Tier;
+            mergeCom.Address = com.Address;
+            mergeCom.Tel = com.Tel;
+            mergeCom.Fax = com.Fax;
+            mergeCom.Remarks = com.Remarks;
+            mergeCom.ManagerUsers = _db.Set<User>().Where(r => mergeCom.ManagerUsers.Select(m => m.ID).Contains(r.ID) ||
+                                                               com.ManagerUsers.Select(m => m.ID).Contains(r.ID)).ToList();
+            if (Update(mergeCom))
+            {
+                //Delete<Company>(companyID);
+                var resources = GetAll<CompanyResource>(m => m.CompanyID == companyID || m.CompanyID == mergeCompanyID);
+                foreach (var companyResource in resources)
+                {
+                    companyResource.Organisation = mergeCom.CompanyName;
+                    companyResource.CountryID = mergeCom.CountryID;
+                    companyResource.CompanyID = mergeCompanyID;
+                    Update(companyResource);
+                }
+                mergeCom.Country = Get<Country>(Convert.ToInt32(mergeCom.CountryID));
+                return mergeCom;
+            }
+            return null;
+        }
         public virtual bool DeleteCompany(int companyID)
         {
             return Delete<Company>(companyID);

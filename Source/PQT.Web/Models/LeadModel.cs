@@ -321,7 +321,7 @@ namespace PQT.Web.Models
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string JobTitle { get; set; }//Job Title
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
-        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9]*$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "PhoneNumberIsInvalid")]
         public string DirectLine { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string CompanyName { get; set; }
@@ -337,11 +337,11 @@ namespace PQT.Web.Models
         public string Salutation { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9]*$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "PhoneNumberIsInvalid")]
         public string MobilePhone1 { get; set; }
-        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9]*$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "PhoneNumberIsInvalid")]
         public string MobilePhone2 { get; set; }
-        [RegularExpression(@"^[0-9\-\+\ \(\)]*$", ErrorMessage = "Phone number is invalid")]
+        [RegularExpression(@"^[0-9]*$", ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "PhoneNumberIsInvalid")]
         public string MobilePhone3 { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         [RegularExpression(@"^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$", ErrorMessage = "Email is invalid")]

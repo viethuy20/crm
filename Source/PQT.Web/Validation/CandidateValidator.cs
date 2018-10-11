@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using FluentValidation;
 using PQT.Domain.Entities;
@@ -17,9 +18,9 @@ namespace PQT.Web.Validation
             RuleFor(m => m.FirstName).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.LastName).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.MobileNumber).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(m => m.MobileNumber).Matches(@"^[0-9\-\+\ \(\)]*$").WithMessage("Phone number is invalid");
+            RuleFor(m => m.MobileNumber).Matches(new Regex(@"^[0-9]*$")).WithMessage(Resource.PhoneNumberIsInvalid);
             RuleFor(m => m.PersonalEmail).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(m => m.PersonalEmail).EmailAddress().WithMessage("Email is invalid");
+            RuleFor(m => m.PersonalEmail).EmailAddress().WithMessage(Resource.EmailIsInvalid);
         }
     }
 }

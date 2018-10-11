@@ -537,7 +537,11 @@
                         urlNotify = '@Url.Action("Detail", "Operation")?id=' +
                             this.notifyData.EntryId;
                     }else if (this.notifyData.NotifyTypeCode == '@NotifyType.NewEvent.Value') {
-                        urlLink = '@Url.Action("Detail", "NewEvent")';
+                        urlLink = '@Url.Action("Detail", "NewEvent")?id=' +
+                            this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
+                    }else if (this.notifyData.NotifyTypeCode == '@NotifyType.Invoice.Value') {
+                        urlLink = '@Url.Action("Detail", "Invoice")?id=' +
+                            this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
                     }
                     var row =
                         '<li class="tile" style="border-bottom: 1px solid rgba(150, 156, 156, 0.3);\
@@ -622,6 +626,9 @@
                         }else if (this.notifyData.NotifyTypeCode == '@NotifyType.OpeEvent.Value') {
                             urlNotify = '@Url.Action("Detail", "Operation")?id=' +
                                 this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
+                        }else if (this.notifyData.NotifyTypeCode == '@NotifyType.Invoice.Value') {
+                            urlNotify = '@Url.Action("Detail", "Invoice")?id=' +
+                                this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
                         }
                         var row = '<div class="notify_item dashboard_ncl_new" name="notify-' +
                             this.notifyData.ID + '">\
@@ -658,14 +665,15 @@
                 } else if (this.notifyData.NotifyTypeCode == '@NotifyType.Lead.Value' &&
                     location.href.toLowerCase().indexOf('lead/detail') > 1) {
                     location.reload();
-                }else if (this.notifyData.NotifyTypeCode == '@NotifyType.Recruitment.Value' &&
+                }
+                @*else if (this.notifyData.NotifyTypeCode == '@NotifyType.Recruitment.Value' &&
                     location.href.toLowerCase().indexOf('recruitment/detail') > 1) {
                     location.reload();
                 }else if (this.notifyData.NotifyTypeCode == '@NotifyType.OpeEvent.Value' &&
                     (location.href.toLowerCase().indexOf('operation/detail') > 1 ||
                         location.href.toLowerCase().indexOf('event/detail') > 1)) {
                     location.reload();
-                }
+                }*@
             };
 
             return UserNotification;
@@ -815,6 +823,12 @@
                 UpdateTimestamp();
             },
             60000);
+
+
+        //$("input[type=checkbox][readonly='readonly']").on("click", function (e) {
+        //    e.preventDefault();
+        //    this.checked = !this.checked;
+        //});
     </script>
 
 

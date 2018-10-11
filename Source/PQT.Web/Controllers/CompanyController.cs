@@ -90,6 +90,48 @@ namespace PQT.Web.Controllers
             });
         }
 
+        [DisplayName(@"Merge")]
+        public ActionResult Merge(int id = 0)
+        {
+            var model = new CompanyModel();
+            model.Prepare(id);
+            return PartialView(model);
+        }
+        [HttpPost]
+        [DisplayName(@"Merge")]
+        public ActionResult Merge(CompanyModel model)
+        {
+            if (model.MergeCompanyID == 0)
+            {
+                return Json(new
+                {
+                    Code = 6,
+                    error = "Merge Company should not be empty."
+                });
+            }
+            if (ModelState.IsValid)
+            {
+                var company = _comRepo.MergeCompany(model.CompanyID, model.MergeCompanyID);
+                if (company!=null)
+                {
+                    //company.Country = _unitRepo.GetCountry((int)company.CountryID);
+                    return Json(new
+                    {
+                        Code = 1,
+                        Model = company
+                    });
+                }
+                return Json(new
+                {
+                    Code = 4
+                });
+            }
+            return Json(new
+            {
+                Code = 5
+            });
+        }
+
         [HttpPost]
         public ActionResult Delete(int id)
         {
@@ -134,6 +176,15 @@ namespace PQT.Web.Controllers
                 return View(model);
             }
             return View(model);
+        }
+
+        [AjaxOnly]
+        public ActionResult GetCompaniesForAjaxDropdown(int id,string q)
+        {
+            var bookings = _comRepo.GetAllCompanies(
+                m => m.CompanyName.ToUpper().Trim().Contains(q.ToUpper().Trim())
+                     && m.ID != id).Select(m => new { id = m.ID, text = m.CompanyName });
+            return Json(bookings, JsonRequestBehavior.AllowGet);
         }
 
         [AjaxOnly]
