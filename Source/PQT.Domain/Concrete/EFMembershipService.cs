@@ -276,7 +276,7 @@ namespace PQT.Domain.Concrete
         }
         public IEnumerable<User> GetUsersInRoleLevel(params string[] roleName)
         {
-            return GetAll<User>(u => u.Status == EntityStatus.Normal && 
+            return GetAll<User>(u => u.Status == EntityUserStatus.Normal && 
             u.UserStatus == UserStatus.Live && 
             u.Roles
                     .Select(r => r.RoleLevel.Value)
@@ -298,7 +298,7 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<User> GetAllSalesmans()
         {
-            return GetAll<User>(u => u.Status==EntityStatus.Normal && u.UserStatus==UserStatus.Live &&
+            return GetAll<User>(u => u.Status== EntityUserStatus.Normal && u.UserStatus==UserStatus.Live &&
             u.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel),
                     u => new
                     {
