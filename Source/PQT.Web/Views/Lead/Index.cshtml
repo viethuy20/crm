@@ -11,6 +11,20 @@
 
 
 <style>
+     .table > tbody > tr > td{
+        vertical-align: middle;
+    }
+     .table > tbody > tr > td > p{
+         margin-bottom: 0px;
+     }
+     .truncate {
+         width: 150px;
+         display: -webkit-box;
+         -webkit-line-clamp: 2;
+         -webkit-box-orient: vertical; 
+         overflow: hidden;
+         text-overflow: ellipsis;
+     }
     .table th {
         white-space: nowrap;
     }
@@ -19,13 +33,13 @@
         background: #fff;
     }
 
-        .DTFC_Cloned td {
-            background-color: #fff;
-        }
+    .DTFC_Cloned td {
+        background-color: #fff;
+    }
 
-        .DTFC_Cloned th {
-            background-color: #f5f5f5 !important;
-        }
+    .DTFC_Cloned th {
+        background-color: #f5f5f5 !important;
+    }
 
     #tableLead td, table th {
         text-align: left;
@@ -38,7 +52,7 @@
         height: 78px !important;
     }
 
-        /*#tableLead tbody tr.Reject td {
+    /*#tableLead tbody tr.Reject td {
             color: #8a6d3b;
             background-color: #ffefd5;
         }
@@ -98,31 +112,31 @@
 
     #tableLead tbody tr.follow_status_neutral td,
     .DTFC_Cloned tbody tr.follow_status_neutral td {
-        color: #fff;
-        background-color: #60497a;
+        color: #333;
+        background-color: #fff;
     }
-    #tableLead tbody tr.follow_status_rejected td,
-    .DTFC_Cloned tbody tr.follow_status_rejected td {
-        color: #fff;
-        background-color: #4f6228 ;
-    }
-    #tableLead tbody tr.follow_status_interests td,
-    .DTFC_Cloned tbody tr.follow_status_interests td {
-        color: #fff;
-        background-color: #974706;
-    }
-    #tableLead tbody tr.follow_status_pending td,
-    .DTFC_Cloned tbody tr.follow_status_pending td {
-        color: #fff;
-        background-color: #c00000;
-    }
+        #tableLead tbody tr.follow_status_rejected td,
+        .DTFC_Cloned tbody tr.follow_status_rejected td {
+            color: #333;
+            background-color: #bdd192;
+        }
+        #tableLead tbody tr.follow_status_interests td,
+        .DTFC_Cloned tbody tr.follow_status_interests td {
+            color: #333;
+            background-color: #f8c397;
+        }
+        #tableLead tbody tr.follow_status_pending td,
+        .DTFC_Cloned tbody tr.follow_status_pending td {
+            color: #333;
+            background-color: #ffa7a7;
+        }
 
-    #tableLead tbody tr.Booked td,
-    .DTFC_Cloned tbody tr.Booked td,
-    #tableNCList tbody tr.booked td {
-        color: #000;
-        background-color: #00b0f0 !important;
-    }
+        #tableLead tbody tr.Booked td,
+        .DTFC_Cloned tbody tr.Booked td,
+        #tableNCList tbody tr.booked td {
+            color: #333;
+            background-color: #abd8ff !important;
+        }
 
     .table a {
         text-decoration: underline;
@@ -131,7 +145,7 @@
     .expired {
         color: red;
     }
-    /*#tableLead tbody tr td {
+/*#tableLead tbody tr td {
         min-width: 80px;
     }*/
 </style>
@@ -278,19 +292,19 @@
                                 <td colspan="14"><b>First Follow Up Status</b></td>
                             </tr>
                             <tr>
-                                <td><span class="color_status" style="background: #60497a;">&nbsp;</span></td>
+                                <td><span class="color_status" style="background: #fff;">&nbsp;</span></td>
                                 <td>&nbsp;Neutral</td>
                                 <td style="width: 20px"></td>
-                                <td><span class="color_status" style="background: #4f6228;">&nbsp;</span></td>
+                                <td><span class="color_status" style="background: #bdd192;">&nbsp;</span></td>
                                 <td>&nbsp;Rejected</td>
                                 <td style="width: 20px"></td>
-                                <td><span class="color_status" style="background: #974706;">&nbsp;</span></td>
+                                <td><span class="color_status" style="background: #f8c397;">&nbsp;</span></td>
                                 <td>&nbsp;Interest</td>
                                 <td style="width: 20px"></td>
-                                <td><span class="color_status" style="background: #c00000;">&nbsp;</span></td>
+                                <td><span class="color_status" style="background: #ffa7a7;">&nbsp;</span></td>
                                 <td>&nbsp;Pending</td>
                                 <td style="width: 20px"></td>
-                                <td><span class="color_status" style="background: #00b0f0;">&nbsp;</span></td>
+                                <td><span class="color_status" style="background: #abd8ff;">&nbsp;</span></td>
                                 <td>&nbsp;Booked</td>
                             </tr>
                         </table>
@@ -400,6 +414,9 @@
                  $(nRow).find('td:eq(0)').html('<a class="ink-reaction btn-floating-action btn-primary" title="Call Back" href="@Url.Action("CallingForm")/' +
                      aData["ID"] +
                      '"><i class="fa fa-fw fa-phone"></i></a>');
+
+                 $(nRow).find('td:eq(3)').html('<p title="' + aData["Company"]+'" class="truncate">' + aData["Company"] +'</p>');
+                 $(nRow).find('td:eq(4)').html('<p title="' + aData["JobTitle"] +'" class="truncate">' + aData["JobTitle"] +'</p>');
                  $(nRow).find('td:eq(1)').html('<a href="@Url.Action("Detail")/' +
                      aData["ID"] +
                      '">' +
@@ -409,7 +426,7 @@
                  if (aData["StatusCode"] == @LeadStatus.RequestBook || aData["StatusCode"] == @LeadStatus.Booked) {
                      $(nRow).find('td:eq(22)').html('<a href="@Url.Action("Detail","Booking")?leadId=' +
                          aData["ID"] +
-                         '&eventId=@Model.Event.ID"><span style="white-space: nowrap; color:#fff;">' + aData["StatusDisplay"]+'</span></a>');
+                         '&eventId=@Model.Event.ID"><span style="white-space: nowrap;">' + aData["StatusDisplay"]+'</span></a>');
                  }
                  if ('@eventClosed' == 'False') {
                      $(nRow).find('td:eq(23)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +

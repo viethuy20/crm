@@ -10,6 +10,28 @@
 
 
 <style>
+    .table > tbody > tr > td{
+        vertical-align: middle;
+    }
+    .table > tbody > tr > td > p{
+        margin-bottom: 0px;
+    }
+    .truncate {
+        width: 150px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical; 
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .truncate100 {
+        width: 100px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
     .table th {
         white-space: nowrap;
     }
@@ -270,7 +292,7 @@
                         <thead>
                             <tr>
                                 <th>Time Updated</th>
-                                <th>Salesman</th>
+                                <th style="width: 80px">Salesman</th>
                                 <th>Country</th>
                                 <th style="width: 150px">Company</th>
                                 <th style="width: 150px">Job Title</th>
@@ -396,6 +418,9 @@
              "aaSorting": [[22, "desc"]],
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  updateTableRow(nRow, aData);
+                 $(nRow).find('td:eq(1)').html('<p title="' + aData["Salesman"] + '" class="truncate100">' + aData["Salesman"] + '</p>');
+                 $(nRow).find('td:eq(3)').html('<p title="' + aData["Company"] + '" class="truncate">' + aData["Company"] + '</p>');
+                 $(nRow).find('td:eq(4)').html('<p title="' + aData["JobTitle"] + '" class="truncate">' + aData["JobTitle"] + '</p>');
                  if (aData["NCLExpired"]) {
                      $(nRow).addClass("NCLExpired");
                      $(nRow).find('td:eq(20)')
