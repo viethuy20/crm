@@ -6,7 +6,7 @@
     ViewBag.Title = "Events";
 }
 
-<section>
+<section style="@(CurrentUser.Identity.Background != null && CurrentUser.HasRole("Finance") ?"background: url("+CurrentUser.Identity.BackgroundUrl+ ") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;" : "")">
     <div class="section-header">
         <h2 class="text-primary">@ViewBag.Title</h2>
     </div>

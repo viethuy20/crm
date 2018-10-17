@@ -6,12 +6,12 @@
     ViewBag.Title = "Events For Operation";
 }
 
-<section>
+<section style="@(CurrentUser.Identity.Background != null && CurrentUser.HasRole("Operation") ?"background: url("+CurrentUser.Identity.BackgroundUrl+ ") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;" : "")">
     <div class="section-header">
         <h2 class="text-primary">@ViewBag.Title</h2>
     </div>
     <div class="card" style="margin-bottom: 350px">
-        <div class="card-body">
+        <div class="card-body table-responsive">
             <table class="table" id="table">
                 <thead>
                     <tr>
