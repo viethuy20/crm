@@ -148,6 +148,13 @@ namespace PQT.Web.Controllers
             {
                 return RedirectToAction("Index");
             }
+            var userId = CurrentUser.Identity.ID;
+            if (!(CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("QC") || CurrentUser.HasRole("Manager")) && 
+                model.Booking.SalesmanID != userId && model.Booking.Salesman.TransferUserID != userId)
+            {
+                TempData["error"] = "Don't have permission";
+                return RedirectToAction("Index", "Lead", new { id = model.Booking.EventID });
+            }
             return View(model);
         }
 

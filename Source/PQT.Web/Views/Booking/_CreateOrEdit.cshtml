@@ -110,7 +110,7 @@
                 </div>
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderDestination).Readonly().Class("form-control text-capitalize").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Booking.SenderDestination).LabelText("Destination")
+                    @Html.Bootstrap().LabelFor(m => m.Booking.SenderDestination).LabelText("Designation")
                 </div>
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderTel).Readonly().Class("form-control").ShowValidationMessage(true)
@@ -170,7 +170,7 @@
                 </div>
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserDestination).Readonly().Class("form-control text-capitalize").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserDestination).LabelText("Destination")
+                    @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserDestination).LabelText("Designation")
                 </div>
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserTel).Readonly().Class("form-control").ShowValidationMessage(true)
@@ -274,7 +274,7 @@
                         @Html.Bootstrap().Link(Model.Booking.LetterOfUnderstaking, FileUpload.GetImageUrl(FileUploadType.Booking, Model.Booking.LetterOfUnderstaking)).Class("form-control").HtmlAttributes(new { target = "_blank" })
                     }
                     @Html.Bootstrap().FileFor(m => m.LetterOfUnderstakingFile).ShowValidationMessage(false).HtmlAttributes(new { @style = "margin-top: 15px" })
-                    @Html.Bootstrap().LabelFor(m => m.Booking.LetterOfUnderstaking)
+                    @Html.Bootstrap().LabelFor(m => m.Booking.LetterOfUnderstaking).LabelText("Letter of Undertaking")
                 </div>
                 <div class="form-group">
                     @Html.Bootstrap().TextAreaFor(m => m.Booking.Remarks).Class("form-control").ShowValidationMessage(true)
@@ -548,6 +548,8 @@
                 $("#Booking_Delegates_" + guid + "__WorkEmail").val($(this).data("workemail"));
                 $("#Booking_Delegates_" + guid + "__PersonalEmail").val($(this).data("personalemail"));
                 OrderAllDelegate();
+                delegateItem.find("input[name*='ID']").parents(".delegateItem").find(".advisedlater").addClass("hide");
+                delegateItem.find("input[name*='ID']").parents(".delegateItem").find(".no_advisedlater").removeClass("hide");
             } else if (typefill == "update_delegate") {
                 var delegateItem = $(".delegateItem_" + updateDelegateId);
                 delegateItem.find("input[name*='LeadID']").val($(this).data("id"));
@@ -561,6 +563,10 @@
                 delegateItem.find("input[name*='MobilePhone3']").val($(this).data("mobilephone3"));
                 delegateItem.find("input[name*='WorkEmail']").val($(this).data("workemail"));
                 delegateItem.find("input[name*='PersonalEmail']").val($(this).data("personalemail"));
+                delegateItem.find("input[name*='ToBeAdvisedLater']").removeAttr("checked");
+                delegateItem.find("input[name*='ToBeAdvisedLater']").val(false);
+                delegateItem.find("input[name*='ID']").parents(".delegateItem").find(".advisedlater").addClass("hide");
+                delegateItem.find("input[name*='ID']").parents(".delegateItem").find(".no_advisedlater").removeClass("hide");
             }
         });
         $("#btn_to_be_advised_later").on('click', function () {
@@ -571,6 +577,8 @@
                 $("#Booking_Delegates_" + guid + "__Order").val(0);
                 $("#Booking_Delegates_" + guid + "__ToBeAdvisedLater").attr("checked", "checked");
                 $("#Booking_Delegates_" + guid + "__ToBeAdvisedLater").val(true);
+                $("#Booking_Delegates_" + guid + "__ID").parents(".delegateItem").find(".no_advisedlater").addClass("hide");
+                $("#Booking_Delegates_" + guid + "__ID").parents(".delegateItem").find(".advisedlater").removeClass("hide");
                 OrderAllDelegate();
             }
         });

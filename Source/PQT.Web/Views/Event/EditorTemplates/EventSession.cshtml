@@ -51,6 +51,21 @@
                 <a onclick="return sub.remove(this);" data-action="remove" class="btn btn-danger btn-flat"><i class="md md-delete"></i> Remove</a>
             </div>
             @Html.HiddenFor(m => m.ID)
+            @Html.HiddenFor(m => m.TrainerInvoice)
+            @Html.HiddenFor(m => m.TrainerTicket)
+            @Html.HiddenFor(m => m.TrainerVisa)
+            @Html.HiddenFor(m => m.TrainerInsurance)
+            @Html.HiddenFor(m => m.OperationTicket)
+            @Html.HiddenFor(m => m.OperationVisa)
+            @Html.HiddenFor(m => m.OperationInsurance)
+            @Html.HiddenFor(m => m.TrainerInvoiceRemark)
+            @Html.HiddenFor(m => m.TrainerTicketRemark)
+            @Html.HiddenFor(m => m.TrainerVisaRemark)
+            @Html.HiddenFor(m => m.TrainerInsuranceRemark)
+            @Html.HiddenFor(m => m.OperationTicketRemark)
+            @Html.HiddenFor(m => m.OperationVisaRemark)
+            @Html.HiddenFor(m => m.OperationInsuranceRemark)
+            @Html.HiddenFor(m => m.TrainerID)
             @Html.HiddenFor(m => m.EventID)
         </div>
     </div>

@@ -5,6 +5,7 @@
 {
     <tr>
         @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.EventID)
         <td style="white-space: nowrap">@Model.SessionTitle</td>
         <td>
             @if (Model.TrainerInvoice != null && !string.IsNullOrEmpty(Model.TrainerInvoice))

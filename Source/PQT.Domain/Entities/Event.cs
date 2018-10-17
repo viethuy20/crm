@@ -74,15 +74,21 @@ namespace PQT.Domain.Entities
         public string EventName { get; set; }
         public string BackgroundColor { get; set; }
 
+        private string _hotelVenue;
         public string HotelVenue
         {
             get
             {
                 if (VenueInfo != null && VenueInfo.Status == InfoStatus.Approved)
                 {
-                    return VenueInfo.HotelVenue;
+                    if (!string.IsNullOrEmpty(VenueInfo.HotelVenue))
+                        return VenueInfo.HotelVenue;
                 }
-                return "";
+                return _hotelVenue;
+            }
+            set
+            {
+                _hotelVenue = value;
             }
         }
 

@@ -169,13 +169,19 @@
                         @Html.Bootstrap().LabelFor(m => m.Candidate.ApplicationSource)
                     </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Candidate.OfficeLocationDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Candidate.OfficeLocation)
                     </div>
                 </div>
-                <div class=" col-sm-4">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.RecruitmentPositionDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.RecruitmentPosition)
+                    </div>
+                </div>
+                <div class=" col-sm-6">
                     <div class="form-group">
                         @if (!string.IsNullOrEmpty(Model.Candidate.Resume))
                         {
@@ -184,13 +190,7 @@
                         @Html.Bootstrap().LabelFor(m => m.Candidate.Resume)
                     </div>
                 </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.RecruitmentPositionDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Candidate.RecruitmentPosition)
-                    </div>
-                </div>
-                <div class="col-sm-12">
+                <div class="col-sm-6">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Candidate.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Candidate.Remarks)

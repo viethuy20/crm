@@ -24,13 +24,15 @@ namespace PQT.Web.Controllers
         private readonly ICompanyRepository _comRepo;
         private readonly ILeadService _leadService;
         private readonly IUnitRepository _unitRepository;
+        private readonly IBookingService _bookingService;
 
-        public EventController(IEventService repo, ICompanyRepository comRepo, ILeadService leadService, IUnitRepository unitRepository)
+        public EventController(IEventService repo, ICompanyRepository comRepo, ILeadService leadService, IUnitRepository unitRepository, IBookingService bookingService)
         {
             _repo = repo;
             _comRepo = comRepo;
             _leadService = leadService;
             _unitRepository = unitRepository;
+            _bookingService = bookingService;
         }
 
         [DisplayName(@"Event management")]
@@ -363,12 +365,6 @@ namespace PQT.Web.Controllers
                             item.MobilePhone1 = lead.MobilePhone1;
                             item.MobilePhone2 = lead.MobilePhone2;
                             item.MobilePhone3 = lead.MobilePhone3;
-                            //if (eventCompany != null)
-                            //{
-                            //    item.BusinessUnit = eventCompany.BusinessUnit;
-                            //    item.BudgetMonth = eventCompany.BudgetMonth;
-                            //    item.Remarks = eventCompany.Remarks;
-                            //}
                             _comRepo.UpdateCompanyResource(item);
                         }
                     }
@@ -391,12 +387,6 @@ namespace PQT.Web.Controllers
                             Salutation = lead.Salutation,
                             WorkEmail = lead.WorkEmail
                         };
-                        //if (eventCompany != null)
-                        //{
-                        //    item.BusinessUnit = eventCompany.BusinessUnit;
-                        //    item.BudgetMonth = eventCompany.BudgetMonth;
-                        //    item.Remarks = eventCompany.Remarks;
-                        //}
                         _comRepo.CreateCompanyResource(item);
                     }
                     var json = new
@@ -448,6 +438,7 @@ namespace PQT.Web.Controllers
             int recordsTotal = 0;
 
             IEnumerable<Event> events = new HashSet<Event>();
+            var bookings = _bookingService.GetAllBookings(m => m.BookingStatusRecord == BookingStatus.Approved);
             if (!string.IsNullOrEmpty(searchValue))
             {
                 if (!string.IsNullOrEmpty(searchValue))
@@ -466,6 +457,11 @@ namespace PQT.Web.Controllers
             else
             {
                 events = _repo.GetAllEvents();
+            }
+
+            foreach (var item in events)
+            {
+                item.TotalDelegates = bookings.Where(m => m.EventID == item.ID).Sum(m => m.Delegates.Count);
             }
 
             if (sortColumnDir == "asc")
@@ -492,6 +488,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "ClosingDate":
                         events = events.OrderBy(s => s.ClosingDate).ThenBy(s => s.ID);
+                        break;
+                    case "TotalDelegates":
+                        events = events.OrderBy(s => s.TotalDelegates).ThenBy(s => s.ID);
                         break;
                     case "Location":
                         events = events.OrderBy(s => s.Location).ThenBy(s => s.ID);
@@ -529,6 +528,9 @@ namespace PQT.Web.Controllers
                     case "ClosingDate":
                         events = events.OrderByDescending(s => s.ClosingDate).ThenBy(s => s.ID);
                         break;
+                    case "TotalDelegates":
+                        events = events.OrderByDescending(s => s.TotalDelegates).ThenBy(s => s.ID);
+                        break;
                     case "Location":
                         events = events.OrderByDescending(s => s.Location).ThenBy(s => s.ID);
                         break;
@@ -540,7 +542,6 @@ namespace PQT.Web.Controllers
                         break;
                 }
             }
-
 
             recordsTotal = events.Count();
             if (pageSize > recordsTotal)
@@ -563,6 +564,7 @@ namespace PQT.Web.Controllers
                     m.BackgroundColor,
                     m.Location,
                     m.HotelVenue,
+                    m.TotalDelegates,
                     StartDate = m.StartDate.ToString("dd/MM/yyyy"),
                     EndDate = m.EndDate.ToString("dd/MM/yyyy"),
                     DateOfConfirmation = m.DateOfConfirmationStr,

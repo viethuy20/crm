@@ -53,7 +53,7 @@ namespace PQT.Web.Controllers
             if (DateTime.Today > model.Event.ClosingDate || (model.Event.DateOfOpen > DateTime.Today && !model.Event.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) &&
                 !model.Event.ManagerUsers.Select(u => u.ID).Contains(userId)))
             {
-                TempData["error"] = "Don't have access permission for this event";
+                TempData["error"] = "Closed this event / don't have access permission for this event";
                 return RedirectToAction("Index", "Home");
             }
             return View(model);
@@ -72,7 +72,7 @@ namespace PQT.Web.Controllers
             if (!(CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("QC") || CurrentUser.HasRole("Manager")) && (DateTime.Today > model.Event.ClosingDate || (model.Event.DateOfOpen > DateTime.Today && !model.Event.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) &&
                                                                  !model.Event.ManagerUsers.Select(u => u.ID).Contains(userId))))
             {
-                TempData["error"] = "Don't have access permission for this event";
+                TempData["error"] = "Closed this event / don't have access permission for this event";
                 return RedirectToAction("Index", "Home");
             }
             return View(model);

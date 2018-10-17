@@ -171,7 +171,7 @@
                             </div>
                             <div class="form-group">
                                 @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderDestination).Disabled().Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.Booking.SenderDestination).LabelText("Destination")
+                                @Html.Bootstrap().LabelFor(m => m.Booking.SenderDestination).LabelText("Designation")
                             </div>
                             <div class="form-group">
                                 @Html.Bootstrap().TextBoxFor(m => m.Booking.SenderTel).Disabled().Class("form-control").ShowValidationMessage(true)
@@ -270,7 +270,7 @@
                             </div>
                             <div class="form-group">
                                 @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserDestination).Disabled().Class("form-control").ShowValidationMessage(true)
-                                @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserDestination).LabelText("Destination")
+                                @Html.Bootstrap().LabelFor(m => m.Booking.AuthoriserDestination).LabelText("Designation")
                             </div>
                             <div class="form-group">
                                 @Html.Bootstrap().TextBoxFor(m => m.Booking.AuthoriserTel).Disabled().Class("form-control").ShowValidationMessage(true)
@@ -328,7 +328,7 @@
                                 {
                                     @Html.Bootstrap().Link(Model.Booking.LetterOfUnderstaking, FileUpload.GetImageUrl(FileUploadType.Booking, Model.Booking.LetterOfUnderstaking)).Class("form-control").HtmlAttributes(new { target = "_blank" })
                                 }
-                                @Html.Bootstrap().LabelFor(m => m.Booking.LetterOfUnderstaking)
+                                @Html.Bootstrap().LabelFor(m => m.Booking.LetterOfUnderstaking).LabelText("Letter of Undertaking")
                             </div>
                             <div class="form-group">
                                 @Html.Bootstrap().TextAreaFor(m => m.Booking.Remarks).Disabled().Class("form-control").ShowValidationMessage(true)

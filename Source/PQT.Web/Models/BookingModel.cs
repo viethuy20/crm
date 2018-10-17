@@ -65,23 +65,11 @@ namespace PQT.Web.Models
         public void PrepareEdit(int bookingId)
         {
             var bookingService = DependencyHelper.GetService<IBookingService>();
-            var leadService = DependencyHelper.GetService<ILeadService>();
-            var settingRepo = DependencyHelper.GetService<ISettingRepository>();
-
             var booking = bookingService.GetBooking(bookingId);
             if (booking != null)
             {
-                var lead = leadService.GetLead(booking.LeadID);
                 Event = booking.Event;
-                var discountSetting = settingRepo.GetSetting("Lead", "DiscountPercent");
                 Booking = booking;
-                Booking.CompanyID = lead.CompanyID;
-                Booking.Company = lead.Company;
-                Booking.DiscountPercent = Convert.ToInt32(discountSetting.Value);
-                Booking.SenderName = lead.JobTitle;
-                Booking.SenderDestination = "";
-                Booking.SenderMail = lead.PersonalEmail;
-                Booking.SenderTel = lead.MobilePhone1;
                 SessionIds = booking.EventSessions.Select(m => m.ID).ToList();
             }
         }

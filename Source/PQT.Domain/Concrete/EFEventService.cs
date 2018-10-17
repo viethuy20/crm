@@ -89,58 +89,62 @@ namespace PQT.Domain.Concrete
             try
             {
 
-                foreach (var existEventSession in exist.EventSessions)
+                if (eventSessions != null)
                 {
-                    var trainerUpdate = eventSessions.FirstOrDefault(m => m.ID == existEventSession.ID);
-                    if (trainerUpdate == null)
-                        continue;
-                    if (!string.IsNullOrEmpty(trainerUpdate.TrainerInvoice) && 
-                        existEventSession.TrainerInvoice != trainerUpdate.TrainerInvoice)
+                    foreach (var existEventSession in exist.EventSessions)
                     {
-                        sessionUpdated = true;
-                        existEventSession.TrainerInvoice = trainerUpdate.TrainerInvoice;
+                        var trainerUpdate = eventSessions.FirstOrDefault(m => m.ID == existEventSession.ID);
+                        if (trainerUpdate == null)
+                            continue;
+                        if (!string.IsNullOrEmpty(trainerUpdate.TrainerInvoice) &&
+                            existEventSession.TrainerInvoice != trainerUpdate.TrainerInvoice)
+                        {
+                            sessionUpdated = true;
+                            existEventSession.TrainerInvoice = trainerUpdate.TrainerInvoice;
+                        }
+                        if (!string.IsNullOrEmpty(trainerUpdate.TrainerTicket) &&
+                            existEventSession.TrainerTicket != trainerUpdate.TrainerTicket)
+                        {
+                            sessionUpdated = true;
+                            existEventSession.TrainerTicket = trainerUpdate.TrainerTicket;
+                        }
+                        if (!string.IsNullOrEmpty(trainerUpdate.TrainerVisa) &&
+                            existEventSession.TrainerVisa != trainerUpdate.TrainerVisa)
+                        {
+                            sessionUpdated = true;
+                            existEventSession.TrainerVisa = trainerUpdate.TrainerVisa;
+                        }
+                        if (!string.IsNullOrEmpty(trainerUpdate.TrainerInsurance) &&
+                            existEventSession.TrainerInsurance != trainerUpdate.TrainerInsurance)
+                        {
+                            sessionUpdated = true;
+                            existEventSession.TrainerInsurance = trainerUpdate.TrainerInsurance;
+                        }
+                        if (!string.IsNullOrEmpty(trainerUpdate.OperationTicket) &&
+                            existEventSession.OperationTicket != trainerUpdate.OperationTicket)
+                        {
+                            sessionUpdated = true;
+                            existEventSession.OperationTicket = trainerUpdate.OperationTicket;
+                        }
+                        if (!string.IsNullOrEmpty(trainerUpdate.OperationVisa) &&
+                            existEventSession.OperationVisa != trainerUpdate.OperationVisa)
+                        {
+                            sessionUpdated = true;
+                            existEventSession.OperationVisa = trainerUpdate.OperationVisa;
+                        }
+                        if (!string.IsNullOrEmpty(trainerUpdate.OperationInsurance) &&
+                            existEventSession.OperationInsurance != trainerUpdate.OperationInsurance)
+                        {
+                            sessionUpdated = true;
+                            existEventSession.OperationInsurance = trainerUpdate.OperationInsurance;
+                        }
                     }
-                    if (!string.IsNullOrEmpty(trainerUpdate.TrainerTicket) && 
-                        existEventSession.TrainerTicket != trainerUpdate.TrainerTicket)
+                    if (sessionUpdated)
                     {
-                        sessionUpdated = true;
-                        existEventSession.TrainerTicket = trainerUpdate.TrainerTicket;
-                    }
-                    if (!string.IsNullOrEmpty(trainerUpdate.TrainerVisa) && 
-                        existEventSession.TrainerVisa != trainerUpdate.TrainerVisa)
-                    {
-                        sessionUpdated = true;
-                        existEventSession.TrainerVisa = trainerUpdate.TrainerVisa;
-                    }
-                    if (!string.IsNullOrEmpty(trainerUpdate.TrainerInsurance) && 
-                        existEventSession.TrainerInsurance != trainerUpdate.TrainerInsurance)
-                    {
-                        sessionUpdated = true;
-                        existEventSession.TrainerInsurance = trainerUpdate.TrainerInsurance;
-                    }
-                    if (!string.IsNullOrEmpty(trainerUpdate.OperationTicket) && 
-                        existEventSession.OperationTicket != trainerUpdate.OperationTicket)
-                    {
-                        sessionUpdated = true;
-                        existEventSession.OperationTicket = trainerUpdate.OperationTicket;
-                    }
-                    if (!string.IsNullOrEmpty(trainerUpdate.OperationVisa) && 
-                        existEventSession.OperationVisa != trainerUpdate.OperationVisa)
-                    {
-                        sessionUpdated = true;
-                        existEventSession.OperationVisa = trainerUpdate.OperationVisa;
-                    }
-                    if (!string.IsNullOrEmpty(trainerUpdate.OperationInsurance) && 
-                        existEventSession.OperationInsurance != trainerUpdate.OperationInsurance)
-                    {
-                        sessionUpdated = true;
-                        existEventSession.OperationInsurance = trainerUpdate.OperationInsurance;
+                        UpdateCollection(exist, m => m.ID == exist.ID, m => m.EventSessions, m => m.ID);
                     }
                 }
-                if (sessionUpdated)
-                {
-                    UpdateCollection(exist, m => m.ID == exist.ID, m => m.EventSessions, m => m.ID);
-                }
+
             }
             catch (Exception e)
             {
