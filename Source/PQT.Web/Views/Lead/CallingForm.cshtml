@@ -59,7 +59,7 @@
          function LoadEventCompanyInfo() {
                  $.ajax({
                      url: '@Url.Action("EventCompanyInfo")?eventId=@Model.EventID&companyID=@Model.Lead.CompanyID',
-                     type: 'POST',
+                     type: 'GET',
                      success: function (data) {
                          StartTick();
                          SetEventCompanyInfo(data);

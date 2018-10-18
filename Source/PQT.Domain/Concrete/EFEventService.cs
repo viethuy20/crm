@@ -57,8 +57,14 @@ namespace PQT.Domain.Concrete
 
         public virtual bool UpdateEvent(Event info)
         {
+            var exist = Get<Event>(info.ID);
+            if (exist == null)
+            {
+                return false;
+            }
             info.EventCode = info.EventCode.Trim().ToUpper();
-            return Update(info);
+            Update(info);
+            return Update(exist);
         }
 
         public virtual Event UpdateEventOperation(int id, VenueInfo venueInfo, AccomodationInfo accomodationInfo, DriverInfo driverInfo, PhotographerInfo photographerInfo, LocalVisaAgentInfo localVisaAgentInfo, PostEventInfo postEventInfo, IEnumerable<EventSession> eventSessions)

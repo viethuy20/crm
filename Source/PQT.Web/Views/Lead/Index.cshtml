@@ -429,8 +429,12 @@
                          '&eventId=@Model.Event.ID"><span style="white-space: nowrap;">' + aData["StatusDisplay"]+'</span></a>');
                  }
                  if ('@eventClosed' == 'False') {
-                     $(nRow).find('td:eq(23)').html('<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
-                         aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');
+                     $(nRow).find('td:eq(23)').html(
+                         '<a class="simple-ajax-popup-align-top" href="@Url.Action("Action")?leadId=' +
+                         aData["ID"] +
+                         '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md fa-fw md-view-headline"></i> Action<span></a>');
+                 } else {
+                     $(nRow).find('td:eq(23)').html('Closed');
                  }
                  $(nRow).addClass(aData["ClassStatus"]);
                  $(nRow).addClass("follow_status_"+aData["FirstFollowUpStatusClass"]);

@@ -537,7 +537,7 @@
                 ReValidateForm();
                 $("#Booking_Delegates_" + guid + "__Order").val(0);
                 $("#Booking_Delegates_" + guid + "__LeadID").val($(this).data("id"));
-                $("#Booking_Delegates_" + guid + "__Salutation").val($(this).data("salutation").toUpperCase()).trigger("change");
+                $("#Booking_Delegates_" + guid + "__Salutation").val($(this).data("salutation")?$(this).data("salutation").toUpperCase():"").trigger("change");
                 $("#Booking_Delegates_" + guid + "__FirstName").val($(this).data("firstname"));
                 $("#Booking_Delegates_" + guid + "__LastName").val($(this).data("lastname"));
                 $("#Booking_Delegates_" + guid + "__JobTitle").val($(this).data("jobtitle"));
@@ -553,7 +553,7 @@
             } else if (typefill == "update_delegate") {
                 var delegateItem = $(".delegateItem_" + updateDelegateId);
                 delegateItem.find("input[name*='LeadID']").val($(this).data("id"));
-                delegateItem.find("select[name*='Salutation']").val($(this).data("salutation").toUpperCase()).trigger("change");
+                delegateItem.find("select[name*='Salutation']").val($(this).data("salutation") ? $(this).data("salutation").toUpperCase() : "").trigger("change");
                 delegateItem.find("input[name*='FirstName']").val($(this).data("firstname"));
                 delegateItem.find("input[name*='LastName']").val($(this).data("lastname"));
                 delegateItem.find("input[name*='JobTitle']").val($(this).data("jobtitle"));

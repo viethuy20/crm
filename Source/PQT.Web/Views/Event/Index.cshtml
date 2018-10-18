@@ -30,7 +30,8 @@
                         <th>Event First Day</th>
                         <th>Event Last Day</th>
                         <th>Date Of Confirmation</th>
-                        <th>Total Delegates</th>
+                        <th class="@(CurrentUser.HasRole("Finance")?"hide":"")">Date Of Closing Sales</th>
+                        <th class="@(!CurrentUser.HasRole("Finance")?"hide":"")">Total Delegates</th>
                         <th>Location</th>
                         <th>Hotel Venue</th>
                         <th></th>
@@ -66,6 +67,7 @@
                 { "data": "StartDate", "name": "StartDate", "orderable": true },
                 { "data": "EndDate", "name": "EndDate", "orderable": true },
                 { "data": "DateOfConfirmation", "name": "DateOfConfirmation", "orderable": true },
+                { "data": "ClosingDate", "name": "ClosingDate", "orderable": true },
                 { "data": "TotalDelegates", "name": "TotalDelegates", "orderable": true },
                 { "data": "Location", "name": "Location", "orderable": true },
                 { "data": "HotelVenue", "name": "HotelVenue", "orderable": true },
@@ -85,6 +87,12 @@
                     $(nRow).find('td:eq(0)').html(aData["EventCode"]);
                 }
                 $(nRow).find('td:eq(3)').html('<span class="EventColor" style="cursor: default;display: inline-block;width: 30px;height: 30px;background:' + aData["BackgroundColor"] + ';border:1px solid #c3c3c3;border-radius: 50%;">&nbsp;</span>');
+                if ('@CurrentUser.HasRole("Finance")' == 'True') {
+                    $(nRow).find('td:eq(7)').addClass('hide');
+                }
+                if ('@CurrentUser.HasRole("Finance")' != 'True') {
+                    $(nRow).find('td:eq(8)').addClass('hide');
+                }
                 var dropdowns = '';
                 if ('@CurrentUser.HasPermission("Lead", "Detail")' == 'True') {
                     dropdowns += '<li><a href="@Url.Action("Detail")/' + aData["ID"] + '"><i class="fa fa-eye"> Detail</i></a></li>';
@@ -110,7 +118,7 @@
                 if ('@CurrentUser.HasPermission("Kpi", "ImportVoIp")' == 'True') {
                     dropdowns += '<li class="divider"></li><li><a href="@Url.Action("ImportVoIp", "Kpi")/' + aData["ID"] + '"><i class="fa fa-upload text-primary"> Import VoIP & Check KPI</i></a></li>';
                 }
-                $(nRow).find('td:eq(10)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
+                $(nRow).find('td:eq(11)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
                     dropdowns +
                     '</ul></div>');
                 $(nRow).attr("data-id", ["ID"]);
