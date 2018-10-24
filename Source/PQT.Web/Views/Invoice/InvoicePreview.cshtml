@@ -1,0 +1,33 @@
+﻿@using Resources
+@model PQT.Domain.Entities.Invoice
+
+@{
+    Model.FontSize = 14;
+    ViewBag.Title = "Invoice Preview";
+}
+<section>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card  card-underline">
+                <div class="card-head">
+                    <header>
+                        <i class="fa fa-file-text"></i> @ViewBag.Title
+                    </header>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12" style="padding-right: 24px; padding-bottom: 12px">
+                        @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                        @if (CurrentUser.HasPermission("Invoice", "Edit"))
+                        {
+                            @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new {id = Model.ID}).Class(" btn-primary").PrependIcon("md md-edit")
+                        }
+                        @Html.Bootstrap().ActionLinkButton("Print Invoice", "PublishToPdfWithURL", "ExportToPDF").RouteValues(new { path = Url.Action("PrintInvoice", "Report") + "?id=" + Model.ID, name = "Invoice_" + Model.InvoiceNo }).PrependIcon("md md-print").Style(ButtonStyle.Info)
+                    </div>
+                </div>
+                <div class="card-body">
+                    @Html.Partial("~/Views/Report/PrintInvoice.cshtml",Model)
+                </div><!--end .card-body -->
+            </div><!--end .card -->
+        </div>
+    </div>
+</section>

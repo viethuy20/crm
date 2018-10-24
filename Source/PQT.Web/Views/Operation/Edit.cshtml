@@ -62,7 +62,7 @@
                     @Html.HiddenFor(m => m.VenueInfo.Status)
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.VenueInfo.HotelVenue).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.VenueInfo.HotelVenue).Class("form-control text-capitalize").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.VenueInfo.HotelVenue)
                         </div>
                     </div>
@@ -92,7 +92,7 @@
                     @Html.HiddenFor(m => m.AccomodationInfo.Status)
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.AccomodationInfo.HotelAccomodation).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.AccomodationInfo.HotelAccomodation).Class("form-control text-capitalize").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.AccomodationInfo.HotelAccomodation)
                         </div>
                     </div>
@@ -119,7 +119,7 @@
                     <div class="row form">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.DriverInfo.Name).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().TextBoxFor(m => m.DriverInfo.Name).Class("form-control text-capitalize").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.DriverInfo.Name).LabelText("Driver Name")
                             </div>
                         </div>
@@ -154,7 +154,7 @@
                         @Html.HiddenFor(m => m.PhotographerInfo.ID)
                         <div class="col-sm-6">
                             <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.PhotographerInfo.Name).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().TextBoxFor(m => m.PhotographerInfo.Name).Class("form-control text-capitalize").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.PhotographerInfo.Name).LabelText("Photographer Name")
                             </div>
                         </div>
@@ -189,7 +189,7 @@
                         @Html.HiddenFor(m => m.LocalVisaAgentInfo.ID)
                         <div class="col-sm-6">
                             <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.LocalVisaAgentInfo.Name).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().TextBoxFor(m => m.LocalVisaAgentInfo.Name).Class("form-control text-capitalize").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.LocalVisaAgentInfo.Name).LabelText("Local Visa Agent Name")
                             </div>
                         </div>

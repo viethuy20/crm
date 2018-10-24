@@ -88,7 +88,10 @@
                  if ('@CurrentUser.HasPermission("Invoice", "Edit")' == 'True') {
                      $(nRow).find('td:eq(5)').html('<a href="@Url.Action("Edit")?id=' +
                          aData["ID"] +
-                         '" data-action="edit"><i class="md md-edit text-info"></i></a> ');
+                         '" data-action="edit"><i class="md md-edit text-info"></i></a> ' +
+                         '<a href="@Url.Action("InvoicePreview")/' +
+                         aData["ID"] +
+                         '"><i class="md md-print text-primary"></i></a>');
                  } else {
                      $(nRow).find('td:eq(5)').html('');
                  }

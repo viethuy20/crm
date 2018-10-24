@@ -24,6 +24,7 @@
                 <thead>
                     <tr>
                         <th>Bank Name</th>
+                        <th>Bank Address</th>
                         <th>Account Holder Name</th>
                         <th>Account Holder Address</th>
                         <th>Account Number</th>
@@ -38,6 +39,7 @@
                     {
                         <tr data-id="@item.ID">
                             <td>@item.BankName</td>
+                            <td>@item.BankAddress</td>
                             <td>@item.AccountHolderName</td>
                             <td>@item.AccountHolderAddress</td>
                             <td>@item.AccountNumber</td>
@@ -125,6 +127,7 @@
         function addNewLineItem(data) {
             var rowIndex = $Table.fnAddData([
                 data.BankName,
+                data.BankAddress,
                 data.AccountHolderName,
                 data.AccountHolderAddress,
                 data.AccountNumber,
@@ -144,12 +147,13 @@
                     var td = $(item).find("td");
                     if (td.length > 0) {
                         $(td[0]).text(data.BankName);
-                        $(td[1]).text(data.AccountHolderName);
-                        $(td[2]).text(data.AccountHolderAddress);
-                        $(td[3]).text(data.AccountNumber);
-                        $(td[4]).text(data.Branch);
-                        $(td[5]).text(data.SwiftCode);
-                        $(td[6]).text(data.CurrencyDisplay);
+                        $(td[1]).text(data.BankAddress);
+                        $(td[2]).text(data.AccountHolderName);
+                        $(td[3]).text(data.AccountHolderAddress);
+                        $(td[4]).text(data.AccountNumber);
+                        $(td[5]).text(data.Branch);
+                        $(td[6]).text(data.SwiftCode);
+                        $(td[7]).text(data.CurrencyDisplay);
                     }
                 }
             });

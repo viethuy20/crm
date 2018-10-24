@@ -360,6 +360,9 @@ namespace PQT.Web.Controllers
             var callExists = _repo.GetAllLeads(m =>
                 m.EventID == model.EventID &&
                 m.ID != model.LeadID &&
+                (m.LeadStatusRecord != LeadStatus.Initial &&
+                 m.LeadStatusRecord != LeadStatus.Reject &&
+                 m.LeadStatusRecord != LeadStatus.Deleted) &&
                 ((!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail == model.WorkEmail) ||
                  (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1 == model.WorkEmail1) ||
                  (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail == model.PersonalEmail) ||

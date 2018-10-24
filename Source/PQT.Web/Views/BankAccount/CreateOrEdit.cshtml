@@ -27,6 +27,10 @@
                 @Html.Bootstrap().LabelFor(m => m.BankName).ShowRequiredStar(true)
             </div>
             <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.BankAddress).Class("form-control text-capitalize").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.BankAddress)
+            </div>
+            <div class="form-group">
                 @Html.Bootstrap().TextBoxFor(m => m.AccountHolderName).Class("form-control code").ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.AccountHolderName).ShowRequiredStar(true)
             </div>

@@ -640,6 +640,8 @@ namespace PQT.Web.Controllers
                                                                        .Contains(searchValue) ||
                                                                    m.TotalPaidRevenue.ToString()
                                                                        .Contains(searchValue) ||
+                                                                   (m.InvoiceNo != null && m.InvoiceNo
+                                                                        .ToLower().Contains(searchValue))||
                                                                    (m.PaymentStatus != null && m.PaymentStatusDisplay
                                                                         .ToLower().Contains(searchValue))));
             }
@@ -683,6 +685,9 @@ namespace PQT.Web.Controllers
                     case "PaymentStatus":
                         bookings = bookings.OrderBy(s => s.PaymentStatusDisplay).ThenBy(s => s.ID);
                         break;
+                    case "InvoiceNo":
+                        bookings = bookings.OrderBy(s => s.InvoiceNo).ThenBy(s => s.ID);
+                        break;
                     default:
                         bookings = bookings.OrderBy(s => s.ID);
                         break;
@@ -716,6 +721,9 @@ namespace PQT.Web.Controllers
                     case "PaymentStatus":
                         bookings = bookings.OrderByDescending(s => s.PaymentStatusDisplay).ThenBy(s => s.ID);
                         break;
+                    case "InvoiceNo":
+                        bookings = bookings.OrderByDescending(s => s.InvoiceNo).ThenBy(s => s.ID);
+                        break;
                     default:
                         bookings = bookings.OrderByDescending(s => s.ID);
                         break;
@@ -744,9 +752,10 @@ namespace PQT.Web.Controllers
                     CompanyName = m.Company != null ? m.Company.CompanyName : "",
                     EventName = m.Event != null ? m.Event.EventName : "",
                     EventCode = m.Event != null ? m.Event.EventCode : "",
-                    TotalWrittenRevenue = m.TotalWrittenRevenue.ToString("N2"),
-                    TotalPaidRevenue = m.TotalPaidRevenue.ToString("N2"),
+                    TotalWrittenRevenue = m.TotalWrittenRevenue.ToString("N0"),
+                    TotalPaidRevenue = m.TotalPaidRevenue.ToString("N0"),
                     PaymentStatus = m.PaymentStatusDisplay,
+                    m.InvoiceNo
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

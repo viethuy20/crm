@@ -3,12 +3,49 @@
 @model PQT.Domain.Entities.Invoice
 @{
     Layout = null;
+
+    var fontSize = 20;
+    var delegates = Model.Booking.Delegates.OrderBy(m => m.Order).ToArray();
+    var totalDelegate = delegates.Length;
+    var maxCount = Math.Round(((float)totalDelegate) / 2, 0, MidpointRounding.AwayFromZero);
+    var minCount = 13;
+    maxCount = maxCount > minCount ? maxCount : minCount;
+
+    if (Model.FontSize > 0)
+    {
+        fontSize = Model.FontSize;
+    }
+    else
+    {
+        if (maxCount > 11 && maxCount < 14)
+        {
+            fontSize = 18;
+        }
+        else if (maxCount >= 14 && maxCount < 16)
+        {
+            fontSize = 16;
+        }
+        else if (maxCount >= 16 && maxCount < 18)
+        {
+            fontSize = 15;
+        }
+        else if (maxCount >= 18 && maxCount < 20)
+        {
+            fontSize = 14;
+        }
+        else if (maxCount >= 20)
+        {
+            fontSize = 13;
+        }
+    }
 }
 
 <style>
     .thinv {
-        width: 1000px;
+        width: 100%;
         margin: auto;
+        padding: 0 50px;
+        font-family: "Arial"
     }
 
         .thinv h3,
@@ -26,94 +63,103 @@
             border-collapse: collapse;
         }
 
-            .thinv table tr td {
+        .thinv hr {
+            border: 2px solid;
+        }
+
+        .thinv table tr td {
+            vertical-align: top;
+        }
+
+        .thinv .attention_table, .thinv .invoice_info_table {
+            margin: 8px;
+        }
+
+            .thinv .attention_table .tax-invoice {
+                font-size: @(fontSize+30)px;
+                font-weight: bold;
+                border-bottom: 5px solid;
+            }
+
+            .thinv .attention_table td {
+                line-height: @(fontSize+20)px;
                 vertical-align: top;
             }
 
-        .thinv > .thinvinfo {
-            border-left: 1px solid #000;
-            border-top: 1px solid #000;
+    .thinv .pqt_info_table{
+        margin-left: 20px;
+    }
+
+        .thinv .pqt_info_table td {
+            font-size: @(fontSize-3)px;
         }
 
-        .thinv .thinvinfo table tr td {
-            line-height: 22px;
+        .thinv .pqt_info_table b {
+            font-size: @(fontSize)px;
         }
 
-        .thinv > .thinvinfo > tbody > tr > td {
-            border-right: 1px solid #000;
-            border-bottom: 1px solid #000;
+        .thinv .pqt_info_table img {
+            width: @(fontSize*10)px;
         }
 
-        .thinv > .thinvprice {
-            border: 1px solid #000;
-            margin-top: 10px;
+        .thinv .invoice_info_table td {
+            line-height: @(fontSize+2)px;
         }
 
-            .thinv > .thinvprice tr td {
-                line-height: 25px;
+        .thinv .invoice_info_table .delegate_table td:nth-child(2) {
+            font-style: italic;
+        }
+
+        .thinv .event_info_table td {
+            line-height: @(fontSize+2)px;
+            font-size: @(fontSize)px;
+        }
+
+        .thinv .event_info_table .bold td {
+            font-weight: bold;
+        }
+
+        .thinv .note_highlight {
+            color: red;
+            margin: 8px;
+        }
+
+            .thinv .note_highlight .title {
+                font-size: @(fontSize)px;
+                padding: 0;
+                margin: 0;
             }
 
-        .thinv .thinvprice tr:last-child > td {
-            text-align: center !important;
-        }
-
-        .thinv > .thinvprice > tbody > tr > td:not(:last-child) {
-            border-right: 1px solid #000;
-        }
-
-        .thinv .checkbox {
-            width: 23px;
-        }
-
-        .thinv .bordertr td {
-            border-bottom: 1px solid #000;
-        }
-
-        .thinv .bordertd {
-            border-bottom: 1px solid #000;
-        }
-
-        .thinv .thinvprice tr td {
-            text-align: right;
-        }
-
-        .thinv > .thinvprice > tbody > tr:first-child > td {
-            text-align: center;
-            border-bottom: 1px solid #000;
-        }
-
-        .thinv .thinvprice tr td:nth-child(0n+2) {
-            text-align: center;
-        }
-
-        .thinv .thinvprice tr td:first-child {
-            text-align: left;
-        }
-
-        .thinv .thinvprice p {
-            margin: 5px 0 5px 50px;
-        }
-
-        .thinv .left50 {
-            padding-left: 50px;
-        }
-
-        .thinv .thinvpricecontent {
-            width: 100%;
-            border: none;
-        }
-
-            .thinv .thinvpricecontent tr td {
-                border-right: 1px solid #000;
-                border-left: 0;
+            .thinv .note_highlight .subtitle {
+                font-size: 14px;
+                padding: 0;
+                margin: 0;
             }
 
-                .thinv .thinvpricecontent tr td:last-child {
-                    border-right: 0;
-                }
+        .thinv .bank_info_table td {
+            padding: 5px 8px;
+            border-bottom: 1px solid;
+            border-left: 1px solid;
+        }
+
+
+        .thinv .bank_info_table tr:first-child {
+            border-top: 4px solid;
+        }
+
+        .thinv .bank_info_table tr:first-child,
+        .thinv .bank_info_table tr:nth-child(2),
+        .thinv .bank_info_table tr:nth-child(3),
+        .thinv .bank_info_table tr:nth-child(4) {
+            font-size: @(fontSize)px
+        }
+
+        .thinv .bank_info_table td:last-child {
+            border-right: 1px solid;
+        }
 
     table {
-        font-size: 14px !important;
+        font-size: @(fontSize)px !important;
     }
 
 
@@ -121,136 +167,217 @@
         page-break-after: always;
     }
 </style>
-<div class="thinv">
+<div class="thinv" style="background: url(/Content/images/invoice_bg.jpg);background-position: center;background-repeat: space;">
     <table cellpadding="0" cellspacing="0">
         <tr>
             <td>
-                <h1 style="margin-top: -15px;">PRIME QUALITY TRAINING</h1>
+                <table class="attention_table">
+                    <tr><td><span class="tax-invoice"><b>TAX INVOICE</b></span></td></tr>
+                    <tr><td><b>Attention to: @Model.Booking.SenderName</b></td></tr>
+                    <tr><td><b>@Model.Booking.CompanyName</b></td></tr>
+                    <tr><td>@Model.Booking.Address</td></tr>
+                </table>
             </td>
-            <td style="width:180px;">
-                <table>
-                    <tr>
-                        <td style="text-align: right;"><b>Tax Invoice</b></td>
-                    </tr>
+            <td style="width: 300px">
+                <table class="pqt_info_table">
+                    <tr><td><img src="~/Content/img/logo_bg.jpg" /></td></tr>
+                    <tr><td><b>PRIME QUALITY TRAINING<br/>PTE. LTD.</b></td></tr>
+                    <tr><td>Co UEN: 201324367M</td></tr>
+                    <tr><td>8 Boon Lay Way #06-11</td></tr>
+                    <tr><td>Trade Hub 21,</td></tr>
+                    <tr><td>Singapore 609964</td></tr>
+                    <tr><td>www.pri-qua.com</td></tr>
+                    <tr><td>T: +65 3159 1297</td></tr>
+                    @*<tr><td>F: +65 6515 3525</td></tr>*@
                 </table>
             </td>
         </tr>
     </table>
-    <p>
-        9 Bukit Timah Road Singapore  Tel. (84) 1234 1234 Fax. (84) 1234 1234
-    </p>
-    <table style="margin-bottom: 10px;">
+    <hr />
+    <table class="invoice_info_table">
         <tr>
-            <td>
-                Tax ID No.  M2-12345678-9
-            </td>
-            @*<td>PAGE : 1/1</td>*@
+            <td style="width: 220px">Invoice Number</td>
+            <td style="width: 5px">:</td>
+            <td>@Model.InvoiceNo</td>
         </tr>
-    </table>
-    <table class="thinvinfo">
         <tr>
-            <td style="width: 55%;">
-                <table class="thinvcustomer">
-                    <tr>
-                        <td>Company Name:</td>
-                        <td>&emsp; @Model.Booking.Company.CompanyName</td>
-                    </tr>
-                    <tr>
-                        <td>Authoriser:</td>
-                        <td>&emsp;@Model.Booking.AuthoriserName</td>
-                    </tr>
-                    <tr>
-                        <td>Tel:</td>
-                        <td>&emsp; @Model.Booking.AuthoriserTel</td>
-                    </tr>
-                    <tr>
-                        <td>Mail:</td>
-                        <td>&emsp; @Model.Booking.AuthoriserMail</td>
-                    </tr>
-                </table>
-            </td>
-            <td>
-                <table>
-                    <tr>
-                        <td style="width: 35%;">Invoice No.</td>
-                        <td>@Model.InvoiceNo</td>
-                    </tr>
-                    <tr>
-                        <td>Date</td>
-                        <td>@Convert.ToDateTime(Model.InvoiceDate).ToString("dd/MM/yyyy")</td>
-                    </tr>
-                </table>
-            </td>
+            <td>&nbsp;</td>
         </tr>
-    </table>
-
-    <table class="thinvprice" style="min-height: 400px">
         <tr>
-            <td style="width: 70%;">Delegate</td>
-            <td style="width: 15%;">Discount</td>
-            <td style="width: 15%;">Amount</td>
+            <td>Invoice Date</td>
+            <td>:</td>
+            <td>@Model.InvoiceDate.ToString("dd MMMM yyyy")</td>
         </tr>
-        @foreach (var item in Model.Booking.Delegates)
-        {
-            <tr>
-                <td class="left50">
-                    @item.Order) @item.FullName
+        <tr>
+            <td>Booking Date</td>
+            <td>:</td>
+            <td>@Model.Booking.BookingDate.ToString("dd MMMM yyyy")</td>
+        </tr>
+        <tr>
+            <td>Attendee(s):</td>
+            <td>:</td>
+            <td></td>
+        </tr>
+        <tr>
+            @if (totalDelegate < 12)
+            {
+                <td colspan="3" style="padding-left: 227px;padding-top: 10px">
+                    <table class="delegate_table">
+                        @{
+                            for (var i = 0; i < 12; i++)
+                            {
+                                if (i < totalDelegate)
+                                {
+                                    <tr>
+                                        <td style="width: 8px">@(i + 1).</td>
+                                        <td>@delegates[i].FullName</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </table>
                 </td>
-                <td></td>
-                <td></td>
-            </tr>
-        }
-        <tr>
-            <td class="left50"></td>
-            <td></td>
-            <td></td>
+                            }
+                            else
+                            {
+                                <td colspan="3" style="padding-left: 50px;padding-top: 10px">
+                                    <table>
+                                        <tr>
+                                            <td style="width: 49%">
+                                                <table class="delegate_table">
+                                                    @{
+                                                        for (var i = 0; i < maxCount; i++)
+                                                        {
+                                                            if (i < totalDelegate)
+                                                            {
+                                                                <tr>
+                                                                    <td style="width: 8px">@(i + 1).</td>
+                                                                    <td>@delegates[i].FullName</td>
+                                                                </tr>
+                                                            }
+                                                            else
+                                                            {
+                                                                <tr>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>&nbsp;</td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    }
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table class="delegate_table">
+                                                    @{
+                                                        for (var i = minCount; i < maxCount * 2; i++)
+                                                        {
+                                                            if (i < totalDelegate)
+                                                            {
+                                                                <tr>
+                                                                    <td style="width: 8px">@(i + 1).</td>
+                                                                    <td>@delegates[i].FullName</td>
+                                                                </tr>
+                                                            }
+                                                            else
+                                                            {
+                                                                <tr>
+                                                                    <td>&nbsp;</td>
+                                                                    <td>&nbsp;</td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    }
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                                        }
         </tr>
-        <tr class="bordertr" style="border-top: 1px solid #000;">
-            <td colspan="1" style="vertical-align: middle; text-align: center;">
-                @Model.TotalAmount.NumberToWords()
-            </td>
-            <td style="text-align: left;">Grand Total</td>
-            <td colspan="1" style="text-align: right;">@Model.TotalAmount.ToString("N2")</td>
+    </table>
+    <table class="event_info_table">
+        <tr>
+            <td style="width: 220px">Program</td>
+            <td style="width: 5px">:</td>
+            <td>@Model.Booking.Event.EventName</td>
         </tr>
         <tr>
-            <td colspan="2">
-                <table>
-                    <tr>
-                        <td>
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            ................................
-                            <br />Received by
-                        </td>
-                        <td>
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            ................................
-                            <br />Collector
-                        </td>
-                        <td>
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            ................................
-                            <br />Date
-                        </td>
-                    </tr>
-                </table>
+            <td>Date</td>
+            <td>:</td>
+            <td>@(Model.Booking.Event.StartDate == Model.Booking.Event.EndDate ? Model.Booking.Event.StartDate.ToString("dd MMMM yyyy") : Model.Booking.Event.StartDate.ToString("dd MMMM yyyy") + " - " + Model.Booking.Event.EndDate.ToString("dd MMMM yyyy"))</td>
+        </tr>
+        <tr>
+            <td>Venue</td>
+            <td>:</td>
+            <td>@Model.Booking.Event.HotelVenue</td>
+        </tr>
+        <tr>
+            <td>Remark</td>
+            <td>:</td>
+            <td>@Model.Remarks</td>
+        </tr>
+        <tr>
+            <td>Admin Charges (@Model.Currency.DisplayName)</td>
+            <td>:</td>
+            <td>@Model.AdminCharge.ToString("N0")</td>
+        </tr>
+        <tr class="bold">
+            <td>Total Amount (@Model.Currency.DisplayName)</td>
+            <td>:</td>
+            <td>@Model.TotalAmount.ToString("N0")</td>
+        </tr>
+        <tr>
+            <td colspan="3">&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan="3">&nbsp;</td>
+        </tr>
+    </table>
+    <div class="note_highlight">
+        <p class="title">FULL PAYMENT IS REQUIRED WITHIN <b>3 WORKING DAYS</b> ON RECEIPT OF INVOICE</p>
+        <p class="subtitle">(Please note that the remitting organization has to bear both the local and correspondent bank charges, this invoice amount is listed free excluding tax)</p>
+    </div>
+    <table class="bank_info_table">
+        <tr>
+            <td style="width: 40%">CHEQUE PAYABLE TO</td>
+            <td><b>@(string.IsNullOrEmpty(Model.ChequePayableTo) ? Model.BankAccount.AccountHolderName : Model.ChequePayableTo)</b></td>
+        </tr>
+        <tr style="background-color: #cecece">
+            <td colspan="2">TELEGRAPHIC TRANSFER</td>
+        </tr>
+        <tr>
+            <td>A/C NAME</td>
+            <td><b>@Model.BankAccount.AccountHolderName</b></td>
+        </tr>
+        <tr>
+            <td>BANK</td>
+            <td>
+                <b>@Model.BankAccount.BankName</b><br /><br />
+                @Model.BankAccount.BankAddress
             </td>
-            <td colspan="1">
-                <br />
-                <br />
-                <br />
-                <br />
-                ..............................
-                <br />Authorized by
-            </td>
+        </tr>
+        <tr>
+            <td>BANK CODE</td>
+            <td>@Model.BankAccount.Branch</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>A/C NUMBER</td>
+            <td>@(Model.BankAccount.AccountNumber)&nbsp;@(Model.BankAccount.CurrencyDisplay)</td>
+        </tr>
+        <tr>
+            <td>SWIFT CODE</td>
+            <td>@Model.BankAccount.SwiftCode</td>
         </tr>
     </table>
 </div>

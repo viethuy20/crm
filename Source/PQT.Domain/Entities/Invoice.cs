@@ -9,6 +9,9 @@ namespace PQT.Domain.Entities
 {
     public class Invoice : Entity
     {
+        public Invoice()
+        {
+        }
         public string InvoiceNo { get; set; }
         public decimal AdminCharge { get; set; }
         public decimal TotalAmount { get; set; }
@@ -19,8 +22,11 @@ namespace PQT.Domain.Entities
         public int? BankAccountID { get; set; }
         [ForeignKey("BankAccountID")]
         public virtual BankAccount BankAccount { get; set; }
+        public string ChequePayableTo { get; set; }
         public string Remarks { get; set; }
         public string DeleteRemarks { get; set; }
+        [NotMapped]
+        public int FontSize { get; set; }
         public DateTime InvoiceDate
         {
             get

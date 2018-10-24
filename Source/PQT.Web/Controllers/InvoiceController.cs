@@ -34,6 +34,21 @@ namespace PQT.Web.Controllers
             return View();
         }
 
+        [AjaxOnly]
+        public ActionResult InvoicePreview(int id = 0)
+        {
+            Invoice invoice = null;
+            if (id > 0)
+            {
+                invoice = _invoiceService.GetInvoice(id);
+            }
+            if (invoice == null)
+            {
+                TempData["error"] = "Invoice not found";
+                return RedirectToAction("Index");
+            }
+            return View(invoice);
+        }
         public ActionResult Detail(int id = 0)
         {
             var model = new InvoiceModel();
@@ -74,17 +89,17 @@ namespace PQT.Web.Controllers
             {
                 try
                 {
-                    var flag = model.Create() != null;
-                    if (flag)
+                    var newInvoice = model.Create();
+                    if (newInvoice != null)
                     {
                         TempData["message"] = Resource.SaveSuccessful;
-                        return RedirectToAction("Index");
+                        return RedirectToAction("InvoicePreview", new { id = newInvoice.ID });
                     }
                     TempData["error"] = Resource.SaveError;
                 }
                 catch (Exception e)
                 {
-                    if (e.InnerException!=null)
+                    if (e.InnerException != null)
                     {
                         TempData["error"] = e.Message + " >>>>> " + e.InnerException.Message;
                     }
@@ -163,12 +178,12 @@ namespace PQT.Web.Controllers
             IEnumerable<Invoice> invoices = new HashSet<Invoice>();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                invoices = _invoiceService.GetAllInvoices(m=>m.InvoiceNo.ToLower().Contains(searchValue) ||
+                invoices = _invoiceService.GetAllInvoices(m => m.InvoiceNo.ToLower().Contains(searchValue) ||
                                                              m.InvoiceDateStr.ToLower().Contains(searchValue) ||
-                                                             (m.Remarks !=null && m.Remarks.ToLower().Contains(searchValue)) ||
+                                                             (m.Remarks != null && m.Remarks.ToLower().Contains(searchValue)) ||
                                                              (m.BankAccount != null && m.BankAccount.BankNameDescription.ToLower().Contains(searchValue)) ||
-                                                             (m.Booking !=null && m.Booking.CompanyName.ToLower().Contains(searchValue)) ||
-                                                             (m.Booking !=null && m.Booking.Event.EventCode.ToLower().Contains(searchValue)) ||
+                                                             (m.Booking != null && m.Booking.CompanyName.ToLower().Contains(searchValue)) ||
+                                                             (m.Booking != null && m.Booking.Event.EventCode.ToLower().Contains(searchValue)) ||
                                                              (m.TotalAmount.ToString().Contains(searchValue)));
             }
             else

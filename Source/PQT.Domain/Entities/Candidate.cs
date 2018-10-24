@@ -22,7 +22,7 @@ namespace PQT.Domain.Entities
         public string Resume { get; set; }
         public int? OfficeLocationID { get; set; }
         [ForeignKey("OfficeLocationID")]
-        public OfficeLocation OfficeLocation { get; set; }
+        public virtual OfficeLocation OfficeLocation { get; set; }
 
         public int? CandidateStatusID { get; set; }
         [ForeignKey("CandidateStatusID")]

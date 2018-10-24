@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
@@ -46,12 +47,12 @@ namespace PQT.Web.Controllers
             var model = new RecruitmentModel();
             model.Candidate = new Candidate { UserID = CurrentUser.Identity.ID };
             var rolesInterviewer = new List<string> {"manager", "hr"};
-            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
+            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value == EntityStatus.Deleted.Value && (m.FinanceAdminUnit != FinanceAdminUnit.None ||
                                                                   m.SalesManagementUnit != SalesManagementUnit.None ||
                                                                   m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
                                                                       .Select(r => r.Name.ToUpper())
                                                                       .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
-                                                                      .Any());
+                                                                      .Any()));
             model.Interviewers = allSupervisors;
             return View(model);
         }
@@ -79,12 +80,12 @@ namespace PQT.Web.Controllers
             }
 
             var rolesInterviewer = new List<string> { "manager", "hr" };
-            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
+            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value == EntityStatus.Deleted.Value && (m.FinanceAdminUnit != FinanceAdminUnit.None ||
                                                                   m.SalesManagementUnit != SalesManagementUnit.None ||
                                                                   m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
                                                                       .Select(r => r.Name.ToUpper())
                                                                       .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
-                                                                      .Any());
+                                                                      .Any()));
             model.Interviewers = allSupervisors;
             TempData["error"] = "Save failed";
             return View(model);
@@ -95,12 +96,12 @@ namespace PQT.Web.Controllers
             model.PrepareEdit(id);
 
             var rolesInterviewer = new List<string> { "manager", "hr" };
-            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
+            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value == EntityStatus.Deleted.Value && (m.FinanceAdminUnit != FinanceAdminUnit.None ||
                                                                   m.SalesManagementUnit != SalesManagementUnit.None ||
                                                                   m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
                                                                       .Select(r => r.Name.ToUpper())
                                                                       .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
-                                                                      .Any());
+                                                                      .Any()));
             model.Interviewers = allSupervisors;
             if (model.Candidate == null)
             {
@@ -122,12 +123,12 @@ namespace PQT.Web.Controllers
                 }
             }
             var rolesInterviewer = new List<string> { "manager", "hr" };
-            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
+            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value == EntityStatus.Deleted.Value && (m.FinanceAdminUnit != FinanceAdminUnit.None ||
                                                                   m.SalesManagementUnit != SalesManagementUnit.None ||
                                                                   m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
                                                                       .Select(r => r.Name.ToUpper())
                                                                       .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
-                                                                      .Any());
+                                                                      .Any()));
             model.Interviewers = allSupervisors;
             TempData["error"] = "Save failed";
             return View(model);

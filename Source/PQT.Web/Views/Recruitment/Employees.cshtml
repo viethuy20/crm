@@ -66,10 +66,12 @@
                      htmlAction += '<a href="@Url.Action("EditEmployment")/' +
                          aData["ID"] +
                          '" class="active" data-toggle="class"><i class="fa fa-pencil-square-o text-primary"> Edit</i></a> ';
-                 } 
+                 }
+                 if ('@CurrentUser.HasPermission("Recruitment", "DetailEmployment")' == 'True') {
                  htmlAction += ' <a href="@Url.Action("DetailEmployment")/' +
                      aData["ID"] +
-                     '" class="active" data-toggle="class"><i class="fa fa-eye text-default"> Detail</i></a> ';
+                         '" class="active" data-toggle="class"><i class="fa fa-eye text-default"> Detail</i></a> ';
+                 }
                  $(nRow).find('td:eq(7)').html(htmlAction);
              },
              initComplete: function() {

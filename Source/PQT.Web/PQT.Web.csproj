@@ -2652,6 +2652,7 @@
     <Content Include="Views\Report\PrintInvoice.cshtml" />
     <Content Include="Views\Operation\EditorTemplates\EventSession.cshtml" />
     <Content Include="Views\Company\Merge.cshtml" />
+    <Content Include="Views\Invoice\InvoicePreview.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

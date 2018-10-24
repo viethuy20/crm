@@ -9,6 +9,7 @@ namespace PQT.Domain.Entities
     public class BankAccount : Entity
     {
         public string BankName { get; set; }
+        public string BankAddress { get; set; }
         public string AccountHolderName { get; set; }
         public string AccountHolderAddress { get; set; }
         public string AccountNumber { get; set; }//Bank Account Number/ IBAN

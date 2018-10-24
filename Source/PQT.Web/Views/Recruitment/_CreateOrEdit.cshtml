@@ -18,19 +18,19 @@
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.FirstName).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.FirstName).Class("form-control text-capitalize").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Candidate.FirstName).ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.LastName).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.LastName).Class("form-control text-capitalize").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Candidate.LastName).ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.EnglishName).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.EnglishName).Class("form-control text-capitalize").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Candidate.EnglishName)
                 </div>
             </div>
@@ -65,7 +65,14 @@
                     {
                         <a href="@FileUpload.GetImageUrl(FileUploadType.Recruitment, Model.Candidate.Resume)" target="_blank">@Model.Candidate.Resume</a>
                     }
-                    @Html.Bootstrap().FileFor(m => m.ResumeFile).Class("form-control").ShowValidationMessage(true).HtmlAttributes(new { required = "required" })
+                    @if (Model.Candidate != null && Model.Candidate.ID > 0)
+                    {
+                        @Html.Bootstrap().FileFor(m => m.ResumeFile).Class("form-control").ShowValidationMessage(true)
+                    }
+                    else
+                    {
+                        @Html.Bootstrap().FileFor(m => m.ResumeFile).Class("form-control").ShowValidationMessage(true).HtmlAttributes(new { required = "required" })
+                    }
                     @Html.Bootstrap().LabelFor(m => m.ResumeFile).LabelText("Resume").ShowRequiredStar(true)
                 </div>
             </div>
