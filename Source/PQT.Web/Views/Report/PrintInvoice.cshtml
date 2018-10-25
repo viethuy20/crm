@@ -17,23 +17,23 @@
     }
     else
     {
-        if (maxCount > 11 && maxCount < 14)
+        if (maxCount > 13 && maxCount < 18)
         {
             fontSize = 18;
         }
-        else if (maxCount >= 14 && maxCount < 16)
+        else if (maxCount >= 18 && maxCount < 20)
         {
             fontSize = 16;
         }
-        else if (maxCount >= 16 && maxCount < 18)
+        else if (maxCount >= 21 && maxCount < 23)
         {
             fontSize = 15;
         }
-        else if (maxCount >= 18 && maxCount < 20)
+        else if (maxCount >= 23 && maxCount < 25)
         {
             fontSize = 14;
         }
-        else if (maxCount >= 20)
+        else if (maxCount >= 25)
         {
             fontSize = 13;
         }
@@ -87,7 +87,8 @@
             }
 
     .thinv .pqt_info_table{
-        margin-left: 20px;
+        margin-left: 15px;
+        width: @(fontSize*10+10)px;
     }
 
         .thinv .pqt_info_table td {
@@ -98,8 +99,8 @@
             font-size: @(fontSize)px;
         }
 
-        .thinv .pqt_info_table img {
-            width: @(fontSize*10)px;
+        .thinv .logo {
+            width: @((fontSize-2)*10)px;
         }
 
         .thinv .invoice_info_table td {
@@ -178,10 +179,10 @@
                     <tr><td>@Model.Booking.Address</td></tr>
                 </table>
             </td>
-            <td style="width: 300px">
+            <td style="width: 1px"><img class="logo" src="~/Content/img/logo_bg.jpg" /></td>
+            <td style="width: 1px">
                 <table class="pqt_info_table">
-                    <tr><td><img src="~/Content/img/logo_bg.jpg" /></td></tr>
-                    <tr><td><b>PRIME QUALITY TRAINING<br/>PTE. LTD.</b></td></tr>
+                    <tr><td><b>PRIME QUALITY TRAINING PTE. LTD.</b></td></tr>
                     <tr><td>Co UEN: 201324367M</td></tr>
                     <tr><td>8 Boon Lay Way #06-11</td></tr>
                     <tr><td>Trade Hub 21,</td></tr>
