@@ -275,7 +275,7 @@ namespace PQT.Web.Controllers
                                                              (!string.IsNullOrEmpty(m.PersonalEmail) &&
                                                               m.PersonalEmail == model.PersonalEmail) ||
                                                              (!string.IsNullOrEmpty(m.DirectLine) &&
-                                                              m.MobilePhone1 == model.DirectLine) ||
+                                                              m.DirectLine == model.DirectLine) ||
                                                              (!string.IsNullOrEmpty(m.MobilePhone1) &&
                                                               m.MobilePhone1 == model.MobilePhone1) ||
                                                              (!string.IsNullOrEmpty(m.MobilePhone2) &&
@@ -366,6 +366,7 @@ namespace PQT.Web.Controllers
                 ((!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail == model.WorkEmail) ||
                  (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1 == model.WorkEmail1) ||
                  (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail == model.PersonalEmail) ||
+                 (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine == model.DirectLine) ||
                  (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1 == model.MobilePhone1) ||
                  (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2 == model.MobilePhone2) ||
                  (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3 == model.MobilePhone3)));
