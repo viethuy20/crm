@@ -368,38 +368,37 @@ namespace PQT.Web.Controllers
             IEnumerable<CompanyResource> audits = new HashSet<CompanyResource>();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                if (!string.IsNullOrEmpty(searchValue))
-                    audits = _comRepo.GetAllCompanyResources(m =>
-                        (string.IsNullOrEmpty(country) ||
-                         (!string.IsNullOrEmpty(m.Country) && m.Country.ToLower().Contains(country))) &&
-                        (string.IsNullOrEmpty(organisation) ||
-                         (!string.IsNullOrEmpty(m.Organisation) && m.Organisation.ToLower().Contains(organisation))) &&
-                        (string.IsNullOrEmpty(name) ||
-                         (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(name))) &&
-                        (string.IsNullOrEmpty(mobile) ||
-                         (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(mobile)) ||
-                         (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(mobile)) ||
-                         (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(mobile)) ||
-                         (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(mobile))
-                        ) &&
-                        (string.IsNullOrEmpty(email) ||
-                         (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email)) ||
-                         (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(email))
-                        ) &&
-                        (string.IsNullOrEmpty(role) ||
-                         (!string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(role))) &&
-                        (m.Country != null && m.Country.ToLower().Contains(searchValue)) ||
-                        m.Organisation.ToLower().Contains(searchValue) ||
-                        m.LastName.ToLower().Contains(searchValue) ||
-                        m.FirstName.ToLower().Contains(searchValue) ||
-                        m.Role.ToLower().Contains(searchValue) ||
-                        (m.DirectLine != null && m.DirectLine.Contains(searchValue)) ||
-                        (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
-                        (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
-                        (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
-                        (m.WorkEmail != null && m.WorkEmail.ToLower().Contains(searchValue)) ||
-                        (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue))
-                    );
+                audits = _comRepo.GetAllCompanyResources(m =>
+                    (string.IsNullOrEmpty(country) ||
+                     (!string.IsNullOrEmpty(m.Country) && m.Country.ToLower().Contains(country))) &&
+                    (string.IsNullOrEmpty(organisation) ||
+                     (!string.IsNullOrEmpty(m.Organisation) && m.Organisation.ToLower().Contains(organisation))) &&
+                    (string.IsNullOrEmpty(name) ||
+                     (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(name))) &&
+                    (string.IsNullOrEmpty(mobile) ||
+                     (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(mobile)) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(mobile)) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(mobile)) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(mobile))
+                    ) &&
+                    (string.IsNullOrEmpty(email) ||
+                     (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email)) ||
+                     (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(email))
+                    ) &&
+                    (string.IsNullOrEmpty(role) ||
+                     (!string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(role))) &&
+                    (m.Country != null && m.Country.ToLower().Contains(searchValue)) ||
+                    m.Organisation.ToLower().Contains(searchValue) ||
+                    m.LastName.ToLower().Contains(searchValue) ||
+                    m.FirstName.ToLower().Contains(searchValue) ||
+                    m.Role.ToLower().Contains(searchValue) ||
+                    (m.DirectLine != null && m.DirectLine.Contains(searchValue)) ||
+                    (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
+                    (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
+                    (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
+                    (m.WorkEmail != null && m.WorkEmail.ToLower().Contains(searchValue)) ||
+                    (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue))
+                );
             }
             else
             {
