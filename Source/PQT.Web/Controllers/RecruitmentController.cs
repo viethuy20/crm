@@ -46,7 +46,7 @@ namespace PQT.Web.Controllers
         {
             var model = new RecruitmentModel();
             model.Candidate = new Candidate { UserID = CurrentUser.Identity.ID };
-            var rolesInterviewer = new List<string> {"manager", "hr"};
+            var rolesInterviewer = new List<string> { "manager", "hr" };
             var allSupervisors = _membershipService.GetUsers(m => m.Status.Value == EntityStatus.Deleted.Value && (m.FinanceAdminUnit != FinanceAdminUnit.None ||
                                                                   m.SalesManagementUnit != SalesManagementUnit.None ||
                                                                   m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
@@ -79,9 +79,11 @@ namespace PQT.Web.Controllers
                 }
             }
 
-            var rolesInterviewer = new List<string> { "manager", "hr" };
-            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value == EntityStatus.Deleted.Value && (m.FinanceAdminUnit != FinanceAdminUnit.None ||
+            var rolesInterviewer = new List<string> { "manager", "hr","admin" };
+            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value == EntityStatus.Deleted.Value && (
+                                                                  m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
                                                                   m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                                  m.FinanceAdminUnit == FinanceAdminUnit.Manager ||
                                                                   m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
                                                                       .Select(r => r.Name.ToUpper())
                                                                       .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
@@ -113,7 +115,6 @@ namespace PQT.Web.Controllers
         [HttpPost]
         public ActionResult Edit(RecruitmentModel model)
         {
-
             if (ModelState.IsValid)
             {
                 if (model.SaveEdit())
@@ -123,20 +124,22 @@ namespace PQT.Web.Controllers
                 }
             }
             var rolesInterviewer = new List<string> { "manager", "hr" };
-            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value == EntityStatus.Deleted.Value && (m.FinanceAdminUnit != FinanceAdminUnit.None ||
-                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
-                                                                      .Select(r => r.Name.ToUpper())
-                                                                      .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
-                                                                      .Any()));
+            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value == EntityStatus.Deleted.Value && (
+                                                                      m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
+                                                                      m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                                      m.FinanceAdminUnit == FinanceAdminUnit.Manager ||
+                                                                      m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
+                                                                          .Select(r => r.Name.ToUpper())
+                                                                          .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
+                                                                          .Any()));
             model.Interviewers = allSupervisors;
             TempData["error"] = "Save failed";
             return View(model);
         }
 
-        public ActionResult Detail(int id = 0)
+        public ActionResult Detail(int id = 0, string backAction = "")
         {
-            var model = new RecruitmentModel();
+            var model = new RecruitmentModel { BackAction = backAction };
             model.PrepareEdit(id);
             if (model.Candidate == null)
             {

@@ -18,6 +18,7 @@ namespace PQT.Web.Models
     {
         public int id { get; set; }
         public int RoleID { get; set; }
+        public string BackAction { get; set; }
         public Candidate Candidate { get; set; }
         public User Employee { get; set; }
         public HttpPostedFileBase ResumeFile { get; set; }

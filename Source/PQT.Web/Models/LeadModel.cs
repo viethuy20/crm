@@ -602,6 +602,7 @@ namespace PQT.Web.Models
                     {
                         company.BusinessUnit = EventCompany.BusinessUnit;
                         company.BudgetMonth = EventCompany.BudgetMonth;
+                        company.FinancialYear = EventCompany.BudgetMonth;
                         company.Remarks = EventCompany.Remarks;
                         comRepo.UpdateCompany(company);
                     }
@@ -655,6 +656,7 @@ namespace PQT.Web.Models
                     {
                         Lead.Company.BusinessUnit = EventCompany.BusinessUnit;
                         Lead.Company.BudgetMonth = EventCompany.BudgetMonth;
+                        Lead.Company.FinancialYear = EventCompany.BudgetMonth;
                         Lead.Company.Remarks = EventCompany.Remarks;
                         comRepo.UpdateCompany(Lead.Company);
                     }

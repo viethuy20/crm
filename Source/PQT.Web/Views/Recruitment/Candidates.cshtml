@@ -87,9 +87,9 @@
             "iDisplayLength": 50,
             "aaSorting": [[13, "desc"]],
             "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                var eq15Html = '<a href="@Url.Action("Detail")/' +
+                var eq15Html = '<a href="@Url.Action("Detail")?id=' +
                     aData["ID"] +
-                    '"><i class="fa fa-eye"> Detail</i></a>';
+                    '&backAction=@(ViewContext.Controller.ValueProvider.GetValue("action").RawValue)"><i class="fa fa-eye"> Detail</i></a>';
                 if ('@CurrentUser.HasPermission("Recruitment", "Edit")' == 'True') {
                     eq15Html += ' | <a href="@Url.Action("Edit")/' + aData["ID"] + '"><i class="md md-edit text-info"> Edit</i></a>';
                 }

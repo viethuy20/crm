@@ -1254,7 +1254,7 @@ namespace PQT.Web.Controllers
                 return Json(new
                 {
                     model.ID,
-                    model.BudgetMonth,
+                    BudgetMonth = model.FinancialYear,
                     model.BusinessUnit,
                     model.Remarks,
                 }, JsonRequestBehavior.AllowGet);
@@ -1270,7 +1270,7 @@ namespace PQT.Web.Controllers
             return Json(new
             {
                 model.ID,
-                model.BudgetMonth,
+                BudgetMonth = model.FinancialYear,
                 model.BusinessUnit,
                 model.Remarks,
             }, JsonRequestBehavior.AllowGet);
@@ -1475,6 +1475,7 @@ namespace PQT.Web.Controllers
                     m.Industry,
                     m.BusinessUnit,
                     m.BudgetMonth,
+                    m.FinancialYear,
                     m.Remarks,
                     m.Ownership,
                     m.Tier,

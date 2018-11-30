@@ -149,7 +149,7 @@ namespace PQT.Web.Controllers
                 return RedirectToAction("Index");
             }
             var userId = CurrentUser.Identity.ID;
-            if (!(CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("QC") || CurrentUser.HasRole("Manager")) && 
+            if (!(CurrentUser.HasRole("Finance") || CurrentUser.HasRole("Admin") || CurrentUser.HasRole("QC") || CurrentUser.HasRole("Manager")) &&
                 model.Booking.SalesmanID != userId && model.Booking.Salesman.TransferUserID != userId)
             {
                 TempData["error"] = "Don't have permission";
@@ -379,7 +379,9 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 bookings = _bookingService.GetAllBookings(
-                    m => (eventId == 0 || m.EventID == eventId) && (
+                    m => (m.BookingStatusRecord.Status == BookingStatus.Approved ||
+                          m.BookingStatusRecord.Status == BookingStatus.Initial) &&
+                         (eventId == 0 || m.EventID == eventId) && (
                              m.CreatedTime.ToString("dd/MM/yyyy HH:mm:ss")
                                  .Contains(searchValue) ||
                              (m.Company != null && m.Company.CompanyName.ToLower()
@@ -412,7 +414,10 @@ namespace PQT.Web.Controllers
             }
             else
             {
-                bookings = _bookingService.GetAllBookings(m => eventId == 0 || m.EventID == eventId);
+                bookings = _bookingService.GetAllBookings(m =>
+                    (m.BookingStatusRecord.Status == BookingStatus.Approved ||
+                     m.BookingStatusRecord.Status == BookingStatus.Initial) &&
+                    (eventId == 0 || m.EventID == eventId));
             }
             // ReSharper disable once AssignNullToNotNullAttribute
 
@@ -641,7 +646,7 @@ namespace PQT.Web.Controllers
                                                                    m.TotalPaidRevenue.ToString()
                                                                        .Contains(searchValue) ||
                                                                    (m.InvoiceNo != null && m.InvoiceNo
-                                                                        .ToLower().Contains(searchValue))||
+                                                                        .ToLower().Contains(searchValue)) ||
                                                                    (m.PaymentStatus != null && m.PaymentStatusDisplay
                                                                         .ToLower().Contains(searchValue))));
             }

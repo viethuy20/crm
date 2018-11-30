@@ -47,9 +47,9 @@ namespace PQT.Domain.Entities
         public string Industry { get; set; }
         public string Ownership { get; set; }
         public string BusinessUnit { get; set; }
-        public int BudgetMonth { get; set; }
+        public int BudgetMonth { get; set; }//hidden
         public decimal BudgetPerHead { get; set; }
-        public int FinancialYear { get; set; }
+        public int FinancialYear { get; set; }// as budgetMonth
         public int Tier { get; set; }//tier: 1-red 2-blue -0-black
         public string CountryName
         {
