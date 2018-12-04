@@ -46,13 +46,15 @@ namespace PQT.Web.Controllers
         {
             var model = new RecruitmentModel();
             model.Candidate = new Candidate { UserID = CurrentUser.Identity.ID };
-            var rolesInterviewer = new List<string> { "manager", "hr" };
-            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value == EntityStatus.Deleted.Value && (m.FinanceAdminUnit != FinanceAdminUnit.None ||
-                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
-                                                                      .Select(r => r.Name.ToUpper())
-                                                                      .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
-                                                                      .Any()));
+            var rolesInterviewer = new List<string> { "manager", "hr", "admin" };
+            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value != EntityStatus.Deleted.Value && (
+                                                                      m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
+                                                                      m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                                      m.FinanceAdminUnit == FinanceAdminUnit.Manager ||
+                                                                      m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
+                                                                          .Select(r => r.Name.ToUpper())
+                                                                          .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
+                                                                          .Any()));
             model.Interviewers = allSupervisors;
             return View(model);
         }
@@ -80,14 +82,14 @@ namespace PQT.Web.Controllers
             }
 
             var rolesInterviewer = new List<string> { "manager", "hr","admin" };
-            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value == EntityStatus.Deleted.Value && (
-                                                                  m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
-                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                                  m.FinanceAdminUnit == FinanceAdminUnit.Manager ||
-                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
-                                                                      .Select(r => r.Name.ToUpper())
-                                                                      .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
-                                                                      .Any()));
+            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value != EntityStatus.Deleted.Value && (
+                                                                      m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
+                                                                      m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                                      m.FinanceAdminUnit == FinanceAdminUnit.Manager ||
+                                                                      m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
+                                                                          .Select(r => r.Name.ToUpper())
+                                                                          .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
+                                                                          .Any()));
             model.Interviewers = allSupervisors;
             TempData["error"] = "Save failed";
             return View(model);
@@ -97,13 +99,15 @@ namespace PQT.Web.Controllers
             var model = new RecruitmentModel();
             model.PrepareEdit(id);
 
-            var rolesInterviewer = new List<string> { "manager", "hr" };
-            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value == EntityStatus.Deleted.Value && (m.FinanceAdminUnit != FinanceAdminUnit.None ||
-                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
-                                                                      .Select(r => r.Name.ToUpper())
-                                                                      .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
-                                                                      .Any()));
+            var rolesInterviewer = new List<string> { "manager", "hr", "admin" };
+            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value != EntityStatus.Deleted.Value && (
+                                                                      m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
+                                                                      m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                                      m.FinanceAdminUnit == FinanceAdminUnit.Manager ||
+                                                                      m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
+                                                                          .Select(r => r.Name.ToUpper())
+                                                                          .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
+                                                                          .Any()));
             model.Interviewers = allSupervisors;
             if (model.Candidate == null)
             {
@@ -123,8 +127,8 @@ namespace PQT.Web.Controllers
                     return RedirectToAction("Detail", new { id = model.Candidate.ID });
                 }
             }
-            var rolesInterviewer = new List<string> { "manager", "hr" };
-            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value == EntityStatus.Deleted.Value && (
+            var rolesInterviewer = new List<string> { "manager", "hr", "admin" };
+            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value != EntityStatus.Deleted.Value && (
                                                                       m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
                                                                       m.SalesManagementUnit != SalesManagementUnit.None ||
                                                                       m.FinanceAdminUnit == FinanceAdminUnit.Manager ||
