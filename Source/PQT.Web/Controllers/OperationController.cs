@@ -199,6 +199,8 @@ namespace PQT.Web.Controllers
             {
                 if (!string.IsNullOrEmpty(searchValue))
                     events = _repo.GetAllEvents(m =>
+                        m.EventStatus != EventStatus.Completed &&
+                        m.EventStatus != EventStatus.Cancelled && (
                         m.EventCode.ToLower().Contains(searchValue) ||
                         m.EventName.ToLower().Contains(searchValue) ||
                         m.StartDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
@@ -207,7 +209,7 @@ namespace PQT.Web.Controllers
                         m.EventStatusDisplay.ToLower().Contains(searchValue) ||
                         (m.Location != null && m.Location.ToLower().Contains(searchValue)) ||
                         (m.HotelVenue != null && m.HotelVenue.ToLower().Contains(searchValue))
-                       );
+                       ));
             }
             else
             {

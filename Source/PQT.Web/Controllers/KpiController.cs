@@ -742,8 +742,8 @@ namespace PQT.Web.Controllers
                 );
                 leadNews = _leadNewService.GetAllLeadNews(m =>
                     (m.AssignUserID >0) &&
-                    (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
-                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                    (datefrom == default(DateTime) || m.AssignDate.Date >= datefrom.Date) &&
+                    (dateto == default(DateTime) || m.AssignDate.Date <= dateto.Date) &&
                     (eventId == 0 || m.EventID == eventId) &&
                     (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
                     ((m.User != null && m.User.Email.Contains(searchValue)) ||
@@ -763,8 +763,8 @@ namespace PQT.Web.Controllers
                 );
                 leadNews = _leadNewService.GetAllLeadNews(m =>
                     (m.AssignUserID > 0) &&
-                    (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
-                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                    (datefrom == default(DateTime) || m.AssignDate.Date >= datefrom.Date) &&
+                    (dateto == default(DateTime) || m.AssignDate.Date <= dateto.Date) &&
                     (eventId == 0 || m.EventID == eventId) &&
                     (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
                 );

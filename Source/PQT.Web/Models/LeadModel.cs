@@ -799,6 +799,7 @@ namespace PQT.Web.Models
                 if (LeadNew != null)
                 {
                     LeadNew.AssignUserID = AssignSales;
+                    LeadNew.AssignDate = DateTime.Now;
                     if (leadRepo.UpdateLeadNew(LeadNew))
                     {
                         var membershipService = DependencyHelper.GetService<IMembershipService>();
