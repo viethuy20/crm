@@ -7,7 +7,7 @@
     ViewBag.Title = "Edit Employee";
     var unitService = DependencyHelper.GetService<IUnitRepository>();
     var officeLocations = unitService.GetAllOfficeLocations();
-    var countries = PQT.Web.Infrastructure.Utility.StringHelper.GetAllCountries();
+    var countries = unitService.GetAllCountries().Select(m => m.Name);
 }
 <section>
     <div class="section-header">

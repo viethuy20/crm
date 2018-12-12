@@ -213,7 +213,9 @@ namespace PQT.Web.Controllers
             }
             else
             {
-                events = _repo.GetAllEvents();
+                events = _repo.GetAllEvents(m =>
+                        m.EventStatus != EventStatus.Completed &&
+                        m.EventStatus != EventStatus.Cancelled);
             }
 
 
