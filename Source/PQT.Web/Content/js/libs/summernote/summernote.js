@@ -1921,6 +1921,7 @@
         ['style', ['style']],
         ['font', ['bold', 'italic', 'underline', 'clear']],
         ['fontname', ['fontname']],
+        ['fontsize', ['fontsize']],
         ['color', ['color']],
         ['para', ['ul', 'ol', 'paragraph']],
         ['height', ['height']],
@@ -1963,7 +1964,8 @@
         'Helvetica Neue', 'Impact', 'Lucida Grande',
         'Tahoma', 'Times New Roman', 'Verdana'
       ],
-
+      defaultFontSize: '13',
+      fontSizes: ['8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '20', '22', '24', '36', '48', '64', '82', '150'],
       // pallete colors(n x n)
       colors: [
         ['#000000', '#424242', '#636363', '#9C9C94', '#CEC6CE', '#EFEFEF', '#F7F7F7', '#FFFFFF'],
@@ -2087,7 +2089,8 @@
           underline: 'Underline',
           clear: 'Remove Font Style',
           height: 'Line Height',
-          name: 'Font Family'
+          name: 'Font Family',
+          size: 'Font Size'
         },
         image: {
           image: 'Picture',
@@ -4519,6 +4522,20 @@
           title: lang.font.name,
           dropdown: '<ul class="dropdown-menu">' + items + '</ul>'
         });
+      },
+      fontsize: function (lang, options) {
+          var items = options.fontSizes.reduce(function (memo, v) {
+              return memo + '<li><a data-event="fontSize" href="#" data-value="' + v + '">' +
+                  '<i class="fa fa-check"></i> ' + v +
+                  '</a></li>';
+          }, '');
+          var label = '<span class="note-current-fontname">' +
+              options.defaultFontSize +
+              '</span>';
+          return tplButton(label, {
+              title: lang.font.size,
+              dropdown: '<ul class="dropdown-menu">' + items + '</ul>'
+          });
       },
       color: function (lang) {
         var colorButtonLabel = '<i class="fa fa-font" style="color:black;background-color:yellow;"></i>';

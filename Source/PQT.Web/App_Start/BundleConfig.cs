@@ -83,7 +83,6 @@ namespace PQT.Web
                 , "~/Content/js/libs/toastr/toastr.min.js"
                 //, "~/Content/js/libs/ckeditor/ckeditor.js"
                 //, "~/Content/js/libs/ckeditor/adapters/jquery.js"
-                , "~/Content/js/libs/summernote/summernote.min.js"
 
 
                 , "~/Content/js/core/source/App.js"
@@ -114,7 +113,7 @@ namespace PQT.Web
                 , "~/Content/js/globalize-1.1.1/dist/globalize.js"
                 , "~/Content/js/globalize-1.1.1/dist/globalize/number.js"
                 , "~/Content/js/globalize-1.1.1/dist/globalize/date.js"
-
+                , "~/Content/js/libs/summernote/summernote.js"
                 ));
 
 
