@@ -10,6 +10,7 @@ using PQT.Domain.Entities;
 using PQT.Domain.Enum;
 using PQT.Web.Hubs;
 using PQT.Web.Infrastructure.Filters;
+using PQT.Web.Infrastructure.Helpers;
 using PQT.Web.Infrastructure.Utility;
 using PQT.Web.Models;
 
@@ -341,10 +342,10 @@ namespace PQT.Web.Controllers
                     count++;
                     var existResources =
                         companyResources.Where(
-                            m => m.WorkEmail == lead.WorkEmail &&
-                                 m.DirectLine == lead.DirectLine &&
-                                 m.MobilePhone1 == lead.MobilePhone1 &&
-                                 m.MobilePhone2 == lead.MobilePhone2 &&
+                            m => m.WorkEmail == lead.WorkEmail ||
+                                 m.DirectLine == lead.DirectLine ||
+                                 m.MobilePhone1 == lead.MobilePhone1 ||
+                                 m.MobilePhone2 == lead.MobilePhone2 ||
                                  m.MobilePhone3 == lead.MobilePhone3);
                     //var eventCompany = _repo.GetEventCompany(lead.EventID, lead.CompanyID);
                     if (existResources.Any())
@@ -438,11 +439,13 @@ namespace PQT.Web.Controllers
             int recordsTotal = 0;
 
             IEnumerable<Event> events = new HashSet<Event>();
-            var bookings = _bookingService.GetAllBookings(m => m.BookingStatusRecord == BookingStatus.Approved);
+            var salesUser = PermissionHelper.SalesmanId();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                if (!string.IsNullOrEmpty(searchValue))
-                    events = _repo.GetAllEvents(m =>
+                if (salesUser > 0)
+                    events = _repo.GetAllEvents(m => (
+                        m.EventStatus == EventStatus.Confirmed ||
+                        m.EventStatus == EventStatus.Live) && (
                         m.EventCode.ToLower().Contains(searchValue) ||
                         m.EventName.ToLower().Contains(searchValue) ||
                         m.StartDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
@@ -452,16 +455,38 @@ namespace PQT.Web.Controllers
                         m.EventStatusDisplay.ToLower().Contains(searchValue) ||
                         (m.Location != null && m.Location.ToLower().Contains(searchValue)) ||
                         (m.HotelVenue != null && m.HotelVenue.ToLower().Contains(searchValue))
+                        )
                        );
+                else
+                    events = _repo.GetAllEvents(m =>
+                    m.EventCode.ToLower().Contains(searchValue) ||
+                    m.EventName.ToLower().Contains(searchValue) ||
+                    m.StartDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
+                    m.EndDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
+                    m.DateOfConfirmationStr.Contains(searchValue) ||
+                    m.ClosingDateStr.ToLower().Contains(searchValue) ||
+                    m.EventStatusDisplay.ToLower().Contains(searchValue) ||
+                    (m.Location != null && m.Location.ToLower().Contains(searchValue)) ||
+                    (m.HotelVenue != null && m.HotelVenue.ToLower().Contains(searchValue))
+                );
             }
             else
             {
-                events = _repo.GetAllEvents();
+                if (salesUser > 0)
+                    events = _repo.GetAllEvents(m =>
+                        m.EventStatus == EventStatus.Confirmed ||
+                        m.EventStatus == EventStatus.Live);
+                else
+                    events = _repo.GetAllEvents();
             }
 
-            foreach (var item in events)
+            if (salesUser > 0)
             {
-                item.TotalDelegates = bookings.Where(m => m.EventID == item.ID).Sum(m => m.Delegates.Count);
+                var bookings = _bookingService.GetAllBookings(m => m.BookingStatusRecord == BookingStatus.Approved);
+                foreach (var item in events)
+                {
+                    item.TotalDelegates = bookings.Where(m => m.EventID == item.ID).Sum(m => m.Delegates.Count);
+                }
             }
 
             if (sortColumnDir == "asc")

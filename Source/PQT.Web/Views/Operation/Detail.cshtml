@@ -419,7 +419,7 @@
                     </div>
                     <div class="col-sm-9">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Event.DriverInfo.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().TextAreaFor(m => m.Event.DriverInfo.Remarks).Rows(5).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Event.DriverInfo.Remarks)
                         </div>
                     </div>
@@ -452,7 +452,7 @@
                     </div>
                     <div class="col-sm-9">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Event.PhotographerInfo.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().TextAreaFor(m => m.Event.PhotographerInfo.Remarks).Rows(5).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Event.PhotographerInfo.Remarks)
                         </div>
                     </div>
@@ -485,7 +485,7 @@
                     </div>
                     <div class="col-sm-9">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Event.LocalVisaAgentInfo.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().TextAreaFor(m => m.Event.LocalVisaAgentInfo.Remarks).Rows(5).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Event.LocalVisaAgentInfo.Remarks)
                         </div>
                     </div>
@@ -572,7 +572,7 @@
                                             <a href="@item.TrainerInvoiceUrl" target="_blank">@item.TrainerInvoice</a>
                                         }
                                         <div class="form-group">
-                                            @Html.Bootstrap().TextBoxFor(m => item.TrainerInvoiceRemark).Class("form-control")
+                                            @Html.Bootstrap().TextAreaFor(m => item.TrainerInvoiceRemark).Rows(5).Class("form-control")
                                             @Html.Bootstrap().LabelFor(m => item.TrainerInvoiceRemark).LabelText("Remarks")
                                         </div>
                                     </td>
@@ -582,7 +582,7 @@
                                             <a href="@item.TrainerTicketUrl" target="_blank">@item.TrainerTicket</a>
                                         }
                                         <div class="form-group">
-                                            @Html.Bootstrap().TextBoxFor(m => item.TrainerTicketRemark).Class("form-control")
+                                            @Html.Bootstrap().TextAreaFor(m => item.TrainerTicketRemark).Rows(5).Class("form-control")
                                             @Html.Bootstrap().LabelFor(m => item.TrainerTicketRemark).LabelText("Remarks")
                                         </div>
                                     </td>
@@ -592,7 +592,7 @@
                                             <a href="@item.TrainerVisaUrl" target="_blank">@item.TrainerVisa</a>
                                         }
                                         <div class="form-group">
-                                            @Html.Bootstrap().TextBoxFor(m => item.TrainerVisaRemark).Class("form-control")
+                                            @Html.Bootstrap().TextAreaFor(m => item.TrainerVisaRemark).Rows(5).Class("form-control")
                                             @Html.Bootstrap().LabelFor(m => item.TrainerVisaRemark).LabelText("Remarks")
                                         </div>
                                     </td>
@@ -602,7 +602,7 @@
                                             <a href="@item.TrainerInsuranceUrl" target="_blank">@item.TrainerInsurance</a>
                                         }
                                         <div class="form-group">
-                                            @Html.Bootstrap().TextBoxFor(m => item.TrainerInsuranceRemark).Class("form-control")
+                                            @Html.Bootstrap().TextAreaFor(m => item.TrainerInsuranceRemark).Rows(5).Class("form-control")
                                             @Html.Bootstrap().LabelFor(m => item.TrainerInsuranceRemark).LabelText("Remarks")
                                         </div>
                                     </td>
@@ -612,7 +612,7 @@
                                             <a href="@item.OperationTicketUrl" target="_blank">@item.OperationTicket</a>
                                         }
                                         <div class="form-group">
-                                            @Html.Bootstrap().TextBoxFor(m => item.OperationTicketRemark).Class("form-control")
+                                            @Html.Bootstrap().TextAreaFor(m => item.OperationTicketRemark).Rows(5).Class("form-control")
                                             @Html.Bootstrap().LabelFor(m => item.OperationTicketRemark).LabelText("Remarks")
                                         </div>
                                     </td>
@@ -622,7 +622,7 @@
                                             <a href="@item.OperationVisaUrl" target="_blank">@item.OperationVisa</a>
                                         }
                                         <div class="form-group">
-                                            @Html.Bootstrap().TextBoxFor(m => item.OperationVisaRemark).Class("form-control")
+                                            @Html.Bootstrap().TextAreaFor(m => item.OperationVisaRemark).Rows(5).Class("form-control")
                                             @Html.Bootstrap().LabelFor(m => item.OperationVisaRemark).LabelText("Remarks")
                                         </div>
                                     </td>
@@ -632,7 +632,7 @@
                                             <a href="@item.OperationInsuranceUrl" target="_blank">@item.OperationInsurance</a>
                                         }
                                         <div class="form-group">
-                                            @Html.Bootstrap().TextBoxFor(m => item.OperationInsuranceRemark).Class("form-control")
+                                            @Html.Bootstrap().TextAreaFor(m => item.OperationInsuranceRemark).Rows(5).Class("form-control")
                                             @Html.Bootstrap().LabelFor(m => item.OperationInsuranceRemark).LabelText("Remarks")
                                         </div>
                                     </td>

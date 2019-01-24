@@ -9720,3 +9720,16 @@ li.L8 {
 .DTFC_Cloned td:not(.ModelColor) {
     background-color: #eeeeee;
 }
+
+
+.DTFC_Cloned {
+    background: #fff;
+}
+
+.DTFC_Cloned td {
+    background-color: #fff;
+}
+
+.DTFC_Cloned th {
+    background-color: #f5f5f5 !important;
+}

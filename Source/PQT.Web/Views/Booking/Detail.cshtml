@@ -331,7 +331,7 @@
                                 @Html.Bootstrap().LabelFor(m => m.Booking.LetterOfUnderstaking).LabelText("Letter of Undertaking")
                             </div>
                             <div class="form-group">
-                                @Html.Bootstrap().TextAreaFor(m => m.Booking.Remarks).Disabled().Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().TextAreaFor(m => m.Booking.Remarks).Rows(5).Disabled().Class("form-control").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.Booking.Remarks)
                             </div>
                         </div>

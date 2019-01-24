@@ -9,6 +9,7 @@ using PQT.Domain.Entities;
 using PQT.Domain.Enum;
 using PQT.Web.Infrastructure.Filters;
 using PQT.Web.Infrastructure.Helpers;
+using PQT.Web.Infrastructure.Utility;
 using PQT.Web.Models;
 
 namespace PQT.Web.Controllers
@@ -20,12 +21,14 @@ namespace PQT.Web.Controllers
         private readonly ILeadService _leadService;
         private readonly ILeadNewService _leadNewService;
         private readonly IEventService _eventService;
+        private readonly IBookingService _bookingService;
 
-        public KpiController(ILeadService leadService, IEventService eventService, ILeadNewService leadNewService)
+        public KpiController(ILeadService leadService, IEventService eventService, ILeadNewService leadNewService, IBookingService bookingService)
         {
             _leadService = leadService;
             _eventService = eventService;
             _leadNewService = leadNewService;
+            _bookingService = bookingService;
         }
 
         [DisplayName(@"Enquire KPIs")]
@@ -438,54 +441,153 @@ namespace PQT.Web.Controllers
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
             IEnumerable<Lead> leads = new HashSet<Lead>();
+            var salesUser = PermissionHelper.SalesmanId();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                leads = _leadService.GetAllLeads(m =>
-                    (m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
-                     m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
-                     m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value) &&
-                    (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
-                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
-                    (eventId == 0 || m.EventID == eventId) &&
-                    (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
-                    (string.IsNullOrEmpty(statusCode) || (statusCode == KPIStatus.KPI && m.MarkKPI)
-                     || (statusCode == KPIStatus.NoKPI && !m.MarkKPI && !string.IsNullOrEmpty(m.FileNameImportKPI))
-                     || (statusCode == KPIStatus.NoCheck && string.IsNullOrEmpty(m.FileNameImportKPI)))
-                    && (
-                        m.EventName.Contains(searchValue) ||
-                        m.SalesmanName.Contains(searchValue) ||
-                        m.StatusUpdateTimeStr.Contains(searchValue) ||
-                        m.StatusDisplay.Contains(searchValue) ||
-                        m.CompanyName.Contains(searchValue) ||
-                        m.CountryCode.Contains(searchValue) ||
-                        m.JobTitle.Contains(searchValue) ||
-                        m.DirectLine.Contains(searchValue) ||
-                        m.CallBackDateDisplay.Contains(searchValue) ||
-                        (m.Salutation != null && m.Salutation.Contains(searchValue)) ||
-                        (m.FirstName != null && m.FirstName.Contains(searchValue)) ||
-                        (m.LastName != null && m.LastName.Contains(searchValue)) ||
-                        (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
-                        (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
-                        (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
-                        (m.WorkEmail != null && m.WorkEmail.Contains(searchValue)) ||
-                       (m.WorkEmail1 != null && m.WorkEmail1.Contains(searchValue)) ||
-                        (m.PersonalEmail != null && m.PersonalEmail.Contains(searchValue)))
-                );
+                if (salesUser > 0) //only salesman
+                {
+                    var currentUser = CurrentUser.Identity;
+                    if (currentUser != null && currentUser.BusinessDevelopmentUnit != BusinessDevelopmentUnit.None)
+                    {
+                        leads = _leadService.GetAllLeads(m =>
+                            m.User.DirectSupervisorID == currentUser.ID &&
+                            (m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
+                             m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
+                             m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value) &&
+                            (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                            (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                            (eventId == 0 || m.EventID == eventId) &&
+                            (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
+                            (string.IsNullOrEmpty(statusCode) || (statusCode == KPIStatus.KPI && m.MarkKPI)
+                             || (statusCode == KPIStatus.NoKPI && !m.MarkKPI && !string.IsNullOrEmpty(m.FileNameImportKPI))
+                             || (statusCode == KPIStatus.NoCheck && string.IsNullOrEmpty(m.FileNameImportKPI)))
+                            && (
+                                m.EventName.Contains(searchValue) ||
+                                m.SalesmanName.Contains(searchValue) ||
+                                m.StatusUpdateTimeStr.Contains(searchValue) ||
+                                m.StatusDisplay.Contains(searchValue) ||
+                                m.CompanyName.Contains(searchValue) ||
+                                m.CountryCode.Contains(searchValue) ||
+                                m.JobTitle.Contains(searchValue) ||
+                                m.DirectLine.Contains(searchValue) ||
+                                m.CallBackDateDisplay.Contains(searchValue) ||
+                                (m.Salutation != null && m.Salutation.Contains(searchValue)) ||
+                                (m.FirstName != null && m.FirstName.Contains(searchValue)) ||
+                                (m.LastName != null && m.LastName.Contains(searchValue)) ||
+                                (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
+                                (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
+                                (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
+                                (m.WorkEmail != null && m.WorkEmail.Contains(searchValue)) ||
+                                (m.WorkEmail1 != null && m.WorkEmail1.Contains(searchValue)) ||
+                                (m.PersonalEmail != null && m.PersonalEmail.Contains(searchValue)))
+                        );
+                    }
+                    else if (currentUser != null && currentUser.SalesManagementUnit != SalesManagementUnit.None)
+                    {
+
+                        leads = _leadService.GetAllLeads(m =>
+                            m.User.DirectSupervisorID == currentUser.ID &&
+                            (m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
+                             m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
+                             m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value) &&
+                            (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                            (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                            (eventId == 0 || m.EventID == eventId) &&
+                            (userId == 0 || m.UserID == userId ||
+                             (m.User != null && m.User.TransferUserID == userId)) &&
+                            (string.IsNullOrEmpty(statusCode) || (statusCode == KPIStatus.KPI && m.MarkKPI)
+                             || (statusCode == KPIStatus.NoKPI && !m.MarkKPI &&
+                                 !string.IsNullOrEmpty(m.FileNameImportKPI))
+                             || (statusCode == KPIStatus.NoCheck && string.IsNullOrEmpty(m.FileNameImportKPI)))
+                            && (
+                                m.EventName.Contains(searchValue) ||
+                                m.SalesmanName.Contains(searchValue) ||
+                                m.StatusUpdateTimeStr.Contains(searchValue) ||
+                                m.StatusDisplay.Contains(searchValue) ||
+                                m.CompanyName.Contains(searchValue) ||
+                                m.CountryCode.Contains(searchValue) ||
+                                m.JobTitle.Contains(searchValue) ||
+                                m.DirectLine.Contains(searchValue) ||
+                                m.CallBackDateDisplay.Contains(searchValue) ||
+                                (m.Salutation != null && m.Salutation.Contains(searchValue)) ||
+                                (m.FirstName != null && m.FirstName.Contains(searchValue)) ||
+                                (m.LastName != null && m.LastName.Contains(searchValue)) ||
+                                (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
+                                (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
+                                (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
+                                (m.WorkEmail != null && m.WorkEmail.Contains(searchValue)) ||
+                                (m.WorkEmail1 != null && m.WorkEmail1.Contains(searchValue)) ||
+                                (m.PersonalEmail != null && m.PersonalEmail.Contains(searchValue)))
+                        );
+                    }
+                }
+                else //for manager
+                {
+                    leads = _leadService.GetAllLeads(m =>
+                        (m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
+                         m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
+                         m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value) &&
+                        (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                        (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                        (eventId == 0 || m.EventID == eventId) &&
+                        (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
+                        (string.IsNullOrEmpty(statusCode) || (statusCode == KPIStatus.KPI && m.MarkKPI)
+                         || (statusCode == KPIStatus.NoKPI && !m.MarkKPI && !string.IsNullOrEmpty(m.FileNameImportKPI))
+                         || (statusCode == KPIStatus.NoCheck && string.IsNullOrEmpty(m.FileNameImportKPI)))
+                        && (
+                            m.EventName.Contains(searchValue) ||
+                            m.SalesmanName.Contains(searchValue) ||
+                            m.StatusUpdateTimeStr.Contains(searchValue) ||
+                            m.StatusDisplay.Contains(searchValue) ||
+                            m.CompanyName.Contains(searchValue) ||
+                            m.CountryCode.Contains(searchValue) ||
+                            m.JobTitle.Contains(searchValue) ||
+                            m.DirectLine.Contains(searchValue) ||
+                            m.CallBackDateDisplay.Contains(searchValue) ||
+                            (m.Salutation != null && m.Salutation.Contains(searchValue)) ||
+                            (m.FirstName != null && m.FirstName.Contains(searchValue)) ||
+                            (m.LastName != null && m.LastName.Contains(searchValue)) ||
+                            (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
+                            (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
+                            (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
+                            (m.WorkEmail != null && m.WorkEmail.Contains(searchValue)) ||
+                            (m.WorkEmail1 != null && m.WorkEmail1.Contains(searchValue)) ||
+                            (m.PersonalEmail != null && m.PersonalEmail.Contains(searchValue)))
+                    );
+                }
             }
             else
             {
-                leads = _leadService.GetAllLeads(m =>
-                    (m.LeadStatusRecord != LeadStatus.Reject &&
-                     m.LeadStatusRecord != LeadStatus.Initial &&
-                     m.LeadStatusRecord != LeadStatus.Deleted) &&
-                    (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
-                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
-                    (eventId == 0 || m.EventID == eventId) &&
-                    (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
-                    (string.IsNullOrEmpty(statusCode) || (statusCode == KPIStatus.KPI && m.MarkKPI)
-                     || (statusCode == KPIStatus.NoKPI && !m.MarkKPI && !string.IsNullOrEmpty(m.FileNameImportKPI))
-                     || (statusCode == KPIStatus.NoCheck && string.IsNullOrEmpty(m.FileNameImportKPI)))
-                );
+                if (salesUser > 0)//only salesman
+                {
+                    leads = _leadService.GetAllLeads(m =>
+                        (m.LeadStatusRecord != LeadStatus.Reject &&
+                         m.LeadStatusRecord != LeadStatus.Initial &&
+                         m.LeadStatusRecord != LeadStatus.Deleted) &&
+                        (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                        (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                        (eventId == 0 || m.EventID == eventId) &&
+                        (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
+                        (string.IsNullOrEmpty(statusCode) || (statusCode == KPIStatus.KPI && m.MarkKPI)
+                         || (statusCode == KPIStatus.NoKPI && !m.MarkKPI && !string.IsNullOrEmpty(m.FileNameImportKPI))
+                         || (statusCode == KPIStatus.NoCheck && string.IsNullOrEmpty(m.FileNameImportKPI)))
+                    );
+                }
+                else//for manager
+                {
+                    leads = _leadService.GetAllLeads(m =>
+                        (m.LeadStatusRecord != LeadStatus.Reject &&
+                         m.LeadStatusRecord != LeadStatus.Initial &&
+                         m.LeadStatusRecord != LeadStatus.Deleted) &&
+                        (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                        (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                        (eventId == 0 || m.EventID == eventId) &&
+                        (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
+                        (string.IsNullOrEmpty(statusCode) || (statusCode == KPIStatus.KPI && m.MarkKPI)
+                         || (statusCode == KPIStatus.NoKPI && !m.MarkKPI && !string.IsNullOrEmpty(m.FileNameImportKPI))
+                         || (statusCode == KPIStatus.NoCheck && string.IsNullOrEmpty(m.FileNameImportKPI)))
+                    );
+                }
             }
             // ReSharper disable once AssignNullToNotNullAttribute
 
@@ -727,6 +829,7 @@ namespace PQT.Web.Controllers
             int recordsTotal = 0;
             IEnumerable<Lead> leads = new HashSet<Lead>();
             IEnumerable<LeadNew> leadNews = new HashSet<LeadNew>();
+            IEnumerable<Booking> bookings = new HashSet<Booking>();
             if (!string.IsNullOrEmpty(searchValue))
             {
                 leads = _leadService.GetAllLeads(m =>
@@ -738,16 +841,26 @@ namespace PQT.Web.Controllers
                     (eventId == 0 || m.EventID == eventId) &&
                     (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
                     ((m.User != null && m.User.Email.Contains(searchValue)) ||
-                        m.SalesmanName.Contains(searchValue))
+                     m.SalesmanName.Contains(searchValue))
                 );
                 leadNews = _leadNewService.GetAllLeadNews(m =>
-                    (m.AssignUserID >0) &&
+                    (m.AssignUserID > 0) &&
                     (datefrom == default(DateTime) || m.AssignDate.Date >= datefrom.Date) &&
                     (dateto == default(DateTime) || m.AssignDate.Date <= dateto.Date) &&
                     (eventId == 0 || m.EventID == eventId) &&
                     (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
                     ((m.User != null && m.User.Email.Contains(searchValue)) ||
-                        m.SalesmanName.Contains(searchValue))
+                     m.SalesmanName.Contains(searchValue))
+                );
+                bookings = _bookingService.GetAllBookings(m =>
+                    m.BookingStatusRecord == BookingStatus.Approved &&
+                    (datefrom == default(DateTime) || m.BookingDate.Date >= datefrom.Date) &&
+                    (dateto == default(DateTime) || m.BookingDate.Date <= dateto.Date) &&
+                    (eventId == 0 || m.EventID == eventId) &&
+                    (userId == 0 || m.SalesmanID == userId ||
+                     (m.Salesman != null && m.Salesman.TransferUserID == userId)) &&
+                    ((m.Salesman != null && m.Salesman.Email.Contains(searchValue)) ||
+                     m.SalesmanName.Contains(searchValue))
                 );
             }
             else
@@ -768,10 +881,18 @@ namespace PQT.Web.Controllers
                     (eventId == 0 || m.EventID == eventId) &&
                     (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
                 );
+                bookings = _bookingService.GetAllBookings(m =>
+                    m.BookingStatusRecord == BookingStatus.Approved &&
+                    (datefrom == default(DateTime) || m.BookingDate.Date >= datefrom.Date) &&
+                    (dateto == default(DateTime) || m.BookingDate.Date <= dateto.Date) &&
+                    (eventId == 0 || m.EventID == eventId) &&
+                    (userId == 0 || m.SalesmanID == userId ||
+                     (m.Salesman != null && m.Salesman.TransferUserID == userId))
+                );
             }
             // ReSharper disable once AssignNullToNotNullAttribute
             var model = new ConsolidateKPIModel();
-            model.Prepare(leads, leadNews);
+            model.Prepare(leads, leadNews, bookings);
 
             #region sort
             if (sortColumnDir == "asc")
@@ -792,6 +913,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "Email":
                         model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.User.Email).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "WrittenRevenue":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.WrittenRevenue).ThenBy(s => s.User.ID).ToList();
                         break;
                     default:
                         model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.User.DisplayName).ToList();
@@ -816,6 +940,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "Email":
                         model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.User.Email).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "WrittenRevenue":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.WrittenRevenue).ThenBy(s => s.User.ID).ToList();
                         break;
                     default:
                         model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.User.DisplayName).ToList();
@@ -845,6 +972,7 @@ namespace PQT.Web.Controllers
                     m.NewEventRequest,
                     m.KPI,
                     m.NoKPI,
+                    WrittenRevenue = m.WrittenRevenue.ToString("N0"),
                     m.NoCheck,
                 })
             };

@@ -223,6 +223,18 @@ namespace PQT.Domain.Entities
             set { _delegateNumber = value; }
         }
 
+        public string SalesmanName
+        {
+            get
+            {
+                if (Salesman != null)
+                {
+                    return Salesman.DisplayName;
+                }
+
+                return "";
+            }
+        }
         public object Serializing()
         {
             return new

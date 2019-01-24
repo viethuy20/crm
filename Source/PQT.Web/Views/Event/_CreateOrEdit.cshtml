@@ -122,8 +122,14 @@
             </div>*@
             <div class="col-sm-12">
                 <div class="form-group ">
-                    @Html.Bootstrap().TextAreaFor(m => m.Event.Location).Rows(3).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().TextAreaFor(m => m.Event.Location).Rows(5).Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Event.Location)
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group ">
+                    @Html.Bootstrap().TextAreaFor(m => m.Event.Summary).Rows(5).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.Summary).LabelText("Event Summary")
                 </div>
             </div>
             <div class="col-sm-4">

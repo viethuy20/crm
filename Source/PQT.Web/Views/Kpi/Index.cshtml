@@ -4,6 +4,7 @@
 
 @{
     ViewBag.Title = "Enquire KPIs";
+    var isSalesman = PermissionHelper.SalesmanId();
 }
 
 <style>
@@ -15,6 +16,14 @@
     #kpiTable tbody tr.KPI td {
         color: #3c763d;
         background-color: #c7fcca;
+    }
+    .disable-select {
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none;   /* Chrome/Safari/Opera */
+        -khtml-user-select: none;    /* Konqueror */
+        -moz-user-select: none;      /* Firefox */
+        -ms-user-select: none;       /* Internet Explorer/Edge */
+        user-select: none;           /* Non-prefixed version, currently supported by any browser but < IE9 */
     }
 </style>
 <section>
@@ -104,6 +113,9 @@
 @Html.Script(
 
     @<script>
+        $('body').bind('copy', function (e) { e.preventDefault(); return false; }); 
+
+        var fixedColumn = 0;
          var oTable = $("#kpiTable");
          oTable.dataTable({
              "processing": true, // for show progress bar
@@ -155,6 +167,9 @@
                      htmlAction += ' <a href="#" data-action="delete" data-id="' + aData["ID"] +'">' +
                          '<span class="text-danger" style="white-space: nowrap;"><i class="md md-delete"></i> Delete<span></a>';
                  }
+                 if (@isSalesman > 0) {
+                     $(nRow).addClass("disable-select");
+                 }
                  $(nRow).find('td:eq(14)').html(htmlAction);
              },
              initComplete: function () {
@@ -164,12 +179,43 @@
                  _table.parent().find('input[type="search"]').bind('keyup', function (e) {
                      clearTimeout(timeOutTyping);
                      timeOutTyping = setTimeout(function () {
+                         fixedColumn = 0;
                          _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
                      }, 600);
                  });
              },
+             scrollY: false,
+             scrollX: true,
+             "bScrollCollapse": false,
+             "drawCallback": function (settings, json) {
+                 FixedTable();
+             },
          });
 
+         function FixedTable() {
+             if (fixedColumn < 3) {
+                 fixedColumn++;
+                 var fixColumn = new $.fn.dataTable.FixedColumns(oTable, {
+                     leftColumns: 5,
+                     sHeightMatch: "auto",
+                     rightColumns: 1
+                 });
+                 var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                 if ($leftWrappers.length > 1) {
+                     $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                 }
+                 var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                 if ($rightWrappers.length > 1) {
+                     $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                 }
+             }
+         }
+         $(document).on("click", ".paginate_button", function () {
+             fixedColumn = 0;
+         });
+         $(document).on("change", "select[name=table_length]", function () {
+             fixedColumn = 0;
+         });
          oTable.on('click', '[data-action="delete"]', function (e) {
              e.preventDefault();
              var selftr = $(this);
@@ -194,10 +240,12 @@
              });
          });
          $('#btnSearch').click(function () {
+             fixedColumn = 0;
              oTable.fnFilter('');
          });
 
          $('#btnClear').click(function () {
+             fixedColumn = 0;
              $(".input-clear ").val('');
              $('@Html.JquerySelectorFor(m=>m.EventID)').val('').trigger("change");
              $('@Html.JquerySelectorFor(m=>m.UserID)').val('').trigger("change");

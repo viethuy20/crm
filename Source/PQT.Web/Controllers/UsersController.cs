@@ -11,6 +11,7 @@ using PQT.Web.Models;
 using PQT.Web.Infrastructure.Filters;
 using PQT.Web.Infrastructure.Utility;
 using NS.Entity;
+using PQT.Web.Infrastructure.Helpers;
 using Resources;
 using StringHelper = PQT.Web.Infrastructure.Utility.StringHelper;
 
@@ -305,11 +306,42 @@ namespace PQT.Web.Controllers
         [AjaxOnly]
         public ActionResult GetPossibleSalesman(string q)
         {
-            var bookings =
-                _membershipService.GetUsers(m => m.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel) &&
-                (m.DisplayName != null && m.DisplayName.ToLower().Contains(q.ToLower())) ||
-                                        (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
-            return Json(bookings.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
+
+            var salesUser = PermissionHelper.SalesmanId();
+            if (salesUser > 0)
+            {
+                var currentUser = CurrentUser.Identity;
+                IEnumerable<User> bookings = new List<User>();
+                if (currentUser != null && currentUser.BusinessDevelopmentUnit != BusinessDevelopmentUnit.None)
+                {
+                    bookings =
+                        _membershipService.GetUsers(m => m.DirectSupervisorID == currentUser.ID &&
+                                                         m.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel) &&
+                                                         (m.DisplayName != null &&
+                                                          m.DisplayName.ToLower().Contains(q.ToLower())) ||
+                                                         (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
+                }
+                else if (currentUser != null && currentUser.SalesManagementUnit != SalesManagementUnit.None)
+                {
+                    bookings =
+                        _membershipService.GetUsers(m => m.DirectSupervisorID == currentUser.ID &&
+                                                         m.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel) &&
+                                                         (m.DisplayName != null &&
+                                                          m.DisplayName.ToLower().Contains(q.ToLower())) ||
+                                                         (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
+                }
+                return Json(bookings.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                var bookings =
+                    _membershipService.GetUsers(m => m.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel) &&
+                                                     (m.DisplayName != null &&
+                                                      m.DisplayName.ToLower().Contains(q.ToLower())) ||
+                                                     (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
+                return Json(bookings.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
+
+            }
         }
 
         [AjaxOnly]

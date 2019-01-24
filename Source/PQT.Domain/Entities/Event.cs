@@ -33,6 +33,7 @@ namespace PQT.Domain.Entities
             PrimaryJobtitleKeywords = e.PrimaryJobtitleKeywords;
             SecondaryJobtitleKeywords = e.SecondaryJobtitleKeywords;
             Location = e.Location;
+            Summary = e.Summary;
             Remark = e.Remark;
             SalesBrochure = e.SalesBrochure;
             OperationBrochure = e.OperationBrochure;
@@ -108,6 +109,7 @@ namespace PQT.Domain.Entities
         public string PrimaryJobtitleKeywords { get; set; }
         public string SecondaryJobtitleKeywords { get; set; }
         public string Location { get; set; }
+        public string Summary { get; set; }
         public string Remark { get; set; }
         public string SalesBrochure { get; set; }//Sales Brochure
         public string OperationBrochure { get; set; }//Sales Brochure

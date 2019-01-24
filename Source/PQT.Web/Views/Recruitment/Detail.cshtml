@@ -199,7 +199,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().TextAreaFor(m => m.Candidate.Remarks).Rows(5).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Candidate.Remarks)
                     </div>
                 </div>

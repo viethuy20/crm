@@ -434,6 +434,7 @@
                  _table.parent().find('input[type="search"]').bind('keyup', function (e) {
                      clearTimeout(timeOutTyping);
                      timeOutTyping = setTimeout(function () {
+                         fixedColumn = 0;
                          _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
                      }, 600);
                  });

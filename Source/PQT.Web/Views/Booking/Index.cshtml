@@ -4,14 +4,23 @@
     ViewBag.StartSocket = true;
 }
 <style>
+
+    .DTFC_Cloned tbody tr.Rejected td {
+        color: #8a6d3b;
+        background-color: #fee8c7;
+    }
     #bookingTable tbody tr.Rejected td {
         color: #8a6d3b;
-        background-color: #ffefd5;
+        background-color: #fff9ef;
     }
 
-    #bookingTable tbody tr.Approved td {
+    .DTFC_Cloned tbody tr.Approved td {
         color: #3c763d;
         background-color: #c7fcca;
+    }
+    #bookingTable tbody tr.Approved td {
+        color: #3c763d;
+        background-color: #ceffd1;
     }
 </style>
 <section>
@@ -123,11 +132,36 @@
                  _table.parent().find('input[type="search"]').bind('keyup', function (e) {
                      clearTimeout(timeOutTyping);
                      timeOutTyping = setTimeout(function () {
+                         fixedColumn = 0;
                          _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
                      }, 600);
                  });
              },
+             scrollY: false,
+             scrollX: true,
+             "bScrollCollapse": false,
+             "drawCallback": function (settings, json) {
+                 FixedTable();
+             },
          });
+         function FixedTable() {
+             if (fixedColumn < 3) {
+                 fixedColumn ++;
+                 var fixColumn = new $.fn.dataTable.FixedColumns(bookingTable, {
+                     leftColumns: 5,
+                     sHeightMatch: "auto",
+                     rightColumns: 1
+                 });
+                 var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                 if ($leftWrappers.length > 1) {
+                     $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                 }
+                 var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                 if ($rightWrappers.length > 1) {
+                     $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                 }
+             }
+         }
          $(document).on("click", ".paginate_button", function () {
              fixedColumn = 0;
          });

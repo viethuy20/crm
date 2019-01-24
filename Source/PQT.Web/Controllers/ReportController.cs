@@ -18,13 +18,15 @@ namespace PQT.Web.Controllers
         private readonly ILeadNewService _leadNewService;
         private readonly IEventService _eventService;
         private readonly IInvoiceService _invoiceService;
-        public ReportController(IUnitRepository unitRepo, ILeadService leadService, IEventService eventService, ILeadNewService leadNewService, IInvoiceService invoiceService)
+        private readonly IBookingService _bookingService;
+        public ReportController(IUnitRepository unitRepo, ILeadService leadService, IEventService eventService, ILeadNewService leadNewService, IInvoiceService invoiceService, IBookingService bookingService)
         {
             _unitRepo = unitRepo;
             _leadService = leadService;
             _eventService = eventService;
             _leadNewService = leadNewService;
             _invoiceService = invoiceService;
+            _bookingService = bookingService;
         }
 
 
@@ -65,6 +67,7 @@ namespace PQT.Web.Controllers
             }
             IEnumerable<LeadNew> leadNews = new HashSet<LeadNew>();
             IEnumerable<Lead> leads = new HashSet<Lead>();
+            IEnumerable<Booking> bookings = new HashSet<Booking>();
             leads = _leadService.GetAllLeads(m =>
                 (m.LeadStatusRecord != LeadStatus.Reject &&
                  m.LeadStatusRecord != LeadStatus.Initial &&
@@ -81,7 +84,14 @@ namespace PQT.Web.Controllers
                 (eventId == 0 || m.EventID == eventId) &&
                 (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
             );
-            model.Prepare(leads, leadNews);
+            bookings = _bookingService.GetAllBookings(m =>
+                m.BookingStatusRecord == BookingStatus.Approved &&
+                (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                (eventId == 0 || m.EventID == eventId) &&
+                (userId == 0 || m.SalesmanID == userId || (m.Salesman != null && m.Salesman.TransferUserID == userId))
+            );
+            model.Prepare(leads, leadNews, bookings);
             return View(model);
         }
 

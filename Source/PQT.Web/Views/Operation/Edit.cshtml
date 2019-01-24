@@ -137,7 +137,7 @@
                         </div>
                         <div class="col-sm-9">
                             <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.DriverInfo.Remarks).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().TextAreaFor(m => m.DriverInfo.Remarks).Rows(5).Class("form-control").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.DriverInfo.Remarks)
                             </div>
                         </div>
@@ -172,7 +172,7 @@
                         </div>
                         <div class="col-sm-9">
                             <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.PhotographerInfo.Remarks).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().TextAreaFor(m => m.PhotographerInfo.Remarks).Rows(5).Class("form-control").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.PhotographerInfo.Remarks)
                             </div>
                         </div>
@@ -207,7 +207,7 @@
                         </div>
                         <div class="col-sm-9">
                             <div class="form-group">
-                                @Html.Bootstrap().TextBoxFor(m => m.LocalVisaAgentInfo.Remarks).Class("form-control").ShowValidationMessage(true)
+                                @Html.Bootstrap().TextAreaFor(m => m.LocalVisaAgentInfo.Remarks).Rows(5).Class("form-control").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.LocalVisaAgentInfo.Remarks)
                             </div>
                         </div>

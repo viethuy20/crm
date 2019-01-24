@@ -228,7 +228,7 @@
                     </div>
                     <div class="col-sm-12">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Remark).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().TextAreaFor(m => m.Remark).Rows(5).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Remark).LabelText("New Event Remarks")
                         </div>
                     </div>

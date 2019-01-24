@@ -76,7 +76,7 @@
                             <thead>
                                 <tr>
                                     <th>Salesman</th>
-                                    <th>Email</th>
+                                    <th>(USD) Written Revenue</th>
                                     <th class="text-center">New Event Request</th>
                                     <th class="text-center">KPI</th>
                                     <th class="text-center">No KPI</th>
@@ -115,15 +115,16 @@
              },
              "columns": [
                  { "data": "UserName", "name": "UserName", "orderable": true },
-                 { "data": "UserEmail", "name": "UserEmail", "orderable": true },
+                 { "data": "WrittenRevenue", "name": "WrittenRevenue", "orderable": true },
                  { "data": "NewEventRequest", "name": "NewEventRequest", "orderable": true },
                  { "data": "KPI", "name": "KPI", "orderable": true },
                  { "data": "NoKPI", "name": "NoKPI", "orderable": true },
                  { "data": "NoCheck", "name": "NoCheck", "NoCheck": true },
              ],
              "iDisplayLength": 25,
-             "aaSorting": [[1, "desc"]],
+             "aaSorting": [[0, "asc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 $(nRow).find('td:eq(1)').attr("style", "text-align:center");
                  $(nRow).find('td:eq(2)').addClass("NewEventRequest");
                  $(nRow).find('td:eq(2)').attr("style", "text-align:center");
                  $(nRow).find('td:eq(3)').addClass("KPI");

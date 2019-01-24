@@ -18,17 +18,19 @@ namespace PQT.Web.Models
             EventName = "All";
             Date = "All";
         }
-        public void Prepare(IEnumerable<Lead> leads, IEnumerable<LeadNew> leadNews)
+        public void Prepare(IEnumerable<Lead> leads, IEnumerable<LeadNew> leadNews, IEnumerable<Booking> bookings)
         {
             ConsolidateKpis = new List<ConsolidateKPI>();
-            var users = leads.DistinctBy(m => m.UserID).Select(m => m.User) ;
+            var users = leads.DistinctBy(m => m.UserID).Select(m => m.User);
             foreach (var user in users)
             {
                 var item = new ConsolidateKPI
                 {
                     User = user
                 };
-                item.Prepare(leads.Where(m => m.User.TransferUserID == user.ID || m.UserID == user.ID), leadNews.Where(m => m.User.TransferUserID == user.ID || m.UserID == user.ID));
+                item.Prepare(leads.Where(m => m.User.TransferUserID == user.ID || m.UserID == user.ID), 
+                    leadNews.Where(m => m.User.TransferUserID == user.ID || m.UserID == user.ID),
+                    bookings.Where(m=> m.Salesman.TransferUserID == user.ID || m.SalesmanID == user.ID));
                 ConsolidateKpis.Add(item);
             }
         }
@@ -37,12 +39,14 @@ namespace PQT.Web.Models
     {
         public User User { get; set; }
         public int NewEventRequest { get; set; }
+        public decimal WrittenRevenue { get; set; }
         public int KPI { get; set; }
         public int NoKPI { get; set; }
         public int NoCheck { get; set; }
-        public void Prepare(IEnumerable<Lead> leads,IEnumerable<LeadNew> leadNews)
+        public void Prepare(IEnumerable<Lead> leads, IEnumerable<LeadNew> leadNews, IEnumerable<Booking> bookings)
         {
             NewEventRequest = leadNews.Count();
+            WrittenRevenue = bookings.Sum(m => m.TotalWrittenRevenue);
             KPI = leads.Count(m => m.MarkKPI);
             NoKPI = leads.Count(m => !m.MarkKPI && !string.IsNullOrEmpty(m.FileNameImportKPI));
             NoCheck = leads.Count(m => string.IsNullOrEmpty(m.FileNameImportKPI));

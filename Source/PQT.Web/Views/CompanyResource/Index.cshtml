@@ -24,24 +24,75 @@
     </div>
     <div class="card">
         <div class="card-body">
+        @using (Html.BeginForm("PrintExcel", "CompanyResource", null, FormMethod.Post, new {@class = "form no_loader"}))
+        {
+            <div class="row ">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Country).HtmlAttributes(new {@class = "input-clear form-control"})
+                        <label>Country</label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Organisation).HtmlAttributes(new {@class = "input-clear form-control"})
+                        <label>Company</label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Name).HtmlAttributes(new {@class = "input-clear form-control"})
+                        <label>Name</label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Mobile).HtmlAttributes(new {@class = "input-clear form-control"})
+                        <label>Mobile</label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Email).HtmlAttributes(new {@class = "input-clear form-control"})
+                        <label>Email</label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Role).HtmlAttributes(new {@class = "input-clear form-control"})
+                        <label>Job Title</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-4">
+                    @Html.Bootstrap().Button().Text("Clear").Id("btnClear").PrependIcon("md md-close").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-default"})
+                    @Html.Bootstrap().Button().Text("Search").Id("btnSearch").PrependIcon("md md-search").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-primary"})
+                    @if (CurrentUser.HasPermission("CompanyResource", "PrintExcel"))
+                    {
+                        @Html.Bootstrap().SubmitButton().Text("Print").PrependIcon("md md-print").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-info"})
+                    }
+                </div>
+            </div>
+        }
             <div class="table-responsive">
                 <table class="table" id="table">
                     <thead>
-                        <tr>
-                            <th>Country</th>
-                            <th>Title</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Company</th>
-                            <th>Role</th>
-                            <th>Direct Line</th>
-                            <th>Mobile Phone1</th>
-                            <th>Mobile Phone2</th>
-                            <th>Mobile Phone3</th>
-                            <th>Work Email</th>
-                            <th>Personal Email</th>
-                            <th></th>
-                        </tr>
+                    <tr>
+                        <th>Country</th>
+                        <th>Title</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Company</th>
+                        <th>Job Title</th>
+                        <th>Direct Line</th>
+                        <th>Mobile Phone1</th>
+                        <th>Mobile Phone2</th>
+                        <th>Mobile Phone3</th>
+                        <th>Work Email</th>
+                        <th>Personal Email</th>
+                        <th></th>
+                    </tr>
                     </thead>
                 </table>
             </div>
@@ -53,6 +104,7 @@
 @Html.Script(
     @<script>
 
+        var fixedColumn = 0;
         var $Table = $("#table");
         $Table.dataTable({
             "processing": true, // for show progress bar
@@ -65,13 +117,12 @@
                 "type": "POST",
                 "datatype": "json",
                 "data": function (d) {
-                    d.Country = $('#table_filter').find('input[name="search_country"]').val();
-                    d.Organisation = $('#table_filter').find('input[name="search_organisation"]').val();
-                    d.Name = $('#table_filter').find('input[name="search_name"]').val();
-                    d.Mobile = $('#table_filter').find('input[name="search_mobile"]').val();
-                    d.Email = $('#table_filter').find('input[name="search_email"]').val();
-                    d.Role = $('#table_filter').find('input[name="search_role"]').val();
-                    d.Others = $('#table_filter').find('input[name="search_others"]').val();
+                    d.Country = $('@Html.JquerySelectorFor(m=>m.Country)').val();
+                    d.Organisation = $('@Html.JquerySelectorFor(m => m.Organisation)').val();
+                    d.Name = $('@Html.JquerySelectorFor(m => m.Name)').val();
+                    d.Mobile = $('@Html.JquerySelectorFor(m => m.Mobile)').val();
+                    d.Email = $('@Html.JquerySelectorFor(m => m.Email)').val();
+                    d.Role = $('@Html.JquerySelectorFor(m => m.Role)').val();
                 }
             },
             "columns": [
@@ -99,30 +150,47 @@
             },
             initComplete: function () {
                 var _table = this;
-                var filter_box = _table.parent().find("#table_filter");
-                var htmlFilter = '<label>Country:<input type="search" name="search_country" /></label>';
-                htmlFilter += '<label>Company:<input type="search" name="search_organisation" /></label>';
-                htmlFilter += '<label>Name:<input type="search" name="search_name" /></label>';
-                htmlFilter += '<label>Mobile:<input type="search" name="search_mobile" /></label>';
-                htmlFilter += '<label>Email:<input type="search" name="search_email" /></label>';
-                htmlFilter += '<label>Role:<input type="search" name="search_role" /></label>';
-                htmlFilter += '<label>Others:<input type="search" name="search_others" /></label>';
-                filter_box.html(htmlFilter);
-                searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
-            },
-        });
-        function searchBindingKeyUp(elementSearch, tableElement) {
-            elementSearch.unbind();
-            var timeOutTyping;
-            elementSearch.bind('keyup',
-                function (e) {
+                _table.parent().find('input[type="search"]').unbind();
+                var timeOutTyping;
+                _table.parent().find('input[type="search"]').bind('keyup', function (e) {
                     clearTimeout(timeOutTyping);
                     timeOutTyping = setTimeout(function () {
-                            tableElement.fnFilter(elementSearch.eq(0).val());
-                        },
-                        600);
+                        fixedColumn = 0;
+                        _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                    }, 600);
                 });
+            },
+            scrollY: false,
+            scrollX: true,
+            "bScrollCollapse": false,
+            "drawCallback": function (settings, json) {
+                FixedTable();
+            },
+        });
+        function FixedTable() {
+            if (fixedColumn < 3) {
+                fixedColumn ++;
+                var fixColumn = new $.fn.dataTable.FixedColumns($Table, {
+                    leftColumns: 5,
+                    sHeightMatch: "auto",
+                    rightColumns: 1
+                });
+                var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                if ($leftWrappers.length > 1) {
+                    $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                }
+                var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                if ($rightWrappers.length > 1) {
+                    $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                }
+            }
         }
+        $(document).on("click", ".paginate_button", function () {
+            fixedColumn = 0;
+        });
+        $(document).on("change", "select[name=table_length]", function () {
+            fixedColumn = 0;
+        });
         $Table.on('click', '[data-action="delete"]', function (e) {
             e.preventDefault();
             var selftr = $(this);
@@ -145,7 +213,17 @@
                 }
             });
         });
+        
+        $('#btnSearch').click(function () {
+            fixedColumn = 0;
+            $Table.fnFilter('');
+        });
 
+        $('#btnClear').click(function () {
+            fixedColumn = 0;
+            $(".input-clear ").val('');
+            $Table.fnFilter('');
+        });
         function onFail() {
             $(".error").removeClass('hide');
             $(".success").addClass('hide');
