@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using FluentValidation.Validators;
 using PQT.Domain.Enum;
 
@@ -13,6 +14,20 @@ namespace PQT.Domain.Entities
             Permissions = new HashSet<Permission>();
         }
 
+        public Role(Role r)
+        {
+            Name = r.Name;
+            Description = r.Description;
+            RoleLevel = r.RoleLevel;
+            if (r.Permissions != null)
+            {
+                Permissions = r.Permissions.Select(p => new Permission(p)).ToList();
+            }
+            else
+            {
+                Permissions = new HashSet<Permission>();
+            }
+        }
         // Primitive properties
         public string Name { get; set; }
         public string Description { get; set; }

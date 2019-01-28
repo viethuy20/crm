@@ -6,6 +6,16 @@ namespace PQT.Domain.Entities
 {
     public class Permission : EntityBase
     {
+        public Permission()
+        {
+            
+        }
+        public Permission(Permission r)
+        {
+            Target = r.Target;
+            Description = r.Description;
+            Right = r.Right;
+        }
         public string Target { get; set; }
         public string Right { get; set; }
         public string Description { get; set; }//Type

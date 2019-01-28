@@ -22,7 +22,6 @@ namespace PQT.Domain.Abstract
         IEnumerable<User> GetUsersInRole(params string[] roleName);
         IEnumerable<User> GetUsersInRoleLevel(params string[] roleName);
         EmailSetting GetEmailTemplate(string type, string nameTemplate);
-
         bool ReActiveUser(int id);
 
         IEnumerable<User> GetAllSalesmans();

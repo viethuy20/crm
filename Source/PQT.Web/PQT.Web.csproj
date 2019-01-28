@@ -387,6 +387,7 @@
     <Compile Include="Hubs\ProgressHub.cs" />
     <Compile Include="Infrastructure\Helpers\ImageHelper.cs" />
     <Compile Include="Infrastructure\Helpers\LeadHelper.cs" />
+    <Compile Include="Infrastructure\MemoryRoleBasedAuthorizer.cs" />
     <Compile Include="Infrastructure\MemorySettingsRepository.cs" />
     <Compile Include="Infrastructure\MemoryNotifyRepository.cs" />
     <Compile Include="Infrastructure\MemoryEventRepository.cs" />
@@ -2715,7 +2716,7 @@
           <IISUrl>http://localhost:31134/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>True</UseCustomServer>
-          <CustomServerUrl>http://localhost/</CustomServerUrl>
+          <CustomServerUrl>http://localhost:8081/</CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>

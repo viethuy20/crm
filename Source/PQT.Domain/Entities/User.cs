@@ -38,7 +38,14 @@ namespace PQT.Domain.Entities
             Email = user.Email;
             BusinessPhone = user.BusinessPhone;
             MobilePhone = user.MobilePhone;
-            Roles = new HashSet<Role>();
+            if (user.Roles != null)
+            {
+                Roles = user.Roles.Select(r => new Role(r)).ToList();
+            }
+            else
+            {
+                Roles = new HashSet<Role>();
+            }
             LastAccess = user.LastAccess;
             Address = user.Address;
             PersonalEmail = user.PersonalEmail;
