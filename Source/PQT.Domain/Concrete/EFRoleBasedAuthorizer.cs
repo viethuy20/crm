@@ -53,22 +53,14 @@ namespace PQT.Domain.Concrete
             role.Permissions = GetAll<Permission>(p => rolePermissions.Contains(p.ID)).ToList();
             Update(role);
 
-            var userCaches = UserRoleRecords.Where(m => m.Roles.Select(r => r.ID).Contains(role.ID)).ToList();
-            foreach (var userCache in userCaches)
-            {
-                UserRoleRecords.Remove(userCache);
-            }
+            UserRoleRecords.Clear();
             return role;
         }
 
         public void DeleteRole(int id)
         {
             Delete<Role>(id);
-            var userCaches = UserRoleRecords.Where(m => m.Roles.Select(r => r.ID).Contains(id)).ToList();
-            foreach (var userCache in userCaches)
-            {
-                UserRoleRecords.Remove(userCache);
-            }
+            UserRoleRecords.Clear();
         }
 
         public virtual Permission CreatePermission(Permission perm)

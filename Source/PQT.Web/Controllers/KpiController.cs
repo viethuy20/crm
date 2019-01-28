@@ -560,18 +560,41 @@ namespace PQT.Web.Controllers
             {
                 if (salesUser > 0)//only salesman
                 {
-                    leads = _leadService.GetAllLeads(m =>
-                        (m.LeadStatusRecord != LeadStatus.Reject &&
-                         m.LeadStatusRecord != LeadStatus.Initial &&
-                         m.LeadStatusRecord != LeadStatus.Deleted) &&
-                        (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
-                        (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
-                        (eventId == 0 || m.EventID == eventId) &&
-                        (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
-                        (string.IsNullOrEmpty(statusCode) || (statusCode == KPIStatus.KPI && m.MarkKPI)
-                         || (statusCode == KPIStatus.NoKPI && !m.MarkKPI && !string.IsNullOrEmpty(m.FileNameImportKPI))
-                         || (statusCode == KPIStatus.NoCheck && string.IsNullOrEmpty(m.FileNameImportKPI)))
-                    );
+                    var currentUser = CurrentUser.Identity;
+                    if (currentUser != null && currentUser.BusinessDevelopmentUnit != BusinessDevelopmentUnit.None)
+                    {
+                        leads = _leadService.GetAllLeads(m =>
+                            m.User.DirectSupervisorID == currentUser.ID &&
+                            (m.LeadStatusRecord != LeadStatus.Reject &&
+                             m.LeadStatusRecord != LeadStatus.Initial &&
+                             m.LeadStatusRecord != LeadStatus.Deleted) &&
+                            (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                            (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                            (eventId == 0 || m.EventID == eventId) &&
+                            (userId == 0 || m.UserID == userId ||
+                             (m.User != null && m.User.TransferUserID == userId)) &&
+                            (string.IsNullOrEmpty(statusCode) || (statusCode == KPIStatus.KPI && m.MarkKPI)
+                             || (statusCode == KPIStatus.NoKPI && !m.MarkKPI &&
+                                 !string.IsNullOrEmpty(m.FileNameImportKPI))
+                             || (statusCode == KPIStatus.NoCheck && string.IsNullOrEmpty(m.FileNameImportKPI)))
+                        );
+                    }
+                    else if (currentUser != null && currentUser.SalesManagementUnit != SalesManagementUnit.None)
+                    {
+                        leads = _leadService.GetAllLeads(m =>
+                            m.User.DirectSupervisorID == currentUser.ID &&
+                            (m.LeadStatusRecord != LeadStatus.Reject &&
+                             m.LeadStatusRecord != LeadStatus.Initial &&
+                             m.LeadStatusRecord != LeadStatus.Deleted) &&
+                            (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                            (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                            (eventId == 0 || m.EventID == eventId) &&
+                            (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
+                            (string.IsNullOrEmpty(statusCode) || (statusCode == KPIStatus.KPI && m.MarkKPI)
+                             || (statusCode == KPIStatus.NoKPI && !m.MarkKPI && !string.IsNullOrEmpty(m.FileNameImportKPI))
+                             || (statusCode == KPIStatus.NoCheck && string.IsNullOrEmpty(m.FileNameImportKPI)))
+                        );
+                    }
                 }
                 else//for manager
                 {
