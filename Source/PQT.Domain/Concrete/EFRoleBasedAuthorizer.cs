@@ -12,7 +12,6 @@ namespace PQT.Domain.Concrete
 {
     public class EFRoleBasedAuthorizer : Repository, IRoleService
     {
-        public static readonly List<User> UserRoleRecords = new List<User>();
 
         public EFRoleBasedAuthorizer(DbContext db)
             : base(db)
@@ -21,29 +20,32 @@ namespace PQT.Domain.Concrete
 
         #region IRoleService Members
 
-        public IEnumerable<Role> GetAllRoles()
+        public virtual IEnumerable<Role> GetAllRoles()
         {
-            return GetAll<Role>(r => r.Permissions).AsEnumerable();
+            return GetAll<Role>(u => new
+            {
+                u.Permissions,
+            }).AsEnumerable();
         }
 
-        public Role GetRole(int id)
+        public virtual Role GetRole(int id)
         {
             return Get<Role>(r => r.ID == id,
-                             r => r.Permissions);
+                             r => new { r.Permissions });
         }
 
-        public Role GetRoleByName(string name)
+        public virtual Role GetRoleByName(string name)
         {
             return Get(Role.HasName(name));
         }
 
-        public Role CreateRole(Role role, IEnumerable<int> rolePermissions)
+        public virtual Role CreateRole(Role role, IEnumerable<int> rolePermissions)
         {
             role.Permissions = GetAll<Permission>(p => rolePermissions.Contains(p.ID)).ToList();
             return Create(role);
         }
 
-        public Role UpdateRole(int id, Role roleInfo, IEnumerable<int> rolePermissions)
+        public virtual Role UpdateRole(int id, Role roleInfo, IEnumerable<int> rolePermissions)
         {
             var role = Get<Role>(id);
             role.Name = roleInfo.Name;
@@ -52,15 +54,12 @@ namespace PQT.Domain.Concrete
             role.Permissions.Clear();
             role.Permissions = GetAll<Permission>(p => rolePermissions.Contains(p.ID)).ToList();
             Update(role);
-
-            UserRoleRecords.Clear();
             return role;
         }
 
-        public void DeleteRole(int id)
+        public virtual void DeleteRole(int id)
         {
             Delete<Role>(id);
-            UserRoleRecords.Clear();
         }
 
         public virtual Permission CreatePermission(Permission perm)
@@ -68,22 +67,18 @@ namespace PQT.Domain.Concrete
             return Create(perm);
         }
 
-        public IEnumerable<Permission> GetUserPermissions(int userID)
+        public virtual User GetUserPermissions(int userID)
         {
-            var userCache = UserRoleRecords.FirstOrDefault(m => m.ID == userID);
-            if (userCache != null) return userCache.Roles.SelectMany(r => r.Permissions).AsEnumerable();
             var user = Get<User>(u => u.ID == userID, u => new
             {
                 Roles = u.Roles.Select(r => r.Permissions),
             });
             if (user == null)
-                return new List<Permission>();
-            if (UserRoleRecords.All(m => m.ID != userID))
-                UserRoleRecords.Add(new User(user));
-            return user.Roles.SelectMany(r => r.Permissions).AsEnumerable();
+                return new User();
+            return user;
         }
 
-        public void AssignRoles(User user, IEnumerable<int> userRoles)
+        public virtual void AssignRoles(User user, IEnumerable<int> userRoles)
         {
             var userExist = Get<User>(u => u.ID == user.ID, u => new
             {
@@ -95,12 +90,8 @@ namespace PQT.Domain.Concrete
             user.Roles.Clear();
             user.Roles = GetAll<Role>(r => userRoles.Contains(r.ID)).ToList();
             var tmp = Update(userExist);
-
-            var userCache = UserRoleRecords.FirstOrDefault(m => m.ID == user.ID);
-            if (userCache != null) UserRoleRecords.Remove(userCache);
-            //_db.SaveChanges();
         }
-        public Permission EnsurePermissionRecord(string target, string right, string description = null)
+        public virtual Permission EnsurePermissionRecord(string target, string right, string description = null)
         {
             return Get<Permission>(p => p.Target.ToLower() == target.ToLower() &&
                                         p.Right.ToLower() == right.ToLower() &&
@@ -108,7 +99,7 @@ namespace PQT.Domain.Concrete
                    ?? CreatePermission(new Permission { Target = target, Right = right, Description = description });
         }
 
-        public bool CheckAccess(int userID, string feature, string permissionType = null)
+        public virtual bool CheckAccess(int userID, string feature, string permissionType = null)
         {
             string[] segments = feature.Split(new[] { '.' });
             if (segments.Length < 2) return false;
@@ -121,10 +112,10 @@ namespace PQT.Domain.Concrete
 
         public virtual bool CheckAccess(int userID, string controller, string action, string permissionType = null)
         {
-            IEnumerable<Permission> userPermissions = GetUserPermissions(userID);
+            var userPermissions = GetUserPermissions(userID);
             if (!string.IsNullOrEmpty(permissionType))
-                return userPermissions.Any(Permission.HasRight(controller, action, permissionType));
-            return userPermissions.Any(Permission.HasRight(controller, action));
+                return userPermissions.Roles.SelectMany(r => r.Permissions).Any(Permission.HasRight(controller, action, permissionType));
+            return userPermissions.Roles.SelectMany(r => r.Permissions).Any(Permission.HasRight(controller, action));
         }
     }
 }

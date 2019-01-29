@@ -85,11 +85,13 @@ namespace PQT.Web
 
             // Repositories
             kernel.Bind<IAuthenticationService, IMembershipService>().To<InMemLoginTracker>();
-            kernel.Bind<IAuthorizationService, IRoleService>().To<EFRoleBasedAuthorizer>();
+            //kernel.Bind<IAuthorizationService, IRoleService>().To<EFRoleBasedAuthorizer>();
             kernel.Bind<ILoginTracker>().To<InMemLoginTracker>()
                   .WithConstructorArgument("concurrentMax", Convert.ToInt32(ConfigurationManager.AppSettings["ConcurrentLoginMax"]));
             //_kernel.Bind<ILoginTracker>().To<InMemLoginTracker>();
             kernel.Bind<EFMenuRepository>().ToSelf();
+            kernel.Bind<IAuthorizationService, IRoleService>().To<MemoryUserRoleRepository>().InSingletonScope();
+            kernel.Bind<EFRoleBasedAuthorizer>().ToSelf();
             kernel.Bind<IMenuRepository>().To<MemoryMenuRepository>().InSingletonScope();
             kernel.Bind<EFCompanyRepository>().ToSelf();
             kernel.Bind<ICompanyRepository>().To<MemoryCompanyRepository>().InSingletonScope();

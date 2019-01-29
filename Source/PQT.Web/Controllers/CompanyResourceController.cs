@@ -299,7 +299,7 @@ namespace PQT.Web.Controllers
 
         [DisplayName(@"Print Excel Resources ")]
         [HttpPost]
-        public void PrintExcel(CompanyResourceModel model)
+        public ActionResult PrintExcel(CompanyResourceModel model)
         {
             var countries = !string.IsNullOrEmpty(model.Country) ? model.Country.Split(new[] { ",", ";" }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim()) : new List<string>();
             var organisations = !string.IsNullOrEmpty(model.Organisation) ? model.Organisation.Split(new[] { ",", ";" }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim()) : new List<string>();
@@ -313,7 +313,7 @@ namespace PQT.Web.Controllers
                                                            m.Country) &&
                                                        countries.Any(c =>
                                                            m.Country.ToLower()
-                                                               .Contains(c))) &&
+                                                               .Contains(c)))) &&
                                                       (!organisations.Any() ||
                                                        (!string.IsNullOrEmpty(
                                                             m.Organisation) &&
@@ -364,7 +364,7 @@ namespace PQT.Web.Controllers
                                                        (!string.IsNullOrEmpty(
                                                             m.Role) && roles.Any(c =>
                                                             m.Role.ToLower()
-                                                                .Contains(c))))));
+                                                                .Contains(c)))));
             using (ExcelPackage excelPackage = new ExcelPackage())
             {
                 var sheet = excelPackage.Workbook.Worksheets.Add("Resource");
@@ -427,6 +427,7 @@ namespace PQT.Web.Controllers
                     Response.End();
                 }
             }
+            return null;
         }
 
         [AjaxOnly]
@@ -509,8 +510,8 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 audits = _comRepo.GetAllCompanyResources(m =>
-                    (!countries.Any() ||
-                     (!string.IsNullOrEmpty(m.Country) && countries.Any(c => m.Country.ToLower().Contains(c))) &&
+                    ((!countries.Any() ||
+                     (!string.IsNullOrEmpty(m.Country) && countries.Any(c => m.Country.ToLower().Contains(c)))) &&
                     (!organisations.Any() ||
                      (!string.IsNullOrEmpty(m.Organisation) && organisations.Any(c => m.Organisation.ToLower().Contains(c)))) &&
                     (!searchNames.Any() ||
@@ -529,8 +530,7 @@ namespace PQT.Web.Controllers
                      (!string.IsNullOrEmpty(m.Role) && roles.Any(c => m.Role.ToLower().Contains(c))))) &&
                     (m.Country != null && m.Country.ToLower().Contains(searchValue)) ||
                     m.Organisation.ToLower().Contains(searchValue) ||
-                    m.LastName.ToLower().Contains(searchValue) ||
-                    m.FirstName.ToLower().Contains(searchValue) ||
+                    m.FullName.ToLower().Contains(searchValue) ||
                     m.Role.ToLower().Contains(searchValue) ||
                     (m.DirectLine != null && m.DirectLine.Contains(searchValue)) ||
                     (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
@@ -544,7 +544,7 @@ namespace PQT.Web.Controllers
             {
                 audits = _comRepo.GetAllCompanyResources(m => (!countries.Any() ||
                                                                (!string.IsNullOrEmpty(m.Country) && countries.Any(c =>
-                                                                    m.Country.ToLower().Contains(c))) &&
+                                                                    m.Country.ToLower().Contains(c)))) &&
                                                                (!organisations.Any() ||
                                                                 (!string.IsNullOrEmpty(m.Organisation) &&
                                                                  organisations.Any(c =>
@@ -573,7 +573,7 @@ namespace PQT.Web.Controllers
                                                                ) &&
                                                                (!roles.Any() ||
                                                                 (!string.IsNullOrEmpty(m.Role) && roles.Any(c =>
-                                                                     m.Role.ToLower().Contains(c))))));
+                                                                     m.Role.ToLower().Contains(c)))));
             }
 
             if (sortColumnDir == "asc")
