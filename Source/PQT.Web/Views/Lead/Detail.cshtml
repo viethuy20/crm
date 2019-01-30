@@ -92,7 +92,7 @@
                                                                      Model.Lead.LeadStatusRecord == LeadStatus.RequestBook ||
                                                                      Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI))
                 {
-                    @Html.Bootstrap().ActionLinkButton("Approve " + Model.Lead.StatusDisplay, "ApprovalAction").Id("approve_action").Class("btn-success").PrependIcon("md md-done")
+                    @Html.Bootstrap().Button().Text("Approve " + Model.Lead.StatusDisplay).Id("approve_action").Class("btn-success").PrependIcon("md md-done")
                 }
 
                 @if (!eventClosed && CurrentUser.HasPermission("Lead", "RejectAction") && (Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
@@ -119,7 +119,7 @@
                                                                     Model.Lead.LeadStatusRecord == LeadStatus.RequestLOI ||
                                                                     Model.Lead.LeadStatusRecord == LeadStatus.RequestBook))
                 {
-                    @Html.Bootstrap().ActionLinkButton("Cancel " + Model.Lead.StatusDisplay, "CancelRequest").Id("cancel_request").Class("btn-warning").PrependIcon("md md-cancel")
+                    @Html.Bootstrap().Button().Text("Cancel " + Model.Lead.StatusDisplay).Id("cancel_request").Class("btn-warning").PrependIcon("md md-cancel")
                 }
                 @if (!eventClosed && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))
                 {
@@ -127,14 +127,14 @@
                     {
                         if (CurrentUser.HasPermission("Lead", "BlockLead"))
                         {
-                            @Html.Bootstrap().ActionLinkButton("Block ", "BlockLead").Id("lead_block").Class("btn-warning").PrependIcon("md md-lock-outline")
+                            @Html.Bootstrap().Button().Text("Block").Id("lead_block").Class("btn-warning").PrependIcon("md md-lock-outline")
                         }
                     }
                     else
                     {
                         if (CurrentUser.HasPermission("Lead", "UnblockLead"))
                         {
-                            @Html.Bootstrap().ActionLinkButton("Unblock ", "UnblockLead").Id("lead_unblock").Class("btn-warning").PrependIcon("md md-lock-open")
+                            @Html.Bootstrap().Button().Text("Unblock").Id("lead_unblock").Class("btn-warning").PrependIcon("md md-lock-open")
                         }
                     }
                 }
@@ -142,7 +142,7 @@
                 {
                     if (CurrentUser.HasPermission("Lead", "Delete"))
                     {
-                        @Html.Bootstrap().ActionLinkButton("Delete ", "Delete").Id("lead_delete").Class("btn-danger").PrependIcon("md md-delete")
+                        @Html.Bootstrap().Button().Text("Delete").Id("lead_delete").Class("btn-danger").PrependIcon("md md-delete")
                     }
                 }
                 @if (!eventClosed && CurrentUser.HasPermission("Lead", "CallingForm") && (Model.Lead.LeadStatusRecord != LeadStatus.Booked))

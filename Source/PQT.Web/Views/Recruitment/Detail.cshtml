@@ -83,7 +83,7 @@
             @if (CurrentUser.HasPermission("Recruitment", "DeleteCandidate") && (Model.Candidate.CandidateStatusRecord != CandidateStatus.ApprovedEmployment &&
                                                                                  Model.Candidate.CandidateStatusRecord != CandidateStatus.Deleted))
             {
-                @Html.Bootstrap().ActionLinkButton("Delete ", "DeleteCandidate").Id("candidate_delete").Class("btn-danger").PrependIcon("md md-delete")
+                @Html.Bootstrap().Button().Text("Delete").Id("candidate_delete").Class("btn-danger").PrependIcon("md md-delete")
             }
 
             @if (CurrentUser.HasPermission("Recruitment", "RequestAction") && (Model.Candidate.CandidateStatusRecord == CandidateStatus.Initial ||
@@ -95,7 +95,7 @@
 
             @if (CurrentUser.HasPermission("Recruitment", "ApprovalAction") && (Model.Candidate.CandidateStatusRecord == CandidateStatus.RequestEmployment))
             {
-                @Html.Bootstrap().ActionLinkButton("Approve Employment", "ApprovalAction").Id("approve_action").Class("btn-success").PrependIcon("md md-done")
+                @Html.Bootstrap().Button().Text("Approve Employment").Id("approve_action").Class("btn-success").PrependIcon("md md-done")
             }
 
             @if (CurrentUser.HasPermission("Recruitment", "RejectAction") && (Model.Candidate.CandidateStatusRecord == CandidateStatus.RequestEmployment))
