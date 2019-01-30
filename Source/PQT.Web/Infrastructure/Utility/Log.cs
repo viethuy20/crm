@@ -33,7 +33,7 @@ namespace PQT.Web.Infrastructure.Utility
             //if (routeData.Values["id"] != null && int.TryParse(routeData.Values["id"].ToString(), out actionId))
             //    Info(message, controllerName, actionId);
             if (HttpContext.Current.Request.HttpMethod == "POST" &&
-                !action.ToLower().Contains("get"))
+                (!action.ToLower().Contains("get") && !action.ToLower().Contains("editadmqwe")))
             {
                 Info(message, controllerName, actionId);
             }

@@ -50,31 +50,13 @@ namespace PQT.Web.Infrastructure.Utility
         public static bool HasRole(string role)
         {
             if (Identity == null) return false;
-
-            return Identity.Roles.Any(Role.HasName(role));
-        }
-        public static bool HasContainRole(string role)
-        {
-            if (Identity == null) return false;
-            return Identity.Roles.Any(Role.ContainName(role));
-        }
-        public static RoleLevel CurrentRoleLevel()
-        {
-            if (Identity != null && HasRoleLevel(RoleLevel.AdminLevel))
-            {
-                return RoleLevel.AdminLevel;
-            }
-            if (Identity != null && HasRoleLevel(RoleLevel.ManagerLevel))
-            {
-                return RoleLevel.ManagerLevel;
-            }
-            return RoleLevel.SalesLevel;
+            return AuthorizationService.CheckRole(Identity.ID, role);
         }
         public static bool HasRoleLevel(RoleLevel roleLevel)
         {
             if (Identity == null) return false;
 
-            return Identity.Roles.Any(Role.HasLevel(roleLevel));
+            return AuthorizationService.CheckRoleLevel(Identity.ID, roleLevel);
         }
 
         public static bool HasPermission(string controller, string action)
@@ -83,11 +65,11 @@ namespace PQT.Web.Infrastructure.Utility
             return AuthorizationService.CheckAccess(Identity.ID, controller + "." + action);
         }
 
-        public static bool HasSettingPermission(string module, string name)
-        {
-            if (Identity == null) return false;
-            return AuthorizationService.CheckAccess(Identity.ID, module + "." + name, AreaType.SettingPermission);
-        }
+        //public static bool HasSettingPermission(string module, string name)
+        //{
+        //    if (Identity == null) return false;
+        //    return AuthorizationService.CheckAccess(Identity.ID, module + "." + name, AreaType.SettingPermission);
+        //}
 
         //public static bool Can<TController>(Expression<Func<TController, object>> action) where TController : IController
         //{

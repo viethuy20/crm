@@ -375,7 +375,7 @@ namespace PQT.Web.Controllers
                         {
                             CompanyID = lead.CompanyID,
                             CountryID = lead.Company.CountryID,
-                            Country = lead.Company.CountryName,
+                            Country = lead.Company.CountryCode,
                             FirstName = lead.FirstName,
                             LastName = lead.LastName,
                             DirectLine = lead.DirectLine,

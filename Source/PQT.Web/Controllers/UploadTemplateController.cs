@@ -16,10 +16,12 @@ namespace PQT.Web.Controllers
         //
         // GET: /UploadTemplate/
         private readonly IUploadTemplateService _uploadService;
+        private readonly IMembershipService _membershipService;
 
-        public UploadTemplateController(IUploadTemplateService uploadService)
+        public UploadTemplateController(IUploadTemplateService uploadService, IMembershipService membershipService)
         {
             _uploadService = uploadService;
+            _membershipService = membershipService;
         }
 
         [DisplayName(@"Templates management")]
@@ -31,7 +33,8 @@ namespace PQT.Web.Controllers
         [AjaxOnly]
         public ActionResult SalesmanTemplates()
         {
-            return PartialView(_uploadService.GetAllUploadTemplates(CurrentUser.Identity.Roles.Select(m => m.Name).ToArray()));
+            var user = _membershipService.GetUser(CurrentUser.Identity.ID);
+            return PartialView(_uploadService.GetAllUploadTemplates(user.Roles.Select(m => m.Name).ToArray()));
         }
         public ActionResult Create()
         {

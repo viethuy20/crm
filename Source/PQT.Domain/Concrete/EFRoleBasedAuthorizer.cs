@@ -117,5 +117,17 @@ namespace PQT.Domain.Concrete
                 return userPermissions.Roles.SelectMany(r => r.Permissions).Any(Permission.HasRight(controller, action, permissionType));
             return userPermissions.Roles.SelectMany(r => r.Permissions).Any(Permission.HasRight(controller, action));
         }
+
+        public virtual bool CheckRole(int userID, string role)
+        {
+            var user = GetUserPermissions(userID);
+            return user.Roles.Any(Role.HasName(role));
+        }
+
+        public virtual bool CheckRoleLevel(int userID, RoleLevel roleLevel)
+        {
+            var user = GetUserPermissions(userID);
+            return user.Roles.Any(Role.HasLevel(roleLevel));
+        }
     }
 }

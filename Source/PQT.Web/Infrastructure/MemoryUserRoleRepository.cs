@@ -6,6 +6,7 @@ using System.Web;
 using PQT.Domain.Abstract;
 using PQT.Domain.Concrete;
 using PQT.Domain.Entities;
+using PQT.Domain.Enum;
 
 namespace PQT.Web.Infrastructure
 {
@@ -112,6 +113,17 @@ namespace PQT.Web.Infrastructure
             if (!string.IsNullOrEmpty(permissionType))
                 return user.Roles.SelectMany(r => r.Permissions).Any(Permission.HasRight(controller, action, permissionType));
             return user.Roles.SelectMany(r => r.Permissions).Any(Permission.HasRight(controller, action));
+        }
+        public override bool CheckRole(int userID, string role)
+        {
+            var user = GetUserPermissions(userID);
+            return user.Roles.Any(Role.HasName(role));
+        }
+
+        public override bool CheckRoleLevel(int userID, RoleLevel roleLevel)
+        {
+            var user = GetUserPermissions(userID);
+            return user.Roles.Any(Role.HasLevel(roleLevel));
         }
     }
 }
