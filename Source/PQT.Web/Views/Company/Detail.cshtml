@@ -1,0 +1,190 @@
+﻿@using PQT.Domain.Entities
+@using Resources
+@model PQT.Web.Models.CompanyModel
+
+
+@{
+    ViewBag.Title = "Company Detail";
+}
+
+<style>
+    #grid_companies tbody tr {
+        cursor: pointer;
+    }
+
+        #grid_companies tbody tr.Tier1 {
+            color: #a94442;
+            background-color: #ffdad7;
+        }
+
+            #grid_companies tbody tr.Tier1.selected {
+                color: #a94442;
+                background-color: #fcaca6;
+            }
+
+        #grid_companies tbody tr.Tier2 {
+            color: #31708f;
+            background-color: #d8edff !important;
+        }
+
+            #grid_companies tbody tr.Tier2.selected {
+                color: #31708f;
+                background-color: #add9ff !important;
+            }
+
+        #grid_companies tbody tr.Tier0.selected {
+            color: #313534;
+            background-color: #e5e6e6 !important;
+        }
+</style>
+
+<section>
+
+    <div class="row section-header" style="height: auto">
+        <h2 class="text-primary col-sm-3">@ViewBag.Title</h2>
+    </div>
+    <div class="row">
+        <div class="col-sm-12" style="padding-right: 24px; padding-bottom: 12px">
+            @if (CurrentUser.HasPermission("Company", "Index"))
+            {
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+            }
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body form">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Company.CountryName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Company.CountryName).LabelText("Country")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Company.CompanyName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Company.CompanyName).LabelText("Company Name")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Company.ProductOrService).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Company.ProductOrService).LabelText("Product/Service")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Company.Sector).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Company.Sector)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Company.Industry).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Company.Industry)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Company.Ownership).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Company.Ownership)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Company.BusinessUnit).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Company.BusinessUnit)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Company.BudgetPerHead).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Company.BudgetPerHead)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Company.FinancialYear).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Company.FinancialYear)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Company.Tier).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Company.Tier)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Company.Tier.ToString() == TierType.Tier1.Value)
+    {
+        <div class="card card-underline">
+            <div class="card-head">
+                <header>Past Bookings</header>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <table class="table no-margin" id="grid_bookings">
+                        <thead>
+                            <tr>
+                                <th>Event Name</th>
+                                <th>Event Code</th>
+                                <th>Event Date</th>
+                                <th>Delegate Name</th>
+                                <th>Delegate Email</th>
+                                <th>Delegate Contact</th>
+                                <th>Attendance Status</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div><!--end .card-body -->
+        </div>
+    }
+</section>
+
+@Html.Script(
+    @<script>
+        if ($("#grid_bookings")) {
+             var table = $("#grid_bookings").DataTable({
+                 "processing": true, // for show progress bar
+                 "serverSide": true, // for process server side
+                 "filter": true, // this is for disable filter (search box)
+                 "orderMulti": false, // for disable multiple column at once
+                 "stateSave": false,
+                 "ajax": {
+                     "url": "@Url.Action("AjaxGetDelegates")?comId=@Model.Company.ID",
+                     "type": "POST",
+                     "datatype": "json",
+                     "data": function(d) {
+                     }
+                 },
+                 "columns": [
+                     { "data": "EventName", "name": "EventName", "orderable": true },
+                     { "data": "EventCode", "name": "EventCode", "orderable": true },
+                     { "data": "EventDate", "name": "EventDate", "orderable": true },
+                     { "data": "DelegateName", "name": "DelegateName", "orderable": true },
+                     { "data": "DelegateEmail", "name": "DelegateEmail", "orderable": true },
+                     { "data": "DelegateContact", "name": "DelegateContact", "orderable": true },
+                     { "data": "AttendanceStatusDisplay", "name": "AttendanceStatusDisplay", "orderable": true },
+                 ],
+                 "iDisplayLength": 25,
+                 "aaSorting": [[0, "asc"]],
+                 "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 },
+                 initComplete: function() {
+                     var _table = this;
+                     _table.parent().find('input[type="search"]').unbind();
+                     var timeOutTyping;
+                     _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                         clearTimeout(timeOutTyping);
+                         timeOutTyping = setTimeout(function () {
+                             _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                         }, 600);
+                     });
+                 },
+             });
+        }
+    </script>)

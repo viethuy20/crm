@@ -96,7 +96,7 @@
                     $(nRow).find('td:eq(9)').addClass('hide');
                 }
                 var dropdowns = '';
-                if ('@CurrentUser.HasPermission("Lead", "Detail")' == 'True') {
+                if ('@CurrentUser.HasPermission("Event", "Detail")' == 'True') {
                     dropdowns += '<li><a href="@Url.Action("Detail")/' + aData["ID"] + '"><i class="fa fa-eye"> Detail</i></a></li>';
                 }
                 if ('@CurrentUser.HasPermission("Lead", "NCLForManager")' == 'True') {
@@ -120,9 +120,14 @@
                 if ('@CurrentUser.HasPermission("Kpi", "ImportVoIp")' == 'True') {
                     dropdowns += '<li class="divider"></li><li><a href="@Url.Action("ImportVoIp", "Kpi")/' + aData["ID"] + '"><i class="fa fa-upload text-primary"> Import VoIP & Check KPI</i></a></li>';
                 }
-                $(nRow).find('td:eq(12)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
-                    dropdowns +
-                    '</ul></div>');
+                if (dropdowns !== '') {
+                    $(nRow).find('td:eq(12)').html(
+                        '<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
+                        dropdowns +
+                        '</ul></div>');
+                } else {
+                    $(nRow).find('td:eq(12)').html('');
+                }
                 $(nRow).attr("data-id", ["ID"]);
             },
             initComplete: function () {

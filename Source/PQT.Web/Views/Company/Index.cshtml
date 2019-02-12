@@ -94,7 +94,8 @@
             "iDisplayLength": 50,
             "aaSorting": [[2, "asc"]],
             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                $(nRow).find('td:eq(8)').html('<a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info" style="white-space:nowrap">  Edit</i></a> ' +
+                $(nRow).find('td:eq(8)').html('<a href="@Url.Action("Detail")?id=' + aData["ID"] + '" ><i class="fa fa-eye text-default" style="white-space:nowrap">  Detail</i></a> ' +
+                    ' <a href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '" data-action="edit" class="simple-ajax-popup-align-top"><i class="md md-edit text-info" style="white-space:nowrap">  Edit</i></a> ' +
                     ' <a href="#" data-action="delete" data-id="' + aData["ID"] +'"><i class="md md-delete text-danger"  style="white-space:nowrap"> Delete</i></a> ' +
                     '<a href="@Url.Action("Merge")?id=' + aData["ID"] + '" data-action="merge" class="simple-ajax-popup-align-top"><i class="md md-merge-type text-primary"  style="white-space:nowrap"> Merge</i></a> ');
                 $(nRow).attr("data-id", aData["ID"]);

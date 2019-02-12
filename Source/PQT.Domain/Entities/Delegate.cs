@@ -61,6 +61,14 @@ namespace PQT.Domain.Entities
             }
         }
         [NotMapped]
+        public string EventName { get; set; }
+        [NotMapped]
+        public string EventCode { get; set; }
+        [NotMapped]
+        public string EventDate { get; set; }
+        [NotMapped]
+        public string EventID { get; set; }
+        [NotMapped]
         public string Country { get; set; }
         [NotMapped]
         public string Company { get; set; }
@@ -77,6 +85,51 @@ namespace PQT.Domain.Entities
                 return Salutation + " " + FirstName + " " + LastName;
             }
         }
+        public string DelegateEmail
+        {
+            get
+            {
+                var contact = "";
+                if (!string.IsNullOrEmpty(WorkEmail))
+                {
+                    contact += WorkEmail;
+                }
+                if (!string.IsNullOrEmpty(PersonalEmail))
+                {
+                    if (!string.IsNullOrEmpty(contact))
+                        contact += " / " + PersonalEmail;
+                    else
+                        contact += PersonalEmail;
+                }
+                return contact;
+            }
+        }
+        public string DelegateContact
+        {
+            get
+            {
+                var contact = "";
+                if (!string.IsNullOrEmpty(MobilePhone1))
+                {
+                    contact += MobilePhone1;
+                }
+                if (!string.IsNullOrEmpty(MobilePhone2))
+                {
+                    if (!string.IsNullOrEmpty(contact))
+                        contact += " / " + MobilePhone2;
+                    else
+                        contact += MobilePhone2;
+                }
+                if (!string.IsNullOrEmpty(MobilePhone3))
+                {
+                    if (!string.IsNullOrEmpty(contact))
+                        contact += " / " + MobilePhone3;
+                    else
+                        contact += MobilePhone3;
+                }
+                return contact;
+            }
+        }
 
         public Delegate PassInfo(string country, string company, string salesman, IEnumerable<EventSession> eventSessions)
         {
@@ -84,6 +137,14 @@ namespace PQT.Domain.Entities
             Company = company;
             Salesman = salesman;
             EventSessions = eventSessions;
+            return this;
+        }
+        public Delegate PassInfoForTierCompany(string eventId, string eventName, string eventCode, string eventDate)
+        {
+            EventID = eventId;
+            EventName = eventName;
+            EventCode = eventCode;
+            EventDate = eventDate;
             return this;
         }
 

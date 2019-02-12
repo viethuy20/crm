@@ -52,7 +52,7 @@
                     <div id="rootwizard2" class="form-wizard form-wizard-horizontal">
                         @using (Html.BeginForm("StartCallForm", "Lead", FormMethod.Post, new { @class = "form form-validation" }))
                         {
-                            @Html.HiddenFor(m=>m.TypeSubmit, new { @class = "typeSubmit" })
+                            @Html.HiddenFor(m => m.TypeSubmit, new { @class = "typeSubmit" })
                             <div class="form-wizard-nav">
                                 <div class="progress">
                                     <div class="progress-bar progress-bar-primary"></div>
@@ -113,10 +113,12 @@
                                 </div><!--end #step3 -->
                             </div><!--end .tab-content -->
                             <ul class="pager wizard">
-                                <li class="previous"><a class="btn-raised"  style="position: fixed;bottom: 50px;left: 105px;display: block;z-index: 1008;" href="javascript:void(0);"><i class="md md-arrow-back"></i> Back to Companies List</a></li>
+                                <li class="previous"><a class="btn-raised" style="position: fixed;bottom: 50px;left: 105px;display: block;z-index: 1008;" href="javascript:void(0);"><i class="md md-arrow-back"></i> Back to Companies List</a></li>
                                 <li class="next"><a class="btn-raised" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;" href="javascript:void(0);">Next Call Info <i class="md md-arrow-forward"></i></a></li>
-                                <li class="finish "><button type="submit" class="btn btn-primary pull-right" style="position: fixed;bottom: 50px;right: 185px;display: block;z-index: 1006;"  id="requestnewevent"><i class="md md-phone-forwarded"></i> Request New Event</button>
-                                    <button type="submit" class="btn btn-success pull-right" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;"  id="endcall_save"><i class="md md-call-end"></i> Finish Call</button></li>
+                                <li class="finish ">
+                                    <button type="submit" class="btn btn-primary pull-right" style="position: fixed;bottom: 50px;right: 185px;display: block;z-index: 1006;" id="requestnewevent"><i class="md md-phone-forwarded"></i> Request New Event</button>
+                                    <button type="submit" class="btn btn-success pull-right" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;" id="endcall_save"><i class="md md-call-end"></i> Finish Call</button>
+                                </li>
                             </ul>
                         }
                     </div><!--end .card-body -->
@@ -217,6 +219,10 @@
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  var rowId = aData["ID"];
                  $(nRow).find('input[type="checkbox"]').val(rowId);
+                 if ('@CurrentUser.HasPermission("Company", "Detail")' == 'True') {
+                     $(nRow).find('td:eq(2)').html('<a target="_blank" href="@Url.Action("Detail","Company")/' +
+                         aData["ID"] + '">' + aData["CompanyName"] + '</a>');
+                 } 
                  $(nRow).attr('data-id', rowId);
                  $(nRow).addClass('Tier' + aData["Tier"]);
                  if (company_id_selected_val == rowId) {

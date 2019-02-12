@@ -2657,6 +2657,7 @@
     <Content Include="Views\Invoice\InvoicePreview.cshtml" />
     <Content Include="Views\EventCategory\CreateOrEdit.cshtml" />
     <Content Include="Views\EventCategory\Index.cshtml" />
+    <Content Include="Views\Company\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
+using PQT.Domain.Enum;
 using PQT.Web.Infrastructure.Filters;
 using PQT.Web.Infrastructure.Helpers;
 using PQT.Web.Models;
@@ -19,17 +20,25 @@ namespace PQT.Web.Controllers
 
         private readonly ICompanyRepository _comRepo;
         private readonly IUnitRepository _unitRepo;
+        private readonly IBookingService _bookingService;
 
-        public CompanyController(ICompanyRepository comRepo, IUnitRepository unitRepo)
+        public CompanyController(ICompanyRepository comRepo, IUnitRepository unitRepo, IBookingService bookingService)
         {
             _comRepo = comRepo;
             _unitRepo = unitRepo;
+            _bookingService = bookingService;
         }
         [DisplayName(@"Company management")]
         public ActionResult Index()
         {
             //var models = _comRepo.GetAllCompanies();
             return View(new List<Company>());
+        }
+        public ActionResult Detail(int id)
+        {
+            var model = new CompanyModel();
+            model.Prepare(id);
+            return View(model);
         }
 
         [DisplayName(@"Create Or Edit")]
@@ -112,7 +121,7 @@ namespace PQT.Web.Controllers
             if (ModelState.IsValid)
             {
                 var company = _comRepo.MergeCompany(model.CompanyID, model.MergeCompanyID);
-                if (company!=null)
+                if (company != null)
                 {
                     //company.Country = _unitRepo.GetCountry((int)company.CountryID);
                     return Json(new
@@ -179,7 +188,7 @@ namespace PQT.Web.Controllers
         }
 
         [AjaxOnly]
-        public ActionResult GetCompaniesForAjaxDropdown(int id,string q)
+        public ActionResult GetCompaniesForAjaxDropdown(int id, string q)
         {
             var bookings = _comRepo.GetAllCompanies(
                 m => m.CompanyName.ToUpper().Trim().Contains(q.ToUpper().Trim())
@@ -440,5 +449,151 @@ namespace PQT.Web.Controllers
             };
             return Json(json, JsonRequestBehavior.AllowGet);
         }
+
+
+        [AjaxOnly]
+        public ActionResult AjaxGetDelegates(int comId)
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+
+            var searchValue = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
+            }
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int page = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+            IEnumerable<PQT.Domain.Entities.Delegate> delegates = new HashSet<PQT.Domain.Entities.Delegate>();
+            var bookings = _bookingService.GetAllBookings(m => m.CompanyID == comId && m.BookingStatusRecord == BookingStatus.Approved);
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                Func<PQT.Domain.Entities.Delegate, bool> predicate = m =>
+                    (!string.IsNullOrEmpty(m.EventCode) && m.EventCode.ToLower().Contains(searchValue)) ||
+                    (!string.IsNullOrEmpty(m.EventDate) && m.EventDate.ToLower().Contains(searchValue)) ||
+                    (!string.IsNullOrEmpty(m.EventName) && m.EventName.ToLower().Contains(searchValue)) ||
+                    (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(searchValue)) ||
+                    (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(searchValue)) ||
+                    (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(searchValue)) ||
+                    (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(searchValue)) ||
+                    (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(searchValue)) ||
+                    (!string.IsNullOrEmpty(m.AttendanceStatusDisplay) &&
+                     m.AttendanceStatusDisplay.ToLower().Contains(searchValue));
+                delegates = bookings.SelectMany(m => m.Delegates.Select(d =>
+                        d.PassInfoForTierCompany(m.EventID.ToString(), m.Event.EventName, m.Event.EventCode,
+                            m.Event.EventDate)))
+                    .Where(predicate);
+            }
+            else
+            {
+                delegates = bookings.SelectMany(m => m.Delegates.Select(d =>
+                    d.PassInfoForTierCompany(m.EventID.ToString(), m.Event.EventName, m.Event.EventCode,
+                        m.Event.EventDate)));
+            }
+
+            #region sort
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "EventName":
+                        delegates = delegates.OrderBy(s => s.EventName).ThenBy(s => s.ID);
+                        break;
+                    case "EventCode":
+                        delegates = delegates.OrderBy(s => s.EventCode).ThenBy(s => s.ID);
+                        break;
+                    case "EventDate":
+                        delegates = delegates.OrderBy(s => s.EventDate).ThenBy(s => s.ID);
+                        break;
+                    case "DelegateName":
+                        delegates = delegates.OrderBy(s => s.FullName).ThenBy(s => s.ID);
+                        break;
+                    case "DelegateEmail":
+                        delegates = delegates.OrderBy(s => s.DelegateEmail).ThenBy(s => s.ID);
+                        break;
+                    case "DelegateContact":
+                        delegates = delegates.OrderBy(s => s.DelegateContact).ThenBy(s => s.ID);
+                        break;
+                    case "AttendanceStatusDisplay":
+                        delegates = delegates.OrderBy(s => s.AttendanceStatusDisplay).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        delegates = delegates.OrderBy(s => s.ID);
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "EventName":
+                        delegates = delegates.OrderByDescending(s => s.EventName).ThenBy(s => s.ID);
+                        break;
+                    case "EventCode":
+                        delegates = delegates.OrderByDescending(s => s.EventCode).ThenBy(s => s.ID);
+                        break;
+                    case "EventDate":
+                        delegates = delegates.OrderByDescending(s => s.EventDate).ThenBy(s => s.ID);
+                        break;
+                    case "DelegateName":
+                        delegates = delegates.OrderByDescending(s => s.FullName).ThenBy(s => s.ID);
+                        break;
+                    case "DelegateEmail":
+                        delegates = delegates.OrderByDescending(s => s.DelegateEmail).ThenBy(s => s.ID);
+                        break;
+                    case "DelegateContact":
+                        delegates = delegates.OrderByDescending(s => s.DelegateContact).ThenBy(s => s.ID);
+                        break;
+                    case "AttendanceStatusDisplay":
+                        delegates = delegates.OrderByDescending(s => s.AttendanceStatusDisplay).ThenBy(s => s.ID);
+                        break;
+                    default:
+                        delegates = delegates.OrderByDescending(s => s.ID);
+                        break;
+                }
+            }
+
+            #endregion sort
+
+            recordsTotal = delegates.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            var data = delegates.Skip(page).Take(pageSize).ToList();
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    m.ID,
+                    m.EventName,
+                    m.EventCode,
+                    m.EventDate,
+                    DelegateName = m.FullName,
+                    m.DelegateContact,
+                    m.DelegateEmail,
+                    m.AttendanceStatusDisplay
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
+
     }
 }
