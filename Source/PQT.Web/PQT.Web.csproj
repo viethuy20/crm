@@ -355,6 +355,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\MapperConfig.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
+    <Compile Include="Controllers\EventCategoryController.cs" />
     <Compile Include="Controllers\RecruitmentPositionController.cs" />
     <Compile Include="Controllers\NotifySettingController.cs" />
     <Compile Include="Controllers\BookingController.cs" />
@@ -2654,6 +2655,8 @@
     <Content Include="Views\Operation\EditorTemplates\EventSession.cshtml" />
     <Content Include="Views\Company\Merge.cshtml" />
     <Content Include="Views\Invoice\InvoicePreview.cshtml" />
+    <Content Include="Views\EventCategory\CreateOrEdit.cshtml" />
+    <Content Include="Views\EventCategory\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

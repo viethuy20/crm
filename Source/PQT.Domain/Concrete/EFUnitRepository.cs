@@ -1,19 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Globalization;
-using System.Linq;
-using System.Windows.Forms.VisualStyles;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
 using PQT.Domain.Helpers;
-using Humanizer;
-using NS.Entity;
-using ServiceStack;
-using WebGrease.Css;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 
 namespace PQT.Domain.Concrete
 {
@@ -361,6 +353,46 @@ namespace PQT.Domain.Concrete
         public bool UpdateAccomodationInfo(AccomodationInfo info)
         {
             return Update(info);
+        }
+
+        #endregion
+
+
+        #region Event Category
+        public IEnumerable<EventCategory> GetEventCategories()
+        {
+            return GetAll<EventCategory>().AsEnumerable();
+        }
+
+        public EventCategory GetEventCategory(int id)
+        {
+            return Get<EventCategory>(id);
+        }
+
+        public EventCategory GetEventCategory(string code)
+        {
+            if (code == null)
+            {
+                return null;
+            }
+            return Get<EventCategory>(m => m.Name.ToLower() == code.Trim().ToLower());
+        }
+
+        public EventCategory CreateEventCategory(EventCategory info)
+        {
+            info.Name = info.Name.Trim();
+            return Create(info);
+        }
+
+        public bool UpdateEventCategory(EventCategory info)
+        {
+            info.Name = info.Name.Trim();
+            return Update(info);
+        }
+
+        public bool DeleteEventCategory(int id)
+        {
+            return Delete<EventCategory>(id);
         }
 
         #endregion

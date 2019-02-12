@@ -67,8 +67,6 @@ namespace PQT.Domain.Abstract
         bool UpdateAccomodationInfo(AccomodationInfo holiday);
         #endregion AccomodationInfo
 
-
-
         #region Bank Account
         IEnumerable<BankAccount> GetAllBankAccounts();
         BankAccount GetBankAccount(int id);
@@ -77,5 +75,15 @@ namespace PQT.Domain.Abstract
         bool UpdateBankAccount(BankAccount info);
         bool DeleteBankAccount(int id);
         #endregion Bank Account
+
+        #region Event Category
+        IEnumerable<EventCategory> GetEventCategories();
+        EventCategory GetEventCategory(int id);
+        EventCategory GetEventCategory(string code);
+        EventCategory CreateEventCategory(EventCategory info);
+        bool UpdateEventCategory(EventCategory info);
+        bool DeleteEventCategory(int id);
+        #endregion Event Category
+
     }
 }

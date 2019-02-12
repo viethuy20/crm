@@ -195,6 +195,7 @@
     <Compile Include="Entities\EmailSetting.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\EventCategory.cs" />
     <Compile Include="Entities\EventCompany.cs" />
     <Compile Include="Entities\Holiday.cs" />
     <Compile Include="Entities\Invoice.cs" />

@@ -14,7 +14,7 @@
 <div class="card">
     <div class="card-body">
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-3">
                 <div class="form-group ">
                     @Html.Bootstrap().TextBoxFor(m => m.Event.EventCode).Class("form-control code").HtmlAttributes(new { required = "required", maxlength = "10" }).ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Event.EventCode).ShowRequiredStar(true)
@@ -24,6 +24,12 @@
                 <div class="form-group ">
                     @Html.Bootstrap().DropDownListFor(m => m.Event.EventStatus, EnumerationHelper.ToSelectList<EventStatus>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Event.EventStatus).ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group ">
+                    @Html.Bootstrap().DropDownListFor(m => m.Event.EventCategoryID, Model.EventCategories.ToSelectList(m => m.ID, m => m.Name)).OptionLabel("").Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Event.EventCategoryID).LabelText("Event Category").ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-3" style="width:150px">
@@ -115,11 +121,11 @@
                 </div>
             </div>
             @*<div class="col-sm-6">
-                <div class="form-group ">
-                    @Html.Bootstrap().TextAreaFor(m => m.Event.HotelVenue).Rows(3).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Event.HotelVenue)
-                </div>
-            </div>*@
+                    <div class="form-group ">
+                        @Html.Bootstrap().TextAreaFor(m => m.Event.HotelVenue).Rows(3).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Event.HotelVenue)
+                    </div>
+                </div>*@
             <div class="col-sm-12">
                 <div class="form-group ">
                     @Html.Bootstrap().TextAreaFor(m => m.Event.Location).Rows(5).Class("form-control").ShowValidationMessage(true)

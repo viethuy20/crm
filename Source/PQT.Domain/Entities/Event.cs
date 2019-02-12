@@ -70,6 +70,8 @@ namespace PQT.Domain.Entities
             LocalVisaAgentInfo = e.LocalVisaAgentInfo;
             PostEventInfoID = e.PostEventInfoID;
             PostEventInfo = e.PostEventInfo;
+            EventCategoryID = e.EventCategoryID;
+            EventCategory = e.EventCategory;
         }
         public string EventCode { get; set; }
         public string EventName { get; set; }
@@ -134,6 +136,9 @@ namespace PQT.Domain.Entities
         public int UserID { get; set; }
         [ForeignKey("UserID")]
         public virtual User User { get; set; }
+        public int? EventCategoryID { get; set; }
+        [ForeignKey("EventCategoryID")]
+        public virtual EventCategory EventCategory { get; set; }
         public int? VenueInfoID { get; set; }
         [ForeignKey("VenueInfoID")]
         public virtual VenueInfo VenueInfo { get; set; }
@@ -202,6 +207,17 @@ namespace PQT.Domain.Entities
         }
         [NotMapped]
         public int TotalDelegates { get; set; }
+        public string EventCategoryDisplay
+        {
+            get
+            {
+                if (EventCategory != null)
+                {
+                    return EventCategory.Name;
+                }
+                return "";
+            }
+        }
     }
     public class EventStatus : Enumeration
     {

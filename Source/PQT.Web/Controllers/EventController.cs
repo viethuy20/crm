@@ -448,6 +448,7 @@ namespace PQT.Web.Controllers
                         m.EventStatus == EventStatus.Live) && (
                         m.EventCode.ToLower().Contains(searchValue) ||
                         m.EventName.ToLower().Contains(searchValue) ||
+                        m.EventCategoryDisplay.ToLower().Contains(searchValue) ||
                         m.StartDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
                         m.EndDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
                         m.DateOfConfirmationStr.Contains(searchValue) ||
@@ -461,6 +462,7 @@ namespace PQT.Web.Controllers
                     events = _repo.GetAllEvents(m =>
                     m.EventCode.ToLower().Contains(searchValue) ||
                     m.EventName.ToLower().Contains(searchValue) ||
+                    m.EventCategoryDisplay.ToLower().Contains(searchValue) ||
                     m.StartDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
                     m.EndDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
                     m.DateOfConfirmationStr.Contains(searchValue) ||
@@ -498,6 +500,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "EventName":
                         events = events.OrderBy(s => s.EventName).ThenBy(s => s.ID);
+                        break;
+                    case "EventCategoryDisplay":
+                        events = events.OrderBy(s => s.EventCategoryDisplay).ThenBy(s => s.ID);
                         break;
                     case "EventStatusDisplay":
                         events = events.OrderBy(s => s.EventStatusDisplay).ThenBy(s => s.ID);
@@ -537,6 +542,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "EventName":
                         events = events.OrderByDescending(s => s.EventName).ThenBy(s => s.ID);
+                        break;
+                    case "EventCategoryDisplay":
+                        events = events.OrderByDescending(s => s.EventCategoryDisplay).ThenBy(s => s.ID);
                         break;
                     case "EventStatusDisplay":
                         events = events.OrderByDescending(s => s.EventStatusDisplay).ThenBy(s => s.ID);
@@ -586,6 +594,7 @@ namespace PQT.Web.Controllers
                     m.EventCode,
                     m.EventName,
                     m.EventStatusDisplay,
+                    m.EventCategoryDisplay,
                     m.BackgroundColor,
                     m.Location,
                     m.HotelVenue,

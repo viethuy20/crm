@@ -23,6 +23,7 @@ namespace PQT.Web.Models
         public List<int> UsersSelected { get; set; }
         public List<int> CompaniesSelected { get; set; }
         public IEnumerable<SalesGroup> SalesGroups { get; set; }
+        public IEnumerable<EventCategory> EventCategories { get; set; }
         public IEnumerable<User> Users { get; set; }
         public HttpPostedFileBase SalesBrochureFile { get; set; }
         public HttpPostedFileBase OperationBrochureFile { get; set; }
@@ -51,8 +52,10 @@ namespace PQT.Web.Models
         public void Prepare()
         {
             var saleRepo = DependencyHelper.GetService<ISalesGroupService>();
+            var unitRepo = DependencyHelper.GetService<IUnitRepository>();
             Users = saleRepo.GetAllSalesmans();
             SalesGroups = saleRepo.GetAllSalesGroups();
+            EventCategories = unitRepo.GetEventCategories();
             Event = new Event
             {
                 UserID = CurrentUser.Identity.ID
@@ -68,8 +71,10 @@ namespace PQT.Web.Models
                 UsersSelected = Event.ManagerUsers.Select(m => m.ID).ToList();
 
                 var saleRepo = DependencyHelper.GetService<ISalesGroupService>();
+                var unitRepo = DependencyHelper.GetService<IUnitRepository>();
                 Users = saleRepo.GetAllSalesmans();
                 SalesGroups = saleRepo.GetAllSalesGroups();
+                EventCategories = unitRepo.GetEventCategories();
                 Event.EventSessions = Event.EventSessions.Where(m => m.EntityStatus == EntityStatus.Normal).ToList();
                 //Event.EventCompanies = Event.EventCompanies.Where(m => m.EntityStatus == EntityStatus.Normal).ToList();
             }

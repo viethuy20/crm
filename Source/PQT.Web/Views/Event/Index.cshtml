@@ -25,6 +25,7 @@
                     <tr>
                         <th>@Resource.Code</th>
                         <th>Status</th>
+                        <th>Category</th>
                         <th>@Resource.Name</th>
                         <th>Color</th>
                         <th>Event First Day</th>
@@ -62,8 +63,9 @@
             "columns": [
                 { "data": "EventCode", "name": "EventCode", "orderable": true },
                 { "data": "EventStatusDisplay", "name": "EventStatusDisplay", "orderable": true },
+                { "data": "EventCategoryDisplay", "name": "EventCategoryDisplay", "orderable": true },
                 { "data": "EventName", "name": "EventName", "orderable": true },
-                { "data": "ID", "name": "ID", "orderable": false },
+                { "data": "ID", "name": "ID", "orderable": true },
                 { "data": "StartDate", "name": "StartDate", "orderable": true },
                 { "data": "EndDate", "name": "EndDate", "orderable": true },
                 { "data": "DateOfConfirmation", "name": "DateOfConfirmation", "orderable": true },
@@ -86,12 +88,12 @@
                 } else {
                     $(nRow).find('td:eq(0)').html(aData["EventCode"]);
                 }
-                $(nRow).find('td:eq(3)').html('<span class="EventColor" style="cursor: default;display: inline-block;width: 30px;height: 30px;background:' + aData["BackgroundColor"] + ';border:1px solid #c3c3c3;border-radius: 50%;">&nbsp;</span>');
+                $(nRow).find('td:eq(4)').html('<span class="EventColor" style="cursor: default;display: inline-block;width: 30px;height: 30px;background:' + aData["BackgroundColor"] + ';border:1px solid #c3c3c3;border-radius: 50%;">&nbsp;</span>');
                 if ('@CurrentUser.HasRole("Finance")' == 'True') {
-                    $(nRow).find('td:eq(7)').addClass('hide');
+                    $(nRow).find('td:eq(8)').addClass('hide');
                 }
                 if ('@CurrentUser.HasRole("Finance")' != 'True') {
-                    $(nRow).find('td:eq(8)').addClass('hide');
+                    $(nRow).find('td:eq(9)').addClass('hide');
                 }
                 var dropdowns = '';
                 if ('@CurrentUser.HasPermission("Lead", "Detail")' == 'True') {
@@ -118,7 +120,7 @@
                 if ('@CurrentUser.HasPermission("Kpi", "ImportVoIp")' == 'True') {
                     dropdowns += '<li class="divider"></li><li><a href="@Url.Action("ImportVoIp", "Kpi")/' + aData["ID"] + '"><i class="fa fa-upload text-primary"> Import VoIP & Check KPI</i></a></li>';
                 }
-                $(nRow).find('td:eq(11)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
+                $(nRow).find('td:eq(12)').html('<div class="dropdown"><a class="btn dropdown-toggle btn-default btn-mini btn btn-flat prepend-icon" data-toggle="dropdown" href="#"><i class="fa fa-navicon"></i> <span class="caret"></span></a><ul class="pull-right dropdown-menu">' +
                     dropdowns +
                     '</ul></div>');
                 $(nRow).attr("data-id", ["ID"]);
