@@ -484,17 +484,25 @@
 
          addDialingCode();
          function addDialingCode() {
-             if (company_business_selected != null && company_business_selected != "") {
+             @*if (company_business_selected != null && company_business_selected != "") {
                  $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").val(company_business_selected);
                  $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").attr("readonly", "readonly");
-             }
-             if (company_budget_selected != null && company_budget_selected != "" && company_budget_selected > 0) {
+             }*@
+             $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").val(company_business_selected);
+             $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").attr("readonly", "readonly");
+             @*if (company_budget_selected != null && company_budget_selected != "" && company_budget_selected > 0) {
                  $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(company_budget_selected).trigger("change");
                  $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").attr("readonly", "readonly");
-             }
-             if (company_remark_selected != null && company_remark_selected != "") {
+             }*@
+             $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(company_budget_selected).trigger("change");
+             $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").attr("readonly", "readonly");
+             
+             @*if (company_remark_selected != null && company_remark_selected != "") {
                  $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val(company_remark_selected);
-             }
+             }*@
+             $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val(company_remark_selected);
+             $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").attr("readonly", "readonly");
+
              if (company_dialingCode_selected == "") return;
              var dialingCodes = $('.dialingCode');
              dialingCodes.each(function (index, item) {
@@ -521,7 +529,7 @@
              }
          }*@
 
-        function SetEventCompanyInfo(data) {
+        @*function SetEventCompanyInfo(data) {
             if (data) {
                 $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(data.ID);
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
@@ -531,7 +539,7 @@
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val('').trigger("change");
                 $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val('');
             }
-         }
+         }*@
 
 
         if (company_id_selected_val > 0) {

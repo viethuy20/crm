@@ -108,6 +108,12 @@
                         @Html.Bootstrap().LabelFor(m => m.Company.FinancialYear)
                     </div>
                 </div>
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextAreaFor(m => m.Company.Remarks).Rows(5).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Company.Remarks)
+                    </div>
+                </div>
                 <div class="col-sm-4">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Company.Tier).Class("form-control").Disabled().ShowValidationMessage(true)

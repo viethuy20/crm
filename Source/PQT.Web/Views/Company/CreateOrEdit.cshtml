@@ -93,6 +93,10 @@
                         <label>Account Manager</label>
                     </div>
                 </div>
+                <div class="form-group col-md-12">
+                    @Html.Bootstrap().TextAreaFor(m => m.Company.Remarks).Rows(5).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Company.Remarks)
+                </div>
 
             </div><!--end .card-body -->
 

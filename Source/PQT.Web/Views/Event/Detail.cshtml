@@ -100,42 +100,6 @@
                             @Html.Bootstrap().LabelFor(m => m.Event.EndDate).LabelText("Event Last Day")
                         </div>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.DateOfConfirmation)">
-                                @(Model.Event.DateOfConfirmation != null ? Convert.ToDateTime(Model.Event.DateOfConfirmation).ToString("dd MMM yyyy") : "")
-                            </div>
-                            @Html.Bootstrap().LabelFor(m => m.Event.DateOfConfirmation)
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.ClosingDate)">
-                                @(Model.Event.ClosingDate != null ? Convert.ToDateTime(Model.Event.ClosingDate).ToString("dd MMM yyyy") : "")
-                            </div>
-                            @Html.Bootstrap().LabelFor(m => m.Event.ClosingDate).LabelText("Date of Closing Sales")
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <div class="form-control" readonly name="@Html.FieldNameFor(m=>m.Event.DateOfOpen)">
-                                @(Model.Event.DateOfOpen != null ? Convert.ToDateTime(Model.Event.DateOfOpen).ToString("dd MMM yyyy") : "")
-                            </div>
-                            @Html.Bootstrap().LabelFor(m => m.Event.DateOfOpen).LabelText("Date Of Open (Cross Sell)")
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Event.HotelVenue).Class("form-control").Disabled().ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Event.HotelVenue)
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Event.HotelAccomodation).Class("form-control").Disabled().ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Event.HotelAccomodation)
-                        </div>
-                    </div>
                     <div class="col-sm-12">
                         <div class="form-group">
                             @Html.Bootstrap().TextAreaFor(m => m.Event.Location).Rows(5).Class("form-control").Disabled().ShowValidationMessage(true)
