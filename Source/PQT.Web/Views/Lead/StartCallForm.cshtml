@@ -84,6 +84,7 @@
                                                                 <th>Industry</th>
                                                                 <th>Business Unit</th>
                                                                 <th>Ownership</th>
+                                                                <th></th>
                                                             </tr>
                                                         </thead>
                                                     </table>
@@ -200,6 +201,7 @@
                  { "data": "Industry", "name": "Industry", "orderable": true },
                  { "data": "BusinessUnit", "name": "BusinessUnit", "orderable": true },
                  { "data": "Ownership", "name": "Ownership", "orderable": true },
+                 { "data": "ID", "name": "ID", "orderable": false }
              ],
              'columnDefs': [
                  {
@@ -220,9 +222,12 @@
                  var rowId = aData["ID"];
                  $(nRow).find('input[type="checkbox"]').val(rowId);
                  if ('@CurrentUser.HasPermission("Company", "Detail")' == 'True') {
-                     $(nRow).find('td:eq(2)').html('<a target="_blank" href="@Url.Action("Detail","Company")/' +
-                         aData["ID"] + '">' + aData["CompanyName"] + '</a>');
-                 } 
+                     $(nRow).find('td:eq(8)').html('<a target="_blank" href="@Url.Action("Detail","Company")?id=' +
+                         aData["ID"] +
+                         '" ><i class="fa fa-eye text-default" style="white-space:nowrap">  Detail</i></a>');
+                 } else {
+                     $(nRow).find('td:eq(8)').html('');
+                 }
                  $(nRow).attr('data-id', rowId);
                  $(nRow).addClass('Tier' + aData["Tier"]);
                  if (company_id_selected_val == rowId) {
