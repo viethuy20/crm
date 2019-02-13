@@ -68,8 +68,8 @@
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Event.EventStatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Event.EventStatus)
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.EventCategoryDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.EventCategory)
                         </div>
                     </div>
                     <div class="col-sm-3">
@@ -157,7 +157,7 @@
         <div class="card">
             <div class="card-body form">
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Event.EventCode).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Event.EventCode)
@@ -167,6 +167,12 @@
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Event.EventStatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Event.EventStatus)
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Event.EventCategoryDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Event.EventCategory)
                         </div>
                     </div>
                     <div class="col-sm-3">

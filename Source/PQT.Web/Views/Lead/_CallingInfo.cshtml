@@ -188,7 +188,7 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
-                                @Html.TextBoxFor(m => m.PhoneCall.CallBackTiming, new { @class = "form-control datetime", @placeholder="HH:mm" })
+                                @Html.TextBoxFor(m => m.PhoneCall.CallBackTiming, new { @class = "form-control datetime", @placeholder = "HH:mm" })
                                 @Html.ValidationMessageFor(m => m.PhoneCall.CallBackTiming)
                                 @Html.Bootstrap().LabelFor(m => m.PhoneCall.CallBackTiming).LabelText("Call Back Time")
                             </div>
@@ -263,13 +263,13 @@
                         <div class="form-group">
                             <div class="input-daterange input-group">
                                 <div class="input-group-content">
-                                    @Html.DatePickerRangeFor(m => m.NewDateFrom, new { @class = "form-control"})
+                                    @Html.DatePickerRangeFor(m => m.NewDateFrom, new { @class = "form-control" })
                                     @Html.ValidationMessageFor(m => m.NewDateFrom)
                                     @Html.Bootstrap().LabelFor(m => m.NewDateFrom)
                                 </div>
                                 <span class="input-group-addon">to</span>
                                 <div class="input-group-content">
-                                    @Html.DatePickerRangeFor(m => m.NewDateTo, new { @class = "form-control"})
+                                    @Html.DatePickerRangeFor(m => m.NewDateTo, new { @class = "form-control" })
                                     @Html.ValidationMessageFor(m => m.NewDateTo)
                                     @Html.Bootstrap().LabelFor(m => m.NewDateTo)
                                 </div>
@@ -307,9 +307,16 @@
         }
 
         var tickStarted = false;
+        var clientNow = new Date(); // Current date now.
+        var serverNow = new Date("@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")");
+
+        var differSeconds = parseInt((clientNow - serverNow) / 1000);
         var startTime = new Date();
-        function tickTime() {
-            var seconds = precisionRound((new Date() - startTime) / 1000, 0);
+        function tickTime()
+        {
+            var dateNow = new Date();
+            dateNow.setSeconds(dateNow.getSeconds() + differSeconds);
+            var seconds = precisionRound((dateNow- startTime) / 1000, 0);
             var m = Math.floor(seconds / 60);
             var s = seconds - m * 60;
             m = checkTime(m);
@@ -327,6 +334,7 @@
         }
         function StartTick() {
             startTime = new Date();
+            startTime.setSeconds(startTime.getSeconds() + differSeconds);
             tickStarted = true;
             $('.phoneCallStartTime').val(moment(startTime).format("DD/MM/YYYY HH:mm:ss"));
             tickTime();
