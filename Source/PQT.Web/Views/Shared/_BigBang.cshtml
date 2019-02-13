@@ -46,7 +46,8 @@
     </style>
 </head>
 @*@(Request.Cookies["menubar-pin"] == null || Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")*@
-<body class="header-fixed menubar-first @(Request.Cookies["menubar-pin"] != null && Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")">
+@*<body class="header-fixed menubar-first @(Request.Cookies["menubar-pin"] != null && Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")">*@
+<body class="header-fixed menubar-first">
 
     @RenderBody()
 
@@ -166,8 +167,8 @@
             if (window.FileReader) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
-                    if (upload[0].files[0].size > 5120000) {
-                        toastr.error('Your file is too large (maximum 5MB), please choose another file', '');
+                    if (upload[0].files[0].size > 20971520) {
+                        toastr.error('Your file is too large (maximum 20MB), please choose another file', '');
                     }
                 };
                 reader.readAsDataURL(upload[0].files[0]);

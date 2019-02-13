@@ -1,0 +1,32 @@
+﻿@model PQT.Domain.Entities.UploadTemplate
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="~/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="~/favicon.ico" type="image/x-icon">
+    <title>
+        @Model.GroupName
+    </title>
+</head>
+<body style="margin: 0; overflow-y: hidden;background: #000" oncontextmenu="return false;">
+    @if (Model.FileName.Contains(".mp4") || Model.FileName.Contains(".avi"))
+    {
+        <video  style="width: 100%;height: 100vh" autoplay controls controlsList="nodownload">
+            <source src="/data/@FileUploadType.Template.Value.ToLower()/@(Model.FileName)" type="video/mp4">
+        </video>
+    }
+    else
+    {
+        <object data="/data/@FileUploadType.Template.Value.ToLower()/@(Model.FileName)?embedded=true#toolbar=0" type="application/pdf" style="border: 0; height: 100vh; width: 100%;">
+            <embed src="/data/@FileUploadType.Template.Value.ToLower()/@(Model.FileName)?embedded=true#toolbar=0" type="application/pdf">
+            </embed>
+        </object>
+    }
+</body>

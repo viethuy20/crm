@@ -13,6 +13,7 @@
         <div class="card">
             <div>
                 @Html.HiddenFor(m=>m.Invoice.ID)
+                @Html.HiddenFor(m=>m.Invoice.CreatedTime)
                 @Html.Partial("_CreateOrEdit", Model)
                 <div class="card-actionbar">
                     <div class="card-actionbar-row">

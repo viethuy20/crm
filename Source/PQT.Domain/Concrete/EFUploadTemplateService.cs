@@ -22,9 +22,17 @@ namespace PQT.Domain.Concrete
         {
             if (!roleName.Any())
             {
-                return GetAll<UploadTemplate>().AsEnumerable();
+                return GetAll<UploadTemplate>(m => !m.ReadOnly).AsEnumerable();
             }
-            return GetAll<UploadTemplate>(m => roleName.Select(r => r.ToLower()).Contains(m.Department.ToLower())).AsEnumerable();
+            return GetAll<UploadTemplate>(m => !m.ReadOnly && roleName.Select(r => r.ToLower()).Any(r => m.Department.ToLower().Contains(r))).AsEnumerable();
+        }
+        public IEnumerable<UploadTemplate> GetAllUploadNonDownloadableTemplates(params string[] roleName)
+        {
+            if (!roleName.Any())
+            {
+                return GetAll<UploadTemplate>(m => m.ReadOnly).AsEnumerable();
+            }
+            return GetAll<UploadTemplate>(m => m.ReadOnly && roleName.Select(r => r.ToLower()).Any(r => m.Department.ToLower().Contains(r))).AsEnumerable();
         }
 
         public UploadTemplate GetUploadTemplate(int id)

@@ -48,6 +48,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="@Url.Action("SalesmanNonDownloadableTemplates","UploadTemplate")" title="Non downloadable Template" class="btn btn-icon-toggle btn-default simple-ajax-popup-align-top">
+                        <i class="fa fa-file-pdf-o"></i>
+                    </a>
+                </li>
+                <li>
                     <a href="#offcanvas-notify" data-toggle="offcanvas" title="Notifications" class="btn btn-icon-toggle btn-default" id="notify-trigger">
                         <i class="fa fa-bell"></i><sup class="badge style-danger count @(count == 0? "hide":"")">@(count)</sup>
                     </a>
@@ -412,16 +417,15 @@
             toggle: true
         });
 
-        $("#left-menubar-toggle").on("click",
-            function() {
-                var $body = $("body");
-                if ($body.hasClass("menubar-pin")) {
-                    createCookie("menubar-pin", "false", 3650);
-                } else {
-                    createCookie("menubar-pin", "true", 3650);
-                }
-
-            });
+        //$("#left-menubar-toggle").on("click",
+        //    function() {
+        //        var $body = $("body");
+        //        if ($body.hasClass("menubar-pin")) {
+        //            createCookie("menubar-pin", "false", 3650);
+        //        } else {
+        //            createCookie("menubar-pin", "true", 3650);
+        //        }
+        //    });
 
         var createCookie = function(name, value, days) {
             var expires;
@@ -456,7 +460,7 @@
     <script>
         function StartConnectProgressHub() {
             var progressNotifier = $.connection.progressHub;
-            progressNotifier.client.sendMessage = function(message) {
+            progressNotifier.client.sendMessage = function (message) {
                 UpdateProgress(message);
             };
         }
@@ -806,22 +810,22 @@
         //Update all .timestamp
         function UpdateTimestamp() {
             var $timestamp = $(".timestamp");
-            $timestamp.each(function(index, item) {
+            $timestamp.each(function (index, item) {
                 var time = $(item).data('time');
                 if (time && time != "") {
                     $(item).html(moment(time, "DDMMYYYYhhmmss").fromNow());
                 }
             });
-            setTimeout(function() {
-                    UpdateTimestamp();
-                },
+            setTimeout(function () {
+                UpdateTimestamp();
+            },
                 60000);
             //console.log("Update all .timestamp length=" + $timestamp.length);
         }
 
-        setTimeout(function() {
-                UpdateTimestamp();
-            },
+        setTimeout(function () {
+            UpdateTimestamp();
+        },
             60000);
 
 

@@ -36,6 +36,32 @@ namespace PQT.Web.Controllers
             var user = _membershipService.GetUser(CurrentUser.Identity.ID);
             return PartialView(_uploadService.GetAllUploadTemplates(user.Roles.Select(m => m.Name).ToArray()));
         }
+        [AjaxOnly]
+        public ActionResult SalesmanNonDownloadableTemplates()
+        {
+            var user = _membershipService.GetUser(CurrentUser.Identity.ID);
+            return PartialView(_uploadService.GetAllUploadNonDownloadableTemplates(user.Roles.Select(m => m.Name).ToArray()));
+        }
+        [AjaxOnly]
+        public ActionResult TemplatePdfLoader(int id = 0)
+        {
+            var template = _uploadService.GetUploadTemplate(id);
+            if (template == null)
+            {
+                return Content("Template not found");
+            }
+            if (CurrentUser.Identity == null)
+            {
+                return Content("Access denied");
+            }
+            var user = _membershipService.GetUser(CurrentUser.Identity.ID);
+            if (!user.Roles.Select(m => m.Name).ToArray().Select(r => r.ToLower())
+                .Any(r => template.Department.ToLower().Contains(r)))
+            {
+                return Content("Access denied");
+            }
+            return View(template);
+        }
         public ActionResult Create()
         {
             return View(new UploadTemplate());
@@ -47,6 +73,7 @@ namespace PQT.Web.Controllers
             {
                 if (model.UploadFile != null)
                     model.FileName = FileUpload.Upload(FileUploadType.Template, model.UploadFile);
+                model.Department = String.Join(",", model.Departments);
                 if (_uploadService.CreateUploadTemplate(model) != null)
                 {
                     TempData["message"] = "Upload successful";
@@ -64,6 +91,8 @@ namespace PQT.Web.Controllers
                 TempData["error"] = "Data not found";
                 return RedirectToAction("Index");
             }
+            if (!string.IsNullOrEmpty(model.Department))
+                model.Departments = model.Department.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             return View(model);
         }
         [HttpPost]
@@ -73,6 +102,7 @@ namespace PQT.Web.Controllers
             {
                 if (model.UploadFile != null)
                     model.FileName = FileUpload.Upload(FileUploadType.Template, model.UploadFile);
+                model.Department = String.Join(",", model.Departments);
                 if (_uploadService.UpdateTemplate(model))
                 {
                     TempData["message"] = "Update successful";
@@ -184,9 +214,10 @@ namespace PQT.Web.Controllers
                 {
                     m.ID,
                     UploadTime = m.UploadTimeStr,
-                    GroupName = m.GroupName,
-                    Department = m.Department,
-                    FileName = m.FileName,
+                    m.GroupName,
+                    m.Department,
+                    m.FileName,
+                    m.Type,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

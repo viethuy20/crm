@@ -4,7 +4,7 @@
 }
 <div class="card card-underline" style="background: white; margin: auto; max-width: 600px; position: relative;">
     <div class="card-head">
-        <header><b>Templates</b></header>
+        <header><b>Non downloadable Template</b></header>
         <div class="tools">
             <div class="btn-group" style="margin-right: 35px;">
                 @if (CurrentUser.HasPermission("UploadTemplate", "Index"))
@@ -33,7 +33,7 @@
                                         var items = Model.Where(m => m.GroupNameCode == group.GroupNameCode);
                                         foreach (var uploadTemplate in items)
                                         {
-                                            <li><a href="/data/@FileUploadType.Template.Value.ToLower()/@uploadTemplate.FileName" target="_blank"><i class="fa fa-download"></i> @uploadTemplate.FileName </a></li>
+                                            <li><a href="@Url.Action("TemplatePdfLoader",new {id=uploadTemplate.ID})" target="_blank"><i class="fa fa-eye"></i> @uploadTemplate.FileName </a></li>
                                         }
                                     }
                                 </ul>

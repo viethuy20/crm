@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
@@ -32,6 +33,14 @@ namespace PQT.Domain.Concrete
         {
             return Get<Invoice>(id);
         }
+        public Invoice GetInvoiceByInvoiceNumber(string no)
+        {
+            if (no == null)
+            {
+                return null;
+            }
+            return Get<Invoice>(m => m.InvoiceNo.ToUpper().Trim() == no.Trim().ToUpper());
+        }
         public Invoice GetInvoiceByBooking(int bookingId)
         {
             return Get<Invoice>(m => m.BookingID == bookingId);
@@ -39,7 +48,25 @@ namespace PQT.Domain.Concrete
 
         public Invoice CreateInvoice(Invoice info)
         {
-            info.InvoiceNo = string.Format("VN{0}", GetNextCounter("Invoice", 1578));
+            var tempNo = GetTempInvoiceNo();
+            if (tempNo == info.InvoiceNo)
+            {
+                //save invoice number for next time
+                info.InvoiceNo = string.Format("VN{0}", GetNextCounter("Invoice", 1578));
+            }
+            else
+            {
+                var counter = Get<Counter>(c => c.Name == "Invoice");
+                if (counter != null)
+                {
+                    var resultString = Regex.Match(info.InvoiceNo, @"\d+").Value;
+                    if (!string.IsNullOrEmpty(resultString))
+                    {
+                        counter.Value = Int32.Parse(resultString);
+                        Update(counter);
+                    }
+                }
+            }
             return Create(info);
         }
 

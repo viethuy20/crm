@@ -625,11 +625,12 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
-            //var saleId = PermissionHelper.SalesmanId();
+            var saleId = PermissionHelper.SalesmanId();
             IEnumerable<Booking> bookings = new HashSet<Booking>();
             if (!string.IsNullOrEmpty(searchValue))
             {
                 bookings = _bookingService.GetAllBookings(m => m.BookingStatusRecord == BookingStatus.Approved &&
+                                                               (saleId == 0 || m.SalesmanID == saleId) &&
                                                                (datefrom == default(DateTime) ||
                                                                 m.CreatedTime.Date >= datefrom.Date) &&
                                                                (dateto == default(DateTime) ||
@@ -655,6 +656,7 @@ namespace PQT.Web.Controllers
             else
             {
                 bookings = _bookingService.GetAllBookings(m => m.BookingStatusRecord == BookingStatus.Approved &&
+                                                               (saleId == 0 || m.SalesmanID == saleId) &&
                                                                (datefrom == default(DateTime) ||
                                                                 m.CreatedTime.Date >= datefrom.Date) &&
                                                                (dateto == default(DateTime) ||

@@ -98,14 +98,14 @@
              "iDisplayLength": 50,
              "aaSorting": [[0, "desc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
-                     aData["ID"] +
-                     '">' +
-                     aData["CreatedTime"] +
-                     '</a>');
+                 if ('@CurrentUser.HasPermission("Booking", "Detail")' == 'True') {
+                     $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
+                         aData["ID"] +
+                         '">' +
+                         aData["CreatedTime"] +
+                         '</a>');
+                 }
                  $(nRow).find('td:eq(0)').css('text-align', "center");
-                 $(nRow).find('td:eq(2)').html('<a href="@Url.Action("Detail")/' +
-                     aData["ID"] + '">' + aData["CompanyName"] + '</a>');
                  $(nRow).find('td:eq(3)').css('text-align', "center");
                  $(nRow).find('td:eq(5)').css('text-align', "center");
                  $(nRow).find('td:eq(6)').css('text-align', "center");

@@ -130,6 +130,7 @@ namespace PQT.Web
             kernel.Bind<IValidator<UploadTemplate>>().To<UploadTemplateValidator>();
             kernel.Bind<IValidator<Domain.Entities.Delegate>>().To<DelegateValidator>();
             kernel.Bind<IValidator<Candidate>>().To<CandidateValidator>();
+            kernel.Bind<IValidator<Invoice>>().To<InvoiceValidator>();
             // cache configurations.
             kernel.Bind<ICacheStorageLocation>().To<RequestCacheSolution>().Named("InRequest");
             kernel.Bind<ICacheStorageLocation>().To<SessionCacheSolution>().Named("InSession");

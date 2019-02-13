@@ -11,6 +11,7 @@ namespace PQT.Domain.Entities
     {
         public Invoice()
         {
+            CreatedTime = DateTime.Today;
         }
         public string InvoiceNo { get; set; }
         public decimal AdminCharge { get; set; }

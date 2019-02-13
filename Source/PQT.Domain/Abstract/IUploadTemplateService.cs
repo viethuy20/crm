@@ -10,6 +10,7 @@ namespace PQT.Domain.Abstract
     {
         IEnumerable<UploadTemplate> GetAllUploadTemplates();
         IEnumerable<UploadTemplate> GetAllUploadTemplates(params string[] roleName);
+        IEnumerable<UploadTemplate> GetAllUploadNonDownloadableTemplates(params string[] roleName);
         UploadTemplate GetUploadTemplate(int id);
         UploadTemplate GetUploadTemplate(string group);
         UploadTemplate CreateUploadTemplate(UploadTemplate item);

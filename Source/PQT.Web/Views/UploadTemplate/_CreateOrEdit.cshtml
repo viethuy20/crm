@@ -45,8 +45,14 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="form-group">
-                    @Html.Bootstrap().DropDownListFor(m => m.Department, departments.ToSelectList(m => m.Name, m => m.Name)).OptionLabel("").Class("form-control").HtmlAttributes(new { required = "required"}).ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Department).ShowRequiredStar(true)
+                    <select multiple class="form-control" name="@Html.NameFor(m=>m.Departments)" required = "required">
+                        @foreach (var com in departments.OrderBy(m => m.Name))
+                        {
+                            <option value="@com.Name" selected="@(Model.Departments.Contains(com.Name))">@com.Name</option>
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(m=>m.Departments)
+                    @Html.Bootstrap().LabelFor(m => m.Departments).ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-12">
@@ -68,6 +74,17 @@
                         @Html.Bootstrap().FileFor(m => m.UploadFile).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                     }
                     @Html.Bootstrap().LabelFor(m => m.UploadFile)
+                </div>
+            </div>
+            <div class="col-sm-12">
+                @Html.HiddenFor(m => m.FileName)
+                <div class="form-group">
+                    <div class="checkbox checkbox-styled">
+                        <label>
+                            <input type="checkbox" class="cbx-sign" id="@Html.IdFor(m => m.ReadOnly)" name="@Html.NameFor(m => m.ReadOnly)" value="@(Model.ReadOnly?"true":"false")" @(Model.ReadOnly ? "checked" : "")>
+                            <span>Non Downloadable Template (Only for PDF)</span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>

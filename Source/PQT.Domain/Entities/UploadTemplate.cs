@@ -10,9 +10,14 @@ namespace PQT.Domain.Entities
 {
     public class UploadTemplate : Entity
     {
+        public UploadTemplate()
+        {
+            Departments = new List<string>();
+        }
         public string Department { get; set; }
         public string GroupName { get; set; }
         public string FileName { get; set; }
+        public bool ReadOnly { get; set; }
         public bool GroupNameEquals(string group)
         {
             return GroupNameCode == StringHelper.RemoveSpecialCharacters(group.Trim().ToLower());
@@ -24,6 +29,19 @@ namespace PQT.Domain.Entities
                 return StringHelper.RemoveSpecialCharacters(GroupName.Trim().ToLower());
             }
         }
+        public string Type
+        {
+            get
+            {
+                if (ReadOnly)
+                {
+                    return "Non Downloadable Template";
+                }
+                return "Template";
+            }
+        }
+        [NotMapped]
+        public List<string> Departments { get; set; }
         [NotMapped]
         public HttpPostedFileBase UploadFile { get; set; }
         public DateTime UploadTime

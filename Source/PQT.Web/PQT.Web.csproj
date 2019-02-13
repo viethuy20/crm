@@ -495,6 +495,7 @@
     <Compile Include="Validation\CompanyValidator.cs" />
     <Compile Include="Validation\CountryValidator.cs" />
     <Compile Include="Validation\MenuValidator.cs" />
+    <Compile Include="Validation\InvoiceValidator.cs" />
     <Compile Include="Validation\UploadTemplateValidator.cs" />
     <Compile Include="Validation\UserValidator.cs" />
   </ItemGroup>
@@ -2658,6 +2659,8 @@
     <Content Include="Views\EventCategory\CreateOrEdit.cshtml" />
     <Content Include="Views\EventCategory\Index.cshtml" />
     <Content Include="Views\Company\Detail.cshtml" />
+    <Content Include="Views\UploadTemplate\SalesmanNonDownloadableTemplates.cshtml" />
+    <Content Include="Views\UploadTemplate\TemplatePdfLoader.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
