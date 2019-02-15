@@ -14,6 +14,10 @@
      #recruitmentTable td, #recruitmentTable td {
          white-space: nowrap;
      }
+    .table td,
+    .table th {
+        white-space: nowrap !important;
+    }
 </style>
 <section>
     <div class="section-header">
@@ -94,9 +98,9 @@
             "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                 var eq15Html = '<a href="@Url.Action("Detail")?id=' +
                     aData["ID"] +
-                    '&backAction=@(ViewContext.Controller.ValueProvider.GetValue("action").RawValue)"><i class="fa fa-eye"> Detail</i></a>';
+                    '&backAction=@(ViewContext.Controller.ValueProvider.GetValue("action").RawValue)" title="View Detail"><i class="fa fa-eye"></i></a>';
                 if ('@CurrentUser.HasPermission("Recruitment", "Edit")' == 'True') {
-                    eq15Html += '<br/><a href="@Url.Action("Edit")/' + aData["ID"] + '" style="white-space: nowrap;"><i class="md md-edit text-info"> Edit</i></a>';
+                    eq15Html += ' | <a href="@Url.Action("Edit")/' + aData["ID"] + '" style="white-space: nowrap;" title="Edit"><i class="fa fa-pencil-square-o text-info"></i></a>';
                 }
                 $(nRow).find('td:eq(13)').html(eq15Html);
                 $(nRow).addClass(aData["ClassStatus"]);
@@ -126,7 +130,7 @@
             if (fixedColumn < 3) {
                 fixedColumn ++;
                 var fixColumn = new $.fn.dataTable.FixedColumns($Table, {
-                    leftColumns: 4,
+                    leftColumns: 3,
                     sHeightMatch: "auto",
                     rightColumns: 1
                 });

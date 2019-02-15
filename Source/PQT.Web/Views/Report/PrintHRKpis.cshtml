@@ -1,0 +1,73 @@
+﻿@model PQT.Web.Models.HRConsolidateKPIModel
+
+@{
+    Layout = null;
+}
+@Styles.Render("~/content/css/min")
+<style type="text/css">
+    #kpiTable tbody .RecruitmentCallKPIs {
+        color: #333;
+        background-color: #fafcc7;
+    }
+
+    #kpiTable tbody .EmployeeKPIs {
+        color: #3c763d;
+        background-color: #c7fcca;
+    }
+
+    table {
+        page-break-after: auto!important;
+    }
+
+    tr {
+        page-break-inside: avoid !important;
+        page-break-after: auto !important;
+    }
+
+    td {
+        page-break-inside: avoid !important;
+        page-break-after: auto !important;
+    }
+
+    thead {
+        display: table-header-group !important;
+    }
+
+    tfoot {
+        display: table-footer-group !important;
+    }
+</style>
+    <div style="text-align: center"><h1>HR KPIs</h1></div>
+    <br />
+    <table>
+        <tr>
+            <td>&nbsp;Date: </td>
+            <td><b>@Model.Date</b></td>
+        </tr>
+        <tr>
+            <td>&nbsp;Print Time: </td>
+            <td><b>@DateTime.Today.ToString("dd/MM/yyyy HH:mm")</b></td>
+        </tr>
+    </table>
+    <br />
+    <table class="table" id="kpiTable"  style="background-color: #ffffff">
+        <thead>
+            <tr>
+                <th>Salesman</th>
+                <th>Email</th>
+                <th class="text-center">Recruitment Call KPIs</th>
+                <th class="text-center">Employee KPIs</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.HrConsolidateKpis.OrderBy(m => m.User.DisplayName))
+            {
+                <tr>
+                    <td>@item.User.DisplayName</td>
+                    <td>@item.User.Email</td>
+                    <td class="RecruitmentCallKPIs" style="text-align:center">@item.RecruitmentCallKPIs</td>
+                    <td class="EmployeeKPIs" style="text-align:center">@item.EmployeeKPIs</td>
+                </tr>
+            }
+        </tbody>
+    </table>

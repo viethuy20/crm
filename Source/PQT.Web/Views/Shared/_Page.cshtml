@@ -218,8 +218,10 @@
     <!-- END MENUBAR -->
 
 
-
-    @Html.Action("PanelNotification", "Home")
+    <div id="panel-notification">
+        @*@Html.Action("PanelNotification", "Home")*@
+    </div>
+    
 </div><!--end #base-->
 <!-- END BASE -->
 @section css
@@ -244,7 +246,29 @@
 
         $('.prepend-icon').prepend("<i class='icon-list'></i>");
 
-
+        $("#notify-trigger").on("click",
+            function(e) {
+                e.preventDefault();
+                if ($("#offcanvas-notify").length > 0) {
+                    $('#offcanvas-notify').toggleClass('toggled');
+                } else {
+                    $.ajax({
+                        url: '@Url.Action("PanelNotification", "Home")',
+                        type: 'GET',
+                        success: function (contentHtml) {
+                            if (contentHtml) {
+                                $("#panel-notification").html(contentHtml);
+                                $("#notify-trigger").click();
+                            } else {
+                                bootbox.alert("Get data failed");
+                            }
+                        },
+                        error: function() {
+                            bootbox.alert("Data error");
+                        }
+                    });
+                }
+            });
         $("select[data-display=select2]").select2({
             placeholder: "@Resource.PleaseSelect",
             width: '100%',

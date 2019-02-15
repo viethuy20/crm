@@ -386,9 +386,11 @@ namespace PQT.Web.Controllers
                             PersonalEmail = lead.PersonalEmail,
                             Role = lead.JobTitle,
                             Salutation = lead.Salutation,
-                            WorkEmail = lead.WorkEmail
+                            WorkEmail = lead.WorkEmail,
+                            Auto = true
                         };
-                        _comRepo.CreateCompanyResource(item);
+                        item = _comRepo.CreateCompanyResource(item);
+                        companyResources.Add(item);
                     }
                     var json = new
                     {

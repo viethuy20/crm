@@ -748,7 +748,8 @@ namespace PQT.Web.Controllers
             {
                 var daysExpired = Settings.Lead.NumberDaysExpired();
                 var companiesInNcl = _leadRepo.GetAllLeads(m => m.EventID == eventId).Where(m =>
-                    m.UserID != currentUser.ID && m.User.TransferUserID != currentUser.ID &&
+                    m.UserID != currentUser.ID && m.User.UserStatus == UserStatus.Live &&
+                    m.User.TransferUserID != currentUser.ID &&
                     m.CheckInNCL(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
                 var eventLead = _eventService.GetEvent(eventId);
                 var assignCompanies = eventLead.EventCompanies.Where(m =>

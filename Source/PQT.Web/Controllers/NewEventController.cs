@@ -58,7 +58,7 @@ namespace PQT.Web.Controllers
         {
             if (model.SaveEditNewEvent())
             {
-                return Json(new { Code = 1});
+                return Json(new { Code = 1 });
             }
             return Json(new { Code = 0, Message = "Save failed" });
         }
@@ -81,6 +81,12 @@ namespace PQT.Web.Controllers
             return Json(new { Code = 0, Message = "Save failed" });
         }
 
+        [DisplayName(@"Delete Assigned")]
+        [HttpPost]
+        public ActionResult DeleteAssigned(LeadModel model)
+        {
+            return Json(model.DeleteAssigned());
+        }
         [HttpPost]
         public ActionResult Delete(LeadModel model)
         {
@@ -365,6 +371,8 @@ namespace PQT.Web.Controllers
                     m.NewLocations,
                     NewDates = m.NewDatesDisplay,
                     m.NewTrainingTypeDisplay,
+                    m.FirstFollowUpStatusClass,
+                    BrochureClass = !string.IsNullOrEmpty(m.RequestBrochure) ? "Brochure" : "",
                     FirstFollowUpStatus = m.FirstFollowUpStatusDisplay,
                     FinalStatus = m.FinalStatusDisplay,
                 })
@@ -637,6 +645,8 @@ namespace PQT.Web.Controllers
                     m.NewLocations,
                     NewDates = m.NewDatesDisplay,
                     m.NewTrainingTypeDisplay,
+                    m.FirstFollowUpStatusClass,
+                    BrochureClass = !string.IsNullOrEmpty(m.RequestBrochure) ? "Brochure" : "",
                     FirstFollowUpStatus = m.FirstFollowUpStatusDisplay,
                     FinalStatus = m.FinalStatusDisplay,
                 })

@@ -13,20 +13,20 @@ namespace PQT.Web.Controllers
     [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
     public class ReportController : Controller
     {
-        private readonly IUnitRepository _unitRepo;
+        private readonly IRecruitmentService _recruitmentService;
         private readonly ILeadService _leadService;
         private readonly ILeadNewService _leadNewService;
         private readonly IEventService _eventService;
         private readonly IInvoiceService _invoiceService;
         private readonly IBookingService _bookingService;
-        public ReportController(IUnitRepository unitRepo, ILeadService leadService, IEventService eventService, ILeadNewService leadNewService, IInvoiceService invoiceService, IBookingService bookingService)
+        public ReportController(ILeadService leadService, IEventService eventService, ILeadNewService leadNewService, IInvoiceService invoiceService, IBookingService bookingService, IRecruitmentService recruitmentService)
         {
-            _unitRepo = unitRepo;
             _leadService = leadService;
             _eventService = eventService;
             _leadNewService = leadNewService;
             _invoiceService = invoiceService;
             _bookingService = bookingService;
+            _recruitmentService = recruitmentService;
         }
 
 
@@ -92,6 +92,47 @@ namespace PQT.Web.Controllers
                 (userId == 0 || m.SalesmanID == userId || (m.Salesman != null && m.Salesman.TransferUserID == userId))
             );
             model.Prepare(leads, leadNews, bookings);
+            return View(model);
+        }
+
+
+        public ActionResult PrintHRKpis(int userId, string dfrom, string dto)
+        {
+            var model = new HRConsolidateKPIModel();
+            var datefrom = default(DateTime);
+            if (!string.IsNullOrEmpty(dfrom))
+            {
+                datefrom = Convert.ToDateTime(dfrom);
+            }
+            var dateto = default(DateTime);
+            if (!string.IsNullOrEmpty(dto))
+            {
+                dateto = Convert.ToDateTime(dto);
+            }
+            if (!string.IsNullOrEmpty(dfrom) && !string.IsNullOrEmpty(dto))
+            {
+                model.Date = dfrom + " - " + dto;
+            }
+            else if (!string.IsNullOrEmpty(dfrom) && string.IsNullOrEmpty(dto))
+            {
+                model.Date = dfrom + " - " + DateTime.Today.ToString("dd/MM/yyyy");
+            }
+            else if (string.IsNullOrEmpty(dfrom) && !string.IsNullOrEmpty(dto))
+            {
+                model.Date = "All - " + dto;
+            }
+            else
+            {
+                model.Date = "All";
+            }
+            IEnumerable<Candidate> candidates = new HashSet<Candidate>();
+            candidates = _recruitmentService.GetAllCandidates(m =>
+                (m.CandidateStatusRecord != CandidateStatus.Deleted) &&
+                (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
+            );
+            model.Prepare(candidates);
             return View(model);
         }
 

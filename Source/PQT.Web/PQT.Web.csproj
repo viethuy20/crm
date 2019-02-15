@@ -2661,6 +2661,8 @@
     <Content Include="Views\Company\Detail.cshtml" />
     <Content Include="Views\UploadTemplate\SalesmanNonDownloadableTemplates.cshtml" />
     <Content Include="Views\UploadTemplate\TemplatePdfLoader.cshtml" />
+    <Content Include="Views\Kpi\HRConsolidate.cshtml" />
+    <Content Include="Views\Report\PrintHRKpis.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -36,101 +36,51 @@
         white-space: nowrap;
     }
 
-    .DTFC_Cloned {
-        background: #fff;
-    }
-
-        .DTFC_Cloned td {
-            background-color: #fff;
-        }
-
-        .DTFC_Cloned th {
-            background-color: #f5f5f5 !important;
-        }
-
     #tableLead td, table th {
         text-align: left;
         color: #000;
     }
 
-
-    .DTFC_Cloned td:not(.ModelColor) {
-        background-color: #eeeeee;
+    
+    .DTFC_Cloned {
+        background: #fff;
     }
 
-    #tableLead tbody tr {
-        height: 78px !important;
+    .DTFC_Cloned td {
+        background-color: #fff;
     }
 
-        #tableLead tbody tr.Reject td {
-            color: #8a6d3b;
-            background-color: #ffefd5;
-        }
-
-    .DTFC_Cloned tbody tr.Reject td {
-        color: #8a6d3b;
-        background-color: #fee8c7;
+    .DTFC_Cloned th {
+        background-color: #f5f5f5 !important;
     }
 
-    #tableLead tbody tr.Blocked td {
-        color: #a94442;
-        background-color: #ffdad7;
+    #tableLead tbody tr.follow_status_neutral td,
+    .DTFC_Cloned tbody tr.follow_status_neutral td {
+        color: #333;
+        background-color: #fff !important;
+    }
+    #tableLead tbody tr.follow_status_rejected td,
+    .DTFC_Cloned tbody tr.follow_status_rejected td {
+        color: #333;
+        background-color: #bdd192 !important;
+    }
+    #tableLead tbody tr.follow_status_interests td,
+    .DTFC_Cloned tbody tr.follow_status_interests td {
+        color: #333;
+        background-color: #f8c397 !important;
+    }
+    #tableLead tbody tr.follow_status_pending td,
+    .DTFC_Cloned tbody tr.follow_status_pending td {
+        color: #333;
+        background-color: #ffa7a7 !important;
     }
 
-    .DTFC_Cloned tbody tr.Blocked td {
-        color: #a94442;
-        background-color: #feccc7;
+    #tableLead tbody tr.Brochure td,
+    .DTFC_Cloned tbody tr.Brochure td{
+        color: #333;
+        background-color: #abd8ff !important;
     }
 
-    .DTFC_Cloned tbody tr.Initial td {
-        color: #000;
-        background-color: #f5f5f5;
-    }
-
-    #tableLead tbody tr.Live td,
-    #tableLead tbody tr.LOI td {
-        color: #31708f;
-        background-color: #d8edff !important;
-    }
-
-    .DTFC_Cloned tbody tr.Live td,
-    .DTFC_Cloned tbody tr.LOI td,
-    #tableNCList tbody tr.lead_owner td {
-        color: #31708f;
-        background-color: #c8e4fa !important;
-    }
-
-
-    #tableLead tbody tr.Booked td {
-        color: #3c763d;
-        background-color: #deffe0;
-    }
-
-    .DTFC_Cloned tbody tr.Booked td,
-    #tableNCList tbody tr.booked td {
-        color: #3c763d;
-        background-color: #c7fcca;
-    }
-
-    #tableLead tbody tr.RequestNCL td,
-    #tableLead tbody tr.RequestLOI td,
-    #tableLead tbody tr.RequestBooking td {
-        color: #a5a100;
-        background-color: #fffed5;
-    }
-
-    .DTFC_Cloned tbody tr.RequestNCL td,
-    .DTFC_Cloned tbody tr.RequestLOI td,
-    .DTFC_Cloned tbody tr.RequestBooking td {
-        color: #a5a100;
-        background-color: #fffdb7;
-    }
-
-    #tableLead tbody tr.NCLExpired td,
-    .DTFC_Cloned tbody tr.NCLExpired td {
-        color: #000;
-        background-color: #f5f5f5;
-    }
 
     .table a {
         text-decoration: underline;
@@ -147,6 +97,15 @@
     .delegateItem {
         padding: 20px;
         border: 1px solid #e2e2e2;
+    }
+    .color_status {
+        cursor: default;
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        border: 1px solid #c3c3c3;
+        border-radius: 50%;
+        margin-top: 7px;
     }
 </style>
 
@@ -191,6 +150,29 @@
                             </tr>
                         </thead>
                     </table>
+                    <div class="row">
+                        <table>
+                            <tr>
+                                <td colspan="14"><b>First Follow Up Status</b></td>
+                            </tr>
+                            <tr>
+                                <td><span class="color_status" style="background: #fff;">&nbsp;</span></td>
+                                <td>&nbsp;Neutral</td>
+                                <td style="width: 20px"></td>
+                                <td><span class="color_status" style="background: #bdd192;">&nbsp;</span></td>
+                                <td>&nbsp;Rejected</td>
+                                <td style="width: 20px"></td>
+                                <td><span class="color_status" style="background: #f8c397;">&nbsp;</span></td>
+                                <td>&nbsp;Interest</td>
+                                <td style="width: 20px"></td>
+                                <td><span class="color_status" style="background: #ffa7a7;">&nbsp;</span></td>
+                                <td>&nbsp;Pending</td>
+                                <td style="width: 20px"></td>
+                                <td><span class="color_status" style="background: #abd8ff;">&nbsp;</span></td>
+                                <td>&nbsp;Request Brochure</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div><!--end .card-body -->
             </div><!--end .card -->
         </div>
@@ -258,10 +240,23 @@
                  $(nRow).find('td:eq(5)').html('<p title="' + aData["Sales"] + '" class="truncate100">' + aData["Sales"] + '</p>');
                  $(nRow).find('td:eq(14)').html('<p title="' + aData["NewTopics"] + '" class="truncate">' + aData["NewTopics"] + '</p>');
                  $(nRow).find('td:eq(15)').html('<p title="' + aData["NewLocations"] + '" class="truncate">' + aData["NewLocations"] + '</p>');
-                 $(nRow).find('td:eq(23)').html('<a href="@Url.Action("Detail")/' +
+
+                 var htmlAction = '<span style="white-space: nowrap;"><a href="@Url.Action("Detail")/' +
                      aData["ID"] +
-                     '"><span class=" text-default" style="white-space: nowrap;"><i class="fa fa-eye"></i> Detail<span></a> <br/> <a class="simple-ajax-popup-align-top" href="@Url.Action("Edit")?id=' +
-                     aData["ID"] + '" ><span class=" text-primary" style="white-space: nowrap;"><i class="md md-edit"></i> Edit<span></a>');
+                     '"><span class=" text-default" style="white-space: nowrap;" title="View Detail"><i class="fa fa-eye"></i><span></a> ';
+                 if ('@CurrentUser.HasPermission("NewEvent", "Edit")' == 'True') {
+                     htmlAction += ' | <a class="simple-ajax-popup-align-top" href="@Url.Action("Edit")?id=' +
+                         aData["ID"] + '" title="Edit"><i class="fa fa-pencil-square-o text-primary"></i></a>';
+                 }
+                 if ('@CurrentUser.HasPermission("NewEvent", "DeleteAssigned")' == 'True') {
+                     htmlAction += ' | <a data-action="delete" data-id="' +
+                         aData["ID"] +
+                         '" href="#" title="Delete"><i class="fa fa-times text-danger "></i></a>';
+                 }
+                 htmlAction += '</span>';
+                 $(nRow).find('td:eq(23)').html(htmlAction);
+                 $(nRow).addClass(aData["BrochureClass"]);
+                 $(nRow).addClass("follow_status_" + aData["FirstFollowUpStatusClass"]);
              },
              initComplete: function () {
                  var _table = this;
@@ -306,6 +301,28 @@
              fixedColumn = 0;
          });
 
+         $(document).on('click', '[data-action="delete"]', function (e) {
+             e.preventDefault();
+             var $self = $(this);
+             bootbox.confirm("@Resource.ConfirmDelete", function (isOK) {
+                 if (isOK) {
+                     var id = $self.data('id');
+                     $.ajax({
+                         url: '@Url.Action("DeleteAssigned")?id=' + id,
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == "") {
+                                 toastr.success("Delete successful");
+                                 tableLead.fnDeleteRow($self.closest('tr')[0]);
+                             } else {
+                                 toastr.error(data);
+                             }
+                         }
+                     });
+                 }
+             });
+
+         });
 
          $(document).on('click', '.btnDelete', function (e) {
              e.preventDefault();

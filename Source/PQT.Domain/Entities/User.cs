@@ -118,8 +118,9 @@ namespace PQT.Domain.Entities
         public string Extension { get; set; }//private number for employees
 
         public int? DirectSupervisorID { get; set; }
-        //[ForeignKey("DirectSupervisorID")]
-        //public User DirectSupervisor { get; set; }
+
+        [ForeignKey("DirectSupervisorID")]
+        public User DirectSupervisor { get; set; }
 
         public int? OfficeLocationID { get; set; }
         [ForeignKey("OfficeLocationID")]
@@ -179,6 +180,21 @@ namespace PQT.Domain.Entities
             {
                 if (DateOfBirth != null) return Convert.ToDateTime(DateOfBirth).ToString("dd/MM/yyyy");
                 return "";
+            }
+        }
+        public string DirectSupervisorDisplay
+        {
+            get
+            {
+                if (DirectSupervisor != null) return DirectSupervisor.DisplayName;
+                return "";
+            }
+        }
+        public string UserStatusDisplay
+        {
+            get
+            {
+                return UserStatus.DisplayName;
             }
         }
         public string EmploymentDateDisplay

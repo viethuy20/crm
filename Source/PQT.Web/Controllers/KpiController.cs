@@ -22,13 +22,15 @@ namespace PQT.Web.Controllers
         private readonly ILeadNewService _leadNewService;
         private readonly IEventService _eventService;
         private readonly IBookingService _bookingService;
+        private readonly IRecruitmentService _recruitmentService;
 
-        public KpiController(ILeadService leadService, IEventService eventService, ILeadNewService leadNewService, IBookingService bookingService)
+        public KpiController(ILeadService leadService, IEventService eventService, ILeadNewService leadNewService, IBookingService bookingService, IRecruitmentService recruitmentService)
         {
             _leadService = leadService;
             _eventService = eventService;
             _leadNewService = leadNewService;
             _bookingService = bookingService;
+            _recruitmentService = recruitmentService;
         }
 
         [DisplayName(@"Enquire KPIs")]
@@ -92,6 +94,13 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
+        [DisplayName(@"HR KPIs")]
+        public ActionResult HRConsolidate()
+        {
+            var model = new KPIViewModel();
+            return View(model);
+        }
+
         [DisplayName(@"Print Consolidate KPIs")]
         [HttpPost]
         public ActionResult PrintConsolidate(KPIViewModel model)
@@ -105,6 +114,22 @@ namespace PQT.Web.Controllers
                     "&dfrom=" + (model.DateFrom != default(DateTime) ? model.DateFrom.ToString("dd/MM/yyyy") : "") +
                     "&dto=" + (model.DateTo != default(DateTime) ? model.DateTo.ToString("dd/MM/yyyy") : ""),
                     name = "ConsolidateKPIs"
+                }
+            );
+        }
+[DisplayName(@"Print HR KPIs")]
+        [HttpPost]
+        public ActionResult PrintHRConsolidate(KPIViewModel model)
+        {
+            return RedirectToAction("PublishToPdfWithURL", "ExportToPDF",
+                new
+                {
+                    path =
+                    Url.Action("PrintHRKpis", "Report") + "?" +
+                    "userId=" + model.UserID +
+                    "&dfrom=" + (model.DateFrom != default(DateTime) ? model.DateFrom.ToString("dd/MM/yyyy") : "") +
+                    "&dto=" + (model.DateTo != default(DateTime) ? model.DateTo.ToString("dd/MM/yyyy") : ""),
+                    name = "HRKPIs"
                 }
             );
         }
@@ -1002,6 +1027,149 @@ namespace PQT.Web.Controllers
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
+        [AjaxOnly]
+        public ActionResult AjaxGetHRKpis()
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+            var searchValue = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
+            }
+            var datefrom = default(DateTime);
+            if (Request.Form.GetValues("DateFrom").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                var _dateFrom = Request.Form.GetValues("DateFrom").FirstOrDefault().Trim().ToLower();
+                if (!string.IsNullOrEmpty(_dateFrom))
+                    datefrom = Convert.ToDateTime(_dateFrom);
+            }
+            var dateto = default(DateTime);
+            if (Request.Form.GetValues("DateTo").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                var _dateto = Request.Form.GetValues("DateTo").FirstOrDefault().Trim().ToLower();
+                if (!string.IsNullOrEmpty(_dateto))
+                    dateto = Convert.ToDateTime(_dateto);
+            }
+
+
+            var userId = 0;
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("UserID").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                if (Request.Form.GetValues("UserID") != null && !string.IsNullOrEmpty(Request.Form.GetValues("UserID").FirstOrDefault()))
+                {
+                    userId = Convert.ToInt32(Request.Form.GetValues("UserID").FirstOrDefault());
+                }
+            }
+
+
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+            IEnumerable<Candidate> candidates = new HashSet<Candidate>();
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                candidates = _recruitmentService.GetAllCandidates(m =>
+                    (m.CandidateStatusRecord != CandidateStatus.Deleted) &&
+                    (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                    (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
+                    ((m.User != null && m.User.Email.Contains(searchValue)) ||
+                     m.SalesmanName.Contains(searchValue))
+                );
+            }
+            else
+            {
+                candidates = _recruitmentService.GetAllCandidates(m =>
+                    (m.CandidateStatusRecord != CandidateStatus.Deleted) &&
+                    (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                    (userId == 0 || m.UserID == userId || 
+                    (m.User != null && m.User.TransferUserID == userId))
+                );
+            }
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var model = new HRConsolidateKPIModel();
+            model.Prepare(candidates);
+
+            #region sort
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "EmployeeKPIs":
+                        model.HrConsolidateKpis = model.HrConsolidateKpis.OrderBy(s => s.EmployeeKPIs).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "RecruitmentCallKPIs":
+                        model.HrConsolidateKpis = model.HrConsolidateKpis.OrderBy(s => s.RecruitmentCallKPIs).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "Email":
+                        model.HrConsolidateKpis = model.HrConsolidateKpis.OrderBy(s => s.User.Email).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    default:
+                        model.HrConsolidateKpis = model.HrConsolidateKpis.OrderBy(s => s.User.DisplayName).ToList();
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "EmployeeKPIs":
+                        model.HrConsolidateKpis = model.HrConsolidateKpis.OrderByDescending(s => s.EmployeeKPIs).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "RecruitmentCallKPIs":
+                        model.HrConsolidateKpis = model.HrConsolidateKpis.OrderByDescending(s => s.RecruitmentCallKPIs).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "Email":
+                        model.HrConsolidateKpis = model.HrConsolidateKpis.OrderByDescending(s => s.User.Email).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    default:
+                        model.HrConsolidateKpis = model.HrConsolidateKpis.OrderByDescending(s => s.User.DisplayName).ToList();
+                        break;
+                }
+            }
+
+            #endregion sort
+
+            recordsTotal = model.HrConsolidateKpis.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            var data = model.HrConsolidateKpis.Skip(skip).Take(pageSize).ToList();
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    UserID = m.User.ID,
+                    UserName = m.User.DisplayName,
+                    UserEmail = m.User.Email,
+                    m.EmployeeKPIs,
+                    m.RecruitmentCallKPIs
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
 
         [HttpPost]
         public ActionResult Delete(LeadModel model)

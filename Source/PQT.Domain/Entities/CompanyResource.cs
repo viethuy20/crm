@@ -30,6 +30,7 @@ namespace PQT.Domain.Entities
         public int? CountryID { get; set; }
 
         public string Remarks { get; set; }
+        public bool Auto { get; set; }
 
         public string FullName
         {

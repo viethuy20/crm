@@ -22,14 +22,14 @@ namespace PQT.Web.Controllers
         private readonly IMembershipService _membershipService;
         private readonly IRoleService _roleService;
         private readonly ILoginTracker _loginTracker;
-        private readonly IUnitRepository _repoUnit;
+        private readonly IRecruitmentService _recruitmentService;
 
-        public UsersController(IMembershipService membershipService, IRoleService roleService, ILoginTracker loginTracker, IUnitRepository repoUnit)
+        public UsersController(IMembershipService membershipService, IRoleService roleService, ILoginTracker loginTracker, IRecruitmentService recruitmentService)
         {
             _membershipService = membershipService;
             _roleService = roleService;
             _loginTracker = loginTracker;
-            _repoUnit = repoUnit;
+            _recruitmentService = recruitmentService;
         }
         [DisplayName("User management")]
         public ActionResult Index(int role = 0)
@@ -153,11 +153,17 @@ namespace PQT.Web.Controllers
             var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
                                                                   m.SalesManagementUnit != SalesManagementUnit.None ||
                                                                   m.ProjectManagementUnit != ProjectManagementUnit.None);
+
             var model = new EditUserModel(user)
             {
                 Roles = _roleService.GetAllRoles(),
                 Supervisors = allSupervisors
             };
+
+            if (model.CandidateID != null)
+            {
+                model.Candidate = _recruitmentService.GetCandidate((int)model.CandidateID);
+            }
             return View(model);
         }
 
@@ -186,6 +192,10 @@ namespace PQT.Web.Controllers
                 model.SelectedRoles = _roleService.GetAllRoles().Where(m => userRoles.Contains(m.ID)).Select(m => m.ID).ToList();
                 model.Roles = _roleService.GetAllRoles();
                 model.Supervisors = allSupervisors;
+                if (model.CandidateID != null)
+                {
+                    model.Candidate = _recruitmentService.GetCandidate((int)model.CandidateID);
+                }
                 return View(model);
             }
 
@@ -268,6 +278,10 @@ namespace PQT.Web.Controllers
             _loginTracker.ReloadUser(user.Email, user);
             if (success)
             {
+                if (user.UserStatus != UserStatus.Live)
+                {
+                    LeadHelper.MakeMergeNoCallListToComResource(user.ID);
+                }
                 TempData["message"] = Resource.SaveSuccessful;
                 return RedirectToAction("Index");
             }
@@ -343,6 +357,46 @@ namespace PQT.Web.Controllers
 
             }
         }
+        [AjaxOnly]
+        public ActionResult GetPossibleHR(string q)
+        {
+
+            var salesUser = PermissionHelper.HRId();
+            if (salesUser > 0)
+            {
+                var currentUser = CurrentUser.Identity;
+                IEnumerable<User> users = new List<User>();
+                if (currentUser != null && currentUser.BusinessDevelopmentUnit != BusinessDevelopmentUnit.None)
+                {
+                    users =
+                        _membershipService.GetUsers(m => m.DirectSupervisorID == currentUser.ID &&
+                                                         m.Roles.Any(r => r.Name.ToUpper().Contains("HR")) &&
+                                                         (m.DisplayName != null &&
+                                                          m.DisplayName.ToLower().Contains(q.ToLower())) ||
+                                                         (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
+                }
+                else if (currentUser != null && currentUser.SalesManagementUnit != SalesManagementUnit.None)
+                {
+                    users =
+                        _membershipService.GetUsers(m => m.DirectSupervisorID == currentUser.ID &&
+                                                         m.Roles.Any(r => r.Name.ToUpper().Contains("HR")) &&
+                                                         (m.DisplayName != null &&
+                                                          m.DisplayName.ToLower().Contains(q.ToLower())) ||
+                                                         (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
+                }
+                return Json(users.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                var bookings =
+                    _membershipService.GetUsers(m => m.Roles.Any(r => r.Name.ToUpper().Contains("HR")) &&
+                                                     (m.DisplayName != null &&
+                                                      m.DisplayName.ToLower().Contains(q.ToLower())) ||
+                                                     (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
+                return Json(bookings.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
+
+            }
+        }
 
         [AjaxOnly]
         public ActionResult AjaxGetIndexView()
@@ -384,11 +438,14 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 Func<User, bool> predicate = m =>
-                (m.Status == EntityUserStatus.Normal ||
-                m.Status == EntityUserStatus.ApprovedEmployment) &&
+                    (m.Status == EntityUserStatus.Normal ||
+                     m.Status == EntityUserStatus.ApprovedEmployment) &&
                     (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID)) &&
                     ((m.DisplayName.ToLower().Contains(searchValue)) ||
+                     (m.UserStatusDisplay.ToLower().Contains(searchValue)) ||
+                     (m.DirectSupervisorDisplay.ToLower().Contains(searchValue)) ||
                      (m.Email != null && m.Email.ToLower().Contains(searchValue)) ||
+                     (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue)) ||
                      (m.BusinessPhone != null && m.BusinessPhone.ToLower().Contains(searchValue)) ||
                      (m.MobilePhone != null && m.MobilePhone.ToLower().Contains(searchValue)) ||
                      (m.Roles != null && m.Roles.Any(r => r.Name.ToLower().Contains(searchValue))));
@@ -420,10 +477,13 @@ namespace PQT.Web.Controllers
                     m.FirstName,
                     m.LastName,
                     m.Email,
+                    UserStatus = m.UserStatusDisplay,
+                    m.PersonalEmail,
                     m.MobilePhone,
                     m.BusinessPhone,
                     DateOfBirth = m.DateOfBirthDisplay,
                     m.Extension,
+                    DirectSupervisor = m.DirectSupervisorDisplay,
                     m.RolesHtml,
                     DisplayNameHtml = !string.IsNullOrEmpty(m.Picture) ? "<img src='/data/user_img/" + m.ID + "/" + m.Picture + "' class='img-rounded user-picture-small' style='max-width: 50px; max-height: 50px;' /> " + m.DisplayName : m.DisplayName,
                 })

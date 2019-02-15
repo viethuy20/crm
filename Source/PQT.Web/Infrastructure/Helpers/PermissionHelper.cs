@@ -20,6 +20,15 @@ namespace PQT.Web.Infrastructure.Helpers
             return CurrentUser.Identity.ID;
         }
 
+        public static int HRId()
+        {
+            if (CurrentUser.Identity != null && CurrentUser.HasRole("HR"))
+            {
+                return CurrentUser.Identity.ID;
+            }
+            return 0;
+        }
+
 
         public static void AddOrUpdateAppSettings(string key, string value)
         {

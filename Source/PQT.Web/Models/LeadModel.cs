@@ -63,9 +63,13 @@ namespace PQT.Web.Models
             if (leads.Count(m => (m.User.TransferUserID == currentUser.ID || m.UserID == currentUser.ID) && m.LeadStatusRecord == LeadStatus.Blocked) >= maxBlock)
                 return "Limit blocked is not exceed " + maxBlock;
             var daysExpired = Settings.Lead.NumberDaysExpired();
-            if (leads.Any(m => m.User.TransferUserID != currentUser.ID && m.UserID != currentUser.ID &&
+            if (leads.Any(m => m.User.TransferUserID != currentUser.ID &&
+                               m.UserID != currentUser.ID &&
+                               m.User.UserStatus == UserStatus.Live &&
                                m.CompanyID == lead.CompanyID &&
-                               m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject && !m.CheckNCLExpired(daysExpired)))
+                               m.LeadStatusRecord != LeadStatus.Initial &&
+                               m.LeadStatusRecord != LeadStatus.Reject &&
+                               !m.CheckNCLExpired(daysExpired)))
                 return "Cannot block this company... Company is requesting to NCL or exists in NCL";
 
             if (lead.LeadStatusRecord == LeadStatus.Blocked) return "Block failed";
@@ -117,10 +121,13 @@ namespace PQT.Web.Models
             var daysExpired = Settings.Lead.NumberDaysExpired();
             var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
             var currentUser = CurrentUser.Identity;
-            if (leads.Any(m => m.User.TransferUserID != currentUser.ID && m.UserID != currentUser.ID &&
+            if (leads.Any(m => m.User.TransferUserID != currentUser.ID &&
+                               m.UserID != currentUser.ID &&
+                               m.User.UserStatus == UserStatus.Live &&
                                m.CompanyID == lead.CompanyID &&
-                               m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
-                && !m.CheckNCLExpired(daysExpired)))
+                               m.LeadStatusRecord != LeadStatus.Initial &&
+                               m.LeadStatusRecord != LeadStatus.Reject
+                               && !m.CheckNCLExpired(daysExpired)))
                 return "Cannot block this company... Company is requesting to NCL or exists in NCL by another";
 
             string fileName = null;
@@ -200,9 +207,12 @@ namespace PQT.Web.Models
 
             var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
             var daysExpired = Settings.Lead.NumberDaysExpired();
-            if (leads.Any(m => m.UserID != lead.UserID && m.User.TransferUserID != lead.UserID &&
+            if (leads.Any(m => m.UserID != lead.UserID &&
+                               m.User.TransferUserID != lead.UserID &&
+                               m.User.UserStatus == UserStatus.Live &&
                                m.CompanyID == lead.CompanyID &&
-                               m.LeadStatusRecord != LeadStatus.Initial && m.LeadStatusRecord != LeadStatus.Reject
+                               m.LeadStatusRecord != LeadStatus.Initial &&
+                               m.LeadStatusRecord != LeadStatus.Reject
                                && !m.CheckNCLExpired(daysExpired)))
                 return new
                 {
@@ -304,7 +314,6 @@ namespace PQT.Web.Models
             NewEventNotificator.NotifyUser(NotifyAction.Request, lead.ID, "Request Brochure"); // notify for manager
             return "";
         }
-
         public string DeleteLeadNew()
         {
             var leadRepo = DependencyHelper.GetService<ILeadNewService>();
@@ -312,6 +321,30 @@ namespace PQT.Web.Models
             if (lead.AssignUserID > 0)
                 return "Cannot process ... Event has been assigned to sales";
             return leadRepo.DeleteLeadNew(id) ? "" : "Delete failed";
+        }
+        public string DeleteAssigned()
+        {
+            return TransactionWrapper.Do(() =>
+            {
+                var leadRepo = DependencyHelper.GetService<ILeadNewService>();
+                LeadNew = leadRepo.GetLeadNew(id);
+                if (LeadNew != null)
+                {
+                    if (LeadNew.AssignUserID == null)
+                        return "Delete failed... New Event has not assigned for sales";
+                    var membershipService = DependencyHelper.GetService<IMembershipService>();
+                    var notiUser = membershipService.GetUser((int)LeadNew.AssignUserID);
+                    LeadNew.AssignUserID = null;
+                    LeadNew.AssignDate = DateTime.Now;
+                    LeadNew.RequestBrochure = null;
+                    if (leadRepo.UpdateLeadNew(LeadNew))
+                    {
+                        NewEventNotificator.NotifyUser(NotifyAction.Assign, new List<User> { notiUser }, id, "Delete New Event"); // notify for manager
+                        return "";
+                    }
+                }
+                return "Delete failed";
+            });
         }
 
     }

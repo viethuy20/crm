@@ -153,6 +153,18 @@ namespace PQT.Domain.Entities
             }
         }
 
+        public string SalesmanName
+        {
+            get
+            {
+                if (User != null)
+                {
+                    return User.DisplayName;
+                }
+
+                return "";
+            }
+        }
     }
 
     public class RecruitmentPosition : EntityBase

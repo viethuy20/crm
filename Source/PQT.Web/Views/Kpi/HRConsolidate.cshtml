@@ -1,0 +1,143 @@
+﻿@using PQT.Domain.Enum
+@model PQT.Web.Models.KPIViewModel
+
+@{
+    ViewBag.Title = "HR KPIs";
+}
+
+<style>
+    #kpiTable tbody .EmployeeKPIs {
+        color: #3c763d;
+        background-color: #c7fcca;
+    }
+    #kpiTable tbody .RecruitmentCallKPIs {
+        color: #333;
+        background-color: #fafcc7;
+    }
+</style>
+<section>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card  card-underline">
+                <div class="card-head">
+                    <header><i class="fa fa-database"></i> @ViewBag.Title</header>
+                </div>
+
+                <div class="card-body">
+                    @using (Html.BeginForm("PrintHRConsolidate", "Kpi", null, FormMethod.Post, new {@class = "form no_loader"}))
+                    {
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <div class="input-daterange input-group">
+                                    <div class="input-group-content">
+                                        @Html.DatePickerRangeFor(m => m.DateFrom, new {@class = "input-clear form-control"})
+                                        @Html.Bootstrap().LabelFor(m => m.DateFrom)
+                                    </div>
+                                    <span class="input-group-addon">to</span>
+                                    <div class="input-group-content">
+                                        @Html.DatePickerRangeFor(m => m.DateTo, new {@class = "input-clear form-control"})
+                                        @Html.Bootstrap().LabelFor(m => m.DateTo)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Bootstrap().DropDownListFor(m => m.UserID, Model.Users.ToSelectList(m => m.ID, m => m.DisplayName)).HtmlAttributes(new {@class = "select-ajax form-control"})
+                                <label>Salesman</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-offset-4">
+                            @Html.Bootstrap().Button().Text("Clear").Id("btnClear").PrependIcon("md md-close").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-default"})
+                            @Html.Bootstrap().Button().Text("Search").Id("btnSearch").PrependIcon("md md-search").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-primary"})
+                            @if (CurrentUser.HasPermission("Kpi", "PrintHRConsolidate"))
+                            {
+                                @Html.Bootstrap().SubmitButton().Text("Print").PrependIcon("md md-print").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-info"})
+                            }
+                        </div>
+                    </div>
+                    }
+                    <div class="table-responsive">
+                        <table class="table" id="kpiTable">
+                            <thead>
+                                <tr>
+                                    <th>Salesman</th>
+                                    <th>Email</th>
+                                    <th class="text-center">Recruitment Call KPIs</th>
+                                    <th class="text-center">Employee KPIs</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <!--end .card-body -->
+            </div><!--end .card -->
+        </div>
+    </div>
+</section>
+
+
+@Html.Script(
+@<script>
+         var oTable = $("#kpiTable");
+         oTable.dataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "url": "@Url.Action("AjaxGetHRKpis")",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function (d) {
+                     d.DateFrom = $('@Html.JquerySelectorFor(m=>m.DateFrom)').val();
+                     d.DateTo = $('@Html.JquerySelectorFor(m=>m.DateTo)').val();
+                     d.UserID = $('@Html.JquerySelectorFor(m=>m.UserID)').val();
+                 }
+             },
+             "columns": [
+                 { "data": "UserName", "name": "UserName", "orderable": true },
+                 { "data": "UserEmail", "name": "Email", "orderable": true },
+                 { "data": "RecruitmentCallKPIs", "name": "RecruitmentCallKPIs", "orderable": true },
+                 { "data": "EmployeeKPIs", "name": "EmployeeKPIs", "orderable": true },
+             ],
+             "iDisplayLength": 25,
+             "aaSorting": [[0, "asc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 $(nRow).find('td:eq(2)').addClass("RecruitmentCallKPIs");
+                 $(nRow).find('td:eq(2)').attr("style", "text-align:center");
+                 $(nRow).find('td:eq(3)').addClass("EmployeeKPIs");
+                 $(nRow).find('td:eq(3)').attr("style", "text-align:center");
+             },
+             initComplete: function () {
+                 var _table = this;
+                 _table.parent().find('input[type="search"]').unbind();
+                 var timeOutTyping;
+                 _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function () {
+                         _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                     }, 600);
+                 });
+             },
+         });
+
+         $('#btnSearch').click(function () {
+             oTable.fnFilter('');
+         });
+
+
+         $('#btnClear').click(function () {
+             $(".input-clear ").val('');
+             $('@Html.JquerySelectorFor(m=>m.UserID)').val('').trigger("change");
+             oTable.fnFilter('');
+         });
+
+         initAjaxDropdown($('@Html.JquerySelectorFor(m=>m.UserID)'), "@Url.Action("GetPossibleHR", "Users")", "Search for user");
+</script>
+
+)

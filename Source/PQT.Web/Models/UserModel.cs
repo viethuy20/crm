@@ -71,6 +71,7 @@ namespace PQT.Web.Models
                 MarketingManagementUnit = user.MarketingManagementUnit;
                 ProcurementManagementUnit = user.ProcurementManagementUnit;
                 ProjectManagementUnit = user.ProjectManagementUnit;
+                CandidateID = user.CandidateID;
             }
         }
 
@@ -80,7 +81,8 @@ namespace PQT.Web.Models
 
         [HiddenInput]
         public int ID { get; set; }
-
+        public int? CandidateID { get; set; }
+        public Candidate Candidate { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
@@ -178,6 +180,7 @@ namespace PQT.Web.Models
             Roles = string.Join(", ", user.Roles.Select(m => m.Name));
             UserSalaryHistories = user.UserSalaryHistories;
             SignedContract = user.SignedContract;
+            CandidateID = user.CandidateID;
         }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string Username { get; set; }
@@ -210,6 +213,7 @@ namespace PQT.Web.Models
         public string OfficeLocation { get; set; }
         public string BackgroundBase64 { get; set; }
         public string SignedContract { get; set; }
+        public int? CandidateID { get; set; }
         public ICollection<UserSalaryHistory> UserSalaryHistories { get; set; }
     }
 }

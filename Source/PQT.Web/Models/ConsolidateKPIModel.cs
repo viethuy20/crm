@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using NS.Helpers;
 using PQT.Domain.Entities;
+using PQT.Domain.Enum;
 
 namespace PQT.Web.Models
 {
@@ -34,6 +35,32 @@ namespace PQT.Web.Models
                 ConsolidateKpis.Add(item);
             }
         }
+
+    }
+    public class HRConsolidateKPIModel
+    {
+        public List<HRConsolidateKPI> HrConsolidateKpis { get; set; }
+        public string Date { get; set; }
+
+        public HRConsolidateKPIModel()
+        {
+            Date = "All";
+        }
+
+        public void Prepare(IEnumerable<Candidate> leads)
+        {
+            HrConsolidateKpis = new List<HRConsolidateKPI>();
+            var users = leads.DistinctBy(m => m.UserID).Select(m => m.User);
+            foreach (var user in users)
+            {
+                var item = new HRConsolidateKPI
+                {
+                    User = user
+                };
+                item.Prepare(leads.Where(m => m.User.TransferUserID == user.ID || m.UserID == user.ID));
+                HrConsolidateKpis.Add(item);
+            }
+        }
     }
     public class ConsolidateKPI
     {
@@ -50,6 +77,17 @@ namespace PQT.Web.Models
             KPI = leads.Count(m => m.MarkKPI);
             NoKPI = leads.Count(m => !m.MarkKPI && !string.IsNullOrEmpty(m.FileNameImportKPI));
             NoCheck = leads.Count(m => string.IsNullOrEmpty(m.FileNameImportKPI));
+        }
+    }
+    public class HRConsolidateKPI
+    {
+        public User User { get; set; }
+        public int RecruitmentCallKPIs { get; set; }
+        public int EmployeeKPIs  { get; set; }
+        public void Prepare(IEnumerable<Candidate> leads)
+        {
+            RecruitmentCallKPIs = leads.Count();
+            EmployeeKPIs = leads.Count(m => m.CandidateStatusRecord == CandidateStatus.ApprovedEmployment);
         }
     }
 }

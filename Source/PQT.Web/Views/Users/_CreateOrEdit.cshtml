@@ -87,6 +87,18 @@
                     @Html.Bootstrap().LabelFor(m => m.OfficeLocationID).LabelText("Office Location")
                 </div>
             </div>
+            @if (Model.Candidate != null)
+            {
+                <div class=" col-sm-12">
+                    <div class="form-group">
+                        @if (!string.IsNullOrEmpty(Model.Candidate.Resume))
+                        {
+                            @Html.Bootstrap().Link(Model.Candidate.Resume, FileUpload.GetImageUrl(FileUploadType.Recruitment, Model.Candidate.Resume)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                        }
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.Resume)
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -255,6 +267,122 @@
     </div>
 </div>
 
+@if (Model.Candidate != null)
+{
+
+    <div class="card card-underline">
+        <div class="card-head">
+            <header>Interview Summary</header>
+        </div>
+        <div class="card-body form">
+            @if (Model.Candidate.PsSummary != null)
+                {
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary).LabelText("PS Summary")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.DateSelectedDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.DateSelected).LabelText("Date")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.Interviewer).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.Interviewer)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.Status)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.ReasonRejected).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.ReasonRejected).LabelText("Reason")
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.Candidate.OneFaceToFaceSummary != null)
+                {
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary).LabelText("1F2F Summary")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.DateSelectedDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.DateSelected).LabelText("Date")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.Interviewer).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.Interviewer)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.Status)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.ReasonRejected).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.ReasonRejected).LabelText("Reason")
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.Candidate.TwoFaceToFaceSummary != null)
+                {
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary).LabelText("2F2F Summary")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.DateSelectedDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.DateSelected).LabelText("Date")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.Interviewer).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.Interviewer)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.Status)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.ReasonRejected).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.ReasonRejected).LabelText("Reason")
+                        </div>
+                    </div>
+                </div>
+            }
+        </div><!--end .card-body -->
+    </div>
+}
 
 @Html.Script(
     @<script>
