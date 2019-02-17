@@ -136,7 +136,7 @@ namespace PQT.Web.Controllers
                 MarketingManagementUnit = model.MarketingManagementUnit,
                 ProcurementManagementUnit = model.ProcurementManagementUnit,
                 ProjectManagementUnit = model.ProjectManagementUnit,
-                SignedContract = model.SignedContract,
+                //SignedContract = model.SignedContract,
             };
 
             user = _membershipService.CreateUser(user);
@@ -257,7 +257,7 @@ namespace PQT.Web.Controllers
             user.BasicSalary = model.BasicSalary;
             user.Extension = model.Extension;
             user.OfficeLocationID = model.OfficeLocationID;
-            user.SignedContract = model.SignedContract;
+            //user.SignedContract = model.SignedContract;
             user.FinanceAdminUnit = model.FinanceAdminUnit;
             user.ProductionUnit = model.ProductionUnit;
             user.OperationUnit = model.OperationUnit;

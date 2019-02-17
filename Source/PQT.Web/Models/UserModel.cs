@@ -63,7 +63,7 @@ namespace PQT.Web.Models
                 UserSalaryHistories = user.UserSalaryHistories;
                 Extension = user.Extension;
                 OfficeLocationID = user.OfficeLocationID;
-                SignedContract = user.SignedContract;
+                //SignedContract = user.SignedContract;
                 FinanceAdminUnit = user.FinanceAdminUnit;
                 ProductionUnit = user.ProductionUnit;
                 OperationUnit = user.OperationUnit;
@@ -179,7 +179,7 @@ namespace PQT.Web.Models
             BasicSalary = user.BasicSalary != null ? Convert.ToDecimal(user.BasicSalary).ToString("N") : "";
             Roles = string.Join(", ", user.Roles.Select(m => m.Name));
             UserSalaryHistories = user.UserSalaryHistories;
-            SignedContract = user.SignedContract;
+            //SignedContract = user.SignedContract;
             CandidateID = user.CandidateID;
         }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]

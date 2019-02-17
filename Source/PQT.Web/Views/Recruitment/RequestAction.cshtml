@@ -144,12 +144,18 @@
                         </div>
                     </div>
                     <div class="col-sm-6">
-                        @Html.HiddenFor(m => m.Employee.SignedContract)
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.ContractPeriod).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.ContractPeriod)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        @*@Html.HiddenFor(m => m.Employee.SignedContract)*@
                         <div class="form-group ">
-                            @if (!string.IsNullOrEmpty(Model.Employee.SignedContract))
+                            @*@if (!string.IsNullOrEmpty(Model.Employee.SignedContract))
                             {
                                 <a href="@UserPicture.GetContractUrl(Model.Employee.SignedContract)" target="_blank">@Model.Employee.SignedContract</a>
-                            }
+                            }*@
                             @Html.Bootstrap().FileFor(m => m.SignedContractFile).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.SignedContractFile).LabelText("Signed Contract")
                         </div>

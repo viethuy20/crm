@@ -329,7 +329,7 @@ namespace PQT.Web.Controllers
             user.FirstEvaluationDate = model.FirstEvaluationDate;
             user.BasicSalary = model.BasicSalary;
             user.SalaryCurrency = model.SalaryCurrency;
-            user.SignedContract = model.SignedContract;
+            //user.SignedContract = model.SignedContract;
             var success = _membershipService.UpdateUser(user);
             _roleService.AssignRoles(user, user.Roles.Select(m => m.ID));
             _loginTracker.ReloadUser(user.Email, user);

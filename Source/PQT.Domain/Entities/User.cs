@@ -74,7 +74,7 @@ namespace PQT.Domain.Entities
             UserSalaryHistories = user.UserSalaryHistories;
             Extension = user.Extension;
             OfficeLocationID = user.OfficeLocationID;
-            SignedContract = user.SignedContract;
+            //SignedContract = user.SignedContract;
             CandidateID = user.CandidateID;
             NotifyNumber = user.NotifyNumber;
         }
@@ -112,9 +112,9 @@ namespace PQT.Domain.Entities
         public DateTime? FirstEvaluationDate { get; set; } //First Evaluation Date tu dong tinh la last day of 03 months from Employment Date
         public decimal? BasicSalary { get; set; }
         public ICollection<UserSalaryHistory> UserSalaryHistories { get; set; }
+        public ICollection<UserContract> UserContracts { get; set; }
 
         public string Ip { get; set; }
-        public string SignedContract { get; set; }
         public string Extension { get; set; }//private number for employees
 
         public int? DirectSupervisorID { get; set; }

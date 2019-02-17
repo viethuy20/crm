@@ -233,6 +233,7 @@
     <Compile Include="Entities\User.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\UserContract.cs" />
     <Compile Include="Entities\UserNotification.cs" />
     <Compile Include="Entities\UserSalaryHistory.cs" />
     <Compile Include="Entities\AccomodationInfo.cs" />

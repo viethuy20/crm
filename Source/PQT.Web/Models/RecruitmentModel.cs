@@ -19,6 +19,7 @@ namespace PQT.Web.Models
         public int id { get; set; }
         public int RoleID { get; set; }
         public string BackAction { get; set; }
+        public string ContractPeriod { get; set; }
         public Candidate Candidate { get; set; }
         public User Employee { get; set; }
         public HttpPostedFileBase ResumeFile { get; set; }
@@ -110,7 +111,11 @@ namespace PQT.Web.Models
                     string uploadPicture = UserPicture.UploadContract(SignedContractFile);
                     if (!string.IsNullOrEmpty(uploadPicture))
                     {
-                        Employee.SignedContract = uploadPicture;
+                        Employee.UserContracts.Add(new UserContract
+                        {
+                            ContractPeriod = ContractPeriod,
+                            SignedContract = uploadPicture
+                        });
                     }
                 }
 
