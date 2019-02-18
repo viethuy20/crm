@@ -252,17 +252,21 @@
                     @Html.Bootstrap().LabelFor(m => m.SalaryCurrency)
                 </div>
             </div>
-            <div class="col-sm-6">
-                @Html.HiddenFor(m => m.SignedContract)
-                <div class="form-group ">
-                    @if (!string.IsNullOrEmpty(Model.SignedContract))
-                    {
-                        <a href="@UserPicture.GetContractUrl(Model.SignedContract)" target="_blank">@Model.SignedContract</a>
-                    }
-                    @Html.Bootstrap().FileFor(m => m.SignedContractFile).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.SignedContractFile).LabelText("Signed Contract")
-                </div>
-            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card card-underline">
+    <div class="card-head">
+        <header>Contracts</header>
+    </div>
+    <div class="card-body text-default-light" id="delegateContain" style="padding: 0px;">
+        @Html.CollectionEditorFor(m => m.UserContracts)
+        @Html.JqueryTemplateFor(m => m.UserContracts, "sub-tmpl")
+    </div><!--end .card-body -->
+    <div class="card-actionbar">
+        <div class="card-actionbar-row">
+            <a class="btn btn-info pull-left" id="btn_add_delegate" onclick="return sub.addNewModule();"><i class="md md-add"></i> Add New Contract</a>
         </div>
     </div>
 </div>
@@ -386,7 +390,39 @@
 
 @Html.Script(
     @<script>
+        var sub = {
+            addNewModule: function () {
+                this._addNew('#sub-tmpl');
+                return false;
+            },
 
+            _addNew: function (templateID) {
+                $(templateID).tmpl({ index: this._generateGuid() }).appendTo('#delegateContain');
+                ReValidateForm();
+                OrderAllDelegate();
+            },
+            remove: function (sender) {
+                $(sender).closest('.delegateItem').remove();
+                OrderAllDelegate();
+            },
+
+            _generateGuid: function () {
+                // Source: http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/105074#105074
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+        };
+
+
+        function OrderAllDelegate() {
+            var allOrderElements =
+                $("#delegateContain").find("input[id*='Order']");
+            allOrderElements.each(function (index, item) {
+                $(item).val(index + 1);
+            });
+        }
         $(".cbx-role").on('click', function (e) {
             var rolename = $(this).data("rolename");
             if (this.checked) {

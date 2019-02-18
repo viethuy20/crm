@@ -27,6 +27,7 @@ namespace PQT.Web.Models
             MarketingManagementUnit = MarketingManagementUnit.None;
             ProcurementManagementUnit = ProcurementManagementUnit.None;
             ProjectManagementUnit = ProjectManagementUnit.None;
+            UserContracts = new HashSet<UserContract>();
         }
 
         public EditUserModel(User user)
@@ -72,6 +73,7 @@ namespace PQT.Web.Models
                 ProcurementManagementUnit = user.ProcurementManagementUnit;
                 ProjectManagementUnit = user.ProjectManagementUnit;
                 CandidateID = user.CandidateID;
+                UserContracts = user.UserContracts;
             }
         }
 
@@ -138,6 +140,7 @@ namespace PQT.Web.Models
         public int? DirectSupervisorID { get; set; }
         public int? OfficeLocationID { get; set; }
         public ICollection<UserSalaryHistory> UserSalaryHistories { get; set; }
+        public ICollection<UserContract> UserContracts { get; set; }
         public HttpPostedFileBase SignedContractFile { get; set; }
         public string SignedContract { get; set; }
         public string AvatarUrl

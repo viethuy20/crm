@@ -1,0 +1,99 @@
+﻿@using PQT.Domain.Enum
+@model PQT.Domain.Entities.UserContract
+
+@using (Html.BeginCollectionItem())
+{
+    <div class="delegateItem col-sm-12 delegateItem_@(Model.ID)" data-id="@Model.ID"  style="padding: 0px;padding-bottom: 20px">
+        <div style="border: 1px solid #e1e1e1; padding: 10px; border-top: 0px;">
+            @Html.HiddenFor(m => m.ID)
+            @Html.HiddenFor(m => m.UserID)
+            <div class="row">
+                <div class="col-sm-1">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Order).Class("form-control").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Order).LabelText("S/No")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.ContractPeriod).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.ContractPeriod)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.DatePickerFor(m => m.ContractPeriod, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.ContractPeriod)
+                        @Html.Bootstrap().LabelFor(m => m.ContractPeriod).LabelText("Contract Date")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @if (!string.IsNullOrEmpty(Model.SignedContract))
+                        {
+                            <a href="@UserPicture.GetContractUrl(Model.SignedContract)" target="_blank">@Model.SignedContract</a>
+                        }
+                        @Html.Bootstrap().FileFor(m => m.SignedContractFile).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.SignedContractFile).LabelText("Signed Contract")
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.DatePickerFor(m => m.EvaluationDate1, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.EvaluationDate1)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationDate1)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EvaluationRemark1).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationRemark1)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.DatePickerFor(m => m.EvaluationDate2, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.EvaluationDate2)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationDate2)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EvaluationRemark2).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationRemark2)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.DatePickerFor(m => m.EvaluationDate3, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.EvaluationDate3)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationDate3)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EvaluationRemark3).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationRemark3)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.DatePickerFor(m => m.EvaluationDate2, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.EvaluationDate2)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationDate2)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EvaluationRemark2).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationRemark2)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

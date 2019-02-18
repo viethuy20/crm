@@ -2663,6 +2663,7 @@
     <Content Include="Views\UploadTemplate\TemplatePdfLoader.cshtml" />
     <Content Include="Views\Kpi\HRConsolidate.cshtml" />
     <Content Include="Views\Report\PrintHRKpis.cshtml" />
+    <Content Include="Views\Users\EditorTemplates\UserContract.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

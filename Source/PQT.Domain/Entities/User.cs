@@ -16,6 +16,7 @@ namespace PQT.Domain.Entities
             Status = EntityUserStatus.Normal;
             UserStatus = UserStatus.Live;
             UserSalaryHistories = new HashSet<UserSalaryHistory>();
+            UserContracts = new HashSet<UserContract>();
 
             BusinessDevelopmentUnit = BusinessDevelopmentUnit.None;
             SalesManagementUnit = SalesManagementUnit.None;
