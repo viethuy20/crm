@@ -400,6 +400,7 @@
                 $(templateID).tmpl({ index: this._generateGuid() }).appendTo('#delegateContain');
                 ReValidateForm();
                 OrderAllDelegate();
+                initDatepicker();
             },
             remove: function (sender) {
                 $(sender).closest('.delegateItem').remove();
