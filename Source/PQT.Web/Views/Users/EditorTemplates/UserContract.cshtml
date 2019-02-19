@@ -14,7 +14,7 @@
                         @Html.Bootstrap().LabelFor(m => m.Order).LabelText("S/No")
                     </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-2">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.ContractPeriod).Class("form-control").ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.ContractPeriod)
@@ -27,7 +27,13 @@
                         @Html.Bootstrap().LabelFor(m => m.ContractPeriod).LabelText("Contract Date")
                     </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.BasicSalary).Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.BasicSalary)
+                    </div>
+                </div>
+                <div class="col-sm-3">
                     <div class="form-group">
                         @if (!string.IsNullOrEmpty(Model.SignedContract))
                         {

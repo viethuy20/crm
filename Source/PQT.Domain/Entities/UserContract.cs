@@ -12,6 +12,7 @@ namespace PQT.Domain.Entities
         public int Order { get; set; }
         public int UserID { get; set; }
         public string SignedContract { get; set; }
+        public decimal? BasicSalary { get; set; }
         public string ContractPeriod { get; set; }
         public DateTime? EvaluationDate1 { get; set; }
         public string EvaluationRemark1 { get; set; }
