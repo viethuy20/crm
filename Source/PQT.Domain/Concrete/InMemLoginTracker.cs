@@ -113,9 +113,8 @@ namespace PQT.Domain.Concrete
             foreach (var inMemLoginRecord in loginRecords)
             {
                 inMemLoginRecord.User = userInfo;
-                return base.UpdateUser(userInfo);
             }
-            return true;
+            return base.UpdateUser(userInfo);
         }
     }
 

@@ -452,7 +452,7 @@ namespace PQT.Web.Controllers
 
 
         [AjaxOnly]
-        public ActionResult AjaxGetDelegates(int comId)
+        public ActionResult AjaxGetDelegates(int comId=0)
         {
             // ReSharper disable once AssignNullToNotNullAttribute
             var draw = Request.Form.GetValues("draw").FirstOrDefault();
@@ -472,7 +472,12 @@ namespace PQT.Web.Controllers
                 // ReSharper disable once PossibleNullReferenceException
                 searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
             }
-
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (comId == 0 && Request.Form.GetValues("ComId") != null && !string.IsNullOrEmpty(Request.Form.GetValues("ComId").FirstOrDefault()))
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                comId = Convert.ToInt32(Request.Form.GetValues("ComId").FirstOrDefault());
+            }
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int page = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;

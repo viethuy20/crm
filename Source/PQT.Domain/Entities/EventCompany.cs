@@ -34,8 +34,8 @@ namespace PQT.Domain.Entities
             EntityStatus = eventCom.EntityStatus;
         }
         public int? EventID { get; set; }
-        [ForeignKey("EventID")]
-        public virtual Event Event { get; set; }
+        //[ForeignKey("EventID")]
+        //public virtual Event Event { get; set; }
         public int BudgetMonth { get; set; }
         public string BusinessUnit { get; set; }
         public string Remarks { get; set; }

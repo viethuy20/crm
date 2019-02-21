@@ -15,5 +15,7 @@ namespace PQT.Domain.Abstract
         void DeleteRole(int id);
         void AssignRoles(User user, IEnumerable<int> userRoles);
         Permission EnsurePermissionRecord(string target, string right, string description = null);
+
+        void RemoveCacheUserRole(int id);
     }
 }

@@ -94,9 +94,9 @@ namespace PQT.Web.Controllers
             TempData["error"] = "Save failed";
             return View(model);
         }
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int id, string backAction = "")
         {
-            var model = new RecruitmentModel();
+            var model = new RecruitmentModel{ BackAction = backAction };
             model.PrepareEdit(id);
 
             var rolesInterviewer = new List<string> { "manager", "hr", "admin" };
@@ -124,7 +124,7 @@ namespace PQT.Web.Controllers
                 if (model.SaveEdit())
                 {
                     TempData["message"] = "Save successful";
-                    return RedirectToAction("Detail", new { id = model.Candidate.ID });
+                    return RedirectToAction("Detail", new { id = model.Candidate.ID, backAction = model.BackAction });
                 }
             }
             var rolesInterviewer = new List<string> { "manager", "hr", "admin" };
@@ -151,7 +151,7 @@ namespace PQT.Web.Controllers
                 return RedirectToAction("Index");
             }
             if (model.Candidate.EmployeeID > 0)
-                model.Employee = _membershipService.GetUser((int)model.Candidate.EmployeeID);
+                model.Employee = _membershipService.GetUserIncludeAll((int)model.Candidate.EmployeeID);
             return View(model);
         }
 
@@ -306,14 +306,47 @@ namespace PQT.Web.Controllers
                 });
             }
 
-            if (model.SignedContractFile != null)
+            if (model.BirthCertificationFile != null)
             {
-                string uploadPicture = UserPicture.UploadContract(model.SignedContractFile);
+                string uploadPicture = UserPicture.UploadContract(model.BirthCertificationFile);
                 if (!string.IsNullOrEmpty(uploadPicture))
                 {
-                    model.SignedContract = uploadPicture;
+                    model.BirthCertification = uploadPicture;
                 }
             }
+            if (model.FamilyCertificationFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.FamilyCertificationFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.FamilyCertification = uploadPicture;
+                }
+            }
+            if (model.FilledDeclarationFormFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.FilledDeclarationFormFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.FilledDeclarationForm = uploadPicture;
+                }
+            }
+            if (model.CertOfHighestEducationFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.CertOfHighestEducationFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.CertOfHighestEducation = uploadPicture;
+                }
+            }
+            if (model.IDCardFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.IDCardFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.IDCard = uploadPicture;
+                }
+            }
+
             user.DisplayName = model.DisplayName;
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
@@ -330,7 +363,12 @@ namespace PQT.Web.Controllers
             user.BasicSalary = model.BasicSalary;
             user.SalaryCurrency = model.SalaryCurrency;
             //user.SignedContract = model.SignedContract;
-            var success = _membershipService.UpdateUser(user);
+            user.BirthCertification = model.BirthCertification;
+            user.FamilyCertification = model.FamilyCertification;
+            user.FilledDeclarationForm = model.FilledDeclarationForm;
+            user.CertOfHighestEducation = model.CertOfHighestEducation;
+            user.IDCard = model.IDCard;
+            var success = _membershipService.UpdateUserIncludeCollection(user);
             _roleService.AssignRoles(user, user.Roles.Select(m => m.ID));
             _loginTracker.ReloadUser(user.Email, user);
             if (success)

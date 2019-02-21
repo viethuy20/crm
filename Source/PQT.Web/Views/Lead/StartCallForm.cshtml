@@ -84,7 +84,6 @@
                                                                 <th>Industry</th>
                                                                 <th>Business Unit</th>
                                                                 <th>Ownership</th>
-                                                                <th></th>
                                                             </tr>
                                                         </thead>
                                                     </table>
@@ -100,6 +99,30 @@
                                             <div class="form">
                                                 <div class="card-body ">
                                                     @Html.Partial("_CompanyResourceList", 0)
+                                                </div>
+                                            </div>
+                                        </div><!--end .card -->
+                                        <div class="card card-underline form-group">
+                                            <div class="card-head">
+                                                <header><b>Past Bookings</b></header>
+                                            </div><!--end .card-head -->
+                                            <div class="form">
+                                                <div class="card-body ">
+                                                    <div class="table-responsive">
+                                                        <table class="table no-margin" id="grid_bookings">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Event Name</th>
+                                                                    <th>Event Code</th>
+                                                                    <th>Event Date</th>
+                                                                    <th>Delegate Name</th>
+                                                                    <th>Delegate Email</th>
+                                                                    <th>Delegate Contact</th>
+                                                                    <th>Attendance Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div><!--end .card -->
@@ -200,8 +223,7 @@
                  { "data": "Sector", "name": "Sector", "orderable": true },
                  { "data": "Industry", "name": "Industry", "orderable": true },
                  { "data": "BusinessUnit", "name": "BusinessUnit", "orderable": true },
-                 { "data": "Ownership", "name": "Ownership", "orderable": true },
-                 { "data": "ID", "name": "ID", "orderable": false }
+                 { "data": "Ownership", "name": "Ownership", "orderable": true }
              ],
              'columnDefs': [
                  {
@@ -221,13 +243,13 @@
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  var rowId = aData["ID"];
                  $(nRow).find('input[type="checkbox"]').val(rowId);
-                 if ('@CurrentUser.HasPermission("Company", "Detail")' == 'True') {
+                 @*if ('@CurrentUser.HasPermission("Company", "Detail")' == 'True') {
                      $(nRow).find('td:eq(8)').html('<a target="_blank" href="@Url.Action("Detail","Company")?id=' +
                          aData["ID"] +
                          '" ><i class="fa fa-eye text-default" style="white-space:nowrap">  Detail</i></a>');
                  } else {
                      $(nRow).find('td:eq(8)').html('');
-                 }
+                 }*@
                  $(nRow).attr('data-id', rowId);
                  $(nRow).addClass('Tier' + aData["Tier"]);
                  if (company_id_selected_val == rowId) {
@@ -338,6 +360,7 @@
              if (company_id_selected_val >= 0) {
                  comResourceTable.fnFilter('');
                  comResourceTable2.fnFilter('');
+                 table_bookings.fnFilter('');
              }
              @*if (company_id_selected.val() > 0) {
                  $.ajax({
@@ -496,7 +519,7 @@
              }*@
              $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(company_budget_selected).trigger("change");
              $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").attr("readonly", "readonly");
-             
+
              @*if (company_remark_selected != null && company_remark_selected != "") {
                  $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val(company_remark_selected);
              }*@
@@ -547,3 +570,80 @@
         }
     </script>
         )
+
+
+@Html.Script(
+    @<script>
+        var fixedColumn = 0;
+        var table_bookings = $("#grid_bookings");
+        table_bookings.dataTable({
+                 "processing": true, // for show progress bar
+                 "serverSide": true, // for process server side
+                 "filter": true, // this is for disable filter (search box)
+                 "orderMulti": false, // for disable multiple column at once
+                 "stateSave": false,
+                 "ajax": {
+                     "url": "@Url.Action("AjaxGetDelegates","Company")",
+                     "type": "POST",
+                     "datatype": "json",
+                     "data": function(d) {
+                         d.ComId = company_id_selected_val;
+                     }
+                 },
+                 "columns": [
+                     { "data": "EventName", "name": "EventName", "orderable": true },
+                     { "data": "EventCode", "name": "EventCode", "orderable": true },
+                     { "data": "EventDate", "name": "EventDate", "orderable": true },
+                     { "data": "DelegateName", "name": "DelegateName", "orderable": true },
+                     { "data": "DelegateEmail", "name": "DelegateEmail", "orderable": true },
+                     { "data": "DelegateContact", "name": "DelegateContact", "orderable": true },
+                     { "data": "AttendanceStatusDisplay", "name": "AttendanceStatusDisplay", "orderable": true },
+                 ],
+                 "iDisplayLength": 25,
+                 "aaSorting": [[0, "asc"]],
+                 "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 },
+                 initComplete: function() {
+                     var _table = this;
+                     _table.parent().find('input[type="search"]').unbind();
+                     var timeOutTyping;
+                     _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                         clearTimeout(timeOutTyping);
+                         timeOutTyping = setTimeout(function () {
+                             _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                         }, 600);
+                     });
+                 },
+                 scrollY: false,
+                 scrollX: true,
+                 "bScrollCollapse": false,
+                 "drawCallback": function (settings, json) {
+                     FixedTable();
+                 },
+        });
+        
+        function FixedTable() {
+            if (fixedColumn < 3) {
+                fixedColumn ++;
+                var fixColumn = new $.fn.dataTable.FixedColumns($Table, {
+                    leftColumns: 3,
+                    sHeightMatch: "auto",
+                    rightColumns: 1
+                });
+                var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                if ($leftWrappers.length > 1) {
+                    $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                }
+                var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                if ($rightWrappers.length > 1) {
+                    $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                }
+            }
+        }
+        $(document).on("click", ".paginate_button", function () {
+            fixedColumn = 0;
+        });
+        $(document).on("change", "select[name=table_length]", function () {
+            fixedColumn = 0;
+        });
+    </script>)

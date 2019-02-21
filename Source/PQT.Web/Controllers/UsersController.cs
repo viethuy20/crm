@@ -96,14 +96,48 @@ namespace PQT.Web.Controllers
                 model.Supervisors = allSupervisors;
                 return View(model);
             }
-            if (model.SignedContractFile != null)
+
+            if (model.BirthCertificationFile != null)
             {
-                string uploadPicture = UserPicture.UploadContract(model.SignedContractFile);
+                string uploadPicture = UserPicture.UploadContract(model.BirthCertificationFile);
                 if (!string.IsNullOrEmpty(uploadPicture))
                 {
-                    model.SignedContract = uploadPicture;
+                    model.BirthCertification = uploadPicture;
                 }
             }
+            if (model.FamilyCertificationFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.FamilyCertificationFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.FamilyCertification = uploadPicture;
+                }
+            }
+            if (model.FilledDeclarationFormFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.FilledDeclarationFormFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.FilledDeclarationForm = uploadPicture;
+                }
+            }
+            if (model.CertOfHighestEducationFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.CertOfHighestEducationFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.CertOfHighestEducation = uploadPicture;
+                }
+            }
+            if (model.IDCardFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.IDCardFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.IDCard = uploadPicture;
+                }
+            }
+
             var user = new User
             {
                 DisplayName = model.DisplayName,
@@ -137,7 +171,12 @@ namespace PQT.Web.Controllers
                 ProcurementManagementUnit = model.ProcurementManagementUnit,
                 ProjectManagementUnit = model.ProjectManagementUnit,
                 //SignedContract = model.SignedContract,
-            };
+                BirthCertification = model.BirthCertification,
+                FamilyCertification = model.FamilyCertification,
+                FilledDeclarationForm = model.FilledDeclarationForm,
+                CertOfHighestEducation = model.CertOfHighestEducation,
+                IDCard = model.IDCard
+        };
 
             user = _membershipService.CreateUser(user);
 
@@ -224,12 +263,56 @@ namespace PQT.Web.Controllers
                 });
             }
 
-            if (model.SignedContractFile != null)
+            if (model.BirthCertificationFile != null)
             {
-                string uploadPicture = UserPicture.UploadContract(model.SignedContractFile);
+                string uploadPicture = UserPicture.UploadContract(model.BirthCertificationFile);
                 if (!string.IsNullOrEmpty(uploadPicture))
                 {
-                    model.SignedContract = uploadPicture;
+                    model.BirthCertification = uploadPicture;
+                }
+            }
+            if (model.FamilyCertificationFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.FamilyCertificationFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.FamilyCertification = uploadPicture;
+                }
+            }
+            if (model.FilledDeclarationFormFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.FilledDeclarationFormFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.FilledDeclarationForm = uploadPicture;
+                }
+            }
+            if (model.CertOfHighestEducationFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.CertOfHighestEducationFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.CertOfHighestEducation = uploadPicture;
+                }
+            }
+            if (model.IDCardFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.IDCardFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.IDCard = uploadPicture;
+                }
+            }
+
+            foreach (var modelUserContract in model.UserContracts)
+            {
+                if (modelUserContract.SignedContractFile != null)
+                {
+                    string uploadPicture = UserPicture.UploadContract(modelUserContract.SignedContractFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        modelUserContract.SignedContract = uploadPicture;
+                    }
                 }
             }
             if (user.Status == EntityUserStatus.ApprovedEmployment && (!string.IsNullOrEmpty(user.Password) ||
@@ -258,6 +341,7 @@ namespace PQT.Web.Controllers
             user.Extension = model.Extension;
             user.OfficeLocationID = model.OfficeLocationID;
             //user.SignedContract = model.SignedContract;
+            user.UserContracts = model.UserContracts;
             user.FinanceAdminUnit = model.FinanceAdminUnit;
             user.ProductionUnit = model.ProductionUnit;
             user.OperationUnit = model.OperationUnit;
@@ -265,13 +349,18 @@ namespace PQT.Web.Controllers
             user.MarketingManagementUnit = model.MarketingManagementUnit;
             user.ProcurementManagementUnit = model.ProcurementManagementUnit;
             user.ProjectManagementUnit = model.ProjectManagementUnit;
+            user.BirthCertification = model.BirthCertification;
+            user.FamilyCertification = model.FamilyCertification;
+            user.FilledDeclarationForm = model.FilledDeclarationForm;
+            user.CertOfHighestEducation = model.CertOfHighestEducation;
+            user.IDCard = model.IDCard;
             if (!string.IsNullOrEmpty(model.Password))
             {
                 //user.Password = EncryptHelper.EncryptPassword(model.Password);
                 user.Password = model.Password;
             }
             //user.LastAccess = model.LastAccess;
-            var success = _membershipService.UpdateUser(user);
+            var success = _membershipService.UpdateUserIncludeCollection(user);
 
             _roleService.AssignRoles(user, userRoles);
 
@@ -485,7 +574,7 @@ namespace PQT.Web.Controllers
                     m.Extension,
                     DirectSupervisor = m.DirectSupervisorDisplay,
                     m.RolesHtml,
-                    DisplayNameHtml = !string.IsNullOrEmpty(m.Picture) ? "<img src='/data/user_img/" + m.ID + "/" + m.Picture + "' class='img-rounded user-picture-small' style='max-width: 50px; max-height: 50px;' /> " + m.DisplayName : m.DisplayName,
+                    DisplayNameHtml = !string.IsNullOrEmpty(m.Picture) ? "<img src='/data/user_img/" + m.ID + "/" + m.Picture + "' class='img-rounded user-picture-small' /> " + m.DisplayName : m.DisplayName,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

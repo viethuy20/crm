@@ -182,8 +182,11 @@ namespace PQT.Web.Infrastructure
         }
         public override bool AssignCompany(int id, IEnumerable<int> companyIds)
         {
+            var startDAte = DateTime.Now;
             if (!EventRepository.AssignCompany(id, companyIds)) return false;
+            var startDAte1 = DateTime.Now;
             var eventExist = EventRepository.GetEvent(id);
+            var startDAte2 = DateTime.Now;
             if (eventExist != null)
             {
                 _events.Remove(GetEvent(id));

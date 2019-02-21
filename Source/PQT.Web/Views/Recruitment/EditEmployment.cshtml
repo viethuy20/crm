@@ -98,21 +98,21 @@
             </div>
             <div class="card-body text-default-light">
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.DatePickerFor(m => m.EmploymentDate, new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.EmploymentDate)
                             @Html.Bootstrap().LabelFor(m => m.EmploymentDate)
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.DatePickerFor(m => m.EmploymentEndDate, new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.EmploymentEndDate)
                             @Html.Bootstrap().LabelFor(m => m.EmploymentEndDate)
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.DatePickerFor(m => m.FirstEvaluationDate, new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.FirstEvaluationDate)
@@ -131,25 +131,193 @@
                             @Html.Bootstrap().LabelFor(m => m.SalaryCurrency)
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        @Html.HiddenFor(m => m.SignedContract)
-                        <div class="form-group ">
-                            @if (!string.IsNullOrEmpty(Model.SignedContract))
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @if (!string.IsNullOrEmpty(Model.BirthCertification))
                             {
-                                <a href="@UserPicture.GetContractUrl(Model.SignedContract)" target="_blank">@Model.SignedContract</a>
+                                <a href="@UserPicture.GetContractUrl(Model.BirthCertification)" target="_blank">@Model.BirthCertification</a>
+                                @Html.HiddenFor(m => m.BirthCertification)
                             }
-                            @Html.Bootstrap().FileFor(m => m.SignedContractFile).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.SignedContractFile).LabelText("Signed Contract")
+                            @Html.Bootstrap().FileFor(m => m.BirthCertificationFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.BirthCertificationFile).LabelText("Birth Certification")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @if (!string.IsNullOrEmpty(Model.FamilyCertification))
+                            {
+                                <a href="@UserPicture.GetContractUrl(Model.FamilyCertification)" target="_blank">@Model.FamilyCertification</a>
+                                @Html.HiddenFor(m => m.FamilyCertification)
+                            }
+                            @Html.Bootstrap().FileFor(m => m.FamilyCertificationFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.FamilyCertificationFile).LabelText("Family Certification")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @if (!string.IsNullOrEmpty(Model.FilledDeclarationForm))
+                            {
+                                <a href="@UserPicture.GetContractUrl(Model.FilledDeclarationForm)" target="_blank">@Model.FilledDeclarationForm</a>
+                                @Html.HiddenFor(m => m.FilledDeclarationForm)
+                            }
+                            @Html.Bootstrap().FileFor(m => m.FilledDeclarationFormFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.FilledDeclarationFormFile).LabelText("Filled Declaration Form")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @if (!string.IsNullOrEmpty(Model.CertOfHighestEducation))
+                            {
+                                <a href="@UserPicture.GetContractUrl(Model.CertOfHighestEducation)" target="_blank">@Model.CertOfHighestEducation</a>
+                                @Html.HiddenFor(m => m.CertOfHighestEducation)
+                            }
+                            @Html.Bootstrap().FileFor(m => m.CertOfHighestEducationFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.CertOfHighestEducationFile).LabelText("Cert Of Highest Education")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @if (!string.IsNullOrEmpty(Model.IDCard))
+                            {
+                                <a href="@UserPicture.GetContractUrl(Model.IDCard)" target="_blank">@Model.IDCard</a>
+                                @Html.HiddenFor(m => m.IDCard)
+                            }
+                            @Html.Bootstrap().FileFor(m => m.IDCardFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.IDCardFile).LabelText("ID Card")
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="card-body text-default-light" id="delegateContain" style="padding: 0px;">
+                @Html.CollectionEditorFor(m => m.UserContracts)
+                @Html.JqueryTemplateFor(m => m.UserContracts, "sub-tmpl")
+            </div><!--end .card-body -->
+            <div class="card-actionbar">
+                <div class="card-actionbar-row">
+                    <a class="btn btn-info pull-left" id="btn_add_delegate" onclick="return sub.addNewModule();"><i class="md md-add"></i> Add New Contract</a>
+                </div>
+            </div>
         </div>
 
+        if (Model.Candidate != null)
+        {
+            <div class="card card-underline">
+                <div class="card-head">
+                    <header>Interview Summary</header>
+                </div>
+                <div class="card-body form">
+                    @if (Model.Candidate.PsSummary != null)
+                    {
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary).LabelText("PS Summary")
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.DateSelectedDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.DateSelected).LabelText("Date")
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.Interviewer).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.Interviewer)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.Status)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.ReasonRejected).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.ReasonRejected).LabelText("Reason")
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @if (Model.Candidate.OneFaceToFaceSummary != null)
+                    {
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary).LabelText("1F2F Summary")
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.DateSelectedDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.DateSelected).LabelText("Date")
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.Interviewer).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.Interviewer)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.Status)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.ReasonRejected).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.ReasonRejected).LabelText("Reason")
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @if (Model.Candidate.TwoFaceToFaceSummary != null)
+                    {
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary).LabelText("2F2F Summary")
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.DateSelectedDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.DateSelected).LabelText("Date")
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.Interviewer).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.Interviewer)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.Status)
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.ReasonRejected).Class("form-control").Disabled().ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.ReasonRejected).LabelText("Reason")
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div><!--end .card-body -->
+            </div>
+        }
 
         <div class="row">
             <div class="form-group  col-md-offset-2">
-                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Employees").PrependIcon("md md-arrow-back")
                 @Html.Bootstrap().SubmitButton().Class("submitbutton").Text(Resource.Save).PrependIcon("md md-done").Style(ButtonStyle.Success)
             </div>
         </div>
@@ -161,10 +329,44 @@
              e.preventDefault();
              bootbox.confirm('@Resource.ConfirmSave', function (isOK) {
                  if (isOK) {
-                    
+
                      var form = $('.submitbutton').parents("form");
                      form.submit();
                  }
              });
          });
-     </script>)
+         var sub = {
+             addNewModule: function () {
+                 this._addNew('#sub-tmpl');
+                 return false;
+             },
+
+             _addNew: function (templateID) {
+                 $(templateID).tmpl({ index: this._generateGuid() }).appendTo('#delegateContain');
+                 ReValidateForm();
+                 OrderAllDelegate();
+                 initDatepicker();
+             },
+             remove: function (sender) {
+                 $(sender).closest('.delegateItem').remove();
+                 OrderAllDelegate();
+             },
+
+             _generateGuid: function () {
+                 // Source: http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/105074#105074
+                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                     return v.toString(16);
+                 });
+             }
+         };
+
+
+         function OrderAllDelegate() {
+             var allOrderElements =
+                 $("#delegateContain").find("input[id*='Order']");
+             allOrderElements.each(function (index, item) {
+                 $(item).val(index + 1);
+             });
+         }
+    </script>)

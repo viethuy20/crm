@@ -417,11 +417,12 @@ namespace PQT.Web.Controllers
                                                (saleId == 0 ||
                                                 (m.AssignUserID == saleId) ||
                                                 (m.AssignUser.TransferUserID == saleId)) && (
-                                                   m.DateCreatedDisplay.Contains(searchValue) ||
+                                                   m.AssignDateDisplay.Contains(searchValue) ||
                                                    m.CompanyName.ToLower().Contains(searchValue) ||
                                                    m.CountryCode.ToLower().Contains(searchValue) ||
                                                    m.JobTitle.ToLower().Contains(searchValue) ||
                                                    m.DirectLine.ToLower().Contains(searchValue) ||
+                                                   (m.Sales != null && m.Sales.ToLower().Contains(searchValue)) ||
                                                    (m.Salutation != null && m.Salutation.ToLower().Contains(searchValue)) ||
                                                    (m.FirstName != null && m.FirstName.ToLower().Contains(searchValue)) ||
                                                    (m.LastName != null && m.LastName.ToLower().Contains(searchValue)) ||
@@ -452,8 +453,8 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
-                    case "CreatedTime":
-                        leads = leads.OrderBy(s => s.CreatedTime).ThenBy(s => s.ID);
+                    case "AssignDate":
+                        leads = leads.OrderBy(s => s.AssignDate).ThenBy(s => s.ID);
                         break;
                     case "Company":
                         leads = leads.OrderBy(s => s.Company.CompanyName).ThenBy(s => s.ID);
@@ -530,8 +531,8 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
-                    case "CreatedTime":
-                        leads = leads.OrderByDescending(s => s.CreatedTime).ThenBy(s => s.ID);
+                    case "AssignDate":
+                        leads = leads.OrderByDescending(s => s.AssignDate).ThenBy(s => s.ID);
                         break;
                     case "Company":
                         leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenBy(s => s.ID);
@@ -623,6 +624,7 @@ namespace PQT.Web.Controllers
                     m.ID,
                     m.EventID,
                     CreatedTime = m.DateCreatedDisplay,
+                    AssignDate = m.AssignDateDisplay,
                     Company = m.Company.CompanyName,
                     Country = m.Company.CountryCodeAndDialing,
                     m.JobTitle,

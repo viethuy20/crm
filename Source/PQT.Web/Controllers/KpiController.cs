@@ -884,8 +884,8 @@ namespace PQT.Web.Controllers
                     (m.LeadStatusRecord != LeadStatus.Reject &&
                      m.LeadStatusRecord != LeadStatus.Initial &&
                      m.LeadStatusRecord != LeadStatus.Deleted) &&
-                    (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
-                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                    (datefrom == default(DateTime) ||  datefrom <= m.CreatedTime.Date) &&
+                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto) &&
                     (eventId == 0 || m.EventID == eventId) &&
                     (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
                     ((m.User != null && m.User.Email.Contains(searchValue)) ||
@@ -893,8 +893,8 @@ namespace PQT.Web.Controllers
                 );
                 leadNews = _leadNewService.GetAllLeadNews(m =>
                     (m.AssignUserID > 0) &&
-                    (datefrom == default(DateTime) || m.AssignDate.Date >= datefrom.Date) &&
-                    (dateto == default(DateTime) || m.AssignDate.Date <= dateto.Date) &&
+                    (datefrom == default(DateTime) || datefrom <= m.AssignDate) &&
+                    (dateto == default(DateTime) || m.AssignDate <= dateto) &&
                     (eventId == 0 || m.EventID == eventId) &&
                     (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
                     ((m.User != null && m.User.Email.Contains(searchValue)) ||
@@ -902,8 +902,8 @@ namespace PQT.Web.Controllers
                 );
                 bookings = _bookingService.GetAllBookings(m =>
                     m.BookingStatusRecord == BookingStatus.Approved &&
-                    (datefrom == default(DateTime) || m.BookingDate.Date >= datefrom.Date) &&
-                    (dateto == default(DateTime) || m.BookingDate.Date <= dateto.Date) &&
+                    (datefrom == default(DateTime) || datefrom <= m.BookingDate.Date) &&
+                    (dateto == default(DateTime) || m.BookingDate.Date <= dateto) &&
                     (eventId == 0 || m.EventID == eventId) &&
                     (userId == 0 || m.SalesmanID == userId ||
                      (m.Salesman != null && m.Salesman.TransferUserID == userId)) &&
@@ -917,22 +917,22 @@ namespace PQT.Web.Controllers
                     (m.LeadStatusRecord != LeadStatus.Reject &&
                      m.LeadStatusRecord != LeadStatus.Initial &&
                      m.LeadStatusRecord != LeadStatus.Deleted) &&
-                    (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
-                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
+                    (datefrom == default(DateTime) || datefrom <= m.CreatedTime.Date) &&
+                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto) &&
                     (eventId == 0 || m.EventID == eventId) &&
                     (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
                 );
                 leadNews = _leadNewService.GetAllLeadNews(m =>
                     (m.AssignUserID > 0) &&
-                    (datefrom == default(DateTime) || m.AssignDate.Date >= datefrom.Date) &&
-                    (dateto == default(DateTime) || m.AssignDate.Date <= dateto.Date) &&
+                    (datefrom == default(DateTime) || datefrom <= m.AssignDate) &&
+                    (dateto == default(DateTime) || m.AssignDate <= dateto) &&
                     (eventId == 0 || m.EventID == eventId) &&
                     (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
                 );
                 bookings = _bookingService.GetAllBookings(m =>
                     m.BookingStatusRecord == BookingStatus.Approved &&
-                    (datefrom == default(DateTime) || m.BookingDate.Date >= datefrom.Date) &&
-                    (dateto == default(DateTime) || m.BookingDate.Date <= dateto.Date) &&
+                    (datefrom == default(DateTime) || datefrom <= m.BookingDate.Date ) &&
+                    (dateto == default(DateTime) || m.BookingDate.Date <= dateto) &&
                     (eventId == 0 || m.EventID == eventId) &&
                     (userId == 0 || m.SalesmanID == userId ||
                      (m.Salesman != null && m.Salesman.TransferUserID == userId))
@@ -1086,7 +1086,7 @@ namespace PQT.Web.Controllers
             {
                 candidates = _recruitmentService.GetAllCandidates(m =>
                     (m.CandidateStatusRecord != CandidateStatus.Deleted) &&
-                    (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                    (datefrom == default(DateTime) || datefrom.Date <= m.CreatedTime.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
                     ((m.User != null && m.User.Email.Contains(searchValue)) ||
@@ -1097,7 +1097,7 @@ namespace PQT.Web.Controllers
             {
                 candidates = _recruitmentService.GetAllCandidates(m =>
                     (m.CandidateStatusRecord != CandidateStatus.Deleted) &&
-                    (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
+                    (datefrom == default(DateTime) || datefrom.Date <= m.CreatedTime.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (userId == 0 || m.UserID == userId || 
                     (m.User != null && m.User.TransferUserID == userId))

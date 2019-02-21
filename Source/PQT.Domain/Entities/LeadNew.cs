@@ -218,6 +218,15 @@ namespace PQT.Domain.Entities
             }
         }
 
+        public string AssignDateDisplay
+        {
+            get
+            {
+                if (AssignDate != default(DateTime))
+                    return Convert.ToDateTime(AssignDate).ToString("dd/MM/yyyy");
+                return "";
+            }
+        }
         public string NewDateFromDisplay
         {
             get

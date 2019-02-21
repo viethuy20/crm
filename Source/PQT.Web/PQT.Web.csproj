@@ -388,8 +388,8 @@
     <Compile Include="Hubs\ProgressHub.cs" />
     <Compile Include="Infrastructure\Helpers\ImageHelper.cs" />
     <Compile Include="Infrastructure\Helpers\LeadHelper.cs" />
-    <Compile Include="Infrastructure\MemorySettingsRepository.cs" />
     <Compile Include="Infrastructure\MemoryNotifyRepository.cs" />
+    <Compile Include="Infrastructure\MemorySettingsRepository.cs" />
     <Compile Include="Infrastructure\MemoryEventRepository.cs" />
     <Compile Include="Infrastructure\MemoryCompanyRepository.cs" />
     <Compile Include="Infrastructure\MemoryUserRoleRepository.cs" />
@@ -2664,6 +2664,8 @@
     <Content Include="Views\Kpi\HRConsolidate.cshtml" />
     <Content Include="Views\Report\PrintHRKpis.cshtml" />
     <Content Include="Views\Users\EditorTemplates\UserContract.cshtml" />
+    <Content Include="Views\Recruitment\EditorTemplates\UserContract.cshtml" />
+    <Content Include="Views\Account\EditorTemplates\UserContract.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

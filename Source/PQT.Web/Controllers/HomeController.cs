@@ -55,7 +55,9 @@ namespace PQT.Web.Controllers
             if (CurrentUser.HasRole("HR"))
                 return RedirectToAction("Index", "Recruitment");
             if (CurrentUser.HasRole("Admin") || CurrentUser.HasRole("QC") || CurrentUser.HasRole("Manager"))
-                model.Events = _eventService.GetAllEvents(m => (m.EventStatus == EventStatus.Live || m.EventStatus == EventStatus.Confirmed));
+                model.Events = _eventService.GetAllEvents(m =>
+                    (m.EventStatus == EventStatus.Live || m.EventStatus == EventStatus.Confirmed) &&
+                    (m.DateOfOpen <= DateTime.Today && DateTime.Today <= m.ClosingDate));
             else
             {
                 var userId = CurrentUser.Identity.ID;

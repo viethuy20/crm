@@ -123,7 +123,7 @@
                     <table class="table" id="tableLead">
                         <thead>
                             <tr>
-                                <th>Created At</th>
+                                <th>Approved Date</th>
                                 <th>Country</th>
                                 <th style="width: 150px">Company</th>
                                 <th style="width: 150px">Job Title</th>
@@ -202,7 +202,7 @@
                  }
              },
              "columns": [
-                 { "data": "CreatedTime", "name": "CreatedTime", "orderable": true },
+                 { "data": "AssignDate", "name": "AssignDate", "orderable": true },
                  { "data": "Country", "name": "Country", "orderable": true },
                  { "data": "Company", "name": "Company", "orderable": true },
                  { "data": "JobTitle", "name": "JobTitle", "orderable": true },
@@ -227,13 +227,14 @@
                  { "data": "FinalStatus", "name": "FinalStatus", "orderable": true },
                  { "data": "ID", "name": "ID", "orderable": false },
              ],
+             "aLengthMenu": [[25, 50, 100, 200, 500, 1000, 2000], [25, 50, 100,200, 500, 1000, 2000]],
              "iDisplayLength": sizeLenght,
              "aaSorting": [[0, "desc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
                      aData["ID"] +
                      '">' +
-                     aData["CreatedTime"] +
+                     aData["AssignDate"] +
                      '</a>');
                  $(nRow).find('td:eq(2)').html('<p title="' + aData["Company"] + '" class="truncate">' + aData["Company"] + '</p>');
                  $(nRow).find('td:eq(3)').html('<p title="' + aData["JobTitle"] + '" class="truncate">' + aData["JobTitle"] + '</p>');

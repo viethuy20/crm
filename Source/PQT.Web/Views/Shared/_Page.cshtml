@@ -821,7 +821,8 @@
         });
         $.connection.hub.qs = "UserID=@(currentUser != null ? currentUser.ID.ToString() : "")";
         $.connection.hub.disconnected(function() {
-            setTimeout(function() {
+            setTimeout(function () {
+                    console.log("Restart $.connection.hub");
                     $.connection.hub.start().done(function() {
                         hubConnectionId = $.connection.hub.id;
                     });

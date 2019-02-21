@@ -20,7 +20,7 @@ namespace PQT.Domain.Concrete
         {
             Func<LeadNew, bool> predicate2 =
                 m => predicate(m);
-            return GetAll(predicate2, m => m.Event).AsEnumerable();
+            return GetAll(predicate2, m => m.Event,m=>m.AssignUser).AsEnumerable();
         }
 
         public LeadNew GetLeadNew(int id)

@@ -24,20 +24,18 @@
                     </header>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table" id="invoiceTable">
-                            <thead>
-                                <tr>
-                                    <th>Invoice No</th>
-                                    <th>Invoice Date</th>
-                                    <th>Company Name</th>
-                                    <th>Total Amount</th>
-                                    <th>Event Code</th>
-                                    <th>&nbsp;</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
+                    <table class="table" id="invoiceTable">
+                        <thead>
+                            <tr>
+                                <th>Invoice No</th>
+                                <th>Invoice Date</th>
+                                <th>Company Name</th>
+                                <th>Total Amount</th>
+                                <th>Event Code</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div><!--end .card-body -->
             </div><!--end .card -->
         </div>
@@ -84,7 +82,7 @@
                      '">' +
                      aData["InvoiceNo"] +
                      '</a>');
-                 
+
                  if ('@CurrentUser.HasPermission("Invoice", "Edit")' == 'True') {
                      $(nRow).find('td:eq(5)').html('<a href="@Url.Action("Edit")?id=' +
                          aData["ID"] +
@@ -109,7 +107,7 @@
                  });
              },
          });
-        
+
          @*$Table.on('click', '[data-action="delete"]', function (e) {
              e.preventDefault();
              var selftr = $(this);

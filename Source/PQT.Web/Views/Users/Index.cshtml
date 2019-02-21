@@ -14,21 +14,28 @@
     .table th {
         white-space: nowrap !important;
     }
+
     .DTFC_Cloned tbody tr.resigned td {
         color: #3c763d;
-        background-color: #b3efb6!important;
+        background-color: #b3efb6 !important;
     }
+
     #users-table tbody tr.resigned td {
         color: #3c763d;
         background-color: #c7fcca !important;
     }
+
     .DTFC_Cloned tbody tr.terminated td {
         color: #31708f;
         background-color: #b5d7f1 !important;
     }
+
     #users-table tbody tr.terminated td {
         color: #31708f;
         background-color: #c8e4fa !important;
+    }
+    .user-picture-small {
+        width: 35px;
     }
 </style>
 <section>
@@ -49,27 +56,25 @@
     </div>
     <div class="card">
         <div class="card-body">
-            <div class="table-responsive">
-                <table id="users-table" class="table">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>@Resource.Name</th>
-                            <th>User Status</th>
-                            <th>Date Of Birth</th>
-                            <th>Company Email</th>
-                            <th>Personal Email</th>
-                            <th>Business Phone</th>
-                            <th>Mobile Phone</th>
-                            <th>Extension</th>
-                            <th>Department</th>
-                            <th>Line Supervisor</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
+            <table id="users-table" class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>@Resource.Name</th>
+                        <th>User Status</th>
+                        <th>Date Of Birth</th>
+                        <th>Company Email</th>
+                        <th>Personal Email</th>
+                        <th>Business Phone</th>
+                        <th>Mobile Phone</th>
+                        <th>Extension</th>
+                        <th>Department</th>
+                        <th>Line Supervisor</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
         </div>
     </div>
 </section>
@@ -107,6 +112,7 @@
                  { "data": "ID", "name": "ID", "orderable": false },
                  { "data": "ID", "name": "ID", "orderable": false }
              ],
+             "aLengthMenu": [[25, 50, 100, 200, 500], [25, 50, 100,200, 500]],
              "iDisplayLength": 25,
              "aaSorting": [[0, "asc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -142,7 +148,7 @@
          });
 
         function FixedTable() {
-            if (fixedColumn < 3) {
+            if (fixedColumn < 4) {
                 fixedColumn++;
                 var fixColumn = new $.fn.dataTable.FixedColumns($modelTable, {
                     leftColumns: 5,

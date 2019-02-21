@@ -74,6 +74,11 @@ namespace PQT.Web.Models
                 ProjectManagementUnit = user.ProjectManagementUnit;
                 CandidateID = user.CandidateID;
                 UserContracts = user.UserContracts;
+                BirthCertification = user.BirthCertification;
+                FamilyCertification = user.FamilyCertification;
+                FilledDeclarationForm = user.FilledDeclarationForm;
+                CertOfHighestEducation = user.CertOfHighestEducation;
+                IDCard = user.IDCard;
             }
         }
 
@@ -141,8 +146,19 @@ namespace PQT.Web.Models
         public int? OfficeLocationID { get; set; }
         public ICollection<UserSalaryHistory> UserSalaryHistories { get; set; }
         public ICollection<UserContract> UserContracts { get; set; }
-        public HttpPostedFileBase SignedContractFile { get; set; }
-        public string SignedContract { get; set; }
+        //public HttpPostedFileBase SignedContractFile { get; set; }
+        //public string SignedContract { get; set; }
+
+        public string BirthCertification { get; set; }
+        public HttpPostedFileBase BirthCertificationFile { get; set; }
+        public string FamilyCertification { get; set; }
+        public HttpPostedFileBase FamilyCertificationFile { get; set; }
+        public string FilledDeclarationForm { get; set; }
+        public HttpPostedFileBase FilledDeclarationFormFile { get; set; }
+        public string CertOfHighestEducation { get; set; }
+        public HttpPostedFileBase CertOfHighestEducationFile { get; set; }
+        public string IDCard { get; set; }
+        public HttpPostedFileBase IDCardFile { get; set; }
         public string AvatarUrl
         {
             get
@@ -155,6 +171,7 @@ namespace PQT.Web.Models
     {
         public AccountModel()
         {
+            UserContracts = new HashSet<UserContract>();
         }
 
         public AccountModel(User user)
@@ -184,6 +201,7 @@ namespace PQT.Web.Models
             UserSalaryHistories = user.UserSalaryHistories;
             //SignedContract = user.SignedContract;
             CandidateID = user.CandidateID;
+            UserContracts = user.UserContracts;
         }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]
         public string Username { get; set; }
@@ -215,8 +233,9 @@ namespace PQT.Web.Models
         public string Roles { get; set; }
         public string OfficeLocation { get; set; }
         public string BackgroundBase64 { get; set; }
-        public string SignedContract { get; set; }
+        //public string SignedContract { get; set; }
         public int? CandidateID { get; set; }
         public ICollection<UserSalaryHistory> UserSalaryHistories { get; set; }
+        public ICollection<UserContract> UserContracts { get; set; }
     }
 }

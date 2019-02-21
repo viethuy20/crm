@@ -91,53 +91,136 @@
         </div>
     </div>
 
-    <div class="card card-underline">
-        <div class="card-head">
-            <header>Contract Info</header>
-        </div>
-        <div class="card-body text-default-light form">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.EmploymentDate).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.EmploymentDate)
-                    </div>
+<div class="card card-underline">
+    <div class="card-head">
+        <header>Contract Info</header>
+    </div>
+    <div class="card-body text-default-light form">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.EmploymentDate).Disabled().Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.EmploymentDate)
                 </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.EmploymentEndDate).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.EmploymentEndDate)
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.FirstEvaluationDate).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.FirstEvaluationDate)
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.BasicSalary).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.BasicSalary)
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.SalaryCurrency.DisplayName).Disabled().Class("form-control").ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.SalaryCurrency)
-                    </div>
-                </div>
-                @*<div class="col-sm-6">
-                    @Html.HiddenFor(m => m.SignedContract)
-                    <div class="form-group ">
-                        @if (!string.IsNullOrEmpty(Model.SignedContract))
-                        {
-                            <a href="@UserPicture.GetContractUrl(Model.SignedContract)" target="_blank">@Model.SignedContract</a>
-                        }
-                        @Html.Bootstrap().LabelFor(m => m.SignedContract).LabelText("Signed Contract")
-                    </div>
-                </div>*@
             </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.EmploymentEndDate).Disabled().Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.EmploymentEndDate)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.FirstEvaluationDate).Disabled().Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.FirstEvaluationDate)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.UserStatusDisplay).Disabled().Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.UserStatus)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.BasicSalary).Disabled().Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.BasicSalary)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.SalaryCurrency.DisplayName).Disabled().Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.SalaryCurrency)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group ">
+                    @if (Model.UserContracts.Any())
+                    {
+                        var contract = Model.UserContracts.LastOrDefault();
+                        if (contract != null)
+                        {
+                            <a class="form-control" readonly="readonly" href="@UserPicture.GetContractUrl(contract.SignedContract)" target="_blank">@contract.SignedContract</a>
+                        }
+                        else
+                        {
+                            <div class="form-control" readonly="readonly"></div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="form-control" readonly="readonly"></div>
+                    }
+                    @Html.Bootstrap().LabelFor(m => m.BirthCertification).LabelText("Signed Contract")
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group ">
+                    @if (!string.IsNullOrEmpty(Model.BirthCertification))
+                    {
+                        <a class="form-control" readonly="readonly" href="@UserPicture.GetContractUrl(Model.BirthCertification)" target="_blank">@Model.BirthCertification</a>
+                    }
+                    else
+                    {
+                        <div class="form-control" readonly="readonly"></div>
+                    }
+                    @Html.Bootstrap().LabelFor(m => m.BirthCertification)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group ">
+                    @if (!string.IsNullOrEmpty(Model.FamilyCertification))
+                    {
+                        <a class="form-control" readonly="readonly" href="@UserPicture.GetContractUrl(Model.FamilyCertification)" target="_blank">@Model.FamilyCertification</a>
+                    }
+                    else
+                    {
+                        <div class="form-control" readonly="readonly"></div>
+                    }
+                    @Html.Bootstrap().LabelFor(m => m.FamilyCertification)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group ">
+                    @if (!string.IsNullOrEmpty(Model.FilledDeclarationForm))
+                    {
+                        <a class="form-control" readonly="readonly" href="@UserPicture.GetContractUrl(Model.FilledDeclarationForm)" target="_blank">@Model.FilledDeclarationForm</a>
+                    }
+                    else
+                    {
+                        <div class="form-control" readonly="readonly"></div>
+                    }
+                    @Html.Bootstrap().LabelFor(m => m.FilledDeclarationForm)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group ">
+                    @if (!string.IsNullOrEmpty(Model.CertOfHighestEducation))
+                    {
+                        <a class="form-control" readonly="readonly" href="@UserPicture.GetContractUrl(Model.CertOfHighestEducation)" target="_blank">@Model.CertOfHighestEducation</a>
+                    }
+                    else
+                    {
+                        <div class="form-control" readonly="readonly"></div>
+                    }
+                    @Html.Bootstrap().LabelFor(m => m.CertOfHighestEducation)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group ">
+                    @if (!string.IsNullOrEmpty(Model.IDCard))
+                    {
+                        <a class="form-control" readonly="readonly" href="@UserPicture.GetContractUrl(Model.IDCard)" target="_blank">@Model.IDCard</a>
+                    }
+                    else
+                    {
+                        <div class="form-control" readonly="readonly"></div>
+                    }
+                    @Html.Bootstrap().LabelFor(m => m.IDCard)
+                </div>
+            </div>
+
         </div>
     </div>
+</div>
 </section>

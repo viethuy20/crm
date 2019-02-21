@@ -14,8 +14,16 @@
     <title>
         @Model.GroupName
     </title>
+    <style>
+        canvas {
+            padding: 0;
+            margin: auto;
+            display: block;
+        }
+    </style>
+    <script src="/Content/js/libs/pdfjs-2.0.943-dist/build/pdf.js"></script>
 </head>
-<body style="margin: 0; overflow-y: hidden;background: #000" oncontextmenu="return false;">
+<body oncontextmenu="return false;" style="background: #000;">
     @if (Model.FileName.Contains(".mp4") || Model.FileName.Contains(".avi"))
     {
         <video  style="width: 100%;height: 100vh" autoplay controls controlsList="nodownload">
@@ -23,10 +31,37 @@
         </video>
     }
     else
-    {
-        <object data="/data/@FileUploadType.Template.Value.ToLower()/@(Model.FileName)?embedded=true#toolbar=0" type="application/pdf" style="border: 0; height: 100vh; width: 100%;">
-            <embed src="/data/@FileUploadType.Template.Value.ToLower()/@(Model.FileName)?embedded=true#toolbar=0" type="application/pdf">
-            </embed>
-        </object>
+    {<div id="holder"></div>
+        <script type="text/javascript">
+            function renderPDF(url, canvasContainer, options) {
+                var options = options || { scale: 1.5 };
+        
+                function renderPage(page) {
+                    var viewport = page.getViewport(options.scale);
+                    var canvas = document.createElement('canvas');
+                    var ctx = canvas.getContext('2d');
+                    var renderContext = {
+                        canvasContext: ctx,
+                        viewport: viewport
+                    };
+        
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    canvasContainer.appendChild(canvas);
+        
+                    page.render(renderContext);
+                }
+    
+                function renderPages(pdfDoc) {
+                    for(var num = 1; num <= pdfDoc.numPages; num++)
+                        pdfDoc.getPage(num).then(renderPage);
+                }
+                pdfjsLib.disableWorker = true;
+                pdfjsLib.getDocument(url).then(renderPages);
+            }   
+        </script> 
+        <script type="text/javascript">
+            renderPDF("/data/@FileUploadType.Template.Value.ToLower()/@(Model.FileName)", document.getElementById('holder'));
+        </script>  
     }
 </body>

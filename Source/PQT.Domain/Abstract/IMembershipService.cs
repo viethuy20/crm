@@ -18,6 +18,7 @@ namespace PQT.Domain.Abstract
         User GetUserByEmail(string email);
         User CreateUser(User userInfo);
         bool UpdateUser(User userInfo);
+        bool UpdateUserIncludeCollection(User userInfo);
         bool DeleteUser(int id);
         IEnumerable<User> GetUsersInRole(params string[] roleName);
         IEnumerable<User> GetUsersInRoleLevel(params string[] roleName);

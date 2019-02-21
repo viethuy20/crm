@@ -19,12 +19,16 @@ namespace PQT.Web.Models
         public int id { get; set; }
         public int RoleID { get; set; }
         public string BackAction { get; set; }
-        public string ContractPeriod { get; set; }
         public Candidate Candidate { get; set; }
         public User Employee { get; set; }
         public HttpPostedFileBase ResumeFile { get; set; }
         public IEnumerable<User> Interviewers { get; set; }
         public HttpPostedFileBase SignedContractFile { get; set; }
+        public HttpPostedFileBase BirthCertificationFile { get; set; }
+        public HttpPostedFileBase FamilyCertificationFile { get; set; }
+        public HttpPostedFileBase FilledDeclarationFormFile { get; set; }
+        public HttpPostedFileBase CertOfHighestEducationFile { get; set; }
+        public HttpPostedFileBase IDCardFile { get; set; }
         public RecruitmentModel()
         {
             Candidate = new Candidate();
@@ -111,14 +115,56 @@ namespace PQT.Web.Models
                     string uploadPicture = UserPicture.UploadContract(SignedContractFile);
                     if (!string.IsNullOrEmpty(uploadPicture))
                     {
-                        Employee.UserContracts.Add(new UserContract
+                        Employee.UserContracts = new List<UserContract>{new UserContract
                         {
-                            ContractPeriod = ContractPeriod,
+                            Order = 1,
+                            EmploymentDate = Employee.EmploymentDate,
+                            EmploymentEndDate = Employee.EmploymentEndDate,
                             SignedContract = uploadPicture
-                        });
+                        }};
                     }
                 }
 
+                if (BirthCertificationFile != null)
+                {
+                    string uploadPicture = UserPicture.UploadContract(BirthCertificationFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        Employee.BirthCertification = uploadPicture;
+                    }
+                }
+                if (FamilyCertificationFile != null)
+                {
+                    string uploadPicture = UserPicture.UploadContract(FamilyCertificationFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        Employee.FamilyCertification = uploadPicture;
+                    }
+                }
+                if (FilledDeclarationFormFile != null)
+                {
+                    string uploadPicture = UserPicture.UploadContract(FilledDeclarationFormFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        Employee.FilledDeclarationForm = uploadPicture;
+                    }
+                }
+                if (CertOfHighestEducationFile != null)
+                {
+                    string uploadPicture = UserPicture.UploadContract(CertOfHighestEducationFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        Employee.CertOfHighestEducation = uploadPicture;
+                    }
+                }
+                if (IDCardFile != null)
+                {
+                    string uploadPicture = UserPicture.UploadContract(IDCardFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        Employee.IDCard = uploadPicture;
+                    }
+                }
                 Employee.Status = EntityUserStatus.RequestEmployment;
                 if (Employee.ID == 0)
                 {
@@ -126,7 +172,7 @@ namespace PQT.Web.Models
                 }
                 else
                 {
-                    membershipService.UpdateUser(Employee);
+                    membershipService.UpdateUserIncludeCollection(Employee);
                 }
                 if (RoleID > 0)
                     roleService.AssignRoles(Employee, new List<int> { RoleID });

@@ -110,54 +110,73 @@
             </div>
             <div class="card-body text-default-light">
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
-                            @Html.DatePickerFor(m => m.Employee.EmploymentDate, new { @class = "form-control" })
+                            @Html.DatePickerFor(m => m.Employee.EmploymentDate, new { @class = "form-control",required = "required"  })
                             @Html.ValidationMessageFor(m => m.Employee.EmploymentDate)
-                            @Html.Bootstrap().LabelFor(m => m.Employee.EmploymentDate)
+                            @Html.Bootstrap().LabelFor(m => m.Employee.EmploymentDate).ShowRequiredStar(true)
                         </div>
-                    </div>
-                    <div class="col-sm-6">
+                    </div>                    
+                    <div class="col-sm-4">
                         <div class="form-group">
-                            @Html.DatePickerFor(m => m.Employee.EmploymentEndDate, new { @class = "form-control" })
+                            @Html.DatePickerFor(m => m.Employee.EmploymentEndDate, new { @class = "form-control",required = "required"  })
                             @Html.ValidationMessageFor(m => m.Employee.EmploymentEndDate)
-                            @Html.Bootstrap().LabelFor(m => m.Employee.EmploymentEndDate)
+                            @Html.Bootstrap().LabelFor(m => m.Employee.EmploymentEndDate).ShowRequiredStar(true)
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
-                            @Html.DatePickerFor(m => m.Employee.FirstEvaluationDate, new { @class = "form-control" })
+                            @Html.DatePickerFor(m => m.Employee.FirstEvaluationDate, new { @class = "form-control",required = "required"  })
                             @Html.ValidationMessageFor(m => m.Employee.FirstEvaluationDate)
-                            @Html.Bootstrap().LabelFor(m => m.Employee.FirstEvaluationDate)
+                            @Html.Bootstrap().LabelFor(m => m.Employee.FirstEvaluationDate).ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Employee.BasicSalary).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Employee.BasicSalary)
+                            @Html.Bootstrap().TextBoxFor(m => m.Employee.BasicSalary).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Employee.BasicSalary).ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
                             @Html.Bootstrap().DropDownListFor(m => m.Employee.SalaryCurrency, EnumerationHelper.ToSelectList<SalaryCurrency>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Employee.SalaryCurrency)
+                            @Html.Bootstrap().LabelFor(m => m.Employee.SalaryCurrency).ShowRequiredStar(true)
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.ContractPeriod).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.ContractPeriod)
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        @*@Html.HiddenFor(m => m.Employee.SignedContract)*@
+                    <div class="col-sm-4">
                         <div class="form-group ">
-                            @*@if (!string.IsNullOrEmpty(Model.Employee.SignedContract))
-                            {
-                                <a href="@UserPicture.GetContractUrl(Model.Employee.SignedContract)" target="_blank">@Model.Employee.SignedContract</a>
-                            }*@
-                            @Html.Bootstrap().FileFor(m => m.SignedContractFile).Class("form-control").ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.SignedContractFile).LabelText("Signed Contract")
+                            @Html.Bootstrap().FileFor(m => m.SignedContractFile).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.SignedContractFile).LabelText("Signed Contract").ShowRequiredStar(true)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().FileFor(m => m.BirthCertificationFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.BirthCertificationFile).LabelText("Birth Certification")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().FileFor(m => m.FamilyCertificationFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.FamilyCertificationFile).LabelText("Family Certification")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().FileFor(m => m.FilledDeclarationFormFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.FilledDeclarationFormFile).LabelText("Filled Declaration Form")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().FileFor(m => m.CertOfHighestEducationFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.CertOfHighestEducationFile).LabelText("Cert Of Highest Education")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().FileFor(m => m.IDCardFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.IDCardFile).LabelText("ID Card")
                         </div>
                     </div>
                 </div>

@@ -382,7 +382,6 @@
              "orderMulti": false, // for disable multiple column at once
              "stateSave": false,
              "ajax": {
-                 "global": false,
                  "url": "@Url.Action("AjaxGetNoCallListForManager")?eventId=@Model.Event.ID",
                  "type": "POST",
                  "datatype": "json",
@@ -486,7 +485,7 @@
          }
 
          function FixedTable() {
-             if (fixedColumn<4) {
+             if (fixedColumn < 3) {
                  fixedColumn ++;
                  var fixColumn = new $.fn.dataTable.FixedColumns(tableLead, {
                      leftColumns: 5,

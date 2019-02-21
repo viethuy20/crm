@@ -1,0 +1,100 @@
+﻿@using PQT.Domain.Enum
+@model PQT.Domain.Entities.UserContract
+
+@using (Html.BeginCollectionItem())
+{
+    <div class="delegateItem col-sm-12 delegateItem_@(Model.ID)" data-id="@Model.ID" style="padding: 0px;padding-bottom: 20px">
+        <div style="border: 1px solid #e1e1e1; padding: 10px;">
+            @Html.HiddenFor(m => m.ID)
+            @Html.HiddenFor(m => m.UserID)
+            @Html.HiddenFor(m => m.SignedContract)
+            <div class="row">
+                <div class="col-sm-1">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Order).Class("form-control").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Order).LabelText("S/No")
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EmploymentDateDisplay).Readonly().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EmploymentDate).ShowRequiredStar(true)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EmploymentEndDateDisplay).Readonly().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EmploymentEndDate).ShowRequiredStar(true)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @if (!string.IsNullOrEmpty(Model.SignedContract))
+                        {
+                            <a class="form-control" href="@UserPicture.GetContractUrl(Model.SignedContract)" target="_blank">@Model.SignedContract</a>
+                        }
+                        else
+                        {
+                            <div class="form-control" readonly="readonly"></div>
+                        }
+                        @Html.Bootstrap().LabelFor(m => m.SignedContractFile).LabelText("Signed Contract").ShowRequiredStar(true)
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EvaluationDate1Display).Readonly().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationDate1)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EvaluationRemark1).Readonly().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationRemark1)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EvaluationDate2Display).Readonly().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationDate2)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EvaluationRemark2).Readonly().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationRemark2)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EvaluationDate3Display).Readonly().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationDate3)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EvaluationRemark3).Readonly().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationRemark3)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EvaluationDate4Display).Readonly().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationDate4)
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.EvaluationRemark4).Readonly().Class("form-control").ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.EvaluationRemark4)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

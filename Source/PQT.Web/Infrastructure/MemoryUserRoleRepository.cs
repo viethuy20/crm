@@ -125,5 +125,11 @@ namespace PQT.Web.Infrastructure
             var user = GetUserPermissions(userID);
             return user.Roles.Any(Role.HasLevel(roleLevel));
         }
+
+        public override void RemoveCacheUserRole(int id)
+        {
+            var userCache = _userRoles.FirstOrDefault(m => m.ID == id);
+            if (userCache != null) _userRoles.Remove(userCache);
+        }
     }
 }

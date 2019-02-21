@@ -17,13 +17,14 @@
         color: #3c763d;
         background-color: #c7fcca;
     }
+
     .disable-select {
         -webkit-touch-callout: none; /* iOS Safari */
-        -webkit-user-select: none;   /* Chrome/Safari/Opera */
-        -khtml-user-select: none;    /* Konqueror */
-        -moz-user-select: none;      /* Firefox */
-        -ms-user-select: none;       /* Internet Explorer/Edge */
-        user-select: none;           /* Non-prefixed version, currently supported by any browser but < IE9 */
+        -webkit-user-select: none; /* Chrome/Safari/Opera */
+        -khtml-user-select: none; /* Konqueror */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by any browser but < IE9 */
     }
 </style>
 <section>
@@ -80,29 +81,27 @@
                             @Html.Bootstrap().Button().Text("Search").Id("btnSearch").PrependIcon("md md-search").Size(ButtonSize.Mini).HtmlAttributes(new { @class = "btn btn-primary" })
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table" id="kpiTable">
-                            <thead>
-                                <tr>
-                                    <th>Event</th>
-                                    <th>Created Time</th>
-                                    <th>Company Name</th>
-                                    <th>Salesman</th>
-                                    <th>Direct Line</th>
-                                    <th>Job Title</th>
-                                    <th>Salutation</th>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Mobile Phone 1</th>
-                                    <th>Work Email</th>
-                                    <th>Personal Email</th>
-                                    <th>Mark KPI</th>
-                                    <th>KPI Remarks</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
+                    <table class="table" id="kpiTable">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Created Time</th>
+                                <th>Company Name</th>
+                                <th>Salesman</th>
+                                <th>Direct Line</th>
+                                <th>Job Title</th>
+                                <th>Salutation</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Mobile Phone 1</th>
+                                <th>Work Email</th>
+                                <th>Personal Email</th>
+                                <th>Mark KPI</th>
+                                <th>KPI Remarks</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div><!--end .card-body -->
             </div><!--end .card -->
         </div>
@@ -113,7 +112,7 @@
 @Html.Script(
 
     @<script>
-        $('body').bind('copy', function (e) { e.preventDefault(); return false; }); 
+        $('body').bind('copy', function (e) { e.preventDefault(); return false; });
 
         var fixedColumn = 0;
          var oTable = $("#kpiTable");
@@ -296,6 +295,6 @@
                  }
              });
          }
-     </script>
+    </script>
 
 )

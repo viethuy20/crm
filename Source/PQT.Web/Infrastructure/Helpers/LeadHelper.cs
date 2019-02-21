@@ -54,11 +54,11 @@ namespace PQT.Web.Infrastructure.Helpers
                     count++;
                     var existResources =
                         comService.GetAllCompanyResources(
-                            m => m.WorkEmail == lead.WorkEmail ||
-                                 m.DirectLine == lead.DirectLine ||
-                                 m.MobilePhone1 == lead.MobilePhone1 ||
-                                 m.MobilePhone2 == lead.MobilePhone2 ||
-                                 m.MobilePhone3 == lead.MobilePhone3).ToList();
+                            m =>
+                                (m.DirectLine != null && m.DirectLine == lead.DirectLine) ||
+                                (m.MobilePhone1 != null && m.MobilePhone1 == lead.MobilePhone1) ||
+                                (m.MobilePhone2 != null && m.MobilePhone2 == lead.MobilePhone2) ||
+                                (m.MobilePhone3 != null && m.MobilePhone3 == lead.MobilePhone3)).ToList();
                     //var eventCompany = _repo.GetEventCompany(lead.EventID, lead.CompanyID);
                     if (existResources.Any())
                     {

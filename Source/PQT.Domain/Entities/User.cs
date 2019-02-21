@@ -78,6 +78,11 @@ namespace PQT.Domain.Entities
             //SignedContract = user.SignedContract;
             CandidateID = user.CandidateID;
             NotifyNumber = user.NotifyNumber;
+            BirthCertification = user.BirthCertification;
+            FamilyCertification = user.FamilyCertification;
+            FilledDeclarationForm = user.FilledDeclarationForm;
+            CertOfHighestEducation = user.CertOfHighestEducation;
+            IDCard = user.IDCard;
         }
 
         #region Primitive
@@ -115,6 +120,11 @@ namespace PQT.Domain.Entities
         public ICollection<UserSalaryHistory> UserSalaryHistories { get; set; }
         public ICollection<UserContract> UserContracts { get; set; }
 
+        public string BirthCertification { get; set; }
+        public string FamilyCertification { get; set; }
+        public string FilledDeclarationForm { get; set; }
+        public string CertOfHighestEducation { get; set; }
+        public string IDCard { get; set; }
         public string Ip { get; set; }
         public string Extension { get; set; }//private number for employees
 
@@ -141,7 +151,7 @@ namespace PQT.Domain.Entities
 
         #region Navigation properties
 
-        public virtual ICollection<Role> Roles { get; set; }
+        public ICollection<Role> Roles { get; set; }
         #endregion
 
         #region Helpers

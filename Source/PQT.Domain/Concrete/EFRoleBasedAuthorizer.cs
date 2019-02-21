@@ -99,6 +99,10 @@ namespace PQT.Domain.Concrete
                    ?? CreatePermission(new Permission { Target = target, Right = right, Description = description });
         }
 
+        public virtual void RemoveCacheUserRole(int id)
+        {
+            
+        }
         public virtual bool CheckAccess(int userID, string feature, string permissionType = null)
         {
             string[] segments = feature.Split(new[] { '.' });

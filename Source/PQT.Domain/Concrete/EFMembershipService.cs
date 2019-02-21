@@ -403,6 +403,32 @@ namespace PQT.Domain.Concrete
             return Update(userInfo);
         }
 
+        public bool UpdateUserIncludeCollection(User userInfo)
+        {
+            return TransactionWrapper.Do(() =>
+            {
+                var itemExist = Get<User>(m => m.ID == userInfo.ID, m => m.UserContracts);
+                Update(userInfo);
+                if (userInfo.UserContracts != null && userInfo.UserContracts.Any())
+                {
+                    foreach (var photo in itemExist.UserContracts.Where(m => !userInfo.UserContracts.Select(n => n.ID).Contains(m.ID)).ToList())
+                    {
+                        itemExist.UserContracts.Remove(photo);
+                        Delete(photo);
+                    }
+                    UpdateCollection(userInfo, m => m.ID == userInfo.ID, m => m.UserContracts, m => m.ID);
+                }
+                else if (itemExist.UserContracts != null)
+                    foreach (var photo in itemExist.UserContracts.ToList())
+                    {
+                        itemExist.UserContracts.Remove(photo);
+                        Delete(photo);
+                    }
+                Update(itemExist);
+                return true;
+            });
+        }
+
         public virtual User GetUser(int id)
         {
             return Get<User>(u => u.ID == id, u => new
@@ -415,6 +441,7 @@ namespace PQT.Domain.Concrete
             return Get<User>(u => u.ID == id, u => new
             {
                 u.UserSalaryHistories,
+                u.UserContracts,
                 u.OfficeLocation,
                 Roles = u.Roles.Select(r => r.Permissions),
             });
@@ -424,7 +451,7 @@ namespace PQT.Domain.Concrete
         {
             return string.IsNullOrWhiteSpace(email)
                 ? null
-                : Get<User>(u => u.Email != null &&
+                : Get<User>(u => u.Status.Value == EntityStatus.Normal &&  u.Email != null &&
                                  u.Email.Trim().ToLower() == email.Trim().ToLower(),
                     u => new
                     {

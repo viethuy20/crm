@@ -18,8 +18,7 @@
         </div>
     </div>
     <div class="card">
-    <div class="card-body">
-        <div class="table-responsive">
+        <div class="card-body">
             <table class="table" id="table">
                 <thead>
                     <tr>
@@ -35,7 +34,7 @@
                             <td>
                                 <a href="@Url.Action("CreateOrEdit", new {id = item.ID})" data-action="edit" class="simple-ajax-popup-align-top">
                                     <i class="md md-edit text-info"></i>
-                                </a> | 
+                                </a> |
                                 <a href="#" data-action="delete" data-id="@item.ID">
                                     <i class="md md-delete text-danger"></i>
                                 </a>
@@ -44,7 +43,6 @@
                     }
                 </tbody>
             </table>
-        </div>
         </div>
     </div>
 </section>

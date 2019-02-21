@@ -14,37 +14,35 @@
     </div>
     <div class="card">
         <div class="card-body">
-            <div class="table-responsive">
-                <table id="users-table" class="table">
-                    <thead>
-                        <tr>
-                            <th>@Resource.UserName</th>
-                            <th>@Resource.Email</th>
-                            <th>@Resource.PhoneNumber</th>
-                            <th class="text-center">@Resource.Actions</th>
+            <table id="users-table" class="table">
+                <thead>
+                    <tr>
+                        <th>@Resource.UserName</th>
+                        <th>@Resource.Email</th>
+                        <th>@Resource.PhoneNumber</th>
+                        <th class="text-center">@Resource.Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (User user in Model)
+                    {
+                        <tr data-roles="@(string.Join(" ", user.Roles.Select(m => m.ID)))">
+                            <td>
+                                @if (user.Picture != null)
+                                {
+                                    <img src="@user.AvatarUrl" class="img-rounded user-picture-small" style="max-width:50px; max-height:50px;" />
+                                }
+                                @user.DisplayName
+                            </td>
+                            <td>@user.Email</td>
+                            <td>@user.BusinessPhone</td>
+                            <td class="text-center">
+                                <a href="@Url.Action("ReActive", new { id = user.ID })" data-action="reactive" data-id="@user.ID"><i class="fa fa-undo text-primary"></i> @Resource.ReActive</a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (User user in Model)
-                        {
-                            <tr data-roles="@(string.Join(" ", user.Roles.Select(m => m.ID)))">
-                                <td>
-                                    @if (user.Picture != null)
-                                    {
-                                        <img src="@user.AvatarUrl" class="img-rounded user-picture-small" style="max-width:50px; max-height:50px;" />
-                                    }
-                                    @user.DisplayName
-                                </td>
-                                <td>@user.Email</td>
-                                <td>@user.BusinessPhone</td>
-                                <td class="text-center">
-                                    <a href="@Url.Action("ReActive", new { id = user.ID })" data-action="reactive" data-id="@user.ID"><i class="fa fa-undo text-primary"></i> @Resource.ReActive</a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </section>
