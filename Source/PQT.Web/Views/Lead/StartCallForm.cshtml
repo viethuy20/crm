@@ -35,6 +35,10 @@
             color: #313534;
             background-color: #e5e6e6 !important;
         }
+    #grid_bookings td,
+    .DTFC_Cloned td{
+        white-space: nowrap;
+    }
 </style>
 <section>
     <div class="row">
@@ -108,7 +112,6 @@
                                             </div><!--end .card-head -->
                                             <div class="form">
                                                 <div class="card-body ">
-                                                    <div class="table-responsive">
                                                         <table class="table no-margin" id="grid_bookings">
                                                             <thead>
                                                                 <tr>
@@ -116,13 +119,16 @@
                                                                     <th>Event Code</th>
                                                                     <th>Event Date</th>
                                                                     <th>Delegate Name</th>
-                                                                    <th>Delegate Email</th>
-                                                                    <th>Delegate Contact</th>
+                                                                    <th>Delegate Drirect Line</th>
+                                                                    <th>Delegate Mobile1</th>
+                                                                    <th>Delegate Mobile2</th>
+                                                                    <th>Delegate Mobile3</th>
+                                                                    <th>Delegate Work Email</th>
+                                                                    <th>Delegate Personal Email</th>
                                                                     <th>Attendance Status</th>
                                                                 </tr>
                                                             </thead>
                                                         </table>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div><!--end .card -->
@@ -358,6 +364,7 @@
 
          function LoadCompanyResources() {
              if (company_id_selected_val >= 0) {
+                 fixedColumn = 0;
                  comResourceTable.fnFilter('');
                  comResourceTable2.fnFilter('');
                  table_bookings.fnFilter('');
@@ -595,8 +602,12 @@
                      { "data": "EventCode", "name": "EventCode", "orderable": true },
                      { "data": "EventDate", "name": "EventDate", "orderable": true },
                      { "data": "DelegateName", "name": "DelegateName", "orderable": true },
-                     { "data": "DelegateEmail", "name": "DelegateEmail", "orderable": true },
-                     { "data": "DelegateContact", "name": "DelegateContact", "orderable": true },
+                     { "data": "DirectLine", "name": "DirectLine", "orderable": true },
+                     { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
+                     { "data": "MobilePhone2", "name": "MobilePhone2", "orderable": true },
+                     { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
+                     { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
+                     { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
                      { "data": "AttendanceStatusDisplay", "name": "AttendanceStatusDisplay", "orderable": true },
                  ],
                  "iDisplayLength": 25,
@@ -625,8 +636,8 @@
         function FixedTable() {
             if (fixedColumn < 3) {
                 fixedColumn ++;
-                var fixColumn = new $.fn.dataTable.FixedColumns($Table, {
-                    leftColumns: 3,
+                var fixColumn = new $.fn.dataTable.FixedColumns(table_bookings, {
+                    leftColumns: 1,
                     sHeightMatch: "auto",
                     rightColumns: 1
                 });

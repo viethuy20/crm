@@ -22,8 +22,9 @@ namespace PQT.Web.Models
         public void Prepare(IEnumerable<Lead> leads, IEnumerable<LeadNew> leadNews, IEnumerable<Booking> bookings)
         {
             ConsolidateKpis = new List<ConsolidateKPI>();
-            var users = leads.DistinctBy(m => m.UserID).Select(m => m.User);
-            foreach (var user in users)
+            var users = leads.DistinctBy(m => m.UserID).Select(m => m.User).ToList();
+            users.AddRange(leadNews.DistinctBy(m => m.UserID).Select(m => m.User));
+            foreach (var user in users.DistinctBy(m => m.ID))
             {
                 var item = new ConsolidateKPI
                 {

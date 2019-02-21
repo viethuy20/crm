@@ -525,6 +525,24 @@ namespace PQT.Web.Controllers
                     case "DelegateName":
                         delegates = delegates.OrderBy(s => s.FullName).ThenBy(s => s.ID);
                         break;
+                    case "DirectLine":
+                        delegates = delegates.OrderBy(s => s.DirectLine).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone1":
+                        delegates = delegates.OrderBy(s => s.MobilePhone1).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone2":
+                        delegates = delegates.OrderBy(s => s.MobilePhone2).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone3":
+                        delegates = delegates.OrderBy(s => s.MobilePhone3).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmail":
+                        delegates = delegates.OrderBy(s => s.WorkEmail).ThenBy(s => s.ID);
+                        break;
+                    case "PersonalEmail":
+                        delegates = delegates.OrderBy(s => s.PersonalEmail).ThenBy(s => s.ID);
+                        break;
                     case "DelegateEmail":
                         delegates = delegates.OrderBy(s => s.DelegateEmail).ThenBy(s => s.ID);
                         break;
@@ -554,6 +572,24 @@ namespace PQT.Web.Controllers
                         break;
                     case "DelegateName":
                         delegates = delegates.OrderByDescending(s => s.FullName).ThenBy(s => s.ID);
+                        break;
+                    case "DirectLine":
+                        delegates = delegates.OrderByDescending(s => s.DirectLine).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone1":
+                        delegates = delegates.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone2":
+                        delegates = delegates.OrderByDescending(s => s.MobilePhone2).ThenBy(s => s.ID);
+                        break;
+                    case "MobilePhone3":
+                        delegates = delegates.OrderByDescending(s => s.MobilePhone3).ThenBy(s => s.ID);
+                        break;
+                    case "WorkEmail":
+                        delegates = delegates.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.ID);
+                        break;
+                    case "PersonalEmail":
+                        delegates = delegates.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.ID);
                         break;
                     case "DelegateEmail":
                         delegates = delegates.OrderByDescending(s => s.DelegateEmail).ThenBy(s => s.ID);
@@ -591,6 +627,12 @@ namespace PQT.Web.Controllers
                     m.EventCode,
                     m.EventDate,
                     DelegateName = m.FullName,
+                    m.DirectLine,
+                    m.MobilePhone1,
+                    m.MobilePhone2,
+                    m.MobilePhone3,
+                    m.WorkEmail,
+                    m.PersonalEmail,
                     m.DelegateContact,
                     m.DelegateEmail,
                     m.AttendanceStatusDisplay

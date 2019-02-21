@@ -36,6 +36,10 @@
             color: #313534;
             background-color: #e5e6e6 !important;
         }
+    #grid_bookings td,
+    .DTFC_Cloned td{
+        white-space: nowrap;
+    }
 </style>
 
 <section>
@@ -139,8 +143,12 @@
                                 <th>Event Code</th>
                                 <th>Event Date</th>
                                 <th>Delegate Name</th>
-                                <th>Delegate Email</th>
-                                <th>Delegate Contact</th>
+                                <th>Delegate Drirect Line</th>
+                                <th>Delegate Mobile1</th>
+                                <th>Delegate Mobile2</th>
+                                <th>Delegate Mobile3</th>
+                                <th>Delegate Work Email</th>
+                                <th>Delegate Personal Email</th>
                                 <th>Attendance Status</th>
                             </tr>
                         </thead>
@@ -154,6 +162,7 @@
 @Html.Script(
     @<script>
         if ($("#grid_bookings")) {
+            var fixedColumn = 0;
              var table = $("#grid_bookings").DataTable({
                  "processing": true, // for show progress bar
                  "serverSide": true, // for process server side
@@ -172,8 +181,12 @@
                      { "data": "EventCode", "name": "EventCode", "orderable": true },
                      { "data": "EventDate", "name": "EventDate", "orderable": true },
                      { "data": "DelegateName", "name": "DelegateName", "orderable": true },
-                     { "data": "DelegateEmail", "name": "DelegateEmail", "orderable": true },
-                     { "data": "DelegateContact", "name": "DelegateContact", "orderable": true },
+                     { "data": "DirectLine", "name": "DirectLine", "orderable": true },
+                     { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
+                     { "data": "MobilePhone2", "name": "MobilePhone2", "orderable": true },
+                     { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
+                     { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
+                     { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
                      { "data": "AttendanceStatusDisplay", "name": "AttendanceStatusDisplay", "orderable": true },
                  ],
                  "iDisplayLength": 25,
@@ -191,6 +204,38 @@
                          }, 600);
                      });
                  },
-             });
+                 scrollY: false,
+                 scrollX: true,
+                 "bScrollCollapse": false,
+                 "drawCallback": function (settings, json) {
+                     FixedTable();
+                 },
+            });
+            
+            function FixedTable() {
+                if (fixedColumn < 3) {
+                    fixedColumn++;
+                    var fixColumn = new $.fn.dataTable.FixedColumns(table, {
+                        leftColumns: 3,
+                        sHeightMatch: "auto",
+                        rightColumns: 1
+                    });
+                    var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                    if ($leftWrappers.length > 1) {
+                        $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                    }
+                    var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                    if ($rightWrappers.length > 1) {
+                        $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                    }
+                }
+            }
+            $(document).on("click", ".paginate_button", function () {
+                fixedColumn = 0;
+            });
+            $(document).on("change", "select[name=table_length]", function () {
+                fixedColumn = 0;
+            });
         }
+
     </script>)
