@@ -130,44 +130,45 @@ namespace PQT.Web.Controllers
             //        ModelState.AddModelError("OldPassword", Resource.TheOldPasswordDoNotMatch);
             //    }
             //}
+            var user = _membership.GetUserIncludeAll(CurrentUser.Identity.ID);
             if (ModelState.IsValid)
             {
                 // Update user profile picture
                 if (!string.IsNullOrEmpty(model.PictureBase64))
                 {
-                    UserPicture.Delete(CurrentUser.Identity.ID, CurrentUser.Identity.Picture);
-                    string pictureFileName = UserPicture.Upload(CurrentUser.Identity.ID, model.PictureBase64);
-                    CurrentUser.Identity.Picture = pictureFileName;
+                    UserPicture.Delete(user.ID, user.Picture);
+                    string pictureFileName = UserPicture.Upload(user.ID, model.PictureBase64);
+                    user.Picture = pictureFileName;
                 }
                 if (!string.IsNullOrEmpty(model.BackgroundBase64))
                 {
-                    UserPicture.Delete(CurrentUser.Identity.ID, CurrentUser.Identity.Background);
-                    string pictureFileName = UserPicture.UploadBackground(CurrentUser.Identity.ID, model.BackgroundBase64);
-                    CurrentUser.Identity.Background = pictureFileName;
+                    UserPicture.Delete(user.ID, user.Background);
+                    string pictureFileName = UserPicture.UploadBackground(user.ID, model.BackgroundBase64);
+                    user.Background = pictureFileName;
                 }
 
-                CurrentUser.Identity.DisplayName = model.Username;
-                CurrentUser.Identity.BusinessPhone = model.BusinessPhone;
-                CurrentUser.Identity.MobilePhone = model.MobilePhone;
-                CurrentUser.Identity.PersonalEmail = model.PersonalEmail;
-                CurrentUser.Identity.PassportID = model.PassportID;
+                user.DisplayName = model.Username;
+                user.BusinessPhone = model.BusinessPhone;
+                user.MobilePhone = model.MobilePhone;
+                user.PersonalEmail = model.PersonalEmail;
+                user.PassportID = model.PassportID;
                 //if (!string.IsNullOrEmpty(model.Password))
                 //{
-                //    CurrentUser.Identity.Password = EncryptHelper.EncryptPassword(model.Password);
+                //    user.Password = EncryptHelper.EncryptPassword(model.Password);
                 //}
 
-                if (_membership.UpdateUser(CurrentUser.Identity))
+                if (_membership.UpdateUser(user))
                 {
 
-                    FormsAuthentication.SetAuthCookie(CurrentUser.Identity.Email, false);
+                    FormsAuthentication.SetAuthCookie(user.Email, false);
                 }
 
-                _loginTracker.ReloadUser(CurrentUser.Identity.Email, CurrentUser.Identity);
+                _loginTracker.ReloadUser(user.Email, _membership.GetUserIncludeAll(user.ID));
 
                 TempData["message"] = Resource.YourProfileHasBeenUpdated;
                 return RedirectToAction("Profile");
             }
-            model.UserSalaryHistories = CurrentUser.Identity.UserSalaryHistories;
+            model.UserSalaryHistories = user.UserSalaryHistories;
             return View(model);
         }
 

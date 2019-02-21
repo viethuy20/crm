@@ -37,8 +37,11 @@ namespace PQT.Domain.Entities
             FirstName = user.FirstName;
             LastName = user.LastName;
             Email = user.Email;
+            Password = user.Password;
             BusinessPhone = user.BusinessPhone;
             MobilePhone = user.MobilePhone;
+            Picture = user.Picture;
+            Background = user.Background;
             if (user.Roles != null)
             {
                 Roles = user.Roles.Select(r => new Role(r)).ToList();
@@ -83,6 +86,7 @@ namespace PQT.Domain.Entities
             FilledDeclarationForm = user.FilledDeclarationForm;
             CertOfHighestEducation = user.CertOfHighestEducation;
             IDCard = user.IDCard;
+            TransferUserID = user.TransferUserID;
         }
 
         #region Primitive

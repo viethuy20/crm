@@ -354,7 +354,7 @@ namespace PQT.Web.Controllers
                         {
                             item.CompanyID = lead.CompanyID;
                             item.CountryID = lead.Company.CountryID;
-                            item.Country = lead.Company.CountryName;
+                            item.Country = lead.Company.CountryCode;
                             item.FirstName = lead.FirstName;
                             item.LastName = lead.LastName;
                             item.Organisation = lead.CompanyName;

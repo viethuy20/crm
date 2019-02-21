@@ -88,7 +88,7 @@ namespace PQT.Domain.Concrete
                 existingRecord.User = user;
             }
             else
-                LoginRecords.Add(new InMemLoginRecord(user, hashKey));
+                LoginRecords.Add(new InMemLoginRecord(new User(user), hashKey));
         }
 
         protected virtual bool CanSignIn(string username)
@@ -102,7 +102,13 @@ namespace PQT.Domain.Concrete
                 LoginRecords.FirstOrDefault(
                     r => r.User.ID == id);
             if (loginRecord != null)
+            {
+                if (loginRecord.User == null || !loginRecord.User.Roles.Any())
+                {
+                    loginRecord.User = new User(base.GetUserIncludeAll(id));
+                }
                 return loginRecord.User;
+            }
             return base.GetUser(id);
         }
         public override bool UpdateUser(User userInfo)

@@ -16,6 +16,7 @@ namespace PQT.Domain.Entities
 
         public Role(Role r)
         {
+            ID = r.ID;
             Name = r.Name;
             Description = r.Description;
             RoleLevel = r.RoleLevel;
