@@ -106,6 +106,10 @@ namespace PQT.Domain.Entities
         public string Remarks { get; set; }
         public virtual ICollection<User> ManagerUsers { get; set; }
 
+        [NotMapped]
+        public bool BlockStartCall { get; set; }
+        [NotMapped]
+        public int ComResourceNumber { get; set; }
         public string BudgetMonthStr
         {
             get

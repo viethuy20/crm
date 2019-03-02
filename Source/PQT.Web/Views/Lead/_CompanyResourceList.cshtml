@@ -16,7 +16,7 @@
     <table class="table" id="crtable">
         <thead>
             <tr>
-                <th>Country</th>
+                @*<th>Country</th>*@
                 <th>Title</th>
                 <th class="nowrap">First Name</th>
                 <th class="nowrap">Last Name</th>
@@ -37,6 +37,7 @@
 
 @Html.Script(
     @<script>
+         var fixedColumnTable = 0;
         comResourceTable = $("#crtable");
         comResourceTable.dataTable({
              "processing": true, // for show progress bar
@@ -57,7 +58,7 @@
                  }
              },
              "columns": [
-                 { "data": "Country", "name": "Country", "orderable": true },
+                 //{ "data": "Country", "name": "Country", "orderable": true },
                  { "data": "Salutation", "name": "Salutation", "orderable": true },
                  { "data": "FirstName", "name": "FirstName", "orderable": true },
                  { "data": "LastName", "name": "LastName", "orderable": true },
@@ -92,13 +93,13 @@
                  $(nRow).attr('data-personalemail', aData["PersonalEmail"]);
                  //$(nRow).attr('data-budgetmonth', aData["BudgetMonth"]);
                  //$(nRow).attr('data-businessunit', aData["BusinessUnit"]);
+                 $(nRow).find('td:eq(1)').addClass('nowrap');
                  $(nRow).find('td:eq(2)').addClass('nowrap');
-                 $(nRow).find('td:eq(3)').addClass('nowrap');
+                 $(nRow).find('td:eq(5)').addClass('nowrap');
                  $(nRow).find('td:eq(6)').addClass('nowrap');
                  $(nRow).find('td:eq(7)').addClass('nowrap');
                  $(nRow).find('td:eq(8)').addClass('nowrap');
                  $(nRow).find('td:eq(9)').addClass('nowrap');
-                 $(nRow).find('td:eq(10)').addClass('nowrap');
              },
              initComplete: function() {
                  var _table = this;
@@ -109,6 +110,12 @@
                  htmlFilter += '<label>Role:<input type="search" name="search_role" /></label>';
                  filter_box.html(htmlFilter);
                  searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
+             },
+             scrollY: false,
+             scrollX: true,
+             "bScrollCollapse": false,
+             "drawCallback": function (settings, json) {
+                 FixedTable2();
              },
         });
         function searchBindingKeyUp(elementSearch, tableElement) {
@@ -123,5 +130,29 @@
                         600);
                 });
         }
+        function FixedTable2() {
+            if (fixedColumnTable < 3) {
+                fixedColumnTable++;
+                var fixColumn = new $.fn.dataTable.FixedColumns(comResourceTable, {
+                    leftColumns: 3,
+                    sHeightMatch: "auto",
+                    rightColumns: 0
+                });
+                var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                if ($leftWrappers.length > 1) {
+                    $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                }
+                var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                if ($rightWrappers.length > 1) {
+                    $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                }
+            }
+        }
+        $(document).on("click", ".paginate_button", function () {
+            fixedColumnTable = 0;
+        });
+        $(document).on("change", "select[name=table_length]", function () {
+            fixedColumnTable = 0;
+        });
     </script>
 )

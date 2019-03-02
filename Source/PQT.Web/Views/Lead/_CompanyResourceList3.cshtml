@@ -12,33 +12,32 @@
             background-color: #f2f2f2;
         }
 </style>
-<div class="table-responsive">
-    <table class="table" id="crtable2">
-        <thead>
-            <tr>
-                <th>Country</th>
-                <th>Title</th>
-                <th class="nowrap">First Name</th>
-                <th class="nowrap">Last Name</th>
-                <th style="min-width:200px">Role</th>
-                <th class="nowrap">Direct Line</th>
-                <th class="nowrap">Mobile Phone1</th>
-                <th class="nowrap">Mobile Phone2</th>
-                <th class="nowrap">Mobile Phone3</th>
-                <th class="nowrap">Work Email</th>
-                <th class="nowrap">Personal Email</th>
-                @*<th class="nowrap">Business Unit</th>
-                    <th class="nowrap">Budget Month</th>
-                    <th class="nowrap">Remarks</th>*@
-            </tr>
-        </thead>
-    </table>
-</div>
+<table class="table" id="crtable2">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th class="nowrap">First Name</th>
+            <th class="nowrap">Last Name</th>
+            <th style="min-width:200px">Role</th>
+            <th class="nowrap">Direct Line</th>
+            <th class="nowrap">Mobile Phone1</th>
+            <th class="nowrap">Mobile Phone2</th>
+            <th class="nowrap">Mobile Phone3</th>
+            <th class="nowrap">Work Email</th>
+            <th class="nowrap">Personal Email</th>
+            @*<th class="nowrap">Business Unit</th>
+                <th class="nowrap">Budget Month</th>
+                <th class="nowrap">Remarks</th>*@
+        </tr>
+    </thead>
+</table>
 
 @Html.Script(
     @<script>
-        comResourceTable2 = $("#crtable2");
-        comResourceTable2.dataTable({
+
+         var fixedColumnTable2 = 0;
+         comResourceTable2 = $("#crtable2");
+         comResourceTable2.dataTable({
              "processing": true, // for show progress bar
              "serverSide": true, // for process server side
              "filter": true, // this is for disable filter (search box)
@@ -57,7 +56,7 @@
                  }
              },
              "columns": [
-                 { "data": "Country", "name": "Country", "orderable": true },
+                 //{ "data": "Country", "name": "Country", "orderable": true },
                  { "data": "Salutation", "name": "Salutation", "orderable": true },
                  { "data": "FirstName", "name": "FirstName", "orderable": true },
                  { "data": "LastName", "name": "LastName", "orderable": true },
@@ -91,13 +90,13 @@
                  $(nRow).attr('data-personalemail', aData["PersonalEmail"]);
                  //$(nRow).attr('data-budgetmonth', aData["BudgetMonth"]);
                  //$(nRow).attr('data-businessunit', aData["BusinessUnit"]);
+                 $(nRow).find('td:eq(1)').addClass('nowrap');
                  $(nRow).find('td:eq(2)').addClass('nowrap');
-                 $(nRow).find('td:eq(3)').addClass('nowrap');
+                 $(nRow).find('td:eq(5)').addClass('nowrap');
                  $(nRow).find('td:eq(6)').addClass('nowrap');
                  $(nRow).find('td:eq(7)').addClass('nowrap');
                  $(nRow).find('td:eq(8)').addClass('nowrap');
                  $(nRow).find('td:eq(9)').addClass('nowrap');
-                 $(nRow).find('td:eq(10)').addClass('nowrap');
              },
              initComplete: function() {
                  var _table = this;
@@ -109,18 +108,49 @@
                  filter_box.html(htmlFilter);
                  searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
              },
-        });
-        function searchBindingKeyUp(elementSearch, tableElement) {
-            elementSearch.unbind();
-            var timeOutTyping;
-            elementSearch.bind('keyup',
-                function (e) {
-                    clearTimeout(timeOutTyping);
-                    timeOutTyping = setTimeout(function () {
-                        tableElement.fnFilter(elementSearch.eq(0).val());
-                    },
-                        600);
-                });
-        }
+             scrollY: false,
+             scrollX: true,
+             "bScrollCollapse": false,
+             "drawCallback": function (settings, json) {
+                 FixedTable2();
+             },
+         });
+         function searchBindingKeyUp(elementSearch, tableElement) {
+             elementSearch.unbind();
+             var timeOutTyping;
+             elementSearch.bind('keyup',
+                 function (e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function () {
+                             tableElement.fnFilter(elementSearch.eq(0).val());
+                         },
+                         600);
+                 });
+         }
+
+         function FixedTable2() {
+             if (fixedColumnTable2 < 3) {
+                 fixedColumnTable2 ++;
+                 var fixColumn = new $.fn.dataTable.FixedColumns(comResourceTable2, {
+                     leftColumns: 3,
+                     sHeightMatch: "auto",
+                     rightColumns: 0
+                 });
+                 var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                 if ($leftWrappers.length > 1) {
+                     $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                 }
+                 var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                 if ($rightWrappers.length > 1) {
+                     $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                 }
+             }
+         }
+         $(document).on("click", ".paginate_button", function () {
+             fixedColumnTable2 = 0;
+         });
+         $(document).on("change", "select[name=table_length]", function () {
+             fixedColumnTable2 = 0;
+         });
     </script>
 )

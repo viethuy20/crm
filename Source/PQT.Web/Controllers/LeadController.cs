@@ -1365,11 +1365,12 @@ namespace PQT.Web.Controllers
 
             var currentUser = CurrentUser.Identity;
             IEnumerable<Company> companies = new HashSet<Company>();
+            IEnumerable<int> companiesInNcl = new HashSet<int>();
             var eventLead = _eventService.GetEvent(eventId);
             if (eventLead != null)
             {
                 var daysExpired = Settings.Lead.NumberDaysExpired();
-                var companiesInNcl = _repo.GetAllLeads(m => m.EventID == eventId).Where(m =>
+                companiesInNcl = _repo.GetAllLeads(m => m.EventID == eventId).Where(m =>
                     m.UserID != currentUser.ID &&
                     m.User.TransferUserID != currentUser.ID &&
                     m.User.UserStatus == UserStatus.Live &&
@@ -1378,7 +1379,7 @@ namespace PQT.Web.Controllers
                     && !m.CheckNCLExpired(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
                 companies = eventLead.EventCompanies.Where(m =>
                         m.EntityStatus == EntityStatus.Normal && m.Company != null &&
-                        m.Company.EntityStatus == EntityStatus.Normal && !companiesInNcl.Contains(m.CompanyID))
+                        m.Company.EntityStatus == EntityStatus.Normal)
                     .Select(m => m.Company);
             }
             else
@@ -1407,11 +1408,20 @@ namespace PQT.Web.Controllers
                  (!string.IsNullOrEmpty(m.Ownership) && m.Ownership.ToLower().Contains(ownership)));
             companies = companies.Where(predicate);
 
+            foreach (var company in companies)
+            {
+                company.BlockStartCall = companiesInNcl.Contains(company.ID);
+                company.ComResourceNumber = _companyRepo.GetAllCompanyResources(m=>m.CompanyID == company.ID).Count();
+            }
+
             #region sort
             if (sortColumnDir == "asc")
             {
                 switch (sortColumn)
                 {
+                    case "ComResourceNumber":
+                        companies = companies.OrderBy(s => s.ComResourceNumber).ThenBy(s => s.Tier);
+                        break;
                     case "CountryName":
                         companies = companies.OrderBy(s => s.CountryCode).ThenBy(s => s.Tier);
                         break;
@@ -1439,6 +1449,9 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
+                    case "ComResourceNumber":
+                        companies = companies.OrderByDescending(s => s.ComResourceNumber).ThenBy(s => s.Tier);
+                        break;
                     case "CountryName":
                         companies = companies.OrderByDescending(s => s.CountryCode).ThenBy(s => s.Tier);
                         break;
@@ -1481,6 +1494,8 @@ namespace PQT.Web.Controllers
                 {
                     m.ID,
                     Country = m.CountryCode,
+                    m.ComResourceNumber,
+                    m.BlockStartCall,
                     m.CompanyName,
                     m.DialingCode,
                     m.ProductOrService,

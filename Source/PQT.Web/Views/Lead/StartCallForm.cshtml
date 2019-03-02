@@ -35,8 +35,9 @@
             color: #313534;
             background-color: #e5e6e6 !important;
         }
+
     #grid_bookings td,
-    .DTFC_Cloned td{
+    .DTFC_Cloned td {
         white-space: nowrap;
     }
 </style>
@@ -63,12 +64,12 @@
                                 </div>
                                 <ul class="nav nav-justified">
                                     <li class="active"><a href="#step1" data-toggle="tab"><span class="step">1</span> <span class="title">SELECT COMPANY RESOURCE</span></a></li>
-                                    <li><a href="#step2" data-toggle="tab"><span class="step">2</span> <span class="title">START CALL</span></a></li>
+                                    <li><a href="#step2" data-toggle="tab"><span class="step">2</span> <span class="title lbl_StartCall">START CALL</span></a></li>
                                 </ul>
                             </div>
                             <div class="tab-content clearfix">
                                 <div class="tab-pane active" id="step1" style="padding-top: 50px; padding-bottom: 50px">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="card card-underline form-group">
                                             <div class="card-head">
                                                 <header>
@@ -80,7 +81,7 @@
                                                     <table class="table no-margin" id="grid_companies">
                                                         <thead>
                                                             <tr>
-                                                                <th></th>
+                                                                <th class="hide"></th>
                                                                 <th>Country</th>
                                                                 <th>Company</th>
                                                                 <th>Product/Service</th>
@@ -88,50 +89,13 @@
                                                                 <th>Industry</th>
                                                                 <th>Business Unit</th>
                                                                 <th>Ownership</th>
+                                                                <th>Company Resources</th>
                                                             </tr>
                                                         </thead>
                                                     </table>
                                                 </div>
                                             </div><!--end .card-body -->
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="card card-underline form-group">
-                                            <div class="card-head">
-                                                <header><b>Company Resources</b></header>
-                                            </div><!--end .card-head -->
-                                            <div class="form">
-                                                <div class="card-body ">
-                                                    @Html.Partial("_CompanyResourceList", 0)
-                                                </div>
-                                            </div>
-                                        </div><!--end .card -->
-                                        <div class="card card-underline form-group">
-                                            <div class="card-head">
-                                                <header><b>Past Bookings</b></header>
-                                            </div><!--end .card-head -->
-                                            <div class="form">
-                                                <div class="card-body ">
-                                                        <table class="table no-margin" id="grid_bookings">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Event Name</th>
-                                                                    <th>Event Code</th>
-                                                                    <th>Event Date</th>
-                                                                    <th>Delegate Name</th>
-                                                                    <th>Delegate Drirect Line</th>
-                                                                    <th>Delegate Mobile1</th>
-                                                                    <th>Delegate Mobile2</th>
-                                                                    <th>Delegate Mobile3</th>
-                                                                    <th>Delegate Work Email</th>
-                                                                    <th>Delegate Personal Email</th>
-                                                                    <th>Attendance Status</th>
-                                                                </tr>
-                                                            </thead>
-                                                        </table>
-                                                </div>
-                                            </div>
-                                        </div><!--end .card -->
                                     </div>
                                 </div><!--end #step1 -->
                                 <div class="tab-pane" id="step2" style="padding-top: 50px; padding-bottom: 50px">
@@ -147,7 +111,7 @@
                                 <li class="next"><a class="btn-raised" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;" href="javascript:void(0);">Next Call Info <i class="md md-arrow-forward"></i></a></li>
                                 <li class="finish ">
                                     <button type="submit" class="btn btn-primary pull-right" style="position: fixed;bottom: 50px;right: 185px;display: block;z-index: 1006;" id="requestnewevent"><i class="md md-phone-forwarded"></i> Request New Event</button>
-                                    <button type="submit" class="btn btn-success pull-right" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;" id="endcall_save"><i class="md md-call-end"></i> Finish Call</button>
+                                    <button type="submit" class="btn btn-success pull-right" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;" id="endcall_save"><i class="md md-call-end"></i> <span class="lbl_FinishCall">Finish Call</span></button>
                                 </li>
                             </ul>
                         }
@@ -159,7 +123,10 @@
 </section>
 <a class="btn ink-reaction btn-floating-action btn-primary" id="btncanvas-comResource" title="Company Resource"
    href="#offcanvas-comResource" data-toggle="offcanvas"
-   style="position: fixed; top: 130px; right: 0; display: block; z-index: 1006;"><i class="md md-list"></i></a>
+   style="position: fixed; top: 80px; right: 0; display: block; z-index: 1006;"><i class="md md-list"></i></a>
+<a class="btn ink-reaction btn-floating-action btn-primary" id="btncanvas-comBooking" title="Past Bookings"
+   href="#offcanvas-comBooking" data-toggle="offcanvas"
+   style="position: fixed; top: 130px; right: 0; display: block; z-index: 1006;"><i class="fa fa-database"></i></a>
 
 <div class="offcanvas">
     <div id="offcanvas-comResource" class="offcanvas-pane width-12" style="">
@@ -171,8 +138,39 @@
                 </a>
             </div>
         </div>
-        <div class="offcanvas-body">
+        <div class="offcanvas-body" style="padding: 0; margin-right: 7px;position: relative;">
             @Html.Partial("_CompanyResourceList3", 0)
+        </div>
+    </div>
+</div>
+<div class="offcanvas">
+    <div id="offcanvas-comBooking" class="offcanvas-pane width-12" style="">
+        <div class="offcanvas-head">
+            <header>Past Bookings</header>
+            <div class="offcanvas-tools" style="left:initial">
+                <a class="btn btn-icon-toggle btn-default-light pull-right" data-dismiss="offcanvas">
+                    <i class="md md-close"></i>
+                </a>
+            </div>
+        </div>
+        <div class="offcanvas-body" style="padding: 0;position: relative;">
+            <table class="table no-margin" id="grid_bookings">
+                <thead>
+                    <tr>
+                        <th style="white-space:nowrap">Event Code</th>
+                        <th style="white-space:nowrap">Event Name</th>
+                        <th style="white-space:nowrap">Event Date</th>
+                        <th style="white-space:nowrap">Delegate Name</th>
+                        <th style="white-space:nowrap">Delegate Drirect Line</th>
+                        <th style="white-space:nowrap">Delegate Mobile1</th>
+                        <th style="white-space:nowrap">Delegate Mobile2</th>
+                        <th style="white-space:nowrap">Delegate Mobile3</th>
+                        <th style="white-space:nowrap">Delegate Work Email</th>
+                        <th style="white-space:nowrap">Delegate Personal Email</th>
+                        <th style="white-space:nowrap">Attendance Status</th>
+                    </tr>
+                </thead>
+            </table>
         </div>
     </div>
 </div>
@@ -183,8 +181,10 @@
              var wCavas = (windowW / 2).toFixed(0);
              if (wCavas < 480) {
                  $('#offcanvas-comResource').css('width', '480px');
+                 $('#offcanvas-comBooking').css('width', '480px');
              } else {
                  $('#offcanvas-comResource').css('width', wCavas+ 'px');
+                 $('#offcanvas-comBooking').css('width', wCavas+ 'px');
              }
          }
 
@@ -200,6 +200,7 @@
          var company_remark_selected = '@Model.EventCompany.Remarks';
          var company_budget_selected = '@Model.EventCompany.BudgetMonth';
          var company_dialingCode_selected = '@Model.DialingCode';
+         var company_block_start_call_selected = false;
          var tableCompanies = $("#grid_companies").DataTable({
              "processing": true, // for show progress bar
              "serverSide": true, // for process server side
@@ -229,7 +230,8 @@
                  { "data": "Sector", "name": "Sector", "orderable": true },
                  { "data": "Industry", "name": "Industry", "orderable": true },
                  { "data": "BusinessUnit", "name": "BusinessUnit", "orderable": true },
-                 { "data": "Ownership", "name": "Ownership", "orderable": true }
+                 { "data": "Ownership", "name": "Ownership", "orderable": true },
+                 { "data": "ComResourceNumber", "name": "ComResourceNumber", "orderable": true }
              ],
              'columnDefs': [
                  {
@@ -248,6 +250,7 @@
              "aaSorting": [[0, "asc"]],
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  var rowId = aData["ID"];
+                 $(nRow).find('td:eq(0)').addClass("hide");
                  $(nRow).find('input[type="checkbox"]').val(rowId);
                  @*if ('@CurrentUser.HasPermission("Company", "Detail")' == 'True') {
                      $(nRow).find('td:eq(8)').html('<a target="_blank" href="@Url.Action("Detail","Company")?id=' +
@@ -256,6 +259,7 @@
                  } else {
                      $(nRow).find('td:eq(8)').html('');
                  }*@
+                 $(nRow).find('td:eq(8)').css("text-align", "center");
                  $(nRow).attr('data-id', rowId);
                  $(nRow).addClass('Tier' + aData["Tier"]);
                  if (company_id_selected_val == rowId) {
@@ -312,6 +316,7 @@
              //var rowBudget = data.BudgetMonth;
              var rowBudget = data.FinancialYear;
              var rowRemark = data.Remarks;
+             var rowBlockCall = data.BlockStartCall;
 
 
              // If checkbox is checked and row ID is not in list of selected row IDs
@@ -323,6 +328,7 @@
                  company_business_selected = rowBusiness;
                  company_remark_selected = rowRemark;
                  company_budget_selected = rowBudget;
+                 company_block_start_call_selected = rowBlockCall;
                  LoadCompanyResources();
                  // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
              } else if (!$this.checked) {
@@ -333,6 +339,7 @@
                  company_business_selected = "";
                  company_remark_selected = "";
                  company_budget_selected = "";
+                 company_block_start_call_selected = false;
                  $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").removeAttr("readonly");
                  ClearDataSelected();
              }
@@ -365,7 +372,7 @@
          function LoadCompanyResources() {
              if (company_id_selected_val >= 0) {
                  fixedColumn = 0;
-                 comResourceTable.fnFilter('');
+                 //comResourceTable.fnFilter('');
                  comResourceTable2.fnFilter('');
                  table_bookings.fnFilter('');
              }
@@ -420,14 +427,22 @@
                  if (index == 1) {
                      $(".next").addClass("hide");
                      $(".finish").removeClass("hide");
+                     if (company_block_start_call_selected) {
+                         $(".lbl_StartCall").text("Existing inside NCL");
+                         $(".lbl_FinishCall").text("Existing inside NCL");
+                         $("#endcall_save").attr("disabled", "disabled");
+                     }
                      //LoadEventCompanyInfo();
-                     $("#btncanvas-comResource").removeClass("hide");
+                     //$("#btncanvas-comResource").removeClass("hide");
                      addDialingCode();
                      StartTick();
                  } else {
                      $(".next").removeClass("hide");
                      $(".finish").addClass("hide");
-                     $("#btncanvas-comResource").addClass("hide");
+                     $(".lbl_StartCall").text("Start Call");
+                     $(".lbl_FinishCall").text("Finish Call");
+                     $("#endcall_save").removeAttr("disabled");
+                     //$("#btncanvas-comResource").addClass("hide");
                      tickStarted = false;
                  }
                  window.scroll(0, 0);
@@ -598,8 +613,8 @@
                      }
                  },
                  "columns": [
-                     { "data": "EventName", "name": "EventName", "orderable": true },
                      { "data": "EventCode", "name": "EventCode", "orderable": true },
+                     { "data": "EventName", "name": "EventName", "orderable": true },
                      { "data": "EventDate", "name": "EventDate", "orderable": true },
                      { "data": "DelegateName", "name": "DelegateName", "orderable": true },
                      { "data": "DirectLine", "name": "DirectLine", "orderable": true },
@@ -612,7 +627,9 @@
                  ],
                  "iDisplayLength": 25,
                  "aaSorting": [[0, "asc"]],
-                 "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                     $(nRow).find('td:eq(0)').addClass('text-center');
+                     $(nRow).find('td:eq(10)').addClass('text-center');
                  },
                  initComplete: function() {
                      var _table = this;
@@ -632,9 +649,9 @@
                      FixedTable();
                  },
         });
-        
+
         function FixedTable() {
-            if (fixedColumn < 3) {
+            if (fixedColumn < 4) {
                 fixedColumn ++;
                 var fixColumn = new $.fn.dataTable.FixedColumns(table_bookings, {
                     leftColumns: 1,

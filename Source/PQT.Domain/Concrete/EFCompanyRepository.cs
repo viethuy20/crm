@@ -57,7 +57,11 @@ namespace PQT.Domain.Concrete
             {
                 return null;
             }
-            return Get<Company>(m => m.CompanyName.Trim().ToLower() == name.Trim().ToLower());
+            return Get<Company>(m => m.CompanyName.Trim().ToLower() == name.Trim().ToLower(), m => new
+            {
+                m.Country,
+                m.ManagerUsers,
+            });
         }
 
         public virtual Company CreateCompany(Company company, IEnumerable<int> users)
