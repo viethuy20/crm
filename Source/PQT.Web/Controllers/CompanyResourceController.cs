@@ -58,7 +58,7 @@ namespace PQT.Web.Controllers
             }
             if (ModelState.IsValid)
             {
-                model.CompanyResource.Country = _unitRepo.GetCountry((int)model.CompanyResource.CountryID).Name;
+                model.CompanyResource.Country = _unitRepo.GetCountry((int)model.CompanyResource.CountryID).Code;
                 if (model.CompanyResource.ID == 0)
                 {
                     TransactionWrapper.Do(() =>
