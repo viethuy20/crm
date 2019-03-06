@@ -56,16 +56,7 @@ namespace PQT.Domain.Concrete
             }
             else
             {
-                var counter = Get<Counter>(c => c.Name == "Invoice");
-                if (counter != null)
-                {
-                    var resultString = Regex.Match(info.InvoiceNo, @"\d+").Value;
-                    if (!string.IsNullOrEmpty(resultString))
-                    {
-                        counter.Value = Int32.Parse(resultString);
-                        Update(counter);
-                    }
-                }
+                SetCounter("Invoice", info.InvoiceNo);
             }
             return Create(info);
         }

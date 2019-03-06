@@ -3,14 +3,10 @@
 @using NS.Mvc
 @using PQT.Domain.Abstract
 @using Resources
-@model PQT.Domain.Entities.RecruitmentPosition
-    @{ 
-        var _roleService = DependencyHelper.GetService<IRoleService>();
-        var roles = _roleService.GetAllRoles();
-    }
+@model PQT.Web.Models.RecruitmentPositionModel
 <div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
     <div class="card-head">
-        <header>@(Model.ID > 0 ? "Edit Data" : "Add New Data")</header>
+        <header>@(Model.RecruitmentPosition.ID > 0 ? "Edit Data" : "Add New Data")</header>
     </div><!--end .card-head -->
 
     @using (Ajax.BeginForm("CreateOrEdit", "routeValues", new AjaxOptions { HttpMethod = "Post", OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
@@ -28,14 +24,25 @@
                     @Html.Bootstrap().Label("error").HtmlAttributes(new { @class = "texterror" }).LabelText(Resource.SaveFailed)
                 }
             </div>
-            @Html.HiddenFor(m => m.ID)
+            @Html.HiddenFor(m => m.RecruitmentPosition.ID)
+            @Html.HiddenFor(m => m.RecruitmentPosition.RecruitmentPositionStatus)
+            @Html.HiddenFor(m => m.RecruitmentPosition.StatusDateTime)
+            @Html.HiddenFor(m => m.RecruitmentPosition.StatusMessage)
             <div class="form-group">
-                @Html.Bootstrap().DropDownListFor(m => m.Department, roles.ToSelectList(m => m.Name, m => m.Name)).Class("form-control text-capitalize").HtmlAttributes(new { required = "required" }).OptionLabel("").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Department).ShowRequiredStar(true)
+                @Html.Bootstrap().TextBoxFor(m => m.RecruitmentPosition.PositionNo).Class("form-control code").HtmlAttributes(new {required = "required"}).ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.RecruitmentPosition.PositionNo).LabelText("Position ID").ShowRequiredStar(true)
             </div>
             <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Position).Class("form-control text-capitalize").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Position).ShowRequiredStar(true)
+                @Html.Bootstrap().DropDownListFor(m => m.RecruitmentPosition.Department, Model.Roles.ToSelectList(m => m.Name, m => m.Name)).Class("form-control text-capitalize").HtmlAttributes(new { required = "required" }).OptionLabel("").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.RecruitmentPosition.Department).ShowRequiredStar(true)
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.RecruitmentPosition.Position).Class("form-control text-capitalize").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.RecruitmentPosition.Position).ShowRequiredStar(true)
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().DropDownListFor(m => m.RecruitmentPosition.OfficeLocationID, Model.OfficeLocations.ToSelectList(m => m.ID, m => m.Name)).HtmlAttributes(new { required = "required" }).Class("form-control").HtmlAttributes(new { required = "required" }).OptionLabel("").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.RecruitmentPosition.OfficeLocation).ShowRequiredStar(true)
             </div>
             <div class="form-group">
                 <div class="pull-right">

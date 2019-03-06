@@ -417,6 +417,7 @@
     <Compile Include="Models\MenuModel.cs" />
     <Compile Include="Models\EventModel.cs" />
     <Compile Include="Models\RecruitmentModel.cs" />
+    <Compile Include="Models\RecruitmentPositionModel.cs" />
     <Compile Include="Models\RoleModel.cs" />
     <Compile Include="Models\SalesGroupModel.cs" />
     <Compile Include="Models\SettingModel.cs" />
@@ -488,6 +489,7 @@
     </Compile>
     <Compile Include="Validation\BookingValidator.cs" />
     <Compile Include="Validation\CandidateValidator.cs" />
+    <Compile Include="Validation\RecruitmentPositionValidator.cs" />
     <Compile Include="Validation\OfficeLocationValidator.cs" />
     <Compile Include="Validation\LeadValidator.cs" />
     <Compile Include="Validation\TrainerValidator.cs" />

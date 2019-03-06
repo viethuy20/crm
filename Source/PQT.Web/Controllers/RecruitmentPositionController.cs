@@ -30,53 +30,31 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Create Or Edit")]
         public ActionResult CreateOrEdit(int id = 0)
         {
-            var model = new RecruitmentPosition();
-            if (id > 0)
-            {
-                model = _unitRepo.GetRecruitmentPosition(id);
-            }
+            var model = new RecruitmentPositionModel();
+            model.Prepare(id);
             return PartialView(model);
         }
         [HttpPost]
         [DisplayName(@"Create Or Edit")]
-        public ActionResult CreateOrEdit(RecruitmentPosition model)
+        public ActionResult CreateOrEdit(RecruitmentPositionModel model)
         {
             if (ModelState.IsValid)
             {
-                if (model.ID == 0)
-                {
-                    if (_unitRepo.CreateRecruitmentPosition(model) != null)
-                    {
-                        return Json(new
-                        {
-                            Code = 1,
-                            Model = model
-                        });
-                    }
+                var exist = _unitRepo.GetRecruitmentPosition(model.RecruitmentPosition.Position,
+                    model.RecruitmentPosition.OfficeLocationID);
+                if (exist != null && exist.ID != model.RecruitmentPosition.ID)
                     return Json(new
                     {
-                        Code = 2
+                        Code = 6
                     });
-                } 
-                if (_unitRepo.UpdateRecruitmentPosition(model))
-                {
-                    return Json(new
-                    {
-                        Code = 3,
-                        Model = model
-                    });
-                }
-                return Json(new
-                {
-                    Code = 4
-                });
+                return Json(model.SaveData());
             }
             return Json(new
             {
                 Code = 5
             });
         }
-        
+
         public ActionResult Delete(int id)
         {
             if (_unitRepo.DeleteRecruitmentPosition(id))

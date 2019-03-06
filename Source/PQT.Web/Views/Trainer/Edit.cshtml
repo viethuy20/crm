@@ -12,6 +12,7 @@
         {
             <div class="card-body">
                 @Html.HiddenFor(m => m.Trainer.ID)
+                @Html.HiddenFor(m => m.Trainer.CreatedTime)
                 @Html.Partial("_CreateOrEdit", Model)
                 <div class="row">
                     <div class="form-group  col-md-offset-2">

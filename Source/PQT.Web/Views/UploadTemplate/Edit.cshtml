@@ -10,7 +10,8 @@
     </div>
     @using (Html.BeginForm("Edit", "UploadTemplate", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
     {
-        @Html.HiddenFor(m=>m.ID)
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CreatedTime)
         @Html.Partial("_CreateOrEdit", Model)
         <div class="row">
             <div class="form-group  col-md-offset-2">

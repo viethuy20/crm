@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Text.RegularExpressions;
 using PQT.Domain.Entities;
 using PQT.Domain.Helpers;
 using NS;
@@ -33,6 +34,17 @@ namespace PQT.Domain
             Update(counter);
 
             return counter.Value;
+        }
+        public void SetCounter(string name, string value)
+        {
+            var resultString = Regex.Match(value, @"\d+").Value;
+            if (!string.IsNullOrEmpty(resultString))
+            {
+                Counter counter = Get<Counter>(c => c.Name == name)
+                                  ?? Create(new Counter(name, 0));
+                counter.Value = Convert.ToInt32(resultString);
+                Update(counter);
+            }
         }
         public int GetNextTempCounter(string name, int defaultValue = 1)
         {

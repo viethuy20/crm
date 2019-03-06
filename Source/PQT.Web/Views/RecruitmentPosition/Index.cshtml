@@ -22,8 +22,11 @@
             <table class="table" id="table">
                 <thead>
                     <tr>
+                        <th>Position ID</th>
                         <th>Department</th>
                         <th>Position</th>
+                        <th>Location</th>
+                        <th>Status</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -31,13 +34,16 @@
                     @foreach (var item in Model)
                     {
                         <tr data-id="@item.ID">
+                            <td>@item.PositionNo</td>
                             <td>@item.Department</td>
                             <td>@item.Position</td>
+                            <td>@item.OfficeLocationName</td>
+                            <td>@Html.Raw(item.RecruitmentPositionStatusDisplay)</td>
                             <td>
-                                <a href="@Url.Action("CreateOrEdit", new {id = item.ID})" data-action="edit" class="simple-ajax-popup-align-top">
+                                <a title="Edit" href="@Url.Action("CreateOrEdit", new {id = item.ID})" data-action="edit" class="simple-ajax-popup-align-top">
                                     <i class="md md-edit text-info"></i>
                                 </a> | 
-                                <a href="#" data-action="delete" data-id="@item.ID">
+                                <a title="Delete" href="#" data-action="delete" data-id="@item.ID">
                                     <i class="md md-delete text-danger"></i>
                                 </a>
                             </td>
@@ -106,17 +112,22 @@
                 if (data.Code == 4)
                     $(".texterror").text('@Resource.SaveError');
                 if (data.Code == 5)
-                    $(".texterror").text("@Resource.CodeExists");
+                    $(".texterror").text("ID exists");
+                if (data.Code == 6)
+                    $(".texterror").text("Position & Location exists");
                 $(".error").removeClass('hide');
             }
         }
 
         function addNewLineItem(data) {
             var rowIndex = $Table.fnAddData([
+                data.PositionNo,
                 data.Department,
                 data.Position,
-                '<a class="simple-ajax-popup-align-top" data-action="edit" href="@Url.Action("CreateOrEdit")?id=' + data.ID + '"><i class="md md-edit text-info"></i></a> | ' +
-                '<a data-action="delete" data-id="' + data.ID + '" href="#"><i class="md md-delete text-danger"></i></a>'
+                data.OfficeLocationName,
+                data.RecruitmentPositionStatusDisplay,
+                '<a  title="Edit" class="simple-ajax-popup-align-top" data-action="edit" href="@Url.Action("CreateOrEdit")?id=' + data.ID + '"><i class="md md-edit text-info"></i></a> | ' +
+                '<a  title="Delete" data-action="delete" data-id="' + data.ID + '" href="#"><i class="md md-delete text-danger"></i></a>'
             ]);
             var row = $Table.fnGetNodes(rowIndex);
             $(row).attr('data-id', data.ID);
@@ -127,8 +138,11 @@
                 if ($(item).data('id') == data.ID) {
                     var td = $(item).find("td");
                     if (td.length > 0) {
-                        $(td[0]).text(data.Department);
-                        $(td[1]).text(data.Position);
+                        $(td[0]).text(data.PositionNo);
+                        $(td[1]).text(data.Department);
+                        $(td[2]).text(data.Position);
+                        $(td[3]).text(data.OfficeLocationName);
+                        $(td[4]).text(data.RecruitmentPositionStatusDisplay);
                     }
                 }
             });

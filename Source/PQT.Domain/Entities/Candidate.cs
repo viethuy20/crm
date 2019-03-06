@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
+using NS;
+using PQT.Domain.Enum;
 using PQT.Domain.Helpers;
 
 namespace PQT.Domain.Entities
@@ -169,9 +172,51 @@ namespace PQT.Domain.Entities
 
     public class RecruitmentPosition : EntityBase
     {
+        public RecruitmentPosition()
+        {
+            RecruitmentPositionStatus = RecruitmentPositionStatus.Request;
+        }
         public string Department { get; set; }
         public string Position { get; set; }
+        public string PositionNo { get; set; }
+        public int? OfficeLocationID { get; set; }
+        [ForeignKey("OfficeLocationID")]
+        public virtual OfficeLocation OfficeLocation { get; set; }
+
+        public RecruitmentPositionStatus RecruitmentPositionStatus { get; set; }
+        public DateTime? StatusDateTime { get; set; }
+        public string StatusMessage { get; set; }
 
         public string Description { get { return Department + " - " + Position; } }
+        public string OfficeLocationName
+        {
+            get
+            {
+                if (OfficeLocation != null)
+                    return OfficeLocation.Name;
+                return "";
+            }
+        }
+        public string RecruitmentPositionStatusDisplay
+        {
+            get
+            {
+                if (RecruitmentPositionStatus != null &&
+                    RecruitmentPositionStatus == RecruitmentPositionStatus.Rejected)
+                    return RecruitmentPositionStatus.DisplayName + 
+                        "<br/><span class='text-danger'>" + StatusMessage + "</span>";
+                if (RecruitmentPositionStatus != null)
+                    return RecruitmentPositionStatus.DisplayName;
+                return "";
+            }
+        }
+    }
+
+    public class RecruitmentPositionStatus : Enumeration
+    {
+        public static readonly RecruitmentPositionStatus Deleted = New<RecruitmentPositionStatus>(0, "Deleted");
+        public static readonly RecruitmentPositionStatus Request = New<RecruitmentPositionStatus>(1, "Request");
+        public static readonly RecruitmentPositionStatus Approved = New<RecruitmentPositionStatus>(2, "Approved");
+        public static readonly RecruitmentPositionStatus Rejected = New<RecruitmentPositionStatus>(3, "Rejected");
     }
 }

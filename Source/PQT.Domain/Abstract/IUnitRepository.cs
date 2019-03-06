@@ -48,8 +48,11 @@ namespace PQT.Domain.Abstract
         #endregion OfficeLocation
 
         #region RecruitmentPosition
+        string GetTempRecruitmentPositionNo();
         IEnumerable<RecruitmentPosition> GetAllRecruitmentPositions();
         RecruitmentPosition GetRecruitmentPosition(int id);
+        RecruitmentPosition GetRecruitmentPositionByNumber(string number);
+        RecruitmentPosition GetRecruitmentPosition(string position,int? locationId);
         RecruitmentPosition CreateRecruitmentPosition(RecruitmentPosition info);
         bool UpdateRecruitmentPosition(RecruitmentPosition holiday);
         bool DeleteRecruitmentPosition(int id);

@@ -16,6 +16,7 @@
             </div>
         </div>
         @Html.HiddenFor(m => m.Event.ID)
+        @Html.HiddenFor(m => m.Event.CreatedTime)
         @Html.Partial("_CreateOrEdit", Model)
         <div class="row">
             <div class="form-group  col-md-offset-2">

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PQT.Domain.Concrete
 {
@@ -268,6 +269,10 @@ namespace PQT.Domain.Concrete
         #region RecruitmentPosition
 
 
+        public string GetTempRecruitmentPositionNo()
+        {
+            return string.Format("RP{0}", GetNextTempCounter("RecruitmentPosition", 1).ToString("D3"));
+        }
         public IEnumerable<RecruitmentPosition> GetAllRecruitmentPositions()
         {
             return GetAll<RecruitmentPosition>().AsEnumerable();
@@ -277,9 +282,30 @@ namespace PQT.Domain.Concrete
         {
             return Get<RecruitmentPosition>(id);
         }
+        public RecruitmentPosition GetRecruitmentPositionByNumber(string number)
+        {
+            return Get<RecruitmentPosition>(m =>
+                m.PositionNo != null && m.PositionNo.ToUpper().Trim() == number.ToUpper().Trim());
+        }
+public RecruitmentPosition GetRecruitmentPosition(string position, int? locationId)
+        {
+            return Get<RecruitmentPosition>(m =>
+                m.Position != null && 
+                m.Position.ToUpper().Trim() == position.ToUpper().Trim() &&
+                m.OfficeLocationID == locationId);
+        }
 
         public RecruitmentPosition CreateRecruitmentPosition(RecruitmentPosition info)
         {
+            var tempNo = GetTempRecruitmentPositionNo();
+            if (tempNo == info.PositionNo)
+            {
+                info.PositionNo = string.Format("RP{0}", GetNextCounter("RecruitmentPosition", 1).ToString("D3"));
+            }
+            else
+            {
+                SetCounter("RecruitmentPosition", info.PositionNo);
+            }
             return Create(info);
         }
 
