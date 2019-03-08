@@ -13,6 +13,7 @@ using PQT.Web.Infrastructure.Filters;
 using PQT.Web.Infrastructure.Helpers;
 using PQT.Web.Infrastructure.Utility;
 using PQT.Web.Models;
+using Resources;
 
 namespace PQT.Web.Controllers
 {
@@ -55,6 +56,73 @@ namespace PQT.Web.Controllers
                     Code = 6,
                     error = "Country should not be empty."
                 });
+            }
+            string error = "";
+            CompanyResource existResources = null;
+            if (!string.IsNullOrEmpty(model.CompanyResource.DirectLine))
+            {
+                existResources =
+                    _comRepo.GetAllCompanyResources(
+                            m => m.ID != model.CompanyResource.ID && 
+                            !string.IsNullOrEmpty(m.DirectLine) &&
+                                  m.DirectLine == model.CompanyResource.DirectLine)
+                        .FirstOrDefault();
+                if (existResources != null)
+                {
+                    ModelState.AddModelError("CompanyResource.DirectLine", @"Phone number exising");
+                    error = "Phone number exising";
+                }
+            }
+            if (!string.IsNullOrEmpty(model.CompanyResource.MobilePhone1))
+            {
+                existResources =
+                    _comRepo.GetAllCompanyResources(
+                            m => m.ID != model.CompanyResource.ID &&
+                                 !string.IsNullOrEmpty(m.MobilePhone1) &&
+                                 m.MobilePhone1 == model.CompanyResource.MobilePhone1)
+                        .FirstOrDefault();
+                if (existResources != null)
+                {
+                    ModelState.AddModelError("CompanyResource.MobilePhone1", @"Phone number exising");
+                    error = "Phone number exising";
+                }
+            }
+            if (!string.IsNullOrEmpty(model.CompanyResource.MobilePhone2))
+            {
+                existResources =
+                    _comRepo.GetAllCompanyResources(
+                            m => m.ID != model.CompanyResource.ID &&
+                                 !string.IsNullOrEmpty(m.MobilePhone2) &&
+                                 m.MobilePhone2 == model.CompanyResource.MobilePhone2)
+                        .FirstOrDefault();
+                if (existResources != null)
+                {
+                    ModelState.AddModelError("CompanyResource.MobilePhone2", @"Phone number exising");
+                    error = "Phone number exising";
+                }
+            }
+            if (!string.IsNullOrEmpty(model.CompanyResource.MobilePhone3))
+            {
+                existResources =
+                    _comRepo.GetAllCompanyResources(
+                            m => m.ID != model.CompanyResource.ID &&
+                                 !string.IsNullOrEmpty(m.MobilePhone3) &&
+                                 m.MobilePhone3 == model.CompanyResource.MobilePhone3)
+                        .FirstOrDefault();
+                if (existResources != null)
+                {
+                    error = "Phone number exising";
+                    ModelState.AddModelError("CompanyResource.MobilePhone3", @"Phone number exising");
+                }
+            }
+
+            if (string.IsNullOrEmpty(model.CompanyResource.DirectLine) &&
+                string.IsNullOrEmpty(model.CompanyResource.MobilePhone1) &&
+                string.IsNullOrEmpty(model.CompanyResource.MobilePhone2) &&
+                string.IsNullOrEmpty(model.CompanyResource.MobilePhone3))
+            {
+                ModelState.AddModelError("CompanyResource.DirectLine", @"Phone number must not be empty");
+                error = "Phone number must not be empty";
             }
             if (ModelState.IsValid)
             {
@@ -130,7 +198,8 @@ namespace PQT.Web.Controllers
             }
             return Json(new
             {
-                Code = 5
+                Code = 5,
+                error
             });
         }
 

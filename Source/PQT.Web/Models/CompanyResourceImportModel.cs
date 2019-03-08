@@ -81,6 +81,14 @@ namespace PQT.Web.Models
                         temp.MobilePhone1 = dtRow[7].ToString();
                         temp.MobilePhone2 = dtRow[8].ToString();
                         temp.MobilePhone3 = dtRow[9].ToString();
+
+                        if (string.IsNullOrEmpty(temp.DirectLine) &&
+                            string.IsNullOrEmpty(temp.MobilePhone1) &&
+                            string.IsNullOrEmpty(temp.MobilePhone2) &&
+                            string.IsNullOrEmpty(temp.MobilePhone3))
+                        {
+                            temp.Error += "- Phone number must be empty<br/>";
+                        }
                         temp.WorkEmail = dtRow[10].ToString();
                         temp.PersonalEmail = dtRow[11].ToString();
                         temp.BusinessUnit = dtRow[12].ToString();
@@ -132,25 +140,41 @@ namespace PQT.Web.Models
             var userId = CurrentUser.Identity.ID;
             foreach (var com in CompanyResources)
             {
-                var comExist = comRepo.GetCompany(com.Organisation);
-                if (comExist == null)
+                var existResources =
+                    comRepo.GetAllCompanyResources(
+                        m =>
+                            m.Role == com.Role && (
+                                (!string.IsNullOrEmpty(m.DirectLine) && !string.IsNullOrEmpty(com.DirectLine) &&
+                                 m.DirectLine == com.DirectLine) ||
+                                (!string.IsNullOrEmpty(m.MobilePhone1) && !string.IsNullOrEmpty(com.MobilePhone1) &&
+                                 m.MobilePhone1 == com.MobilePhone1) ||
+                                (!string.IsNullOrEmpty(m.MobilePhone2) && !string.IsNullOrEmpty(com.MobilePhone2) &&
+                                 m.MobilePhone2 == com.MobilePhone2) ||
+                                (!string.IsNullOrEmpty(m.MobilePhone3) && !string.IsNullOrEmpty(com.MobilePhone3) &&
+                                 m.MobilePhone3 == com.MobilePhone3))).ToList();
+                //var eventCompany = _repo.GetEventCompany(lead.EventID, lead.CompanyID);
+                if (!existResources.Any())
                 {
-                    var newCom = new Company
+                    var comExist = comRepo.GetCompany(com.Organisation);
+                    if (comExist == null)
                     {
-                        CountryID = com.CountryID,
-                        CompanyName = com.Organisation,
-                    };
-                    newCom = comRepo.CreateCompany(newCom, new List<int>());
-                    com.CompanyID = newCom.ID;
+                        var newCom = new Company
+                        {
+                            CountryID = com.CountryID,
+                            CompanyName = com.Organisation,
+                        };
+                        newCom = comRepo.CreateCompany(newCom, new List<int>());
+                        com.CompanyID = newCom.ID;
+                    }
+                    else
+                    {
+                        com.CompanyID = comExist.ID;
+                        //comExist.BusinessUnit = com.BusinessUnit;
+                        //comExist.BudgetMonth = com.BudgetMonth;
+                        //comRepo.UpdateCompany(comExist);
+                    }
+                    comRepo.CreateCompanyResource(com);
                 }
-                else
-                {
-                    com.CompanyID = comExist.ID;
-                    //comExist.BusinessUnit = com.BusinessUnit;
-                    //comExist.BudgetMonth = com.BudgetMonth;
-                    //comRepo.UpdateCompany(comExist);
-                }
-                comRepo.CreateCompanyResource(com);
                 count++;
                 var json = new
                 {

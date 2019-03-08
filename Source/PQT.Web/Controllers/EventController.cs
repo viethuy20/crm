@@ -343,10 +343,15 @@ namespace PQT.Web.Controllers
                     var existResources =
                         companyResources.Where(
                             m =>
-                                (m.DirectLine != null && m.DirectLine == lead.DirectLine) ||
-                                (m.MobilePhone1 != null && m.MobilePhone1 == lead.MobilePhone1) ||
-                                (m.MobilePhone2 != null && m.MobilePhone2 == lead.MobilePhone2) ||
-                                (m.MobilePhone3 != null && m.MobilePhone3 == lead.MobilePhone3));
+                                m.Role == lead.JobTitle && (
+                                (!string.IsNullOrEmpty(m.DirectLine) && !string.IsNullOrEmpty(lead.DirectLine) &&
+                                 m.DirectLine == lead.DirectLine) ||
+                                (!string.IsNullOrEmpty(m.MobilePhone1) && !string.IsNullOrEmpty(lead.MobilePhone1) &&
+                                 m.MobilePhone1 == lead.MobilePhone1) ||
+                                (!string.IsNullOrEmpty(m.MobilePhone2) && !string.IsNullOrEmpty(lead.MobilePhone2) &&
+                                 m.MobilePhone2 == lead.MobilePhone2) ||
+                                (!string.IsNullOrEmpty(m.MobilePhone3) && !string.IsNullOrEmpty(lead.MobilePhone3) &&
+                                 m.MobilePhone3 == lead.MobilePhone3))).ToList();
                     //var eventCompany = _repo.GetEventCompany(lead.EventID, lead.CompanyID);
                     if (existResources.Any())
                     {

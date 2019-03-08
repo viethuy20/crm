@@ -24,57 +24,56 @@
     </div>
     <div class="card">
         <div class="card-body">
-        @using (Html.BeginForm("PrintExcel", "CompanyResource", null, FormMethod.Post, new {@class = "form no_loader"}))
-        {
-            <div class="row ">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Country).HtmlAttributes(new {@class = "input-clear form-control"})
-                        <label>Country</label>
+            @using (Html.BeginForm("PrintExcel", "CompanyResource", null, FormMethod.Post, new { @class = "form no_loader" }))
+            {
+                <div class="row ">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Country).HtmlAttributes(new { @class = "input-clear form-control" })
+                            <label>Country</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Organisation).HtmlAttributes(new { @class = "input-clear form-control" })
+                            <label>Company</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Name).HtmlAttributes(new { @class = "input-clear form-control" })
+                            <label>Name</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Mobile).HtmlAttributes(new { @class = "input-clear form-control" })
+                            <label>Mobile</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Email).HtmlAttributes(new { @class = "input-clear form-control" })
+                            <label>Email</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Role).HtmlAttributes(new { @class = "input-clear form-control" })
+                            <label>Job Title</label>
+                        </div>
                     </div>
                 </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Organisation).HtmlAttributes(new {@class = "input-clear form-control"})
-                        <label>Company</label>
+                <div class="row">
+                    <div class="col-md-offset-4">
+                        @Html.Bootstrap().Button().Text("Clear").Id("btnClear").PrependIcon("md md-close").Size(ButtonSize.Mini).HtmlAttributes(new { @class = "btn btn-default" })
+                        @Html.Bootstrap().Button().Text("Search").Id("btnSearch").PrependIcon("md md-search").Size(ButtonSize.Mini).HtmlAttributes(new { @class = "btn btn-primary" })
+                        @Html.Bootstrap().SubmitButton().Text("Print").PrependIcon("md md-print").Size(ButtonSize.Mini).HtmlAttributes(new { @class = "btn btn-info" })
                     </div>
                 </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Name).HtmlAttributes(new {@class = "input-clear form-control"})
-                        <label>Name</label>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Mobile).HtmlAttributes(new {@class = "input-clear form-control"})
-                        <label>Mobile</label>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Email).HtmlAttributes(new {@class = "input-clear form-control"})
-                        <label>Email</label>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Role).HtmlAttributes(new {@class = "input-clear form-control"})
-                        <label>Job Title</label>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-offset-4">
-                    @Html.Bootstrap().Button().Text("Clear").Id("btnClear").PrependIcon("md md-close").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-default"})
-                    @Html.Bootstrap().Button().Text("Search").Id("btnSearch").PrependIcon("md md-search").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-primary"})
-                    @Html.Bootstrap().SubmitButton().Text("Print").PrependIcon("md md-print").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-info"})
-                </div>
-            </div>
-        }
-            <div class="table-responsive">
-                <table class="table" id="table">
-                    <thead>
+            }
+            <table class="table" id="table">
+                <thead>
                     <tr>
                         <th>Country</th>
                         <th>Title</th>
@@ -90,9 +89,8 @@
                         <th>Personal Email</th>
                         <th></th>
                     </tr>
-                    </thead>
-                </table>
-            </div>
+                </thead>
+            </table>
         </div>
     </div>
 </section>
@@ -210,7 +208,7 @@
                 }
             });
         });
-        
+
         $('#btnSearch').click(function () {
             fixedColumn = 0;
             $Table.fnFilter('');
@@ -246,8 +244,13 @@
                     $(".texterror").text('@Resource.AddError');
                 if (data.Code == 4)
                     $(".texterror").text('@Resource.SaveError');
-                if (data.Code == 5)
-                    $(".texterror").text("@Resource.DataInvalid");
+                if (data.Code == 5) {
+                    if (data.error) {
+                        $(".texterror").text(data.error);
+                    } else {
+                        $(".texterror").text("@Resource.DataInvalid");
+                    }
+                }
                 if (data.Code == 6)
                     $(".texterror").text(data.error);
                 $(".error").removeClass('hide');
@@ -300,4 +303,4 @@
                 }
             });
         }
-</script>)
+    </script>)

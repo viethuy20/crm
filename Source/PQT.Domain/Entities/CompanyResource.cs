@@ -28,7 +28,7 @@ namespace PQT.Domain.Entities
         //[ForeignKey("CompanyID")]
         //public virtual Company Company { get; set; }
         public int? CountryID { get; set; }
-
+        
         public string Remarks { get; set; }
         public bool Auto { get; set; }
 
