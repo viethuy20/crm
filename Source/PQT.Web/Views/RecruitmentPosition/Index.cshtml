@@ -1,7 +1,9 @@
-﻿@using Resources
+﻿@using PQT.Domain.Entities
+@using Resources
 @model IEnumerable<PQT.Domain.Entities.RecruitmentPosition>
 @{
     ViewBag.Title = "Recruitment Positions";
+    var isManager = CurrentUser.HasRole("Manager");
 }
 
 <section>
@@ -38,14 +40,25 @@
                             <td>@item.Department</td>
                             <td>@item.Position</td>
                             <td>@item.OfficeLocationName</td>
-                            <td>@Html.Raw(item.RecruitmentPositionStatusDisplay)</td>
+                            <td>@item.RecruitmentPositionStatusDisplay</td>
                             <td>
-                                <a title="Edit" href="@Url.Action("CreateOrEdit", new {id = item.ID})" data-action="edit" class="simple-ajax-popup-align-top">
-                                    <i class="md md-edit text-info"></i>
-                                </a> | 
-                                <a title="Delete" href="#" data-action="delete" data-id="@item.ID">
-                                    <i class="md md-delete text-danger"></i>
+                                <a title="Detail" href="@Url.Action("Detail", new {id = item.ID})" >
+                                    <i class="fa fa-eye text-default"></i>
                                 </a>
+                                @if (isManager || item.RecruitmentPositionStatus != RecruitmentPositionStatus.Approved)
+                                {
+                                    @:| 
+                                    <a title="Edit" href="@Url.Action("CreateOrEdit", new {id = item.ID})" data-action="edit" class="simple-ajax-popup-align-top">
+                                        <i class="md md-edit text-info"></i>
+                                    </a>
+                                }
+                                @if (isManager)
+                                {
+                                    @:| 
+                                    <a title="Delete" href="#" data-action="delete" data-id="@item.ID">
+                                        <i class="md md-delete text-danger"></i>
+                                    </a>
+                                }
                             </td>
                         </tr>
                     }

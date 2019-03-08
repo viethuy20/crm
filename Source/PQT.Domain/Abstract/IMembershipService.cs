@@ -8,6 +8,7 @@ namespace PQT.Domain.Abstract
 {
     public interface IMembershipService : IAuthenticationService
     {
+        string GetTempUserNo();
         int GetCountUsers(Func<User, bool> predicate);
         IEnumerable<User> GetUsers(Func<User, bool> predicate, string sortColumnDir, string sortColumn, int page, int pageSize);
         IEnumerable<User> GetUsers(string sortColumnDir, string sortColumn, int page, int pageSize);
@@ -15,6 +16,7 @@ namespace PQT.Domain.Abstract
         IEnumerable<User> GetUsersDeleted();
         User GetUser(int id);
         User GetUserIncludeAll(int id);
+        User GetUserByNo(string userNo);
         User GetUserByEmail(string email);
         User CreateUser(User userInfo);
         bool UpdateUser(User userInfo);

@@ -33,6 +33,7 @@ namespace PQT.Domain.Entities
         public User(User user)
         {
             ID = user.ID;
+            UserNo = user.UserNo;
             DisplayName = user.DisplayName;
             FirstName = user.FirstName;
             LastName = user.LastName;
@@ -91,6 +92,7 @@ namespace PQT.Domain.Entities
 
         #region Primitive
 
+        public string UserNo { get; set; }
         public string DisplayName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

@@ -234,15 +234,37 @@ namespace PQT.Web.Controllers
             if (model.TypeSubmit == "requestnewevent")
             {
                 if (string.IsNullOrEmpty(model.NewTopics))
+                {
                     ModelState.AddModelError("NewTopics", Resource.TheFieldShouldNotBeEmpty);
+                    TempData["error"] = "Please check your inputs";
+                }
                 if (string.IsNullOrEmpty(model.NewLocations))
+                {
                     ModelState.AddModelError("NewLocations", Resource.TheFieldShouldNotBeEmpty);
-                TempData["error"] = "Please check your inputs";
+                    TempData["error"] = "Please check your inputs";
+                }
+            }
+            else if (model.TypeSubmit == "reportcall")
+            {
+                if (string.IsNullOrEmpty(model.ReportRemark))
+                {
+                    ModelState.AddModelError("ReportRemark", Resource.TheFieldShouldNotBeEmpty);
+                    TempData["error"] = "Please check your inputs";
+                }
             }
 
             if (ModelState.IsValid)
             {
-                if (model.TypeSubmit == "requestnewevent")
+                if (model.TypeSubmit == "reportcall")
+                {
+                    if (model.CreateReportCall())
+                    {
+                        TempData["message"] = "Report successful";
+                        return RedirectToAction("Index", new { id = model.EventID });
+                    }
+                    TempData["error"] = "Report failed";
+                }
+                else if (model.TypeSubmit == "requestnewevent")
                 {
                     if (model.CreateNewEvent())
                     {
@@ -276,7 +298,7 @@ namespace PQT.Web.Controllers
                                                              (!string.IsNullOrEmpty(m.PersonalEmail) &&
                                                               m.PersonalEmail == model.PersonalEmail)) &&
                                                          ((m.UserID != currentUser.ID &&
-                                                           m.User.TransferUserID != currentUser.ID && 
+                                                           m.User.TransferUserID != currentUser.ID &&
                                                            m.LeadStatusRecord != LeadStatus.Deleted &&
                                                            !m.CheckNCLExpired(daysExpired))));
                     if (emailExists.Any())
@@ -291,7 +313,7 @@ namespace PQT.Web.Controllers
                                                              (!string.IsNullOrEmpty(m.PersonalEmail) &&
                                                               m.PersonalEmail == model.PersonalEmail)) &&
                                                          ((m.UserID == currentUser.ID &&
-                                                           m.User.TransferUserID == currentUser.ID && 
+                                                           m.User.TransferUserID == currentUser.ID &&
                                                            m.LeadStatusRecord != LeadStatus.Deleted)));
                     if (email2Exists.Any())
                     {
@@ -858,7 +880,7 @@ namespace PQT.Web.Controllers
             var daysExpired = Settings.Lead.NumberDaysExpired();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId && 
+                leads = _repo.GetAllLeads(m => m.EventID == eventId &&
                                                m.User.UserStatus == UserStatus.Live &&
                                                m.CheckInNCL(daysExpired) && (
                                                    m.Salesman.Contains(searchValue) ||
@@ -1453,7 +1475,7 @@ namespace PQT.Web.Controllers
             foreach (var company in companies)
             {
                 company.BlockStartCall = companiesInNcl.Contains(company.ID);
-                company.ComResourceNumber = _companyRepo.GetAllCompanyResources(m=>m.CompanyID == company.ID).Count();
+                company.ComResourceNumber = _companyRepo.GetAllCompanyResources(m => m.CompanyID == company.ID).Count();
             }
 
             #region sort

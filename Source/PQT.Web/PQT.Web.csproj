@@ -355,6 +355,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\MapperConfig.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
+    <Compile Include="Controllers\ReportCallController.cs" />
     <Compile Include="Controllers\EventCategoryController.cs" />
     <Compile Include="Controllers\RecruitmentPositionController.cs" />
     <Compile Include="Controllers\NotifySettingController.cs" />
@@ -2668,6 +2669,10 @@
     <Content Include="Views\Users\EditorTemplates\UserContract.cshtml" />
     <Content Include="Views\Recruitment\EditorTemplates\UserContract.cshtml" />
     <Content Include="Views\Account\EditorTemplates\UserContract.cshtml" />
+    <Content Include="Views\RecruitmentPosition\Reject.cshtml" />
+    <Content Include="Views\RecruitmentPosition\Detail.cshtml" />
+    <Content Include="Views\ReportCall\Detail.cshtml" />
+    <Content Include="Views\ReportCall\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -15,6 +15,7 @@ namespace PQT.Domain.Entities
         public Candidate()
         {
         }
+        public string CandidateNo { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string EnglishName { get; set; }
@@ -187,7 +188,7 @@ namespace PQT.Domain.Entities
         public DateTime? StatusDateTime { get; set; }
         public string StatusMessage { get; set; }
 
-        public string Description { get { return Department + " - " + Position; } }
+        public string Description { get { return OfficeLocationName + " - " + Department + " - " + Position; } }
         public string OfficeLocationName
         {
             get
@@ -197,13 +198,31 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
+        public string StatusDateTimeDisplay
+        {
+            get
+            {
+                if (StatusDateTime != null)
+                    return Convert.ToDateTime(StatusDateTime).ToString("dd/MM/yyyy HH:mm:ss");
+                return "";
+            }
+        }
         public string RecruitmentPositionStatusDisplay
+        {
+            get
+            {
+                if (RecruitmentPositionStatus != null)
+                    return RecruitmentPositionStatus.DisplayName;
+                return "";
+            }
+        }
+        public string RecruitmentPositionStatusDisplayHtml
         {
             get
             {
                 if (RecruitmentPositionStatus != null &&
                     RecruitmentPositionStatus == RecruitmentPositionStatus.Rejected)
-                    return RecruitmentPositionStatus.DisplayName + 
+                    return RecruitmentPositionStatus.DisplayName +
                         "<br/><span class='text-danger'>" + StatusMessage + "</span>";
                 if (RecruitmentPositionStatus != null)
                     return RecruitmentPositionStatus.DisplayName;

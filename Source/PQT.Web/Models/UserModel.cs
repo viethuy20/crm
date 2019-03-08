@@ -35,6 +35,7 @@ namespace PQT.Web.Models
             if (user != null)
             {
                 ID = user.ID;
+                UserNo = user.UserNo;
                 DisplayName = user.DisplayName;
                 LastName = user.LastName;
                 FirstName = user.FirstName;
@@ -90,6 +91,7 @@ namespace PQT.Web.Models
         public int ID { get; set; }
         public int? CandidateID { get; set; }
         public Candidate Candidate { get; set; }
+        public string UserNo { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resource), ErrorMessageResourceName = "TheFieldShouldNotBeEmpty")]

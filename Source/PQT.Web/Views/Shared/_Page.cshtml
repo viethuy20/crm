@@ -561,6 +561,9 @@
                     }else if (this.notifyData.NotifyTypeCode == '@NotifyType.Recruitment.Value') {
                         urlNotify = '@Url.Action("Detail", "Recruitment")?id=' +
                             this.notifyData.EntryId;
+                    }else if (this.notifyData.NotifyTypeCode == '@NotifyType.RecruitmentPosition.Value') {
+                        urlNotify = '@Url.Action("Detail", "RecruitmentPosition")?id=' +
+                            this.notifyData.EntryId;
                     }else if (this.notifyData.NotifyTypeCode == '@NotifyType.OpeEvent.Value') {
                         urlNotify = '@Url.Action("Detail", "Operation")?id=' +
                             this.notifyData.EntryId;

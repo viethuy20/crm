@@ -36,6 +36,12 @@
 
 @Html.Script(
     @<script>
+        var windowW = $(window).width();
+        var windowH = $(window).height();
+        var sizeLenght = 10;
+        if (windowH < 720) {
+            sizeLenght = 5;
+        }
         var fixedColumnTable2 = 0;
         comResourceTable2 = $("#crtable2");
         comResourceTable2.dataTable({
@@ -73,8 +79,8 @@
                  //{ "data": "BudgetMonth", "name": "BudgetMonth", "orderable": true },
                  //{ "data": "Remarks", "name": "BudgetMonth", "orderable": true },
              ],
-             "aLengthMenu": [[25, 50, 100, 500, 1000, 2000], [25, 50, 100, 500, 1000, 2000]],
-             "iDisplayLength": 25,
+             "aLengthMenu": [[5, 10, 25, 50, 100, 500, 1000, 2000], [5, 10, 25, 50, 100, 500, 1000, 2000]],
+             "iDisplayLength": sizeLenght,
              "aaSorting": [[0, "asc"]],
              "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  $(nRow).attr('data-id', aData["ID"]);

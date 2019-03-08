@@ -620,6 +620,74 @@ namespace PQT.Web.Infrastructure.Notification
             thread.Start();
         }
     }
+    public class ReportCallNotificator
+    {
+        private static IReportCallService ReportCallService
+        {
+            get { return DependencyResolver.Current.GetService<IReportCallService>(); }
+        }
+        private static IMembershipService MemberService
+        {
+            get { return DependencyResolver.Current.GetService<IMembershipService>(); }
+        }
+        private static IUserNotificationService UserNotificationService
+        {
+            get { return DependencyResolver.Current.GetService<IUserNotificationService>(); }
+        }
+        private static ISettingRepository SettingRepository
+        {
+            get { return DependencyResolver.Current.GetService<ISettingRepository>(); }
+        }
+        private static void NotifyUser(int currentUserId, IEnumerable<User> users, int bookingId, string title)
+        {
+            var thread = new Thread(() =>
+            {
+                foreach (var user in users)
+                {
+                    if (user == null || currentUserId == user.ID)
+                    {
+                        continue;
+                    }
+                    try
+                    {
+                        var notify = new UserNotification
+                        {
+                            UserID = user.ID,
+                            EntryId = bookingId,
+                            EventId = 0,
+                            NotifyType = NotifyType.ReportCall,
+                            Title = title,
+                            EventCode = "",
+                            Description = "Report Call #" + bookingId,
+                            HighlightColor = "#ffffff"
+                        };
+                        notify = UserNotificationService.CreateUserNotification(notify);
+                        user.NotifyNumber++;
+                        MemberService.UpdateUser(user);
+                        NotificationHub.NotifyUser(user, notify);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+            });
+            thread.Start();
+        }
+        public static void NotifyUser(NotifyAction notifyAction, int leadId, string title)
+        {
+            var currentUserId = CurrentUser.Identity.ID;
+            var thread = new Thread(() =>
+            {
+                var setting = SettingRepository.GetNotifySetting(NotifyType.ReportCall, notifyAction);
+                if (setting != null)
+                {
+                    var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
+                    NotifyUser(currentUserId, notiUsers, leadId, title);
+                }
+            });
+            thread.Start();
+        }
+    }
     public class InvoiceNotificator
     {
         private static IInvoiceService InvoiceService

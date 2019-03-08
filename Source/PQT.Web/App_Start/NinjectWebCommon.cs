@@ -80,7 +80,7 @@ namespace PQT.Web
             kernel.Bind<DbContext>().To<PQTDb>().InRequestScope();
             // Logging
             kernel.Bind<IAuditTracker>().To<EFAuditTracker>()
-                // initialize DbContext in another block so it will not persist temporary changes in business flow
+                  // initialize DbContext in another block so it will not persist temporary changes in business flow
                   .WithConstructorArgument("db", c => c.Kernel.BeginBlock().Get<DbContext>());
 
             // Repositories
@@ -111,6 +111,7 @@ namespace PQT.Web
             kernel.Bind<IInvoiceService>().To<EFInvoiceService>();
             kernel.Bind<IRecruitmentService>().To<EFRecruitmentService>();
             kernel.Bind<ILeadNewService>().To<EFLeadNewService>();
+            kernel.Bind<IReportCallService>().To<EFReportCallService>();
 
             // Notification services
             kernel.Bind<INotificationService<Lead>>().To<LeadNotificationService>();
@@ -133,6 +134,9 @@ namespace PQT.Web
             kernel.Bind<IValidator<Candidate>>().To<CandidateValidator>();
             kernel.Bind<IValidator<Invoice>>().To<InvoiceValidator>();
             kernel.Bind<IValidator<RecruitmentPosition>>().To<RecruitmentPositionValidator>();
+            kernel.Bind<IValidator<PsSummary>>().To<PsSummaryValidator>();
+            kernel.Bind<IValidator<OneFaceToFaceSummary>>().To<OneFaceToFaceSummaryValidator>();
+            kernel.Bind<IValidator<TwoFaceToFaceSummary>>().To<TwoFaceToFaceSummaryValidator>();
             // cache configurations.
             kernel.Bind<ICacheStorageLocation>().To<RequestCacheSolution>().Named("InRequest");
             kernel.Bind<ICacheStorageLocation>().To<SessionCacheSolution>().Named("InSession");

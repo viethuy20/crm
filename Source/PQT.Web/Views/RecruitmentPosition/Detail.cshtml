@@ -1,0 +1,159 @@
+﻿@using PQT.Domain.Entities
+@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.RecruitmentPositionModel
+
+@{
+    ViewBag.Title = "Recruitment Position Detail";
+}
+
+<style>
+    .card .Rejected {
+        background-color: #fad7d4 !important;
+    }
+
+        .card .Rejected input {
+            color: #a94442;
+        }
+
+    .card .Approved {
+        background-color: #d4fad6 !important;
+    }
+
+        .card .Approved input {
+            color: #3c763d;
+        }
+</style>
+<section>
+    <div class="card card-underline">
+        <div class="card-head">
+            <div class="tools">
+                <div class="btn-group" style="margin-right: 15px;">
+                    @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                    @if (CurrentUser.HasPermission("RecruitmentPosition", "Approval") && (Model.RecruitmentPosition != null && Model.RecruitmentPosition.RecruitmentPositionStatus == RecruitmentPositionStatus.Request))
+                    {
+                        <a href="#" data-id="@Model.RecruitmentPosition.ID" class="btn btn-success approve_info"><i class="fa fa-check"></i> Approve</a>
+                    }
+                    @if (CurrentUser.HasPermission("RecruitmentPosition", "Reject") && (Model.RecruitmentPosition != null && Model.RecruitmentPosition.RecruitmentPositionStatus == RecruitmentPositionStatus.Request))
+                    {
+                        <a href="@Url.Action("Reject", new {id = Model.RecruitmentPosition.ID})" class="btn btn-danger simple-ajax-popup-align-top"><i class="fa fa-close"></i> Reject</a>
+                    }
+                </div>
+            </div>
+            <header>@ViewBag.Title</header>
+        </div>
+        <div class="card-body @(Model.RecruitmentPosition!=null?Model.RecruitmentPosition.RecruitmentPositionStatusDisplay:"")">
+            <div class="row form">
+                @if (Model.RecruitmentPosition != null)
+                {
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.RecruitmentPosition.RecruitmentPositionStatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.RecruitmentPosition.RecruitmentPositionStatus)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.RecruitmentPosition.StatusDateTimeDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.RecruitmentPosition.StatusDateTime)
+                        </div>
+                    </div>
+                    if (!string.IsNullOrEmpty(Model.RecruitmentPosition.StatusMessage))
+                    {
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.RecruitmentPosition.StatusMessage).Class("form-control").Disabled().ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.RecruitmentPosition.StatusMessage).LabelText("Reject Message")
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row form">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.RecruitmentPosition.PositionNo).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.RecruitmentPosition.PositionNo).LabelText("Position ID")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.RecruitmentPosition.Department).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.RecruitmentPosition.Department)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.RecruitmentPosition.Position).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.RecruitmentPosition.Position)
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.RecruitmentPosition.OfficeLocationName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.RecruitmentPosition.OfficeLocation)
+                    </div>
+                </div>
+            </div>
+        </div><!--end .card-body -->
+    </div>
+
+</section>
+
+@Html.Script(
+    @<script>
+
+        $(document).on('click', '.approve_info', function (e) {
+            e.preventDefault();
+            var self = $(this);
+            bootbox.confirm("@Resource.ConfirmApprove", function (isOK) {
+                if (isOK) {
+                    $.ajax({
+                        url: '@Url.Action("Approval")?id=' + self.data('id') ,
+                        type: 'POST',
+                        success: function (data) {
+                            if (data.IsSuccess) {
+                                location.reload();
+                            } else {
+                                toastr.error(data.Message);
+                            }
+                        },
+                        error: function () {
+                            toastr.error("Approve failed");
+                        }
+                    });
+                }
+            });
+        });
+
+        function onFailRejectAction() {
+            toastr.error('@Resource.SaveError');
+        }
+        function onSuccessRejectAction(data) {
+            if (data.IsSuccess) {
+                toastr.success("Reject successful");
+                $.magnificPopup.close();
+                location.reload();
+            } else {
+                toastr.error(data.Message);
+            }
+        }
+
+
+        function onFailEditDelegate() {
+            toastr.error('@Resource.SaveError');
+        }
+        function onSuccessEditDelegate(data) {
+            if (data.IsSuccess) {
+                toastr.success("Updated successful");
+                updateDelegate(data.Data);
+                $.magnificPopup.close();
+                //location.reload();
+            } else {
+                toastr.error(data.Message);
+            }
+        }
+
+    </script>)

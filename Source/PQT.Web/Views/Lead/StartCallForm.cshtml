@@ -64,7 +64,7 @@
                                 </div>
                                 <ul class="nav nav-justified">
                                     <li class="active"><a href="#step1" data-toggle="tab"><span class="step">1</span> <span class="title">SELECT COMPANY RESOURCE</span></a></li>
-                                    <li><a href="#step2" data-toggle="tab"><span class="step">2</span> <span class="title lbl_StartCall">START CALL</span></a></li>
+                                    <li><a id="process_step2" href="#step2" data-toggle="tab"><span class="step">2</span> <span class="title lbl_StartCall">START CALL</span></a></li>
                                 </ul>
                             </div>
                             <div class="tab-content clearfix">
@@ -108,12 +108,38 @@
                             </div><!--end .tab-content -->
                             <ul class="pager wizard">
                                 <li class="previous"><a class="btn-raised" style="position: fixed;bottom: 50px;left: 105px;display: block;z-index: 1008;" href="javascript:void(0);"><i class="md md-arrow-back"></i> Back to Companies List</a></li>
-                                <li class="next"><a class="btn-raised" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;" href="javascript:void(0);">Next Call Info <i class="md md-arrow-forward"></i></a></li>
+                                <li class="next"><a class="btn-raised" id="nextcallinfo" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;" href="javascript:void(0);">Next Call Info <i class="md md-arrow-forward"></i></a></li>
                                 <li class="finish ">
+                                    <button type="submit" class="btn btn-warning pull-right" style="position: fixed;bottom: 50px;right: 390px;display: block;z-index: 1006;" id="reportcall"><i class="md md-report-problem"></i> Report This Call</button>
                                     <button type="submit" class="btn btn-primary pull-right" style="position: fixed;bottom: 50px;right: 185px;display: block;z-index: 1006;" id="requestnewevent"><i class="md md-phone-forwarded"></i> Request New Event</button>
                                     <button type="submit" class="btn btn-success pull-right" style="position: fixed;bottom: 50px;right: 40px;display: block;z-index: 1006;" id="endcall_save"><i class="md md-call-end"></i> <span class="lbl_FinishCall">Finish Call</span></button>
                                 </li>
                             </ul>
+                            <div style="display: none">
+                                <div id="report_form">
+                                    <div class="card card-underline" style="background: white; margin: auto; max-width: 600px; position: relative;">
+                                        <div>
+                                            <div class="card-head">
+                                                <header><b>Report Call</b></header>
+                                                <button title="Close (Esc)" type="button" class="mfp-close">×</button>
+                                            </div><!--end .card-head -->
+                                            <div class="card-body form">
+                                                <div class="col-sm-12">
+                                                    <div class="form-group">
+                                                        @Html.Bootstrap().TextAreaFor(m => m.ReportRemark).Rows(5).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                                                        @Html.Bootstrap().LabelFor(m => m.ReportRemark).LabelText("Report Remark").ShowRequiredStar(true)
+                                                    </div>
+                                                </div>
+                                            </div><!--end .card-body -->
+                                            <div class="card-actionbar">
+                                                <div class="card-actionbar-row">
+                                                    @Html.Bootstrap().Button().Id("submit_report").Text("Report").PrependIcon("md md-done").Style(ButtonStyle.Danger)
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!--end .card -->
+                                </div>
+                            </div>
                         }
                     </div><!--end .card-body -->
                 </div><!--end .card-body -->
@@ -193,8 +219,8 @@
              updateCanvas();
          };
 
-            var company_id_selected = $("@Html.JquerySelectorFor(m=>m.CompanyID)");
-            company_id_selected_val = company_id_selected.val();
+         var company_id_selected = $("@Html.JquerySelectorFor(m=>m.CompanyID)");
+         company_id_selected_val = company_id_selected.val();
          var company_name_selected = $("@Html.JquerySelectorFor(m=>m.CompanyName)");
          var company_business_selected = '@Model.EventCompany.BusinessUnit';
          var company_remark_selected = '@Model.EventCompany.Remarks';
@@ -376,6 +402,19 @@
                  comResourceTable2.fnFilter('');
                  table_bookings.fnFilter('');
              }
+             if (company_block_start_call_selected) {
+                 $(".lbl_StartCall").text("Existing inside NCL");
+                 $(".lbl_FinishCall").text("Existing inside NCL");
+                 $("#endcall_save").attr("disabled", "disabled");
+                 $("#process_step2").attr("disabled", "disabled");
+                 $(".next").addClass("hide");
+             } else {
+                 $(".lbl_StartCall").text("Start Call");
+                 $(".lbl_FinishCall").text("Finish Call");
+                 $("#endcall_save").removeAttr("disabled");
+                 $("#process_step2").removeAttr("disabled");
+                 $(".next").removeClass("hide");
+             }
              @*if (company_id_selected.val() > 0) {
                  $.ajax({
                      url: '@Url.Action("CompanyResourceList")?companyID=' + company_id_selected.val(),
@@ -395,19 +434,19 @@
                  $(".companies_resources_content").html("");
              }*@
          }
-    </script>)
+     </script>)
 
 
 @Html.Script(
     @<script>
          $(document).on('click', '#endcall_save', function (e) {
              e.preventDefault();
-            bootbox.confirm("Do you want to finish this call?", function (isOK) {
-                if (isOK) {
-                    $(".typeSubmit").val("finishcall");
-                    $('#endcall_save').parents("form").submit();
-                }
-            });
+             bootbox.confirm("Do you want to finish this call?", function (isOK) {
+                 if (isOK) {
+                     $(".typeSubmit").val("finishcall");
+                     $('#endcall_save').parents("form").submit();
+                 }
+             });
          });
          $(document).on('click', '#requestnewevent', function (e) {
              e.preventDefault();
@@ -420,7 +459,27 @@
                  }
              });
          });
+    
+         $("#reportcall").magnificPopup({
+             items: [
+                 {
+                     src: '#report_form',
+                     type: 'inline'
+                 }
+             ],
+             showCloseBtn: true,
+         });
 
+         $(document).on('click', '#submit_report', function (e) {
+             e.preventDefault();
+             bootbox.confirm("Do you want to report this call?", function (isOK) {
+                 if (isOK) {
+                     $.magnificPopup.close();
+                     $(".typeSubmit").val("reportcall");
+                     $('#reportcall').parents("form").submit();
+                 }
+             });
+         });
          var wizard = $('#rootwizard2').bootstrapWizard({
              onTabShow: function (tab, navigation, index) {
                  handleTabShow(tab, navigation, index, $('#rootwizard2'));
@@ -442,6 +501,19 @@
                      $(".lbl_StartCall").text("Start Call");
                      $(".lbl_FinishCall").text("Finish Call");
                      $("#endcall_save").removeAttr("disabled");
+                     if (company_block_start_call_selected) {
+                         $(".lbl_StartCall").text("Existing inside NCL");
+                         $(".lbl_FinishCall").text("Existing inside NCL");
+                         $("#endcall_save").attr("disabled", "disabled");
+                         $("#process_step2").attr("disabled", "disabled");
+                         $(".next").addClass("hide");
+                     } else {
+                         $(".lbl_StartCall").text("Start Call");
+                         $(".lbl_FinishCall").text("Finish Call");
+                         $("#endcall_save").removeAttr("disabled");
+                         $("#process_step2").removeAttr("disabled");
+                         $(".next").removeClass("hide");
+                     }
                      //$("#btncanvas-comResource").addClass("hide");
                      tickStarted = false;
                  }
@@ -470,35 +542,36 @@
              $('.form-wizard-horizontal').find('.progress').css({ 'width': percentWidth });
          };
 
-        function ClearDataSelected() {
-            $("@Html.JquerySelectorFor(m => m.JobTitle)").val("");
-            $("@Html.JquerySelectorFor(m => m.LineExtension)").val("");
-            $("@Html.JquerySelectorFor(m => m.DirectLine)").val("");
-            $("@Html.JquerySelectorFor(m => m.Salutation)").val("").trigger("change");
-            $("@Html.JquerySelectorFor(m => m.FirstName)").val("");
-            $("@Html.JquerySelectorFor(m => m.LastName)").val("");
-            $("@Html.JquerySelectorFor(m => m.MobilePhone1)").val("");
-            $("@Html.JquerySelectorFor(m => m.MobilePhone2)").val("");
-            $("@Html.JquerySelectorFor(m => m.WorkEmail)").val("");
-            $("@Html.JquerySelectorFor(m => m.PersonalEmail)").val("");
-            $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(0).trigger("change");
-            $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").val("");
-            $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val("");
-            $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").removeAttr("readonly");
-            $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").removeAttr("readonly");
+         function ClearDataSelected() {
+             $("@Html.JquerySelectorFor(m => m.JobTitle)").val("");
+             $("@Html.JquerySelectorFor(m => m.LineExtension)").val("");
+             $("@Html.JquerySelectorFor(m => m.DirectLine)").val("");
+             $("@Html.JquerySelectorFor(m => m.Salutation)").val("").trigger("change");
+             $("@Html.JquerySelectorFor(m => m.FirstName)").val("");
+             $("@Html.JquerySelectorFor(m => m.LastName)").val("");
+             $("@Html.JquerySelectorFor(m => m.MobilePhone1)").val("");
+             $("@Html.JquerySelectorFor(m => m.MobilePhone2)").val("");
+             $("@Html.JquerySelectorFor(m => m.WorkEmail)").val("");
+             $("@Html.JquerySelectorFor(m => m.PersonalEmail)").val("");
+             $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(0).trigger("change");
+             $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").val("");
+             $("@Html.JquerySelectorFor(m => m.EventCompany.Remarks)").val("");
+             $("@Html.JquerySelectorFor(m => m.EventCompany.BusinessUnit)").removeAttr("readonly");
+             $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").removeAttr("readonly");
 
-            //if ($("select.callingCompany").val() != "" && !tickStarted) {
-            //    StartTick();
-            //}
-            var dialingCodes = $('.dialingCode');
-            dialingCodes.each(function (index, item) {
-                if ($(item).val() == "") {
-                    $('.dialingCode').val("");
-                }
-            });
-        }
+             //if ($("select.callingCompany").val() != "" && !tickStarted) {
+             //    StartTick();
+             //}
+             var dialingCodes = $('.dialingCode');
+             dialingCodes.each(function (index, item) {
+                 if ($(item).val() == "") {
+                     $('.dialingCode').val("");
+                 }
+             });
+         }
          $(document).on('click', '#crtable tbody tr,#crtable2 tbody tr', function () {
 
+             if (company_block_start_call_selected) return;
              StartTick();
              wizard.bootstrapWizard('next');
 
@@ -574,7 +647,7 @@
              }
          }*@
 
-        @*function SetEventCompanyInfo(data) {
+         @*function SetEventCompanyInfo(data) {
             if (data) {
                 $("@Html.JquerySelectorFor(m => m.EventCompany.ID)").val(data.ID);
                 $("@Html.JquerySelectorFor(m => m.EventCompany.BudgetMonth)").val(data.BudgetMonth).trigger("change");
@@ -587,91 +660,98 @@
          }*@
 
 
-        if (company_id_selected_val > 0) {
-            wizard.bootstrapWizard('next');
-        }
-    </script>
+         if (company_id_selected_val > 0) {
+             wizard.bootstrapWizard('next');
+         }
+     </script>
         )
 
 
 @Html.Script(
     @<script>
-        var fixedColumn = 0;
-        var table_bookings = $("#grid_bookings");
-        table_bookings.dataTable({
-                 "processing": true, // for show progress bar
-                 "serverSide": true, // for process server side
-                 "filter": true, // this is for disable filter (search box)
-                 "orderMulti": false, // for disable multiple column at once
-                 "stateSave": false,
-                 "ajax": {
-                     "url": "@Url.Action("AjaxGetDelegates","Company")",
-                     "type": "POST",
-                     "datatype": "json",
-                     "data": function(d) {
-                         d.ComId = company_id_selected_val;
-                     }
-                 },
-                 "columns": [
-                     { "data": "EventCode", "name": "EventCode", "orderable": true },
-                     { "data": "EventName", "name": "EventName", "orderable": true },
-                     { "data": "EventDate", "name": "EventDate", "orderable": true },
-                     { "data": "DelegateName", "name": "DelegateName", "orderable": true },
-                     { "data": "DirectLine", "name": "DirectLine", "orderable": true },
-                     { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
-                     { "data": "MobilePhone2", "name": "MobilePhone2", "orderable": true },
-                     { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
-                     { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
-                     { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
-                     { "data": "AttendanceStatusDisplay", "name": "AttendanceStatusDisplay", "orderable": true },
-                 ],
-                 "iDisplayLength": 25,
-                 "aaSorting": [[0, "asc"]],
-                 "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                     $(nRow).find('td:eq(0)').addClass('text-center');
-                     $(nRow).find('td:eq(10)').addClass('text-center');
-                 },
-                 initComplete: function() {
-                     var _table = this;
-                     _table.parent().find('input[type="search"]').unbind();
-                     var timeOutTyping;
-                     _table.parent().find('input[type="search"]').bind('keyup', function (e) {
-                         clearTimeout(timeOutTyping);
-                         timeOutTyping = setTimeout(function () {
-                             _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
-                         }, 600);
-                     });
-                 },
-                 scrollY: false,
-                 scrollX: true,
-                 "bScrollCollapse": false,
-                 "drawCallback": function (settings, json) {
-                     FixedTable();
-                 },
-        });
+         var windowW = $(window).width();
+         var windowH = $(window).height();
+         var sizeLenght = 10;
+         if (windowH < 720) {
+             sizeLenght = 5;
+         }
+         var fixedColumn = 0;
+         var table_bookings = $("#grid_bookings");
+         table_bookings.dataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "url": "@Url.Action("AjaxGetDelegates","Company")",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function(d) {
+                     d.ComId = company_id_selected_val;
+                 }
+             },
+             "columns": [
+                 { "data": "EventCode", "name": "EventCode", "orderable": true },
+                 { "data": "EventName", "name": "EventName", "orderable": true },
+                 { "data": "EventDate", "name": "EventDate", "orderable": true },
+                 { "data": "DelegateName", "name": "DelegateName", "orderable": true },
+                 { "data": "DirectLine", "name": "DirectLine", "orderable": true },
+                 { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
+                 { "data": "MobilePhone2", "name": "MobilePhone2", "orderable": true },
+                 { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
+                 { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
+                 { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
+                 { "data": "AttendanceStatusDisplay", "name": "AttendanceStatusDisplay", "orderable": true },
+             ],
+             "aLengthMenu": [[5, 10, 25, 50, 100, 500, 1000, 2000], [5, 10, 25, 50, 100, 500, 1000, 2000]],
+             "iDisplayLength": sizeLenght,
+             "aaSorting": [[0, "asc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 $(nRow).find('td:eq(0)').addClass('text-center');
+                 $(nRow).find('td:eq(10)').addClass('text-center');
+             },
+             initComplete: function() {
+                 var _table = this;
+                 _table.parent().find('input[type="search"]').unbind();
+                 var timeOutTyping;
+                 _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function () {
+                         _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                     }, 600);
+                 });
+             },
+             scrollY: false,
+             scrollX: true,
+             "bScrollCollapse": false,
+             "drawCallback": function (settings, json) {
+                 FixedTable();
+             },
+         });
 
-        function FixedTable() {
-            if (fixedColumn < 4) {
-                fixedColumn ++;
-                var fixColumn = new $.fn.dataTable.FixedColumns(table_bookings, {
-                    leftColumns: 1,
-                    sHeightMatch: "auto",
-                    rightColumns: 1
-                });
-                var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
-                if ($leftWrappers.length > 1) {
-                    $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
-                }
-                var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
-                if ($rightWrappers.length > 1) {
-                    $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
-                }
-            }
-        }
-        $(document).on("click", ".paginate_button", function () {
-            fixedColumn = 0;
-        });
-        $(document).on("change", "select[name=table_length]", function () {
-            fixedColumn = 0;
-        });
-    </script>)
+         function FixedTable() {
+             if (fixedColumn < 4) {
+                 fixedColumn ++;
+                 var fixColumn = new $.fn.dataTable.FixedColumns(table_bookings, {
+                     leftColumns: 1,
+                     sHeightMatch: "auto",
+                     rightColumns: 1
+                 });
+                 var $leftWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_LeftWrapper");
+                 if ($leftWrappers.length > 1) {
+                     $leftWrappers[1].parentNode.removeChild($leftWrappers[1]);
+                 }
+                 var $rightWrappers = $(".DTFC_ScrollWrapper").find(".DTFC_RightWrapper");
+                 if ($rightWrappers.length > 1) {
+                     $rightWrappers[1].parentNode.removeChild($rightWrappers[1]);
+                 }
+             }
+         }
+         $(document).on("click", ".paginate_button", function () {
+             fixedColumn = 0;
+         });
+         $(document).on("change", "select[name=table_length]", function () {
+             fixedColumn = 0;
+         });
+     </script>)

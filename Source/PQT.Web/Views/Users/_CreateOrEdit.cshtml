@@ -14,74 +14,80 @@
     <div class="card-body text-default-light">
 
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.UserNo).Class("form-control code").Readonly().ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.UserNo).LabelText("Employee ID").ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-3">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.DisplayName).HtmlAttributes(new { required = "required" }).Class("form-control text-capitalize").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.DisplayName).LabelText("Display Name").ShowRequiredStar(true)
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-3">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.FirstName).Class("form-control text-capitalize").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.FirstName).ShowRequiredStar(true)
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-3">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.LastName).Class("form-control text-capitalize").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.LastName).ShowRequiredStar(true)
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Email).HtmlAttributes(new { required = "required" }).Class("form-control text-lowercase").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email").ShowRequiredStar(true)
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Password).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Password).LabelText("Password").ShowRequiredStar(true)
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.BusinessPhone).Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.BusinessPhone)
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.MobilePhone)
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.PersonalEmail).Class("form-control text-lowercase").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.PersonalEmail)
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.PassportID).Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.PassportID).LabelText("Passport/ID")
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="form-group">
                     @Html.DatePickerFor(m => m.DateOfBirth, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.DateOfBirth)
                     @Html.Bootstrap().LabelFor(m => m.DateOfBirth)
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="form-group">
                     @Html.Bootstrap().DropDownListFor(m => m.Nationality, countries.ToSelectList(m => m, m => m)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Nationality)
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="form-group">
                     @Html.Bootstrap().DropDownListFor(m => m.OfficeLocationID, officeLocations.ToSelectList(m => m.ID, m => m.Name)).Class("form-control").OptionLabel("").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.OfficeLocationID).LabelText("Office Location")
@@ -166,7 +172,7 @@
                     @Html.Bootstrap().LabelFor(m => m.OperationUnit)
                 </div>
             </div>
-            <div class="col-sm-6 role-hr hide">
+            <div class="col-sm-6 role-hr role-recruitmentintern hide">
                 <div class="form-group">
                     @Html.Bootstrap().DropDownListFor(m => m.HumanResourceUnit, EnumerationHelper.ToSelectList<HumanResourceUnit>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.HumanResourceUnit)
@@ -475,7 +481,7 @@
             });
         }
         $(".cbx-role").on('click', function (e) {
-            var rolename = $(this).data("rolename");
+            var rolename = $(this).data("rolename").replace(" ", "");
             if (this.checked) {
                 $(".role-" + rolename).removeClass('hide');
             } else {

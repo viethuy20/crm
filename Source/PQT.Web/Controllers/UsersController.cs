@@ -71,7 +71,8 @@ namespace PQT.Web.Controllers
             {
                 SelectedRoles = new List<int>(),
                 Roles = _roleService.GetAllRoles(),
-                Supervisors = allSupervisors
+                Supervisors = allSupervisors,
+                UserNo = _membershipService.GetTempUserNo()
             };
             return View(model);
         }
@@ -140,6 +141,7 @@ namespace PQT.Web.Controllers
 
             var user = new User
             {
+                UserNo = model.UserNo,
                 DisplayName = model.DisplayName,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
@@ -176,7 +178,7 @@ namespace PQT.Web.Controllers
                 FilledDeclarationForm = model.FilledDeclarationForm,
                 CertOfHighestEducation = model.CertOfHighestEducation,
                 IDCard = model.IDCard
-        };
+            };
 
             user = _membershipService.CreateUser(user);
 
@@ -318,6 +320,7 @@ namespace PQT.Web.Controllers
             if (user.Status == EntityUserStatus.ApprovedEmployment && (!string.IsNullOrEmpty(user.Password) ||
                 !string.IsNullOrEmpty(model.Password)))
                 user.Status = EntityUserStatus.Normal;
+            user.UserNo = model.UserNo;
             user.DisplayName = model.DisplayName;
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
@@ -523,35 +526,38 @@ namespace PQT.Web.Controllers
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
             IEnumerable<User> users = new HashSet<User>();
-
+            Func<User, bool> predicate = null;
+            bool isRecruitmentIntern = CurrentUser.HasRole("HR") || CurrentUser.HasRole("Recruitment Intern");
             if (!string.IsNullOrEmpty(searchValue))
             {
-                Func<User, bool> predicate = m =>
+                predicate = m =>
+                (!isRecruitmentIntern || m.UserStatus == UserStatus.Live) &&
                     (m.Status == EntityUserStatus.Normal ||
                      m.Status == EntityUserStatus.ApprovedEmployment) &&
                     (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID)) &&
                     ((m.DisplayName.ToLower().Contains(searchValue)) ||
                      (m.UserStatusDisplay.ToLower().Contains(searchValue)) ||
                      (m.DirectSupervisorDisplay.ToLower().Contains(searchValue)) ||
+                     (m.UserNo != null && m.UserNo.ToLower().Contains(searchValue)) ||
                      (m.Email != null && m.Email.ToLower().Contains(searchValue)) ||
                      (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue)) ||
                      (m.BusinessPhone != null && m.BusinessPhone.ToLower().Contains(searchValue)) ||
                      (m.MobilePhone != null && m.MobilePhone.ToLower().Contains(searchValue)) ||
                      (m.Roles != null && m.Roles.Any(r => r.Name.ToLower().Contains(searchValue))));
-                users = _membershipService.GetUsers(predicate, sortColumnDir, sortColumn,
-                    skip, pageSize);
-                recordsTotal = _membershipService.GetCountUsers(predicate);
             }
             else
             {
-                Func<User, bool> predicate = m =>
+                predicate = m =>
+                    (!isRecruitmentIntern || m.UserStatus == UserStatus.Live) &&
                     (m.Status == EntityUserStatus.Normal ||
                     m.Status == EntityUserStatus.ApprovedEmployment) &&
                     (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID));
-                users = _membershipService.GetUsers(predicate, sortColumnDir, sortColumn,
-                    skip, pageSize);
-                recordsTotal = _membershipService.GetCountUsers(predicate);
             }
+
+            users = _membershipService.GetUsers(predicate, sortColumnDir, sortColumn,
+                skip, pageSize);
+            recordsTotal = _membershipService.GetCountUsers(predicate);
+
             #endregion For Search
 
             var json = new
@@ -562,6 +568,7 @@ namespace PQT.Web.Controllers
                 data = users.Select(m => new
                 {
                     m.ID,
+                    m.UserNo,
                     m.DisplayName,
                     m.FirstName,
                     m.LastName,

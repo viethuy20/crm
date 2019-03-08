@@ -139,6 +139,7 @@
     <Compile Include="Abstract\IBookingService.cs" />
     <Compile Include="Abstract\IEventSessionRepository.cs" />
     <Compile Include="Abstract\IInvoiceService.cs" />
+    <Compile Include="Abstract\IReportCallService.cs" />
     <Compile Include="Abstract\ILeadService.cs" />
     <Compile Include="Abstract\ILoginTracker.cs" />
     <Compile Include="Abstract\IMembershipService.cs" />
@@ -163,6 +164,7 @@
     <Compile Include="Concrete\EFCompanyRepository.cs" />
     <Compile Include="Concrete\EfBookingService.cs" />
     <Compile Include="Concrete\EFEventSessionRepository.cs" />
+    <Compile Include="Concrete\EFReportCallService.cs" />
     <Compile Include="Concrete\EFRecruitmentService.cs" />
     <Compile Include="Concrete\EFLeadService.cs" />
     <Compile Include="Concrete\EFMembershipService.cs" />
@@ -217,6 +219,7 @@
     <Compile Include="Entities\Booking.cs" />
     <Compile Include="Entities\Delegate.cs" />
     <Compile Include="Entities\Candidate.cs" />
+    <Compile Include="Entities\ReportCall.cs" />
     <Compile Include="Entities\Role.cs">
       <SubType>Code</SubType>
     </Compile>

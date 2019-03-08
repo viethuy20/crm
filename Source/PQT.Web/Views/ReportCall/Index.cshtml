@@ -1,10 +1,10 @@
 ﻿@using PQT.Domain.Entities
 @using PQT.Domain.Enum
 @using Resources
-@model System.Collections.Generic.IEnumerable<PQT.Domain.Entities.Candidate>
+@model IEnumerable<ReportCall>
 
 @{
-    ViewBag.Title = "Candidates Interview On Today";
+    ViewBag.Title = "Report Call";
 }
 <style>
     .table tr td {
@@ -20,29 +20,29 @@
         white-space: nowrap !important;
     }
 </style>
-<section style="@(CurrentUser.Identity.Background != null && CurrentUser.HasRole("HR") ?"background: url("+CurrentUser.Identity.BackgroundUrl+ ") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;" : "")">
+<section >
     <div class="section-header">
         <h2 class="text-primary">@ViewBag.Title</h2>
     </div>
-    <div class="card" style="margin-bottom: 350px">
+    <div class="card" >
         <div class="card-body">
             <table class="table" id="recruitmentTable">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Created Date</th>
+                        <th>Sales</th>
+                        <th>Company Name</th>
+                        <th>Direct Line</th>
+                        <th>Job Title</th>
+                        <th>Salutation</th>
                         <th>First Name</th>
                         <th>Last Name</th>
-                        <th>Mobile Number</th>
+                        <th>Mobile Phone1</th>
+                        <th>Mobile Phone2</th>
+                        <th>Mobile Phone3</th>
+                        <th>Work Email</th>
+                        <th>Work Email1</th>
                         <th>Personal Email</th>
-                        <th>Application Source</th>
-                        <th>Office Location</th>
-                        <th>PS Status</th>
-                        <th>PS Reason</th>
-                        <th>1F2F Status</th>
-                        <th>1F2F Reason</th>
-                        <th>2F2F Status</th>
-                        <th>2F2F Reason</th>
-                        <th>Status</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -63,27 +63,27 @@
             "orderMulti": false, // for disable multiple column at once
             "stateSave": false,
             "ajax": {
-                "url": "@Url.Action("AjaxGetAllCandidatesInterviewToday")",
+                "url": "@Url.Action("AjaxGetAlls")",
                 "type": "POST",
                 "datatype": "json",
                 "data": function(d) {
                 }
             },
             "columns": [
-                { "data": "CandidateNo", "name": "CandidateNo", "orderable": true },
+                { "data": "CreatedTimeDisplay", "name": "CreatedTime", "orderable": true },
+                { "data": "SalesmanName", "name": "SalesmanName", "orderable": true },
+                { "data": "CompanyName", "name": "CompanyName", "orderable": true },
+                { "data": "DirectLine", "name": "DirectLine", "orderable": true },
+                { "data": "JobTitle", "name": "JobTitle", "orderable": true },
+                { "data": "Salutation", "name": "Salutation", "orderable": true },
                 { "data": "FirstName", "name": "FirstName", "orderable": true },
                 { "data": "LastName", "name": "LastName", "orderable": true },
-                { "data": "MobileNumber", "name": "MobileNumber", "orderable": true },
-                { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": false },
-                { "data": "ApplicationSource", "name": "ApplicationSource", "orderable": true },
-                { "data": "OfficeLocationDisplay", "name": "OfficeLocationDisplay", "orderable": true },
-                { "data": "PsSummaryStatusDisplay", "name": "PsSummaryStatusDisplay", "orderable": true },
-                { "data": "PsSummaryStatusReason", "name": "PsSummaryStatusReason", "orderable": true },
-                { "data": "OneFaceToFaceSummaryStatusDisplay", "name": "OneFaceToFaceSummaryStatusDisplay", "orderable": true },
-                { "data": "OneFaceToFaceSummaryStatusReason", "name": "OneFaceToFaceSummaryStatusReason", "orderable": true },
-                { "data": "TwoFaceToFaceSummaryStatusDisplay", "name": "TwoFaceToFaceSummaryStatusDisplay", "orderable": true },
-                { "data": "TwoFaceToFaceSummaryStatusReason", "name": "TwoFaceToFaceSummaryStatusReason", "orderable": true },
-                { "data": "StatusDisplay", "name": "StatusDisplay", "orderable": true },
+                { "data": "MobilePhone1", "name": "MobilePhone1", "orderable": true },
+                { "data": "MobilePhone2", "name": "MobilePhone2", "orderable": true },
+                { "data": "MobilePhone3", "name": "MobilePhone3", "orderable": true },
+                { "data": "WorkEmail", "name": "WorkEmail", "orderable": true },
+                { "data": "WorkEmail1", "name": "WorkEmail1", "orderable": true },
+                { "data": "PersonalEmail", "name": "PersonalEmail", "orderable": true },
                 { "data": "ID", "name": "ID", "orderable": true },
             ],
             "iDisplayLength": 50,
@@ -92,11 +92,7 @@
                 var eq15Html = '<a href="@Url.Action("Detail")/' +
                     aData["ID"] +
                     '" title="View Detail"><i class="fa fa-eye"></i></a>';
-                if ('@CurrentUser.HasPermission("Recruitment", "Edit")' == 'True') {
-                    eq15Html += ' | <a href="@Url.Action("Edit")/' + aData["ID"] + '" style="white-space: nowrap;" title="Edit"><i class="fa fa-pencil-square-o text-info"></i></a>';
-                }
                 $(nRow).find('td:eq(14)').html(eq15Html);
-                $(nRow).addClass(aData["ClassStatus"]);
                 $(nRow).attr("data-id", ["ID"]);
             },
             initComplete: function () {
@@ -143,5 +139,4 @@
          $(document).on("change", "select[name=table_length]", function () {
              fixedColumn = 0;
          });
-        //StartConnectProgressHub();
     </script>)

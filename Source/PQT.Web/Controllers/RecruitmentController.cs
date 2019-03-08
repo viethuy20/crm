@@ -45,7 +45,7 @@ namespace PQT.Web.Controllers
         public ActionResult Create()
         {
             var model = new RecruitmentModel();
-            model.Candidate = new Candidate { UserID = CurrentUser.Identity.ID };
+            model.Candidate = new Candidate { UserID = CurrentUser.Identity.ID, CandidateNo = _recruitmentService.GetTempCandidateNo() };
             var rolesInterviewer = new List<string> { "manager", "hr", "admin" };
             var allSupervisors = _membershipService.GetUsers(m => m.Status.Value != EntityStatus.Deleted.Value && (
                                                                       m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
@@ -66,11 +66,20 @@ namespace PQT.Web.Controllers
             {
                 var callExists = _recruitmentService.GetAllCandidates(m => (
                     m.RecruitmentPositionID == model.Candidate.RecruitmentPositionID &&
-                    (!string.IsNullOrEmpty(m.MobileNumber) && m.MobileNumber == model.Candidate.MobileNumber) ||
-                    (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail == model.Candidate.PersonalEmail)));
+                    m.OfficeLocationID == model.Candidate.OfficeLocationID &&
+                    (!string.IsNullOrEmpty(m.MobileNumber) && m.MobileNumber == model.Candidate.MobileNumber)));
                 if (callExists.Any())
                 {
-                    TempData["error"] = "Candidate contact exists in called list";
+                    TempData["error"] = "Number existing in another entry of same position";
+                    return RedirectToAction("Create");
+                }
+                callExists = _recruitmentService.GetAllCandidates(m => (
+                                    m.RecruitmentPositionID == model.Candidate.RecruitmentPositionID &&
+                                    m.OfficeLocationID == model.Candidate.OfficeLocationID &&
+                                    (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail == model.Candidate.PersonalEmail)));
+                if (callExists.Any())
+                {
+                    TempData["error"] = "Emails existing in another entry of same position";
                     return RedirectToAction("Create");
                 }
 
@@ -81,7 +90,7 @@ namespace PQT.Web.Controllers
                 }
             }
 
-            var rolesInterviewer = new List<string> { "manager", "hr","admin" };
+            var rolesInterviewer = new List<string> { "manager", "hr", "admin" };
             var allSupervisors = _membershipService.GetUsers(m => m.Status.Value != EntityStatus.Deleted.Value && (
                                                                       m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
                                                                       m.SalesManagementUnit != SalesManagementUnit.None ||
@@ -96,7 +105,7 @@ namespace PQT.Web.Controllers
         }
         public ActionResult Edit(int id, string backAction = "")
         {
-            var model = new RecruitmentModel{ BackAction = backAction };
+            var model = new RecruitmentModel { BackAction = backAction };
             model.PrepareEdit(id);
 
             var rolesInterviewer = new List<string> { "manager", "hr", "admin" };
@@ -185,7 +194,8 @@ namespace PQT.Web.Controllers
                     LastName = model.Candidate.LastName,
                     MobilePhone = model.Candidate.MobileNumber,
                     PersonalEmail = model.Candidate.PersonalEmail,
-                    CandidateID = model.Candidate.ID
+                    CandidateID = model.Candidate.ID,
+                    UserNo = _membershipService.GetTempUserNo()
                 };
             var role = _roleService.GetRoleByName(model.Candidate.RecruitmentPosition.Department);
             if (role != null)
@@ -347,6 +357,7 @@ namespace PQT.Web.Controllers
                 }
             }
 
+            user.UserNo = model.UserNo;
             user.DisplayName = model.DisplayName;
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
@@ -405,13 +416,19 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
+            bool isRecruitmentIntern = CurrentUser.HasRole("HR") || CurrentUser.HasRole("Recruitment Intern");
             var saleId = 0;//CurrentUser.Identity.ID;
+            if (isRecruitmentIntern)
+            {
+                saleId = CurrentUser.Identity.ID;
+            }
             IEnumerable<Candidate> candidates = new HashSet<Candidate>();
             if (!string.IsNullOrEmpty(searchValue))
             {
                 candidates = _recruitmentService.GetAllCandidates(m =>
                                                (saleId == 0 || m.UserID == saleId ||
                                                 (m.User != null && m.User.TransferUserID == saleId)) && (
+                                                   (m.CandidateNo != null && m.CandidateNo.ToLower().Contains(searchValue)) ||
                                                    (m.EnglishName != null && m.EnglishName.ToLower().Contains(searchValue)) ||
                                                    (m.FirstName != null && m.FirstName.ToLower().Contains(searchValue)) ||
                                                    (m.LastName != null && m.LastName.ToLower().Contains(searchValue)) ||
@@ -431,6 +448,9 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
+                    case "CandidateNo":
+                        candidates = candidates.OrderBy(s => s.CandidateNo).ThenBy(s => s.ID);
+                        break;
                     case "CreatedTime":
                         candidates = candidates.OrderBy(s => s.CreatedTime).ThenBy(s => s.ID);
                         break;
@@ -485,6 +505,9 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
+                    case "CandidateNo":
+                        candidates = candidates.OrderByDescending(s => s.CandidateNo).ThenBy(s => s.ID);
+                        break;
                     case "CreatedTime":
                         candidates = candidates.OrderByDescending(s => s.CreatedTime).ThenBy(s => s.ID);
                         break;
@@ -552,6 +575,7 @@ namespace PQT.Web.Controllers
                 data = data.Select(m => new
                 {
                     m.ID,
+                    m.CandidateNo,
                     CreatedTime = m.CreatedTime.ToString("dd/MM/yyyy"),
                     m.FirstName,
                     m.LastName,
@@ -598,7 +622,12 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
+            bool isRecruitmentIntern = CurrentUser.HasRole("HR") || CurrentUser.HasRole("Recruitment Intern");
             var saleId = 0;//CurrentUser.Identity.ID;
+            if (isRecruitmentIntern)
+            {
+                saleId = CurrentUser.Identity.ID;
+            }
             IEnumerable<Candidate> candidates = new HashSet<Candidate>();
             if (!string.IsNullOrEmpty(searchValue))
             {
@@ -609,6 +638,7 @@ namespace PQT.Web.Controllers
                 ) &&
                                                (saleId == 0 || m.UserID == saleId ||
                                                 (m.User != null && m.User.TransferUserID == saleId)) && (
+                                                   (m.CandidateNo != null && m.CandidateNo.ToLower().Contains(searchValue)) ||
                                                    (m.EnglishName != null && m.EnglishName.ToLower().Contains(searchValue)) ||
                                                    (m.FirstName != null && m.FirstName.ToLower().Contains(searchValue)) ||
                                                    (m.LastName != null && m.LastName.ToLower().Contains(searchValue)) ||
@@ -632,6 +662,9 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
+                    case "CandidateNo":
+                        candidates = candidates.OrderBy(s => s.CandidateNo).ThenBy(s => s.ID);
+                        break;
                     case "CreatedTime":
                         candidates = candidates.OrderBy(s => s.CreatedTime).ThenBy(s => s.ID);
                         break;
@@ -686,6 +719,9 @@ namespace PQT.Web.Controllers
             {
                 switch (sortColumn)
                 {
+                    case "CandidateNo":
+                        candidates = candidates.OrderByDescending(s => s.CandidateNo).ThenBy(s => s.ID);
+                        break;
                     case "CreatedTime":
                         candidates = candidates.OrderByDescending(s => s.CreatedTime).ThenBy(s => s.ID);
                         break;
@@ -753,6 +789,7 @@ namespace PQT.Web.Controllers
                 data = data.Select(m => new
                 {
                     m.ID,
+                    m.CandidateNo,
                     CreatedTime = m.CreatedTime.ToString("dd/MM/yyyy"),
                     m.FirstName,
                     m.LastName,

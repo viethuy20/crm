@@ -20,6 +20,10 @@ namespace PQT.Domain.Concrete
 
         #region IMembershipService Members
 
+        public string GetTempUserNo()
+        {
+            return string.Format("EMP{0}", GetNextTempCounter("User", 1).ToString("D3"));
+        }
         public int GetCountUsers(Func<User, bool> predicate)
         {
             if (predicate != null)
@@ -35,6 +39,13 @@ namespace PQT.Domain.Concrete
             {
                 switch (sortColumn)
                 {
+                    case "UserNo":
+                        users = _db.Set<User>()
+                            .Include(m => m.DirectSupervisor)
+                            .Include(m => m.Roles.Select(r => r.Permissions))
+                            .Where(predicate).OrderBy(s => s.UserNo).ThenByDescending(s => s.ID).Skip(page)
+                            .Take(pageSize).AsEnumerable();
+                        break;
                     case "DisplayName":
                         users = _db.Set<User>()
                             .Include(m => m.DirectSupervisor)
@@ -131,6 +142,12 @@ namespace PQT.Domain.Concrete
             {
                 switch (sortColumn)
                 {
+                    case "UserNo":
+                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
+                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
+                            .OrderByDescending(s => s.UserNo).ThenByDescending(s => s.ID).Skip(page).Take(pageSize)
+                            .AsEnumerable();
+                        break;
                     case "DisplayName":
                         users = _db.Set<User>().Include(m => m.DirectSupervisor)
                             .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
@@ -219,6 +236,12 @@ namespace PQT.Domain.Concrete
             {
                 switch (sortColumn)
                 {
+                    case "UserNo":
+                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
+                            .Include(m => m.Roles.Select(r => r.Permissions))
+                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.UserNo)
+                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
                     case "DisplayName":
                         users = _db.Set<User>().Include(m => m.DirectSupervisor)
                             .Include(m => m.Roles.Select(r => r.Permissions))
@@ -303,6 +326,12 @@ namespace PQT.Domain.Concrete
             {
                 switch (sortColumn)
                 {
+                    case "UserNo":
+                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
+                            .Include(m => m.Roles.Select(r => r.Permissions))
+                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.UserNo)
+                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
+                        break;
                     case "DisplayName":
                         users = _db.Set<User>().Include(m => m.DirectSupervisor)
                             .Include(m => m.Roles.Select(r => r.Permissions))
@@ -447,6 +476,17 @@ namespace PQT.Domain.Concrete
             });
         }
 
+        public User GetUserByNo(string userNo)
+        {
+            return string.IsNullOrWhiteSpace(userNo)
+                ? null
+                : Get<User>(u => u.Status.Value == EntityStatus.Normal &&  u.UserNo != null &&
+                                 u.UserNo.Trim().ToUpper() == userNo.Trim().ToUpper(),
+                    u => new
+                    {
+                        Roles = u.Roles.Select(r => r.Permissions),
+                    });
+        }
         public User GetUserByEmail(string email)
         {
             return string.IsNullOrWhiteSpace(email)
@@ -472,6 +512,16 @@ namespace PQT.Domain.Concrete
         {
             if (user.Email != null)
                 user.Email = user.Email.Trim();
+
+            var tempNo = GetTempUserNo();
+            if (tempNo == user.UserNo)
+            {
+                user.UserNo = string.Format("EMP{0}", GetNextCounter("User", 1).ToString("D3"));
+            }
+            else
+            {
+                SetCounter("User", user.UserNo);
+            }
             //user.Password = EncryptHelper.EncryptPassword(user.Password);
             return Create(user);
         }
@@ -502,6 +552,10 @@ namespace PQT.Domain.Concrete
                 u => new
                 {
                     Roles = u.Roles.Select(r => r.Permissions),
+                    OfficeLocation = u.OfficeLocation,
+                    DirectSupervisor = u.DirectSupervisor,
+                    UserContracts = u.UserContracts,
+                    UserSalaryHistories = u.UserSalaryHistories,
                 }).AsEnumerable();
         }
         public IEnumerable<User> GetUsersInRoleLevel(params string[] roleName)

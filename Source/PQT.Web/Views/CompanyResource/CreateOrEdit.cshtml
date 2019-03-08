@@ -33,6 +33,7 @@
                 @Html.HiddenFor(m => m.CompanyResource.Auto)
                 @Html.HiddenFor(m => m.CompanyResource.Country)
                 @Html.HiddenFor(m => m.CompanyResource.CompanyID)
+                @Html.HiddenFor(m => m.CompanyResource.CreatedTime)
                 <div class="form-group col-md-6">
                     @Html.Bootstrap().DropDownListFor(m => m.CompanyResource.CountryID, countries.ToSelectList(m => m.ID, m => m.Name)).HtmlAttributes(new { required = "required" }).OptionLabel("").Class("form-control").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.CompanyResource.CountryID).LabelText("Country").ShowRequiredStar(true)

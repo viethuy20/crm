@@ -395,6 +395,7 @@ namespace PQT.Web.Models
         public DateTime? NewDateTo { get; set; }
         public string NewTrainingType { get; set; }
         public string Remark { get; set; }//for new event
+        public string ReportRemark { get; set; }
         public string GoodTrainingMonthStr
         {
             get
@@ -840,6 +841,40 @@ namespace PQT.Web.Models
                         NewEventNotificator.NotifyUser(NotifyAction.Assign, new List<User> { notiUser }, LeadID, "Assign New Event"); // notify for manager
                         return true;
                     }
+                }
+                return false;
+            });
+        }
+
+
+        public bool CreateReportCall()
+        {
+            return TransactionWrapper.Do(() =>
+            {
+                var callService = DependencyHelper.GetService<IReportCallService>();
+                var reportCall = new ReportCall
+                {
+                    CompanyName = CompanyName,
+                    JobTitle = JobTitle,
+                    LineExtension = LineExtension,
+                    DirectLine = DirectLine,
+                    Salutation = Salutation,
+                    FirstName = FirstName,
+                    LastName = LastName,
+                    MobilePhone1 = MobilePhone1,
+                    MobilePhone2 = MobilePhone2,
+                    MobilePhone3 = MobilePhone3,
+                    WorkEmail = WorkEmail,
+                    WorkEmail1 = WorkEmail1,
+                    PersonalEmail = PersonalEmail,
+                    Remark = ReportRemark,
+                    UserID = CurrentUser.Identity.ID
+                };
+                reportCall = callService.CreateReportCall(reportCall);
+                if (reportCall != null)
+                {
+                    ReportCallNotificator.NotifyUser(NotifyAction.Alert, reportCall.ID, "Report Call #"+ DirectLine); // notify for manager
+                    return true;
                 }
                 return false;
             });

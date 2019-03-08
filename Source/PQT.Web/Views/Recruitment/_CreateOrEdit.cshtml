@@ -16,19 +16,25 @@
 <div class="card">
     <div class="card-body">
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.CandidateNo).Class("form-control code").Readonly().ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.CandidateNo).LabelText("Candidate ID").ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-3">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.FirstName).Class("form-control text-capitalize").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Candidate.FirstName).ShowRequiredStar(true)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.LastName).Class("form-control text-capitalize").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Candidate.LastName).ShowRequiredStar(true)
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.EnglishName).Class("form-control text-capitalize").ShowValidationMessage(true)
                     @Html.Bootstrap().LabelFor(m => m.Candidate.EnglishName)
@@ -103,7 +109,7 @@
             <div class="col-sm-8">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.Remarks).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary).LabelText("PS Summary")
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary).LabelText("PS Summary").ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-4">
@@ -137,7 +143,7 @@
             <div class="col-sm-8">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.Remarks).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary).LabelText("1F2F Summary")
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary).LabelText("1F2F Summary").ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-4">
@@ -171,7 +177,7 @@
             <div class="col-sm-8">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.Remarks).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary).LabelText("2F2F Summary")
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary).LabelText("2F2F Summary").ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-4">

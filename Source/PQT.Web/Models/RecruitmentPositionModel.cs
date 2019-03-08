@@ -16,7 +16,8 @@ namespace PQT.Web.Models
         public RecruitmentPosition RecruitmentPosition { get; set; }
         public IEnumerable<OfficeLocation> OfficeLocations { get; set; }
         public IEnumerable<Role> Roles { get; set; }
-
+        public int RecruitmentPositionID { get; set; }
+        public string Reason { get; set; }
         public RecruitmentPositionModel()
         {
             OfficeLocations = new List<OfficeLocation>();
@@ -40,6 +41,14 @@ namespace PQT.Web.Models
             }
         }
 
+        public void PrepareDetail(int id)
+        {
+            var unitService = DependencyHelper.GetService<IUnitRepository>();
+            if (id > 0)
+            {
+                RecruitmentPosition = unitService.GetRecruitmentPosition(id);
+            }
+        }
         public object SaveData()
         {
             var unitService = DependencyHelper.GetService<IUnitRepository>();
@@ -85,5 +94,43 @@ namespace PQT.Web.Models
             });
         }
 
+        public object Approve()
+        {
+            var unitService = DependencyHelper.GetService<IUnitRepository>();
+            var recruitmentPosition = unitService.GetRecruitmentPosition(RecruitmentPositionID);
+            if (recruitmentPosition == null)
+                return (new { IsSuccess = false, Message = "Data not found" });
+            if (recruitmentPosition.RecruitmentPositionStatus != RecruitmentPositionStatus.Request)
+                return (new { IsSuccess = false, Message = "Data has " + recruitmentPosition.RecruitmentPositionStatusDisplay });
+            recruitmentPosition.RecruitmentPositionStatus = RecruitmentPositionStatus.Approved;
+            recruitmentPosition.StatusDateTime = DateTime.Now;
+            recruitmentPosition.StatusMessage = null;
+            if (!unitService.UpdateRecruitmentPosition(recruitmentPosition))
+            {
+                return (new { IsSuccess = false, Message = "Approve failed" });
+            }
+            RecruitmentPositionNotificator.NotifyUser(NotifyAction.Approved, recruitmentPosition.ID, "New Recruitment Position has been approved");
+            return (new { IsSuccess = true });
+        }
+        public object Reject()
+        {
+            var unitService = DependencyHelper.GetService<IUnitRepository>();
+
+            var hotel = unitService.GetRecruitmentPosition(RecruitmentPositionID);
+            if (hotel == null)
+                return (new { IsSuccess = false, Message = "Data not found" });
+            if (hotel.RecruitmentPositionStatus != RecruitmentPositionStatus.Request)
+                return (new { IsSuccess = false, Message = "Data has " + hotel.RecruitmentPositionStatusDisplay });
+
+            hotel.StatusMessage = Reason;
+            hotel.StatusDateTime = DateTime.Now;
+            hotel.RecruitmentPositionStatus = RecruitmentPositionStatus.Rejected;
+            if (!unitService.UpdateRecruitmentPosition(hotel))
+            {
+                return (new { IsSuccess = false, Message = "Reject failed" });
+            }
+            RecruitmentPositionNotificator.NotifyUser(NotifyAction.Rejected, hotel.ID, "Recruitment Position has been rejected");
+            return (new { IsSuccess = true });
+        }
     }
 }

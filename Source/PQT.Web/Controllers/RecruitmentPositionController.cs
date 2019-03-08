@@ -26,6 +26,12 @@ namespace PQT.Web.Controllers
             var models = _unitRepo.GetAllRecruitmentPositions();
             return View(models);
         }
+        public ActionResult Detail(int id)
+        {
+            var model = new RecruitmentPositionModel();
+            model.PrepareDetail(id);
+            return View(model);
+        }
 
         [DisplayName(@"Create Or Edit")]
         public ActionResult CreateOrEdit(int id = 0)
@@ -53,6 +59,35 @@ namespace PQT.Web.Controllers
             {
                 Code = 5
             });
+        }
+        [DisplayName(@"Approval")]
+        [HttpPost]
+        public ActionResult Approval(int id)
+        {
+            RecruitmentPositionModel model = new RecruitmentPositionModel{ RecruitmentPositionID  = id};
+            return Json(model.Approve());
+        }
+
+        public ActionResult Reject(int id)
+        {
+            ViewBag.ID = id;
+            return PartialView(0);
+        }
+
+        [HttpPost]
+        public ActionResult Reject(int id, string reason)
+        {
+            if (string.IsNullOrEmpty(reason))
+            {
+                return Json(new
+                {
+                    Message = "`Reason` must not be empty",
+                    IsSuccess = false
+                });
+            }
+
+            RecruitmentPositionModel model = new RecruitmentPositionModel {RecruitmentPositionID = id, Reason = reason};
+            return Json(model.Reject());
         }
 
         public ActionResult Delete(int id)

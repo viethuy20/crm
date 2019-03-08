@@ -140,19 +140,25 @@
     <div class="card">
         <div class="card-body form">
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.CandidateNo).Class("form-control code").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.CandidateNo).LabelText("Candidate ID").ShowRequiredStar(true)
+                    </div>
+                </div>
+                <div class="col-sm-3">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Candidate.FirstName).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Candidate.FirstName)
                     </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Candidate.LastName).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Candidate.LastName)
                     </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Candidate.EnglishName).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Candidate.EnglishName)
@@ -176,19 +182,19 @@
                         @Html.Bootstrap().LabelFor(m => m.Candidate.ApplicationSource)
                     </div>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Candidate.OfficeLocationDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Candidate.OfficeLocation)
                     </div>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                     <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Candidate.RecruitmentPositionDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Candidate.RecruitmentPosition)
                     </div>
                 </div>
-                <div class=" col-sm-6">
+                <div class=" col-sm-4">
                     <div class="form-group">
                         @if (!string.IsNullOrEmpty(Model.Candidate.Resume))
                         {
@@ -197,7 +203,7 @@
                         @Html.Bootstrap().LabelFor(m => m.Candidate.Resume)
                     </div>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-12">
                     <div class="form-group">
                         @Html.Bootstrap().TextAreaFor(m => m.Candidate.Remarks).Rows(5).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Candidate.Remarks)
@@ -218,7 +224,7 @@
                     <div class="col-sm-8">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary).LabelText("PS Summary")
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary).LabelText("PS Summary").ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-4">
@@ -253,7 +259,7 @@
                     <div class="col-sm-8">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary).LabelText("1F2F Summary")
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary).LabelText("1F2F Summary").ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-4">
@@ -288,7 +294,7 @@
                     <div class="col-sm-8">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary).LabelText("2F2F Summary")
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary).LabelText("2F2F Summary").ShowRequiredStar(true)
                         </div>
                     </div>
                     <div class="col-sm-4">
