@@ -8,7 +8,7 @@ namespace PQT.Domain.Abstract
 {
     public interface IMembershipService : IAuthenticationService
     {
-        string GetTempUserNo();
+        //string GetTempUserNo();
         int GetCountUsers(Func<User, bool> predicate);
         IEnumerable<User> GetUsers(Func<User, bool> predicate, string sortColumnDir, string sortColumn, int page, int pageSize);
         IEnumerable<User> GetUsers(string sortColumnDir, string sortColumn, int page, int pageSize);

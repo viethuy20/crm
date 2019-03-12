@@ -50,6 +50,7 @@ namespace PQT.Web.Controllers
         {
             var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
                                                             m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                            m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
                                                             m.ProjectManagementUnit != ProjectManagementUnit.None);
             //var supervisors = new List<SelectListItem>();
             //supervisors.AddRange(allSupervisors.Where(m => m.FinanceAdminUnit != FinanceAdminUnit.None).Select(m => new SelectListItem
@@ -72,7 +73,7 @@ namespace PQT.Web.Controllers
                 SelectedRoles = new List<int>(),
                 Roles = _roleService.GetAllRoles(),
                 Supervisors = allSupervisors,
-                UserNo = _membershipService.GetTempUserNo()
+                //UserNo = _membershipService.GetTempUserNo()
             };
             return View(model);
         }
@@ -86,6 +87,7 @@ namespace PQT.Web.Controllers
             var exist = _membershipService.GetUserByEmail(model.Email);
             var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
                                                                   m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                                  m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
                                                                   m.ProjectManagementUnit != ProjectManagementUnit.None);
             if (exist != null)
                 ModelState.AddModelError("Email", Resource.EmailExists);
@@ -193,6 +195,7 @@ namespace PQT.Web.Controllers
             User user = _membershipService.GetUserIncludeAll(id);
             var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
                                                                   m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                                  m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
                                                                   m.ProjectManagementUnit != ProjectManagementUnit.None);
 
             var model = new EditUserModel(user)
@@ -222,6 +225,7 @@ namespace PQT.Web.Controllers
 
             var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
                                                                   m.SalesManagementUnit != SalesManagementUnit.None ||
+                                                                  m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
                                                                   m.ProjectManagementUnit != ProjectManagementUnit.None);
             var exist = _membershipService.GetUserByEmail(model.Email);
             if (exist != null && exist.ID != model.ID)

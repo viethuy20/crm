@@ -8,7 +8,7 @@ namespace PQT.Domain.Abstract
 {
     public interface IRecruitmentService
     {
-        string GetTempCandidateNo();
+        //string GetTempCandidateNo();
         IEnumerable<Candidate> GetAllCandidates(Func<Candidate, bool> predicate);
         Candidate GetCandidate(int id);
         Candidate GetCandidateByNo(string number);

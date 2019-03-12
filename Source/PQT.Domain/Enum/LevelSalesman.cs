@@ -65,6 +65,7 @@ namespace PQT.Domain.Enum
     {
         public static readonly HumanResourceUnit None = New<HumanResourceUnit>(0, "None");
         public static readonly HumanResourceUnit Coordinator = New<HumanResourceUnit>(1, "HR Coordinator");
+        public static readonly HumanResourceUnit RecruitmentIntern = New<HumanResourceUnit>(2, "Recruitment Intern");
     }
     public class MarketingManagementUnit : Enumeration
     {

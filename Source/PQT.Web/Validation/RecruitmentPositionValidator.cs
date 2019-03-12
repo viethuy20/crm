@@ -16,8 +16,8 @@ namespace PQT.Web.Validation
         public RecruitmentPositionValidator(IUnitRepository repo)
         {
             _repo = repo;
-            RuleFor(m => m.PositionNo).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
-            RuleFor(m => m.PositionNo).Must(BeCode).WithMessage("Position number exists");
+            //RuleFor(m => m.PositionNo).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
+            //RuleFor(m => m.PositionNo).Must(BeCode).WithMessage("Position number exists");
         }
 
         private bool BeCode(RecruitmentPosition occ, string code)

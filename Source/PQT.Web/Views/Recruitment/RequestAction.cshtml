@@ -33,6 +33,7 @@
         @Html.HiddenFor(m => m.Employee.Status)
         @Html.HiddenFor(m => m.Employee.FirstName)
         @Html.HiddenFor(m => m.Employee.LastName)
+        @Html.HiddenFor(m => m.Employee.UserNo)
         @Html.HiddenFor(m => m.RoleID)
         <div class="card card-underline">
             <div class="card-head">
@@ -40,25 +41,25 @@
             </div>
             <div class="card-body text-default-light">
                 <div class="row">
-                    <div class="col-sm-3">
+                    @*<div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.UserNo).Class("form-control code").Readonly().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.UserNo).ShowRequiredStar(true)
                         </div>
-                    </div>
-                    <div class="col-sm-3">
+                    </div>*@
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.DisplayName).HtmlAttributes(new { required = "required" }).Class("form-control text-capitalize").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.DisplayName).LabelText("Display Name").ShowRequiredStar(true)
                         </div>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.FirstName).Class("form-control text-capitalize").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.FirstName).ShowRequiredStar(true)
                         </div>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.LastName).Class("form-control text-capitalize").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.LastName).ShowRequiredStar(true)

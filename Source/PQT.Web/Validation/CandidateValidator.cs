@@ -19,7 +19,7 @@ namespace PQT.Web.Validation
         public CandidateValidator(IRecruitmentService recruitmentService)
         {
             _recruitmentService = recruitmentService;
-            RuleFor(u => u.CandidateNo).Must(BeAUniqueNo).WithMessage("Candidate ID existing");
+            //RuleFor(u => u.CandidateNo).Must(BeAUniqueNo).WithMessage("Candidate ID existing");
             RuleFor(m => m.FirstName).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.LastName).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);
             RuleFor(m => m.MobileNumber).NotEmpty().WithMessage(Resource.TheFieldShouldNotBeEmpty);

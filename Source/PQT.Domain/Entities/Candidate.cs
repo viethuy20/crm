@@ -52,6 +52,14 @@ namespace PQT.Domain.Entities
         public virtual User User { get; set; }
 
         public int? EmployeeID { get; set; }
+        public string UserDisplay
+        {
+            get
+            {
+                if (User != null) return User.DisplayName;
+                return "";
+            }
+        }
         public string FullName
         {
             get

@@ -20,10 +20,10 @@ namespace PQT.Domain.Concrete
 
         #region IMembershipService Members
 
-        public string GetTempUserNo()
-        {
-            return string.Format("EMP{0}", GetNextTempCounter("User", 1).ToString("D3"));
-        }
+        //public string GetTempUserNo()
+        //{
+        //    return string.Format("EMP{0}", GetNextTempCounter("User", 1).ToString("D3"));
+        //}
         public int GetCountUsers(Func<User, bool> predicate)
         {
             if (predicate != null)
@@ -480,7 +480,7 @@ namespace PQT.Domain.Concrete
         {
             return string.IsNullOrWhiteSpace(userNo)
                 ? null
-                : Get<User>(u => u.Status.Value == EntityStatus.Normal &&  u.UserNo != null &&
+                : Get<User>(u => u.Status.Value == EntityStatus.Normal && u.UserNo != null &&
                                  u.UserNo.Trim().ToUpper() == userNo.Trim().ToUpper(),
                     u => new
                     {
@@ -491,7 +491,7 @@ namespace PQT.Domain.Concrete
         {
             return string.IsNullOrWhiteSpace(email)
                 ? null
-                : Get<User>(u => u.Status.Value == EntityStatus.Normal &&  u.Email != null &&
+                : Get<User>(u => u.Status.Value == EntityStatus.Normal && u.Email != null &&
                                  u.Email.Trim().ToLower() == email.Trim().ToLower(),
                     u => new
                     {
@@ -513,15 +513,15 @@ namespace PQT.Domain.Concrete
             if (user.Email != null)
                 user.Email = user.Email.Trim();
 
-            var tempNo = GetTempUserNo();
-            if (tempNo == user.UserNo)
-            {
-                user.UserNo = string.Format("EMP{0}", GetNextCounter("User", 1).ToString("D3"));
-            }
-            else
-            {
-                SetCounter("User", user.UserNo);
-            }
+            //var tempNo = GetTempUserNo();
+            //if (tempNo == user.UserNo)
+            //{
+            user.UserNo = string.Format("EMP{0}", GetNextCounter("User", 1).ToString("D3"));
+            //}
+            //else
+            //{
+            //    SetCounter("User", user.UserNo);
+            //}
             //user.Password = EncryptHelper.EncryptPassword(user.Password);
             return Create(user);
         }

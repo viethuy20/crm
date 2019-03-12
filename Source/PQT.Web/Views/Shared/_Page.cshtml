@@ -152,6 +152,10 @@
                     if (item.Title.ToUpper() == "MASTER FILES")
                     {
                         children = children.OrderBy(m => m.Title).ToList();
+                        if (CurrentUser.HasRole("HR") && currentUser.HumanResourceUnit == HumanResourceUnit.RecruitmentIntern)
+                        {
+                            continue;
+                        }
                     }
                     <li class="@(children.Any()?"gui-folder":"")">
                         @if (string.IsNullOrEmpty(item.Url))
@@ -221,7 +225,7 @@
     <div id="panel-notification">
         @*@Html.Action("PanelNotification", "Home")*@
     </div>
-    
+
 </div><!--end #base-->
 <!-- END BASE -->
 @section css

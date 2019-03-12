@@ -133,7 +133,7 @@ namespace PQT.Web
             kernel.Bind<IValidator<Domain.Entities.Delegate>>().To<DelegateValidator>();
             kernel.Bind<IValidator<Candidate>>().To<CandidateValidator>();
             kernel.Bind<IValidator<Invoice>>().To<InvoiceValidator>();
-            kernel.Bind<IValidator<RecruitmentPosition>>().To<RecruitmentPositionValidator>();
+            //kernel.Bind<IValidator<RecruitmentPosition>>().To<RecruitmentPositionValidator>();
             kernel.Bind<IValidator<PsSummary>>().To<PsSummaryValidator>();
             kernel.Bind<IValidator<OneFaceToFaceSummary>>().To<OneFaceToFaceSummaryValidator>();
             kernel.Bind<IValidator<TwoFaceToFaceSummary>>().To<TwoFaceToFaceSummaryValidator>();

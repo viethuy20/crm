@@ -48,7 +48,7 @@ namespace PQT.Domain.Abstract
         #endregion OfficeLocation
 
         #region RecruitmentPosition
-        string GetTempRecruitmentPositionNo();
+        //string GetTempRecruitmentPositionNo();
         IEnumerable<RecruitmentPosition> GetAllRecruitmentPositions();
         RecruitmentPosition GetRecruitmentPosition(int id);
         RecruitmentPosition GetRecruitmentPositionByNumber(string number);

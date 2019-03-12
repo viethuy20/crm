@@ -35,10 +35,10 @@ namespace PQT.Web.Models
             {
                 RecruitmentPosition = unitService.GetRecruitmentPosition(id);
             }
-            if (string.IsNullOrEmpty(RecruitmentPosition.PositionNo))
-            {
-                RecruitmentPosition.PositionNo = unitService.GetTempRecruitmentPositionNo();
-            }
+            //if (string.IsNullOrEmpty(RecruitmentPosition.PositionNo))
+            //{
+            //    RecruitmentPosition.PositionNo = unitService.GetTempRecruitmentPositionNo();
+            //}
         }
 
         public void PrepareDetail(int id)

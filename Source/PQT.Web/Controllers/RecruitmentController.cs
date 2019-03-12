@@ -45,7 +45,7 @@ namespace PQT.Web.Controllers
         public ActionResult Create()
         {
             var model = new RecruitmentModel();
-            model.Candidate = new Candidate { UserID = CurrentUser.Identity.ID, CandidateNo = _recruitmentService.GetTempCandidateNo() };
+            model.Candidate = new Candidate { UserID = CurrentUser.Identity.ID };
             var rolesInterviewer = new List<string> { "manager", "hr", "admin" };
             var allSupervisors = _membershipService.GetUsers(m => m.Status.Value != EntityStatus.Deleted.Value && (
                                                                       m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
@@ -195,7 +195,7 @@ namespace PQT.Web.Controllers
                     MobilePhone = model.Candidate.MobileNumber,
                     PersonalEmail = model.Candidate.PersonalEmail,
                     CandidateID = model.Candidate.ID,
-                    UserNo = _membershipService.GetTempUserNo()
+                    //UserNo = _membershipService.GetTempUserNo()
                 };
             var role = _roleService.GetRoleByName(model.Candidate.RecruitmentPosition.Department);
             if (role != null)
@@ -416,12 +416,12 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
-            bool isRecruitmentIntern = CurrentUser.HasRole("HR") || CurrentUser.HasRole("Recruitment Intern");
             var saleId = 0;//CurrentUser.Identity.ID;
-            if (isRecruitmentIntern)
-            {
-                saleId = CurrentUser.Identity.ID;
-            }
+            //bool isRecruitmentIntern = CurrentUser.HasRole("HR") || CurrentUser.HasRole("Recruitment Intern");
+            //if (isRecruitmentIntern)
+            //{
+            //    saleId = CurrentUser.Identity.ID;
+            //}
             IEnumerable<Candidate> candidates = new HashSet<Candidate>();
             if (!string.IsNullOrEmpty(searchValue))
             {
@@ -493,6 +493,9 @@ namespace PQT.Web.Controllers
                     case "TwoFaceToFaceSummaryStatusReason":
                         candidates = candidates.OrderBy(s => s.TwoFaceToFaceSummaryStatusReason).ThenBy(s => s.ID);
                         break;
+                    case "UserDisplay":
+                        candidates = candidates.OrderBy(s => s.UserDisplay).ThenBy(s => s.ID);
+                        break;
                     case "StatusDisplay":
                         candidates = candidates.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -550,6 +553,9 @@ namespace PQT.Web.Controllers
                     case "TwoFaceToFaceSummaryStatusReason":
                         candidates = candidates.OrderByDescending(s => s.TwoFaceToFaceSummaryStatusReason).ThenBy(s => s.ID);
                         break;
+                    case "UserDisplay":
+                        candidates = candidates.OrderByDescending(s => s.UserDisplay).ThenBy(s => s.ID);
+                        break;
                     case "StatusDisplay":
                         candidates = candidates.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -590,6 +596,7 @@ namespace PQT.Web.Controllers
                     m.TwoFaceToFaceSummaryStatusDisplay,
                     m.TwoFaceToFaceSummaryStatusReason,
                     m.StatusDisplay,
+                    m.UserDisplay,
                     m.StatusCode,
                     m.ClassStatus,
                 })
@@ -622,12 +629,12 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
-            bool isRecruitmentIntern = CurrentUser.HasRole("HR") || CurrentUser.HasRole("Recruitment Intern");
             var saleId = 0;//CurrentUser.Identity.ID;
-            if (isRecruitmentIntern)
-            {
-                saleId = CurrentUser.Identity.ID;
-            }
+            //bool isRecruitmentIntern = CurrentUser.HasRole("HR") || CurrentUser.HasRole("Recruitment Intern");
+            //if (isRecruitmentIntern)
+            //{
+            //    saleId = CurrentUser.Identity.ID;
+            //}
             IEnumerable<Candidate> candidates = new HashSet<Candidate>();
             if (!string.IsNullOrEmpty(searchValue))
             {
@@ -707,6 +714,9 @@ namespace PQT.Web.Controllers
                     case "TwoFaceToFaceSummaryStatusReason":
                         candidates = candidates.OrderBy(s => s.TwoFaceToFaceSummaryStatusReason).ThenBy(s => s.ID);
                         break;
+                    case "UserDisplay":
+                        candidates = candidates.OrderBy(s => s.UserDisplay).ThenBy(s => s.ID);
+                        break;
                     case "StatusDisplay":
                         candidates = candidates.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -764,6 +774,9 @@ namespace PQT.Web.Controllers
                     case "TwoFaceToFaceSummaryStatusReason":
                         candidates = candidates.OrderByDescending(s => s.TwoFaceToFaceSummaryStatusReason).ThenBy(s => s.ID);
                         break;
+                    case "UserDisplay":
+                        candidates = candidates.OrderByDescending(s => s.UserDisplay).ThenBy(s => s.ID);
+                        break;
                     case "StatusDisplay":
                         candidates = candidates.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -804,6 +817,7 @@ namespace PQT.Web.Controllers
                     m.TwoFaceToFaceSummaryStatusDisplay,
                     m.TwoFaceToFaceSummaryStatusReason,
                     m.StatusDisplay,
+                    m.UserDisplay,
                     m.StatusCode,
                     m.ClassStatus,
                 })

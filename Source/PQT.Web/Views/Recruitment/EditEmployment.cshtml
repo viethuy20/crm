@@ -25,22 +25,22 @@
                     <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.UserNo).Class("form-control code").Readonly().ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.UserNo).LabelText("Employee ID").ShowRequiredStar(true)
+                            @Html.Bootstrap().LabelFor(m => m.UserNo).LabelText("Employee ID")
                         </div>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.DisplayName).HtmlAttributes(new { required = "required" }).Class("form-control text-capitalize").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.DisplayName).HtmlAttributes(new {required = "required"}).Class("form-control text-capitalize").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.DisplayName).LabelText("Display Name").ShowRequiredStar(true)
                         </div>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.FirstName).Class("form-control text-capitalize").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.FirstName).ShowRequiredStar(true)
                         </div>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.LastName).Class("form-control text-capitalize").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.LastName).ShowRequiredStar(true)
@@ -48,7 +48,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Email).Readonly().HtmlAttributes(new { required = "required" }).Class("form-control text-lowercase").ShowValidationMessage(true)
+                            @Html.Bootstrap().TextBoxFor(m => m.Email).Readonly().HtmlAttributes(new {required = "required"}).Class("form-control text-lowercase").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Email).LabelText("Email").ShowRequiredStar(true)
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group">
-                            @Html.DatePickerFor(m => m.DateOfBirth, new { @class = "form-control" })
+                            @Html.DatePickerFor(m => m.DateOfBirth, new {@class = "form-control"})
                             @Html.ValidationMessageFor(m => m.DateOfBirth)
                             @Html.Bootstrap().LabelFor(m => m.DateOfBirth)
                         </div>
