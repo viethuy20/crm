@@ -114,6 +114,22 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
+        public DateTime? PsSummaryDate
+        {
+            get
+            {
+                if (PsSummary != null) return PsSummary.DateSelected;
+                return null;
+            }
+        }
+        public string PsSummaryDateDisplay
+        {
+            get
+            {
+                if (PsSummary != null) return PsSummary.DateSelectedDisplay;
+                return "";
+            }
+        }
         public string PsSummaryStatusDisplay
         {
             get
@@ -131,6 +147,22 @@ namespace PQT.Domain.Entities
             }
         }
 
+        public DateTime? OneFaceToFaceSummaryDate
+        {
+            get
+            {
+                if (OneFaceToFaceSummary != null) return OneFaceToFaceSummary.DateSelected;
+                return null;
+            }
+        }
+        public string OneFaceToFaceSummaryDateDisplay
+        {
+            get
+            {
+                if (OneFaceToFaceSummary != null) return OneFaceToFaceSummary.DateSelectedDisplay;
+                return "";
+            }
+        }
         public string OneFaceToFaceSummaryStatusDisplay
         {
             get
@@ -147,7 +179,23 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
+        public DateTime? TwoFaceToFaceSummaryDate
+        {
+            get
+            {
+                if (TwoFaceToFaceSummary != null) return TwoFaceToFaceSummary.DateSelected;
+                return null;
+            }
+        }
 
+        public string TwoFaceToFaceSummaryDateDisplay
+        {
+            get
+            {
+                if (TwoFaceToFaceSummary != null) return TwoFaceToFaceSummary.DateSelectedDisplay;
+                return "";
+            }
+        }
         public string TwoFaceToFaceSummaryStatusDisplay
         {
             get

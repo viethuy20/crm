@@ -435,6 +435,9 @@ namespace PQT.Web.Controllers
                                                    (m.MobileNumber != null && m.MobileNumber.ToLower().Contains(searchValue)) ||
                                                    (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue)) ||
                                                    (m.ApplicationSource != null && m.ApplicationSource.ToLower().Contains(searchValue)) ||
+                                                   (m.PsSummaryDateDisplay != null && m.PsSummaryDateDisplay.ToLower().Contains(searchValue)) ||
+                                                   (m.OneFaceToFaceSummaryDateDisplay != null && m.OneFaceToFaceSummaryDateDisplay.ToLower().Contains(searchValue)) ||
+                                                   (m.TwoFaceToFaceSummaryDateDisplay != null && m.TwoFaceToFaceSummaryDateDisplay.ToLower().Contains(searchValue)) ||
                                                    (m.OfficeLocationDisplay != null && m.OfficeLocationDisplay.ToLower().Contains(searchValue))));
             }
             else
@@ -475,17 +478,26 @@ namespace PQT.Web.Controllers
                     case "OfficeLocationDisplay":
                         candidates = candidates.OrderBy(s => s.OfficeLocationDisplay).ThenBy(s => s.ID);
                         break;
+                    case "PsSummaryDateDisplay":
+                        candidates = candidates.OrderBy(s => s.PsSummaryDate).ThenBy(s => s.ID);
+                        break;
                     case "PsSummaryStatusDisplay":
                         candidates = candidates.OrderBy(s => s.PsSummaryStatusDisplay).ThenBy(s => s.ID);
                         break;
                     case "PsSummaryStatusReason":
                         candidates = candidates.OrderBy(s => s.PsSummaryStatusReason).ThenBy(s => s.ID);
                         break;
+                    case "OneFaceToFaceSummaryDateDisplay":
+                        candidates = candidates.OrderBy(s => s.OneFaceToFaceSummaryDate).ThenBy(s => s.ID);
+                        break;
                     case "OneFaceToFaceSummaryStatusDisplay":
                         candidates = candidates.OrderBy(s => s.OneFaceToFaceSummaryStatusDisplay).ThenBy(s => s.ID);
                         break;
                     case "OneFaceToFaceSummaryStatusReason":
                         candidates = candidates.OrderBy(s => s.OneFaceToFaceSummaryStatusReason).ThenBy(s => s.ID);
+                        break;
+                    case "TwoFaceToFaceSummaryDateDisplay":
+                        candidates = candidates.OrderBy(s => s.TwoFaceToFaceSummaryDate).ThenBy(s => s.ID);
                         break;
                     case "TwoFaceToFaceSummaryStatusDisplay":
                         candidates = candidates.OrderBy(s => s.TwoFaceToFaceSummaryStatusDisplay).ThenBy(s => s.ID);
@@ -535,17 +547,26 @@ namespace PQT.Web.Controllers
                     case "OfficeLocationDisplay":
                         candidates = candidates.OrderByDescending(s => s.OfficeLocationDisplay).ThenBy(s => s.ID);
                         break;
+                    case "PsSummaryDateDisplay":
+                        candidates = candidates.OrderByDescending(s => s.PsSummaryDate).ThenBy(s => s.ID);
+                        break;
                     case "PsSummaryStatusDisplay":
                         candidates = candidates.OrderByDescending(s => s.PsSummaryStatusDisplay).ThenBy(s => s.ID);
                         break;
                     case "PsSummaryStatusReason":
                         candidates = candidates.OrderByDescending(s => s.PsSummaryStatusReason).ThenBy(s => s.ID);
                         break;
+                    case "OneFaceToFaceSummaryDateDisplay":
+                        candidates = candidates.OrderByDescending(s => s.OneFaceToFaceSummaryDate).ThenBy(s => s.ID);
+                        break;
                     case "OneFaceToFaceSummaryStatusDisplay":
                         candidates = candidates.OrderByDescending(s => s.OneFaceToFaceSummaryStatusDisplay).ThenBy(s => s.ID);
                         break;
                     case "OneFaceToFaceSummaryStatusReason":
                         candidates = candidates.OrderByDescending(s => s.OneFaceToFaceSummaryStatusReason).ThenBy(s => s.ID);
+                        break;
+                    case "TwoFaceToFaceSummaryDateDisplay":
+                        candidates = candidates.OrderByDescending(s => s.TwoFaceToFaceSummaryDate).ThenBy(s => s.ID);
                         break;
                     case "TwoFaceToFaceSummaryStatusDisplay":
                         candidates = candidates.OrderByDescending(s => s.TwoFaceToFaceSummaryStatusDisplay).ThenBy(s => s.ID);
@@ -589,10 +610,13 @@ namespace PQT.Web.Controllers
                     m.PersonalEmail,
                     m.ApplicationSource,
                     m.OfficeLocationDisplay,
+                    m.PsSummaryDateDisplay,
                     m.PsSummaryStatusDisplay,
                     m.PsSummaryStatusReason,
+                    m.OneFaceToFaceSummaryDateDisplay,
                     m.OneFaceToFaceSummaryStatusDisplay,
                     m.OneFaceToFaceSummaryStatusReason,
+                    m.TwoFaceToFaceSummaryDateDisplay,
                     m.TwoFaceToFaceSummaryStatusDisplay,
                     m.TwoFaceToFaceSummaryStatusReason,
                     m.StatusDisplay,
