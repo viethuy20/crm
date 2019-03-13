@@ -26,6 +26,12 @@ namespace PQT.Web
             Mapper.CreateMap<CompanyResourceJson, CompanyResource>();
             Mapper.CreateMap<Country, CountryJson>();
             Mapper.CreateMap<CountryJson, Country>();
+            Mapper.CreateMap<CompanyResource, Lead>()
+                .ForMember(d => d.ID, d => d.MapFrom(s => 0))
+                  .ForMember(d => d.JobTitle, d => d.MapFrom(s => s.Role));
+            Mapper.CreateMap<Lead, CompanyResource>()
+                .ForMember(d => d.ID, d => d.MapFrom(s => 0))
+                .ForMember(d => d.Role, d => d.MapFrom(s => s.JobTitle));
         }
     }
 }

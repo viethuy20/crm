@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using AutoMapper;
 using NS.Helpers;
 using NS.Mvc.ActionResults;
 using PQT.Domain;
@@ -190,7 +191,7 @@ namespace PQT.Web.Controllers
                             return RedirectToAction("Index", "Lead", new { id = model.Booking.EventID });
                         }
                         //no need nofify when manager edit and redirect to booking management
-                        return RedirectToAction("Index", new { id = lead.EventID });
+                        return RedirectToAction("Index");
                     }
                     TempData["error"] = Resource.SaveError;
                 }
@@ -827,61 +828,81 @@ namespace PQT.Web.Controllers
             int recordsTotal = 0;
             var currentUser = CurrentUser.Identity;
             IEnumerable<Lead> leads = new HashSet<Lead>();
-
-            Func<Lead, bool> predicate = m =>
-            m.UserID == currentUser.ID && m.CompanyID == companyId &&
-                (string.IsNullOrEmpty(name) ||
-                 (!string.IsNullOrEmpty(m.Name) && m.Name.ToLower().Contains(name))) &&
-                (string.IsNullOrEmpty(designation) ||
-                 (!string.IsNullOrEmpty(m.JobTitle) && m.JobTitle.ToLower().Contains(designation))) &&
-                (string.IsNullOrEmpty(email) ||
-                 (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email)) ||
-                 (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1.ToLower().Contains(email)) ||
-                 (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(email))) &&
-                (string.IsNullOrEmpty(phone) ||
-                 (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(phone)) ||
-                 (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(phone)) ||
-                 (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(phone)) ||
-                 (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(phone)));
-            leads = _leadService.GetAllLeads(predicate);
-
+            if (CurrentUser.HasRole("Manager"))
+            {
+                Func<CompanyResource, bool> predicate1 =
+                    m => m.CompanyID == companyId &&
+                         (string.IsNullOrEmpty(name) ||
+                          (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(name))) &&
+                         (string.IsNullOrEmpty(designation) ||
+                          (!string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(designation))) &&
+                         (string.IsNullOrEmpty(email) ||
+                          (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email)) ||
+                          (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(email))) &&
+                         (string.IsNullOrEmpty(phone) ||
+                          (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(phone)) ||
+                          (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(phone)) ||
+                          (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(phone)) ||
+                          (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(phone)));
+                leads = Mapper.Map<IEnumerable<Lead>>(_companyRepo.GetAllCompanyResources(predicate1));
+            }
+            else
+            {
+                Func<Lead, bool> predicate = m =>
+                    m.UserID == currentUser.ID && m.CompanyID == companyId &&
+                    (string.IsNullOrEmpty(name) ||
+                     (!string.IsNullOrEmpty(m.Name) && m.Name.ToLower().Contains(name))) &&
+                    (string.IsNullOrEmpty(designation) ||
+                     (!string.IsNullOrEmpty(m.JobTitle) && m.JobTitle.ToLower().Contains(designation))) &&
+                    (string.IsNullOrEmpty(email) ||
+                     (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email)) ||
+                     (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1.ToLower().Contains(email)) ||
+                     (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(email))) &&
+                    (string.IsNullOrEmpty(phone) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(phone)) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(phone)) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(phone)) ||
+                     (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(phone)));
+                leads = _leadService.GetAllLeads(predicate);
+            }
+            leads = leads.DistinctBy(m => m.Name);
             #region sort
             if (sortColumnDir == "asc")
             {
                 switch (sortColumn)
                 {
                     case "Salutation":
-                        leads = leads.OrderBy(s => s.Salutation).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.Salutation).ThenBy(s => s.ID).ToList();
                         break;
                     case "FirstName":
-                        leads = leads.OrderBy(s => s.FirstName).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.FirstName).ThenBy(s => s.ID).ToList();
                         break;
                     case "LastName":
-                        leads = leads.OrderBy(s => s.LastName).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.LastName).ThenBy(s => s.ID).ToList();
                         break;
                     case "JobTitle":
-                        leads = leads.OrderBy(s => s.JobTitle).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.JobTitle).ThenBy(s => s.ID).ToList();
                         break;
                     case "DirectLine":
-                        leads = leads.OrderBy(s => s.DirectLine).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.DirectLine).ThenBy(s => s.ID).ToList();
                         break;
                     case "MobilePhone1":
-                        leads = leads.OrderBy(s => s.MobilePhone1).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.MobilePhone1).ThenBy(s => s.ID).ToList();
                         break;
                     case "MobilePhone2":
-                        leads = leads.OrderBy(s => s.MobilePhone2).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.MobilePhone2).ThenBy(s => s.ID).ToList();
                         break;
                     case "MobilePhone3":
-                        leads = leads.OrderBy(s => s.MobilePhone3).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.MobilePhone3).ThenBy(s => s.ID).ToList();
                         break;
                     case "WorkEmail":
-                        leads = leads.OrderBy(s => s.WorkEmail).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.WorkEmail).ThenBy(s => s.ID).ToList();
                         break;
                     case "PersonalEmail":
-                        leads = leads.OrderBy(s => s.PersonalEmail).ThenBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.PersonalEmail).ThenBy(s => s.ID).ToList();
                         break;
                     default:
-                        leads = leads.OrderBy(s => s.ID);
+                        leads = leads.OrderBy(s => s.ID).ToList();
                         break;
                 }
             }
@@ -890,37 +911,37 @@ namespace PQT.Web.Controllers
                 switch (sortColumn)
                 {
                     case "Salutation":
-                        leads = leads.OrderByDescending(s => s.Salutation).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.Salutation).ThenBy(s => s.ID).ToList();
                         break;
                     case "FirstName":
-                        leads = leads.OrderByDescending(s => s.FirstName).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.FirstName).ThenBy(s => s.ID).ToList();
                         break;
                     case "LastName":
-                        leads = leads.OrderByDescending(s => s.LastName).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.LastName).ThenBy(s => s.ID).ToList();
                         break;
                     case "JobTitle":
-                        leads = leads.OrderByDescending(s => s.JobTitle).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.JobTitle).ThenBy(s => s.ID).ToList();
                         break;
                     case "DirectLine":
-                        leads = leads.OrderByDescending(s => s.DirectLine).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.DirectLine).ThenBy(s => s.ID).ToList();
                         break;
                     case "MobilePhone1":
-                        leads = leads.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.ID).ToList();
                         break;
                     case "MobilePhone2":
-                        leads = leads.OrderByDescending(s => s.MobilePhone2).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.MobilePhone2).ThenBy(s => s.ID).ToList();
                         break;
                     case "MobilePhone3":
-                        leads = leads.OrderByDescending(s => s.MobilePhone3).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.MobilePhone3).ThenBy(s => s.ID).ToList();
                         break;
                     case "WorkEmail":
-                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.ID).ToList();
                         break;
                     case "PersonalEmail":
-                        leads = leads.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.ID).ToList();
                         break;
                     default:
-                        leads = leads.OrderByDescending(s => s.ID);
+                        leads = leads.OrderByDescending(s => s.ID).ToList();
                         break;
                 }
             }
