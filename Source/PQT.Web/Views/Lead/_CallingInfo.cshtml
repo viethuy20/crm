@@ -28,7 +28,7 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-sm-3">
-                                        @Html.Bootstrap().TextBoxFor(m => m.DialingCode).Class("form-control dialingCode").Disabled().ShowValidationMessage(true)
+                                        @Html.Bootstrap().TextBoxFor(m => m.DialingCode).Class("form-control dialingCode").Readonly().ShowValidationMessage(true)
                                     </div>
                                     <div class="col-sm-9">
                                         @Html.Bootstrap().TextBoxFor(m => m.DirectLine).Class("form-control").ShowValidationMessage(true)
@@ -74,7 +74,7 @@
                     <div class="row" style="margin-top: 30px;">
                         <div class="col-sm-2">
                             <div class="form-group">
-                                @Html.Bootstrap().DropDownListFor(m => m.Salutation, EnumerationHelper.ToSelectList<NameTitle>()).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                                @Html.Bootstrap().DropDownListFor(m => m.Salutation, EnumerationHelper.ToSelectList<NameTitle>()).HtmlAttributes(new { required = "required" }).Class("form-control").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.Salutation).LabelText("Salutation").ShowRequiredStar(true)
                             </div>
                         </div>
@@ -339,6 +339,10 @@
             $('.phoneCallStartTime').val(moment(startTime).format("DD/MM/YYYY HH:mm:ss"));
             tickTime();
         }
+        
 
+        if (company_id_selected_val > 0) {
+            wizard.bootstrapWizard('next');
+        }
     </script>
                         )

@@ -33,16 +33,21 @@
     </script>
 
     <style>
-        #accordion2 .dropdown-menu {
-            display: block;
-            position: initial;
-            float: initial;
-            border: 0px
+        
+        .bootstrap-tagsinput .label-info {
+            white-space: initial;
         }
 
-            #accordion2 .dropdown-menu li a {
-                padding-left: 50px;
-            }
+         #accordion2 .dropdown-menu {
+             display: block;
+             position: initial;
+             float: initial;
+             border: 0px
+         }
+
+        #accordion2 .dropdown-menu li a {
+            padding-left: 50px;
+        }
     </style>
 </head>
 @*@(Request.Cookies["menubar-pin"] == null || Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")*@

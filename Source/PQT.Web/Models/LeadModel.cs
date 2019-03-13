@@ -421,7 +421,7 @@ namespace PQT.Web.Models
             FirstFollowUpStatus = FollowUpStatus.Neutral;
             FinalStatus = FinalStatus.Neutral;
         }
-        public void PrepareCall(int eventId, int resourceId)
+        public void PrepareCall(int eventId, int comId, int resourceId)
         {
             EventID = eventId;
             FirstFollowUpStatus = FollowUpStatus.Neutral;
@@ -473,6 +473,38 @@ namespace PQT.Web.Models
                             CompanyID = Convert.ToInt32(resource.CompanyID)
                         };
                     }
+                }
+            }
+            if (comId > 0)
+            {
+                var comRepo = DependencyHelper.GetService<ICompanyRepository>();
+                var unitRepo = DependencyHelper.GetService<IUnitRepository>();
+                var resource = comRepo.GetCompany(comId);
+                if (resource != null)
+                {
+                    CompanyName = resource.CompanyName;
+                    CompanyID = resource.ID;
+                    if (resource.CountryID > 0)
+                    {
+                        var country = unitRepo.GetCountry((int)resource.CountryID);
+                        if (country != null)
+                        {
+                            DialingCode = country.DialingCode;
+                        }
+                        var com = comRepo.GetCompany((int)resource.ID);
+                        if (com != null)
+                        {
+                            BusinessUnit = com.DialingCode;
+                        }
+                    }
+                    EventCompany = new EventCompany
+                    {
+                        EventID = eventId,
+                        BusinessUnit = resource.BusinessUnit,
+                        BudgetMonth = resource.BudgetMonth,
+                        Remarks = resource.Remarks,
+                        CompanyID = Convert.ToInt32(resource.ID)
+                    };
                 }
             }
         }
@@ -873,7 +905,7 @@ namespace PQT.Web.Models
                 reportCall = callService.CreateReportCall(reportCall);
                 if (reportCall != null)
                 {
-                    ReportCallNotificator.NotifyUser(NotifyAction.Alert, reportCall.ID, "Report Call #"+ DirectLine); // notify for manager
+                    ReportCallNotificator.NotifyUser(NotifyAction.Alert, reportCall.ID, "Report Call #" + DirectLine); // notify for manager
                     return true;
                 }
                 return false;

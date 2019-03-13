@@ -222,9 +222,9 @@
          var company_id_selected = $("@Html.JquerySelectorFor(m=>m.CompanyID)");
          company_id_selected_val = company_id_selected.val();
          var company_name_selected = $("@Html.JquerySelectorFor(m=>m.CompanyName)");
-         var company_business_selected = '@Model.EventCompany.BusinessUnit';
-         var company_remark_selected = '@Model.EventCompany.Remarks';
-         var company_budget_selected = '@Model.EventCompany.BudgetMonth';
+         var company_business_selected = "@Model.EventCompany.BusinessUnit";
+         var company_remark_selected = "@(Model.EventCompany.Remarks)";
+         var company_budget_selected = "@(Model.EventCompany.BudgetMonth)";
          var company_dialingCode_selected = '@Model.DialingCode';
          var company_block_start_call_selected = false;
          var tableCompanies = $("#grid_companies").DataTable({
@@ -659,10 +659,6 @@
             }
          }*@
 
-
-         if (company_id_selected_val > 0) {
-             wizard.bootstrapWizard('next');
-         }
      </script>
         )
 

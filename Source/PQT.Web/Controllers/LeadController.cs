@@ -201,10 +201,10 @@ namespace PQT.Web.Controllers
         //}
 
         [DisplayName(@"Start Call Form")]
-        public ActionResult StartCallForm(int id = 0, int resourceId = 0)
+        public ActionResult StartCallForm(int id = 0, int comId = 0, int resourceId = 0)
         {
             var model = new CallingModel();
-            model.PrepareCall(id, resourceId);
+            model.PrepareCall(id, comId, resourceId);
             if (model.Event == null)
             {
                 TempData["error"] = "Event not found";
@@ -269,7 +269,25 @@ namespace PQT.Web.Controllers
                     if (model.CreateNewEvent())
                     {
                         TempData["message"] = "Request successful";
-                        return RedirectToAction("Index", "NewEvent");
+                        ModelState["NewTopics"].Value = new ValueProviderResult(null, null, System.Globalization.CultureInfo.CurrentCulture);
+                        ModelState["NewLocations"].Value = new ValueProviderResult(null, null, System.Globalization.CultureInfo.CurrentCulture);
+                        ModelState["NewDateFrom"].Value = new ValueProviderResult(null, null, System.Globalization.CultureInfo.CurrentCulture);
+                        ModelState["NewDateTo"].Value = new ValueProviderResult(null, null, System.Globalization.CultureInfo.CurrentCulture);
+                        ModelState["Remark"].Value = new ValueProviderResult(null, null, System.Globalization.CultureInfo.CurrentCulture);
+                        ModelState["NewTrainingType"].Value = new ValueProviderResult(NewTrainingType.None, null, System.Globalization.CultureInfo.CurrentCulture);
+                        model.NewTopics = null;
+                        model.NewLocations = null;
+                        model.NewDateFrom = null;
+                        model.NewDateTo = null;
+                        model.Remark = null;
+                        model.NewTrainingType = NewTrainingType.None;
+                        //return RedirectToAction("StartCallForm", new { id = model.EventID, comId = model.CompanyID });
+                        model.PrepareCall(model.EventID, 0, 0);
+                        if (model.Event == null)
+                        {
+                            model.Event = _eventService.GetEvent(model.EventID);
+                        }
+                        return View(model);
                     }
                     TempData["error"] = "Request failed";
                 }
@@ -366,6 +384,7 @@ namespace PQT.Web.Controllers
                     TempData["error"] = "Save failed";
                 }
             }
+            model.PrepareCall(model.EventID, 0, 0);
             if (model.Event == null)
             {
                 model.Event = _eventService.GetEvent(model.EventID);
