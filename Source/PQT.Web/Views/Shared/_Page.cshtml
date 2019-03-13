@@ -42,25 +42,35 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="headerbar-right">
             <ul class="header-nav header-nav-options">
+                @if (ViewContext.RouteData.Values["action"] == "Index" &&
+                     ViewContext.RouteData.Values["controller"] == "Home")
+                {
+                    <li style="padding: 0">
+                        @using (Html.BeginForm("Index", "Home"))
+                        {
+                            <div class="row form" style="padding: 0 24px; display: inline-flex">
+                                @Html.Bootstrap().TextBox("HomeSearch").Value(ViewBag.HomeSearch).Placeholder("Enter Event Name or Event Code for Search").HtmlAttributes(new { @class = "form-control", style = "min-width:340px;" })
+                                <button type="submit" class="btn btn-icon-toggle ink-reaction"><i class="fa fa-search"></i></button>
+                            </div>
+                        }
+                    </li>
+                }
                 <li>
-                    <a href="@Url.Action("SalesmanTemplates","UploadTemplate")" title="Templates" class="btn btn-icon-toggle btn-default simple-ajax-popup-align-top">
+                    <a href="@Url.Action("SalesmanTemplates", "UploadTemplate")" title="Templates" class="btn btn-icon-toggle btn-default simple-ajax-popup-align-top">
                         <i class="fa fa-files-o"></i>
                     </a>
                 </li>
                 <li>
-                    <a href="@Url.Action("SalesmanNonDownloadableTemplates","UploadTemplate")" title="Non downloadable Template" class="btn btn-icon-toggle btn-default simple-ajax-popup-align-top">
+                    <a href="@Url.Action("SalesmanNonDownloadableTemplates", "UploadTemplate")" title="Non downloadable Template" class="btn btn-icon-toggle btn-default simple-ajax-popup-align-top">
                         <i class="fa fa-file-pdf-o"></i>
                     </a>
                 </li>
                 <li>
                     <a href="#offcanvas-notify" data-toggle="offcanvas" title="Notifications" class="btn btn-icon-toggle btn-default" id="notify-trigger">
-                        <i class="fa fa-bell"></i><sup class="badge style-danger count @(count == 0? "hide":"")">@(count)</sup>
+                        <i class="fa fa-bell"></i><sup class="badge style-danger count @(count == 0 ? "hide" : "")">@(count)</sup>
                     </a>
                 </li>
-
-
                 @*<li>
-                        <!-- Search form -->
                         <form class="navbar-search" role="search">
                             <div class="form-group">
                                 <input type="text" class="form-control" name="headerSearch" placeholder="Enter your keyword">

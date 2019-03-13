@@ -122,6 +122,14 @@ namespace PQT.Domain.Entities
                 return null;
             }
         }
+        public string PsSummaryInterviewer
+        {
+            get
+            {
+                if (PsSummary != null) return PsSummary.Interviewer;
+                return null;
+            }
+        }
         public string PsSummaryDateDisplay
         {
             get
@@ -155,6 +163,14 @@ namespace PQT.Domain.Entities
                 return null;
             }
         }
+        public string OneFaceToFaceSummaryInterviewer
+        {
+            get
+            {
+                if (OneFaceToFaceSummary != null) return OneFaceToFaceSummary.Interviewer;
+                return null;
+            }
+        }
         public string OneFaceToFaceSummaryDateDisplay
         {
             get
@@ -184,6 +200,14 @@ namespace PQT.Domain.Entities
             get
             {
                 if (TwoFaceToFaceSummary != null) return TwoFaceToFaceSummary.DateSelected;
+                return null;
+            }
+        }
+        public string TwoFaceToFaceSummaryInterviewer
+        {
+            get
+            {
+                if (TwoFaceToFaceSummary != null) return TwoFaceToFaceSummary.Interviewer;
                 return null;
             }
         }

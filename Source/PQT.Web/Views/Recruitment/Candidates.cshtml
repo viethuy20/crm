@@ -104,12 +104,15 @@
                         <th>Date of PS Summary</th>
                         <th>PS Status</th>
                         <th>PS Reason</th>
+                        <th>Interviewer of Ps Summary</th>
                         <th>Date of 1F2F Summary</th>
                         <th>1F2F Status</th>
                         <th>1F2F Reason</th>
+                        <th>Interviewer of 1F2F Summary</th>
                         <th>Date of 2F2F Summary</th>
                         <th>2F2F Status</th>
                         <th>2F2F Reason</th>
+                        <th>Interviewer of 2F2F Summary</th>
                         <th>Status</th>
                         <th></th>
                     </tr>
@@ -165,12 +168,15 @@
                 { "data": "PsSummaryDateDisplay", "name": "PsSummaryDateDisplay", "orderable": true },
                 { "data": "PsSummaryStatusDisplay", "name": "PsSummaryStatusDisplay", "orderable": true },
                 { "data": "PsSummaryStatusReason", "name": "PsSummaryStatusReason", "orderable": true },
+                { "data": "PsSummaryInterviewer", "name": "PsSummaryInterviewer", "orderable": true },
                 { "data": "OneFaceToFaceSummaryDateDisplay", "name": "OneFaceToFaceSummaryDateDisplay", "orderable": true },
                 { "data": "OneFaceToFaceSummaryStatusDisplay", "name": "OneFaceToFaceSummaryStatusDisplay", "orderable": true },
                 { "data": "OneFaceToFaceSummaryStatusReason", "name": "OneFaceToFaceSummaryStatusReason", "orderable": true },
+                { "data": "OneFaceToFaceSummaryInterviewer", "name": "OneFaceToFaceSummaryInterviewer", "orderable": true },
                 { "data": "TwoFaceToFaceSummaryDateDisplay", "name": "TwoFaceToFaceSummaryDateDisplay", "orderable": true },
                 { "data": "TwoFaceToFaceSummaryStatusDisplay", "name": "TwoFaceToFaceSummaryStatusDisplay", "orderable": true },
                 { "data": "TwoFaceToFaceSummaryStatusReason", "name": "TwoFaceToFaceSummaryStatusReason", "orderable": true },
+                { "data": "TwoFaceToFaceSummaryInterviewer", "name": "TwoFaceToFaceSummaryInterviewer", "orderable": true },
                 { "data": "StatusDisplay", "name": "StatusDisplay", "orderable": true },
                 { "data": "ID", "name": "ID", "orderable": true },
             ],
@@ -184,7 +190,7 @@
                 if ('@CurrentUser.HasPermission("Recruitment", "Edit")' == 'True') {
                     eq15Html += ' | <a href="@Url.Action("Edit")?id=' + aData["ID"] + '&backAction=@(ViewContext.Controller.ValueProvider.GetValue("action").RawValue)" style="white-space: nowrap;" title="Edit"><i class="fa fa-pencil-square-o text-info"></i></a>';
                 }
-                $(nRow).find('td:eq(17)').html(eq15Html);
+                $(nRow).find('td:eq(20)').html(eq15Html);
                 $(nRow).addClass(aData["PsSummaryStatusDisplay"]);
                 $(nRow).attr("data-id", ["ID"]);
             },

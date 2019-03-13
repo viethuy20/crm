@@ -428,17 +428,17 @@ namespace PQT.Web.Controllers
                 candidates = _recruitmentService.GetAllCandidates(m =>
                                                (saleId == 0 || m.UserID == saleId ||
                                                 (m.User != null && m.User.TransferUserID == saleId)) && (
-                                                   (m.CandidateNo != null && m.CandidateNo.ToLower().Contains(searchValue)) ||
+                                                   (m.CandidateNo.ToLower().Contains(searchValue)) ||
                                                    (m.EnglishName != null && m.EnglishName.ToLower().Contains(searchValue)) ||
-                                                   (m.FirstName != null && m.FirstName.ToLower().Contains(searchValue)) ||
-                                                   (m.LastName != null && m.LastName.ToLower().Contains(searchValue)) ||
-                                                   (m.MobileNumber != null && m.MobileNumber.ToLower().Contains(searchValue)) ||
-                                                   (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue)) ||
+                                                   (m.FirstName.ToLower().Contains(searchValue)) ||
+                                                   (m.LastName.ToLower().Contains(searchValue)) ||
+                                                   (m.MobileNumber.ToLower().Contains(searchValue)) ||
+                                                   (m.PersonalEmail.ToLower().Contains(searchValue)) ||
                                                    (m.ApplicationSource != null && m.ApplicationSource.ToLower().Contains(searchValue)) ||
-                                                   (m.PsSummaryDateDisplay != null && m.PsSummaryDateDisplay.ToLower().Contains(searchValue)) ||
-                                                   (m.OneFaceToFaceSummaryDateDisplay != null && m.OneFaceToFaceSummaryDateDisplay.ToLower().Contains(searchValue)) ||
-                                                   (m.TwoFaceToFaceSummaryDateDisplay != null && m.TwoFaceToFaceSummaryDateDisplay.ToLower().Contains(searchValue)) ||
-                                                   (m.OfficeLocationDisplay != null && m.OfficeLocationDisplay.ToLower().Contains(searchValue))));
+                                                   (m.PsSummaryDateDisplay.ToLower().Contains(searchValue)) ||
+                                                   (m.OneFaceToFaceSummaryDateDisplay.ToLower().Contains(searchValue)) ||
+                                                   (m.TwoFaceToFaceSummaryDateDisplay.ToLower().Contains(searchValue)) ||
+                                                   (m.OfficeLocationDisplay.ToLower().Contains(searchValue))));
             }
             else
             {
@@ -481,6 +481,9 @@ namespace PQT.Web.Controllers
                     case "PsSummaryDateDisplay":
                         candidates = candidates.OrderBy(s => s.PsSummaryDate).ThenBy(s => s.ID);
                         break;
+                    case "PsSummaryInterviewer":
+                        candidates = candidates.OrderBy(s => s.PsSummaryInterviewer).ThenBy(s => s.ID);
+                        break;
                     case "PsSummaryStatusDisplay":
                         candidates = candidates.OrderBy(s => s.PsSummaryStatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -490,6 +493,9 @@ namespace PQT.Web.Controllers
                     case "OneFaceToFaceSummaryDateDisplay":
                         candidates = candidates.OrderBy(s => s.OneFaceToFaceSummaryDate).ThenBy(s => s.ID);
                         break;
+                    case "OneFaceToFaceSummaryInterviewer":
+                        candidates = candidates.OrderBy(s => s.OneFaceToFaceSummaryInterviewer).ThenBy(s => s.ID);
+                        break;
                     case "OneFaceToFaceSummaryStatusDisplay":
                         candidates = candidates.OrderBy(s => s.OneFaceToFaceSummaryStatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -498,6 +504,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "TwoFaceToFaceSummaryDateDisplay":
                         candidates = candidates.OrderBy(s => s.TwoFaceToFaceSummaryDate).ThenBy(s => s.ID);
+                        break;
+                    case "TwoFaceToFaceSummaryInterviewer":
+                        candidates = candidates.OrderBy(s => s.TwoFaceToFaceSummaryInterviewer).ThenBy(s => s.ID);
                         break;
                     case "TwoFaceToFaceSummaryStatusDisplay":
                         candidates = candidates.OrderBy(s => s.TwoFaceToFaceSummaryStatusDisplay).ThenBy(s => s.ID);
@@ -550,6 +559,9 @@ namespace PQT.Web.Controllers
                     case "PsSummaryDateDisplay":
                         candidates = candidates.OrderByDescending(s => s.PsSummaryDate).ThenBy(s => s.ID);
                         break;
+                    case "PsSummaryInterviewer":
+                        candidates = candidates.OrderByDescending(s => s.PsSummaryInterviewer).ThenBy(s => s.ID);
+                        break;
                     case "PsSummaryStatusDisplay":
                         candidates = candidates.OrderByDescending(s => s.PsSummaryStatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -559,6 +571,9 @@ namespace PQT.Web.Controllers
                     case "OneFaceToFaceSummaryDateDisplay":
                         candidates = candidates.OrderByDescending(s => s.OneFaceToFaceSummaryDate).ThenBy(s => s.ID);
                         break;
+                    case "OneFaceToFaceSummaryInterviewer":
+                        candidates = candidates.OrderByDescending(s => s.OneFaceToFaceSummaryInterviewer).ThenBy(s => s.ID);
+                        break;
                     case "OneFaceToFaceSummaryStatusDisplay":
                         candidates = candidates.OrderByDescending(s => s.OneFaceToFaceSummaryStatusDisplay).ThenBy(s => s.ID);
                         break;
@@ -567,6 +582,9 @@ namespace PQT.Web.Controllers
                         break;
                     case "TwoFaceToFaceSummaryDateDisplay":
                         candidates = candidates.OrderByDescending(s => s.TwoFaceToFaceSummaryDate).ThenBy(s => s.ID);
+                        break;
+                    case "TwoFaceToFaceSummaryInterviewer":
+                        candidates = candidates.OrderByDescending(s => s.TwoFaceToFaceSummaryInterviewer).ThenBy(s => s.ID);
                         break;
                     case "TwoFaceToFaceSummaryStatusDisplay":
                         candidates = candidates.OrderByDescending(s => s.TwoFaceToFaceSummaryStatusDisplay).ThenBy(s => s.ID);
@@ -611,12 +629,15 @@ namespace PQT.Web.Controllers
                     m.ApplicationSource,
                     m.OfficeLocationDisplay,
                     m.PsSummaryDateDisplay,
+                    m.PsSummaryInterviewer,
                     m.PsSummaryStatusDisplay,
                     m.PsSummaryStatusReason,
                     m.OneFaceToFaceSummaryDateDisplay,
+                    m.OneFaceToFaceSummaryInterviewer,
                     m.OneFaceToFaceSummaryStatusDisplay,
                     m.OneFaceToFaceSummaryStatusReason,
                     m.TwoFaceToFaceSummaryDateDisplay,
+                    m.TwoFaceToFaceSummaryInterviewer,
                     m.TwoFaceToFaceSummaryStatusDisplay,
                     m.TwoFaceToFaceSummaryStatusReason,
                     m.StatusDisplay,
@@ -669,14 +690,14 @@ namespace PQT.Web.Controllers
                 ) &&
                                                (saleId == 0 || m.UserID == saleId ||
                                                 (m.User != null && m.User.TransferUserID == saleId)) && (
-                                                   (m.CandidateNo != null && m.CandidateNo.ToLower().Contains(searchValue)) ||
+                                                   (m.CandidateNo.ToLower().Contains(searchValue)) ||
                                                    (m.EnglishName != null && m.EnglishName.ToLower().Contains(searchValue)) ||
-                                                   (m.FirstName != null && m.FirstName.ToLower().Contains(searchValue)) ||
-                                                   (m.LastName != null && m.LastName.ToLower().Contains(searchValue)) ||
-                                                   (m.MobileNumber != null && m.MobileNumber.ToLower().Contains(searchValue)) ||
-                                                   (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue)) ||
+                                                   (m.FirstName.ToLower().Contains(searchValue)) ||
+                                                   (m.LastName.ToLower().Contains(searchValue)) ||
+                                                   (m.MobileNumber.ToLower().Contains(searchValue)) ||
+                                                   (m.PersonalEmail.ToLower().Contains(searchValue)) ||
                                                    (m.ApplicationSource != null && m.ApplicationSource.ToLower().Contains(searchValue)) ||
-                                                   (m.OfficeLocationDisplay != null && m.OfficeLocationDisplay.ToLower().Contains(searchValue))));
+                                                   (m.OfficeLocationDisplay.ToLower().Contains(searchValue))));
             }
             else
             {

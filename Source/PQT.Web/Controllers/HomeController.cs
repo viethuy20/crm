@@ -31,7 +31,6 @@ using ServiceStack;
 
 namespace PQT.Web.Controllers
 {
-
     public class HomeController : Controller
     {
         private readonly IUserNotificationService _notificationService;
@@ -44,7 +43,6 @@ namespace PQT.Web.Controllers
             _eventService = eventService;
             _membershipService = membershipService;
         }
-
         public ActionResult Index()
         {
             var model = new HomeModel();
@@ -63,7 +61,7 @@ namespace PQT.Web.Controllers
                 var userId = CurrentUser.Identity.ID;
                 var events = _eventService.GetAllEvents().Where(m =>
                     (m.EventStatus == EventStatus.Live || m.EventStatus == EventStatus.Confirmed) &&
-                    DateTime.Today <= m.ClosingDate && 
+                    DateTime.Today <= m.ClosingDate &&
                     (m.UserID == userId ||
                     m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) ||
                     m.SalesGroups
@@ -88,9 +86,64 @@ namespace PQT.Web.Controllers
                                                           m.DateOfOpen <= DateTime.Today &&
                                                           DateTime.Today <= m.ClosingDate);
             }
+            ViewBag.HomeSearch = model.HomeSearch;
             return View(model);
         }
+        [HttpPost]
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
+        public ActionResult Index(HomeModel model)
+        {
+            if (CurrentUser.HasRole("Finance"))
+                return RedirectToAction("Index", "Event");
+            if (CurrentUser.HasRole("Operation"))
+                return RedirectToAction("Index", "Operation");
+            if (CurrentUser.HasRole("HR"))
+                return RedirectToAction("Index", "Recruitment");
+            if (CurrentUser.HasRole("Admin") || CurrentUser.HasRole("QC") || CurrentUser.HasRole("Manager"))
+                model.Events = _eventService.GetAllEvents(m =>
+                    (string.IsNullOrEmpty(model.HomeSearch) ||
+                    m.EventName.ToLower().Contains(model.HomeSearch.ToLower()) ||
+                    m.EventCode.ToLower().Contains(model.HomeSearch.ToLower())
+                    ) &&
+                    (m.EventStatus == EventStatus.Live || m.EventStatus == EventStatus.Confirmed) &&
+                    (m.DateOfOpen <= DateTime.Today && DateTime.Today <= m.ClosingDate));
+            else
+            {
+                var userId = CurrentUser.Identity.ID;
+                var events = _eventService.GetAllEvents().Where(m =>
+                    (string.IsNullOrEmpty(model.HomeSearch) ||
+                     m.EventName.ToLower().Contains(model.HomeSearch.ToLower()) ||
+                     m.EventCode.ToLower().Contains(model.HomeSearch.ToLower())
+                    ) &&
+                    (m.EventStatus == EventStatus.Live || m.EventStatus == EventStatus.Confirmed) &&
+                    DateTime.Today <= m.ClosingDate &&
+                    (m.UserID == userId ||
+                     m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID)).Contains(userId) ||
+                     m.SalesGroups
+                         .SelectMany(g => g.Users.Where(u => u.TransferUserID > 0).Select(u => u.TransferUserID))
+                         .Contains(userId) ||
+                     m.ManagerUsers.Select(u => u.ID).Contains(userId) ||
+                     m.ManagerUsers.Where(u => u.TransferUserID > 0).Select(u => u.TransferUserID).Contains(userId) ||
+                     (m.DateOfOpen <= DateTime.Today && DateTime.Today <= m.ClosingDate)));
 
+                model.Events = events.Where(m => (m.UserID == userId ||
+                                                  m.SalesGroups.SelectMany(g => g.Users.Select(u => u.ID))
+                                                      .Contains(userId) ||
+                                                  m.SalesGroups
+                                                      .SelectMany(g =>
+                                                          g.Users.Where(u => u.TransferUserID > 0)
+                                                              .Select(u => u.TransferUserID))
+                                                      .Contains(userId) ||
+                                                  m.ManagerUsers.Select(u => u.ID).Contains(userId) ||
+                                                  m.ManagerUsers.Where(u => u.TransferUserID > 0)
+                                                      .Select(u => u.TransferUserID).Contains(userId)));
+                model.CrossSellEvents = events.Where(m => !model.Events.Select(e => e.ID).Contains(m.ID) &&
+                                                          m.DateOfOpen <= DateTime.Today &&
+                                                          DateTime.Today <= m.ClosingDate);
+            }
+            ViewBag.HomeSearch = model.HomeSearch;
+            return View(model);
+        }
         [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         public ActionResult GetNotifyForEvent(int eventId, int page = 1)
         {
@@ -116,7 +169,7 @@ namespace PQT.Web.Controllers
         public ActionResult GetNotifyForNewEvent()
         {
             var notifications =
-                _notificationService.GetAllUserNotificationsByNewEvent(CurrentUser.Identity.ID,Settings.System.NotificationNumber());
+                _notificationService.GetAllUserNotificationsByNewEvent(CurrentUser.Identity.ID, Settings.System.NotificationNumber());
             return Json(notifications, JsonRequestBehavior.AllowGet);
         }
 

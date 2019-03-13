@@ -13,6 +13,7 @@ namespace PQT.Web.Models
             Events = new HashSet<Event>();
             CrossSellEvents = new HashSet<Event>();
         }
+        public string HomeSearch { get; set; }
         public IEnumerable<Event> Events { get; set; }
         public IEnumerable<Event> CrossSellEvents { get; set; }
     }
