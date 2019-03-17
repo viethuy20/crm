@@ -1,0 +1,322 @@
+﻿@using NS.Mvc
+@using PQT.Domain.Abstract
+@using Resources
+@model PQT.Web.Models.EventImportModel
+@{
+    ViewBag.Title = "Import Events";
+}
+
+<style>
+    label.myLabel input[type="file"] {
+        position: fixed;
+        top: -1000px;
+    }
+
+    /***** Example custom styling *****/
+    .myLabel {
+        border-radius: 8px;
+        padding: 10px 35px;
+        margin-left: 10px;
+        background: #C2C2C2;
+        display: inline-block;
+    }
+
+        .myLabel:hover {
+            background: #CCC;
+        }
+
+        .myLabel:active {
+            background: #CCF;
+        }
+
+        .myLabel :invalid + span {
+            color: #A44;
+        }
+
+        .myLabel :valid + span {
+            color: #4A4;
+        }
+
+        .myLabel span {
+            font-size: 18px;
+        }
+
+    #fileResult {
+        background-color: #F5F5F5;
+        padding: 10px 35px;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+        #fileResult span {
+            color: #4A4;
+            font-size: 16px;
+        }
+
+        #fileResult:empty {
+            display: none;
+        }
+
+    .importindents {
+        width: 450px;
+        background-color: #fff;
+        padding: 10px 0;
+        float: left;
+    }
+
+    /*.indentRecord {
+        width: 100%;
+    }*/
+    .indentRecord tr td:first-child {
+        width: 30%;
+        vertical-align: middle;
+    }
+
+    .indentRecord tr td:last-child {
+        width: 70%;
+    }
+
+    .indentinfo tr td {
+        line-height: 30px;
+    }
+
+    .result-table tr th {
+        background-color: #D7E6EF;
+        text-align: center;
+        border-right: 1px solid #c2c2c2;
+        border-bottom: 1px solid #c2c2c2;
+    }
+
+    .graybackground {
+        background-color: #EBEBEB;
+    }
+
+    .result-table tr td {
+        padding: 5px 15px;
+        border-right: 1px solid #c2c2c2;
+        border-bottom: 1px solid #c2c2c2;
+    }
+
+    .result-table {
+        border-left: 1px solid #c2c2c2;
+        border-top: 1px solid #c2c2c2;
+    }
+
+    .highline {
+        background-color: #FFCAC4;
+    }
+
+    .samplefile {
+        margin-left: 10px;
+        margin-bottom: 10px;
+    }
+</style>
+
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+            @Html.Bootstrap().Button().Id("btnUpload").HtmlAttributes(new {@class = "DTTT_button btn btn-info"}).Text("Import Excel File").PrependIcon("md md-cloud-upload")
+            @if (Model.Events != null && Model.Events.Count > 0)
+            {
+                @Html.Bootstrap().Button().Text("Confirm Upload").Style(ButtonStyle.Success).PrependIcon("md md-done").Id("finish")
+            }
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table" id="importContentTable">
+                    <thead>
+                        <tr>
+                            <th>S/No.</th>
+                            <th>Country</th>
+                            <th>Salutation</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Organisation</th>
+                            <th>Role</th>
+                            <th>Direct Line</th>
+                            <th>Mobile Phone1</th>
+                            <th>Mobile Phone2</th>
+                            <th>Mobile Phone3</th>
+                            <th>Work Email</th>
+                            <th>Personal Email</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<div style="display: none">
+    <div id="dialog-upload" style="background: white; margin: auto; max-width: 600px; position: relative;">
+        <div>
+            <div class="card-head">
+                <header><b>Upload File</b></header>
+            </div><!--end .card-head -->
+            @using (Html.BeginForm("ImportFromExcel", "Event", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="card-body" style="padding-top: 0px;">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <a href="~/Content/SampleFiles/event_sample.xlsx">Download sample excel file</a>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">File Import <span class="required">*</span></label>
+                        <div class="col-sm-9">
+                            @Html.Bootstrap().File("FileImport").Id("inputfile").HtmlAttributes(new { }).Tooltip("Format file: *.xls").Class("form-control")
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@Html.Script(
+    @<script>
+        $("#inputfile").on('change', function () {
+            if ($(this).val() != '') {
+                $("#fileResult").html("<span>" + $(this).val() + "</span>");
+            } else {
+                $("#fileResult").html('');
+            }
+            var filepath = $(this).val();
+            if (filepath != 0) {
+                var value = filepath.substring(filepath.lastIndexOf('.'));
+                if (value == ".xls" || value == ".xlsx") {
+                    $(this).closest('form').submit();
+                }
+                else {
+                    bootbox.alert("No Excel file!");
+                }
+            }
+            else {
+                bootbox.alert("File import empty!");
+            }
+        });
+        if ($("#inputfile").val() != '') {
+            $("#fileResult").html("<span>" + $("#inputfile").val() + "</span>");
+        } else {
+            $("#fileResult").html('');
+        }
+
+
+
+        $("#btnUpload").off('click').click(function (e) {
+            e.preventDefault();
+            $('#inputfile').val('');
+            $.magnificPopup.open({
+                items: [
+                    {
+                        src: '#dialog-upload',
+                        type: 'inline'
+                    }
+                ],
+            });
+        });
+        @if (Model.Events == null || !Model.ImportRows.Any())
+        {
+            <text>
+        $('#inputfile').val('');
+        $.magnificPopup.open({
+            items: [
+                {
+                    src: '#dialog-upload',
+                    type: 'inline'
+                }
+            ],
+        });
+        </text>
+                                                                }
+
+
+        $("#btnStart").click(function () {
+            var filepath = $("#fileUpload").val();
+            if (filepath != 0) {
+                var value = filepath.substring(filepath.lastIndexOf('.'));
+                if (value == ".xls" || value == ".xlsx") {
+                    return true;
+                }
+                else {
+                    bootbox.alert("Not Excel file!");
+                    return false;
+                }
+            }
+            else {
+                bootbox.alert("File import empty!");
+                return false;
+            }
+        });
+
+        var ImportSession = "@Model.SessionName";
+
+        var $importTable = $("#importContentTable").dataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "url": "@Url.Action("ImportReview")",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function (d) {
+                     d.Session = ImportSession;
+                 }
+             },
+             "columns": [
+                 { "data": "EventCode", "name": "EventCode", "orderable": false },
+                 { "data": "EventStatusStr", "name": "EventStatusStr", "orderable": false },
+                 { "data": "EventCategoryStr", "name": "EventCategoryStr", "orderable": false },
+                 { "data": "EventName", "name": "EventName", "orderable": false },
+                 { "data": "StartDateStr", "name": "StartDateStr", "orderable": false },
+                 { "data": "EndDateStr", "name": "EndDateStr", "orderable": false },
+                 { "data": "DateOfConfirmationStr", "name": "DateOfConfirmationStr", "orderable": false },
+                 { "data": "ClosingDateStr", "name": "ClosingDateStr", "orderable": false },
+                 { "data": "DateOfOpenStr", "name": "DateOfOpenStr", "orderable": false },
+                 { "data": "Location", "name": "Location", "orderable": false },
+                 { "data": "Summary", "name": "Summary", "orderable": false },
+                 { "data": "Error", "name": "Error", "orderable": false },
+             ],
+             "iDisplayLength": 25,
+             "aaSorting": [[0, "desc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 $(nRow).find('td:eq(11)').css("color","red");
+             },
+        });
+
+        $("#finish").on("click",
+            function() {
+                bootbox.confirm("Do you want to import this list?", function (isOK) {
+                    if (isOK) {
+
+                        $.ajax({
+                            url: '@Url.Action("ComfirmImport")?sessionName=@Model.SessionName',
+                            type: 'POST',
+                            success: function (message) {
+                                if (message && message != "") {
+                                    toastr.error(message);
+                                } else {
+                                    location.href = '@Url.Action("Index")';
+                                }
+                            },
+                            error: function () {
+                                toastr.error("Import failed");
+                            }
+                        });
+                    }
+                });
+            });
+        StartConnectProgressHub();
+    </script>
+                                             )

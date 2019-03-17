@@ -400,6 +400,7 @@
     <Compile Include="Models\AjaxResult.cs" />
     <Compile Include="Models\BookingModel.cs" />
     <Compile Include="Models\BookingViewModel.cs" />
+    <Compile Include="Models\EventImportModel.cs" />
     <Compile Include="Models\CountryImportModel.cs" />
     <Compile Include="Models\CompanyImportModel.cs" />
     <Compile Include="Models\CompanyModel.cs" />
@@ -2673,6 +2674,7 @@
     <Content Include="Views\RecruitmentPosition\Detail.cshtml" />
     <Content Include="Views\ReportCall\Detail.cshtml" />
     <Content Include="Views\ReportCall\Index.cshtml" />
+    <Content Include="Views\Event\ImportFromExcel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

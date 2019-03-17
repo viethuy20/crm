@@ -20,6 +20,8 @@ namespace PQT.Web
             Mapper.CreateMap<Enumeration, int>().ConvertUsing<EnumerationTypeConverter>();
             //Mapper.CreateMap<Enumeration, string>().ConvertUsing<EnumerationStringTypeConverter>();
             Mapper.AddProfile<ModelMappingProfile>();
+            Mapper.CreateMap<Event, EventJson>();
+            Mapper.CreateMap<EventJson, Event>();
             Mapper.CreateMap<Company, CompanyJson>();
             Mapper.CreateMap<CompanyJson, Company>();
             Mapper.CreateMap<CompanyResource, CompanyResourceJson>();

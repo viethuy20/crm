@@ -16,6 +16,10 @@
             {
                 @Html.Bootstrap().ActionLinkButton(Resource.AddNew, "Create").PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary" })
             }
+            @if (CurrentUser.HasPermission("Event", "ImportFromExcel"))
+            {
+                @Html.Bootstrap().ActionLinkButton(Resource.ImportFromExcel, "ImportFromExcel").PrependIcon("md md-cloud-upload").HtmlAttributes(new { @class = "btn btn-info " })
+            }
         </div>
     </div>
     <div class="card" style="margin-bottom: 350px">

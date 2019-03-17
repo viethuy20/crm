@@ -401,7 +401,7 @@ namespace PQT.Domain.Concrete
             {
                 return null;
             }
-            return Get<EventCategory>(m => m.Name.ToLower() == code.Trim().ToLower());
+            return Get<EventCategory>(m => m.Name.Trim().ToLower() == code.Trim().ToLower());
         }
 
         public EventCategory CreateEventCategory(EventCategory info)

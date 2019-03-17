@@ -128,6 +128,7 @@ namespace PQT.Web.Infrastructure.Helpers
     {
         Companies,
         CompanyResources,
+        Events,
         KPI,
     }
 }
