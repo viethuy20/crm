@@ -16,6 +16,10 @@
     @using (Html.BeginForm("EditEmployment", "Recruitment", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form" }))
     {
         @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.OfferLetter)
+        @Html.HiddenFor(m => m.BankAccountName)
+        @Html.HiddenFor(m => m.BankAccountNumber)
+        @Html.HiddenFor(m => m.BranchAddress)
         <div class="card card-underline">
             <div class="card-head">
                 <header>Basic Info</header>
@@ -190,6 +194,17 @@
                             }
                             @Html.Bootstrap().FileFor(m => m.IDCardFile).Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.IDCardFile).LabelText("ID Card")
+                        </div>
+                    </div>
+                    <div class=" col-sm-4">
+                        <div class="form-group">
+                            @if (!string.IsNullOrEmpty(Model.TerminationLetter))
+                            {
+                                <a href="@UserPicture.GetContractUrl(Model.TerminationLetter)" target="_blank">@Model.TerminationLetter</a>
+                                @Html.HiddenFor(m => m.TerminationLetter)
+                            }
+                            @Html.Bootstrap().FileFor(m => m.TerminationLetterFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.TerminationLetterFile).LabelText("Employment Termination Letter")
                         </div>
                     </div>
                 </div>

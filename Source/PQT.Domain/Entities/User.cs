@@ -88,6 +88,11 @@ namespace PQT.Domain.Entities
             CertOfHighestEducation = user.CertOfHighestEducation;
             IDCard = user.IDCard;
             TransferUserID = user.TransferUserID;
+            TerminationLetter = user.TerminationLetter;
+            OfferLetter = user.OfferLetter;
+            BankAccountName = user.BankAccountName;
+            BankAccountNumber = user.BankAccountNumber;
+            BranchAddress = user.BranchAddress;
         }
 
         #region Primitive
@@ -123,6 +128,9 @@ namespace PQT.Domain.Entities
         public DateTime? EmploymentDate { get; set; }
         public DateTime? FirstEvaluationDate { get; set; } //First Evaluation Date tu dong tinh la last day of 03 months from Employment Date
         public decimal? BasicSalary { get; set; }
+        public string BankAccountName { get; set; }
+        public string BankAccountNumber { get; set; }
+        public string BranchAddress { get; set; }
         public ICollection<UserSalaryHistory> UserSalaryHistories { get; set; }
         public ICollection<UserContract> UserContracts { get; set; }
 
@@ -131,6 +139,8 @@ namespace PQT.Domain.Entities
         public string FilledDeclarationForm { get; set; }
         public string CertOfHighestEducation { get; set; }
         public string IDCard { get; set; }
+        public string TerminationLetter { get; set; }
+        public string OfferLetter { get; set; }
         public string Ip { get; set; }
         public string Extension { get; set; }//private number for employees
 

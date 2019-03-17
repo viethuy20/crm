@@ -108,6 +108,35 @@
                             @Html.Bootstrap().LabelFor(m => m.Employee.OfficeLocationID).LabelText("Office Location")
                         </div>
                     </div>
+                    <div class=" col-sm-4">
+                        <div class="form-group">
+                            @if (!string.IsNullOrEmpty(Model.Employee.OfferLetter))
+                            {
+                                <a href="@UserPicture.GetContractUrl(Model.Employee.OfferLetter)" target="_blank">@Model.Employee.OfferLetter</a>
+                                @Html.HiddenFor(m => m.Employee.OfferLetter)
+                            }
+                            @Html.Bootstrap().FileFor(m => m.OfferLetterFile).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.OfferLetterFile).LabelText("Employment Offer Letter").ShowRequiredStar(true)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Employee.BankAccountName).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Employee.BankAccountName)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Employee.BankAccountNumber).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Employee.BankAccountNumber)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Employee.BranchAddress).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Employee.BranchAddress)
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -186,6 +215,21 @@
                             @Html.Bootstrap().LabelFor(m => m.IDCardFile).LabelText("ID Card")
                         </div>
                     </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().FileFor(m => m.TerminationLetterFile).Class("form-control").ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.TerminationLetterFile).LabelText("Employment Termination Letter")
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body text-default-light" id="delegateContain" style="padding: 0px;">
+                @Html.CollectionEditorFor(m => m.Employee.UserContracts)
+                @Html.JqueryTemplateFor(m => m.Employee.UserContracts, "sub-tmpl")
+            </div><!--end .card-body -->
+            <div class="card-actionbar">
+                <div class="card-actionbar-row">
+                    <a class="btn btn-info pull-left" id="btn_add_delegate" onclick="return sub.addNewModule();"><i class="md md-add"></i> Add New Contract</a>
                 </div>
             </div>
         </div>
@@ -209,4 +253,42 @@
                  }
              });
          });
+    </script>)
+
+@Html.Script(
+    @<script>
+         var sub = {
+             addNewModule: function () {
+                 this._addNew('#sub-tmpl');
+                 return false;
+             },
+
+             _addNew: function (templateID) {
+                 $(templateID).tmpl({ index: this._generateGuid() }).appendTo('#delegateContain');
+                 ReValidateForm();
+                 OrderAllDelegate();
+                 initDatepicker();
+             },
+             remove: function (sender) {
+                 $(sender).closest('.delegateItem').remove();
+                 OrderAllDelegate();
+             },
+
+             _generateGuid: function () {
+                 // Source: http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/105074#105074
+                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                     return v.toString(16);
+                 });
+             }
+         };
+
+
+         function OrderAllDelegate() {
+             var allOrderElements =
+                 $("#delegateContain").find("input[id*='Order']");
+             allOrderElements.each(function (index, item) {
+                 $(item).val(index + 1);
+             });
+         }
     </script>)

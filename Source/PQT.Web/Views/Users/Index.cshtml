@@ -72,6 +72,8 @@
                         <th>Extension</th>
                         <th>Department</th>
                         <th>Line Supervisor</th>
+                        <th>Employment Date</th>
+                        <th>Employment End Date</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -111,6 +113,8 @@
                  { "data": "Extension", "name": "Extension", "orderable": true },
                  { "data": "RolesHtml", "name": "RolesHtml", "orderable": true },
                  { "data": "DirectSupervisor", "name": "DirectSupervisor", "orderable": true },
+                 { "data": "EmploymentDateDisplay", "name": "EmploymentDateDisplay", "orderable": false },
+                 { "data": "EmploymentEndDateDisplay", "name": "EmploymentEndDateDisplay", "orderable": false },
                  { "data": "ID", "name": "ID", "orderable": false },
                  { "data": "ID", "name": "ID", "orderable": false }
              ],
@@ -119,10 +123,10 @@
              "aaSorting": [[0, "asc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  $(nRow).addClass(aData["UserStatus"].toLowerCase());
-                 $(nRow).find('td:eq(11)').html('<a href="@Url.Action("Index", "Audit")?Username=' +
+                 $(nRow).find('td:eq(13)').html('<a href="@Url.Action("Index", "Audit")?Username=' +
                      aData["Username"] +
                      '" >@Resource.Logviewer</a>');
-                 $(nRow).find('td:eq(12)').html('<a href="@Url.Action("Edit")/' +
+                 $(nRow).find('td:eq(14)').html('<a href="@Url.Action("Edit")/' +
                      aData["ID"] +
                      '" class="active" data-toggle="class"><i class="fa fa-pencil-square-o text-violet text-active"></i></a> | <a data-action="delete" data-id="' +
                      aData["ID"] +

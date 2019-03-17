@@ -80,6 +80,11 @@ namespace PQT.Web.Models
                 FilledDeclarationForm = user.FilledDeclarationForm;
                 CertOfHighestEducation = user.CertOfHighestEducation;
                 IDCard = user.IDCard;
+                TerminationLetter = user.TerminationLetter;
+                OfferLetter = user.OfferLetter;
+                BankAccountName = user.BankAccountName;
+                BankAccountNumber = user.BankAccountNumber;
+                BranchAddress = user.BranchAddress;
             }
         }
 
@@ -124,6 +129,9 @@ namespace PQT.Web.Models
         public DateTime? LastAccess { get; set; }
         public string Address { get; set; }
 
+        public string BankAccountName { get; set; }
+        public string BankAccountNumber { get; set; }
+        public string BranchAddress { get; set; }
         public BusinessDevelopmentUnit BusinessDevelopmentUnit { get; set; }
         public SalesManagementUnit SalesManagementUnit { get; set; }
         public SalesSupervision SalesSupervision { get; set; }
@@ -161,6 +169,10 @@ namespace PQT.Web.Models
         public HttpPostedFileBase CertOfHighestEducationFile { get; set; }
         public string IDCard { get; set; }
         public HttpPostedFileBase IDCardFile { get; set; }
+        public string OfferLetter { get; set; }
+        public HttpPostedFileBase OfferLetterFile { get; set; }
+        public string TerminationLetter { get; set; }
+        public HttpPostedFileBase TerminationLetterFile { get; set; }
         public string AvatarUrl
         {
             get

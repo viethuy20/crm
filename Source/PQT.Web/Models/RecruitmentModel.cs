@@ -22,6 +22,7 @@ namespace PQT.Web.Models
         public Candidate Candidate { get; set; }
         public User Employee { get; set; }
         public HttpPostedFileBase ResumeFile { get; set; }
+        public HttpPostedFileBase InformationFile { get; set; }
         public IEnumerable<User> Interviewers { get; set; }
         public HttpPostedFileBase SignedContractFile { get; set; }
         public HttpPostedFileBase BirthCertificationFile { get; set; }
@@ -29,6 +30,8 @@ namespace PQT.Web.Models
         public HttpPostedFileBase FilledDeclarationFormFile { get; set; }
         public HttpPostedFileBase CertOfHighestEducationFile { get; set; }
         public HttpPostedFileBase IDCardFile { get; set; }
+        public HttpPostedFileBase TerminationLetterFile { get; set; }
+        public HttpPostedFileBase OfferLetterFile { get; set; }
         public RecruitmentModel()
         {
             Candidate = new Candidate();
@@ -56,6 +59,14 @@ namespace PQT.Web.Models
                     Candidate.Resume = uploadPicture;
                 }
             }
+            if (InformationFile != null)
+            {
+                string uploadPicture = FileUpload.Upload(FileUploadType.Recruitment, InformationFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    Candidate.Information = uploadPicture;
+                }
+            }
             return recruitmentService.UpdateCandidate(Candidate);
         }
 
@@ -78,6 +89,14 @@ namespace PQT.Web.Models
                 if (!string.IsNullOrEmpty(uploadPicture))
                 {
                     Candidate.Resume = uploadPicture;
+                }
+            }
+            if (InformationFile != null)
+            {
+                string uploadPicture = FileUpload.Upload(FileUploadType.Recruitment, InformationFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    Candidate.Information = uploadPicture;
                 }
             }
             Candidate = recruitmentService.CreateCandidate(Candidate);
@@ -163,6 +182,22 @@ namespace PQT.Web.Models
                     if (!string.IsNullOrEmpty(uploadPicture))
                     {
                         Employee.IDCard = uploadPicture;
+                    }
+                }
+                if (OfferLetterFile != null)
+                {
+                    string uploadPicture = UserPicture.UploadContract(OfferLetterFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        Employee.OfferLetter = uploadPicture;
+                    }
+                }
+                if (TerminationLetterFile != null)
+                {
+                    string uploadPicture = UserPicture.UploadContract(TerminationLetterFile);
+                    if (!string.IsNullOrEmpty(uploadPicture))
+                    {
+                        Employee.TerminationLetter = uploadPicture;
                     }
                 }
                 Employee.Status = EntityUserStatus.RequestEmployment;

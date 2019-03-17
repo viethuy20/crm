@@ -5,7 +5,7 @@
 @{
     var unitService = DependencyHelper.GetService<IUnitRepository>();
     var officeLocations = unitService.GetAllOfficeLocations();
-    var countries = unitService.GetAllCountries().Select(m => m.Name);
+    var countries = unitService.GetAllCountries();
 }
 <div class="card card-underline">
     <div class="card-head">
@@ -58,7 +58,12 @@
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
+                    <div class="input-group">
+                        <span class="input-group-addon dialingCode" style="color: #000;"></span>
+                        <div class="input-group-content">
+                            @Html.Bootstrap().TextBoxFor(m => m.MobilePhone).Class("form-control").ShowValidationMessage(true)
+                        </div>
+                    </div>
                     @Html.Bootstrap().LabelFor(m => m.MobilePhone)
                 </div>
             </div>
@@ -83,7 +88,14 @@
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    @Html.Bootstrap().DropDownListFor(m => m.Nationality, countries.ToSelectList(m => m, m => m)).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                    <select class="form-control" id="@Html.IdFor(m=>m.Nationality)" name="@Html.NameFor(m => m.Nationality)" >
+                        <option value="" dialingcode=""></option>
+                        @foreach (var trainer in countries)
+                        {
+                            <option value="@trainer.Name" dialingcode="@trainer.DialingCode" selected="@(Model.Nationality == trainer.Name)">@trainer.Name</option>
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(m => m.Nationality)
                     @Html.Bootstrap().LabelFor(m => m.Nationality)
                 </div>
             </div>
@@ -95,7 +107,7 @@
             </div>
             @if (Model.Candidate != null)
             {
-                <div class=" col-sm-12">
+                <div class=" col-sm-4">
                     <div class="form-group">
                         @if (!string.IsNullOrEmpty(Model.Candidate.Resume))
                         {
@@ -105,6 +117,35 @@
                     </div>
                 </div>
             }
+            <div class=" col-sm-4">
+                <div class="form-group">
+                    @if (!string.IsNullOrEmpty(Model.OfferLetter))
+                    {
+                        <a href="@UserPicture.GetContractUrl(Model.OfferLetter)" target="_blank">@Model.OfferLetter</a>
+                            @Html.HiddenFor(m => m.OfferLetter)
+                    }
+                    @Html.Bootstrap().FileFor(m => m.OfferLetterFile).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.OfferLetterFile).LabelText("Employment Offer Letter")
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.BankAccountName).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.BankAccountName)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.BankAccountNumber).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.BankAccountNumber)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.BranchAddress).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.BranchAddress)
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -313,6 +354,17 @@
                     @Html.Bootstrap().LabelFor(m => m.IDCardFile).LabelText("ID Card")
                 </div>
             </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @if (!string.IsNullOrEmpty(Model.TerminationLetter))
+                    {
+                        <a href="@UserPicture.GetContractUrl(Model.TerminationLetter)" target="_blank">@Model.TerminationLetter</a>
+                        @Html.HiddenFor(m => m.TerminationLetter)
+                    }
+                    @Html.Bootstrap().FileFor(m => m.TerminationLetterFile).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.TerminationLetterFile).LabelText("Employment Termination Letter")
+                </div>
+            </div>
         </div>
     </div>
     <div class="card-body text-default-light" id="delegateContain" style="padding: 0px;">
@@ -498,4 +550,9 @@
                 $(".role-" + rolename).removeClass('hide');
             }
         });
+
+        $('@Html.JquerySelectorFor(m=>m.Nationality)').on("change",
+            function() {
+                $(".dialingCode").text(this.options[this.selectedIndex].getAttribute('dialingcode'));
+            }).change();
     </script>)

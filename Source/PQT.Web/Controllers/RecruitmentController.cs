@@ -62,6 +62,10 @@ namespace PQT.Web.Controllers
         [HttpPost]
         public ActionResult Create(RecruitmentModel model)
         {
+            if (model.Candidate.OneFaceToFaceSummary.Status != RecruitmentStatus.Initial &&
+                string.IsNullOrEmpty(model.Candidate.Information) && model.InformationFile == null)
+                ModelState.AddModelError("InformationFile", Resource.TheFieldShouldNotBeEmpty);
+
             if (ModelState.IsValid)
             {
                 var callExists = _recruitmentService.GetAllCandidates(m => (
@@ -128,6 +132,9 @@ namespace PQT.Web.Controllers
         [HttpPost]
         public ActionResult Edit(RecruitmentModel model)
         {
+            if (model.Candidate.OneFaceToFaceSummary.Status != RecruitmentStatus.Initial &&
+                string.IsNullOrEmpty(model.Candidate.Information) && model.InformationFile == null)
+                ModelState.AddModelError("InformationFile", Resource.TheFieldShouldNotBeEmpty);
             if (ModelState.IsValid)
             {
                 if (model.SaveEdit())
@@ -379,6 +386,8 @@ namespace PQT.Web.Controllers
             user.FilledDeclarationForm = model.FilledDeclarationForm;
             user.CertOfHighestEducation = model.CertOfHighestEducation;
             user.IDCard = model.IDCard;
+            user.OfferLetter = model.OfferLetter;
+            user.TerminationLetter = model.TerminationLetter;
             var success = _membershipService.UpdateUserIncludeCollection(user);
             _roleService.AssignRoles(user, user.Roles.Select(m => m.ID));
             _loginTracker.ReloadUser(user.Email, user);

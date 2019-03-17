@@ -141,6 +141,24 @@ namespace PQT.Web.Controllers
                 }
             }
 
+            if (model.TerminationLetterFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.TerminationLetterFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.TerminationLetter = uploadPicture;
+                }
+            }
+
+            if (model.OfferLetterFile != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.OfferLetterFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.OfferLetter = uploadPicture;
+                }
+            }
+
             var user = new User
             {
                 UserNo = model.UserNo,
@@ -179,8 +197,13 @@ namespace PQT.Web.Controllers
                 FamilyCertification = model.FamilyCertification,
                 FilledDeclarationForm = model.FilledDeclarationForm,
                 CertOfHighestEducation = model.CertOfHighestEducation,
-                IDCard = model.IDCard
-            };
+                IDCard = model.IDCard,
+                TerminationLetter = model.TerminationLetter,
+                OfferLetter = model.OfferLetter,
+                BankAccountNumber = model.BankAccountNumber,
+                BankAccountName = model.BankAccountName,
+                BranchAddress = model.BranchAddress
+        };
 
             user = _membershipService.CreateUser(user);
 
@@ -309,6 +332,22 @@ namespace PQT.Web.Controllers
                     model.IDCard = uploadPicture;
                 }
             }
+            if (model.TerminationLetter != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.TerminationLetterFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.TerminationLetter = uploadPicture;
+                }
+            }
+            if (model.OfferLetter != null)
+            {
+                string uploadPicture = UserPicture.UploadContract(model.OfferLetterFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    model.OfferLetter = uploadPicture;
+                }
+            }
 
             foreach (var modelUserContract in model.UserContracts)
             {
@@ -361,6 +400,11 @@ namespace PQT.Web.Controllers
             user.FilledDeclarationForm = model.FilledDeclarationForm;
             user.CertOfHighestEducation = model.CertOfHighestEducation;
             user.IDCard = model.IDCard;
+            user.OfferLetter = model.OfferLetter;
+            user.TerminationLetter = model.TerminationLetter;
+            user.BankAccountNumber = model.BankAccountNumber;
+            user.BankAccountName = model.BankAccountName;
+            user.BranchAddress = model.BranchAddress;
             if (!string.IsNullOrEmpty(model.Password))
             {
                 //user.Password = EncryptHelper.EncryptPassword(model.Password);
@@ -541,6 +585,8 @@ namespace PQT.Web.Controllers
                     (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID)) &&
                     ((m.DisplayName.ToLower().Contains(searchValue)) ||
                      (m.UserStatusDisplay.ToLower().Contains(searchValue)) ||
+                     (m.EmploymentDateDisplay.ToLower().Contains(searchValue)) ||
+                     (m.EmploymentEndDateDisplay.ToLower().Contains(searchValue)) ||
                      (m.DirectSupervisorDisplay.ToLower().Contains(searchValue)) ||
                      (m.UserNo != null && m.UserNo.ToLower().Contains(searchValue)) ||
                      (m.Email != null && m.Email.ToLower().Contains(searchValue)) ||
@@ -578,6 +624,8 @@ namespace PQT.Web.Controllers
                     m.LastName,
                     m.Email,
                     UserStatus = m.UserStatusDisplay,
+                    m.EmploymentDateDisplay,
+                    m.EmploymentEndDateDisplay,
                     m.PersonalEmail,
                     m.MobilePhone,
                     m.BusinessPhone,

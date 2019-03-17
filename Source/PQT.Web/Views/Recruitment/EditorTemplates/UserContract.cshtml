@@ -3,7 +3,7 @@
 
 @using (Html.BeginCollectionItem())
 {
-    <div class="delegateItem col-sm-12 delegateItem_@(Model.ID)" data-id="@Model.ID" style="padding: 0px;padding-bottom: 20px">
+    <div class="delegateItem col-sm-12 delegateItem_@(Model.ID)" data-id="@Model.ID"  style="padding: 0px;padding-bottom: 20px">
         <div style="border: 1px solid #e1e1e1; padding: 10px; border-bottom: 0px;">
             @Html.HiddenFor(m => m.ID)
             @Html.HiddenFor(m => m.UserID)

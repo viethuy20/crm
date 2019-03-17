@@ -81,8 +81,8 @@
                     @Html.Bootstrap().LabelFor(m => m.Booking.CompanyID).LabelText("Company Name")
                 </div>
                 <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Booking.Address).Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Booking.Address)
+                    @Html.Bootstrap().TextBoxFor(m => m.Booking.Address).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Booking.Address).ShowRequiredStar(true)
                 </div>
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Booking.Tel).Class("form-control").ShowValidationMessage(true)
@@ -591,6 +591,7 @@
             allOrderElements.each(function (index, item) {
                 $(item).val(index + 1);
             });
+            TotalWrittenRevenue();
         }
         var isReloadSelectData = false;
         $("#btn_add_new_call").on("click",
@@ -610,6 +611,42 @@
             $('#calltable_filter').find('input[name="search_mobile"]').val('');
             isReloadSelectData = false;
             callResourceTable.fnFilter('');
+        }
+
+        function parseToDecimal(input) {
+            if (input == '' || input == undefined)
+                return 0;
+            if ($.isNumeric(input)) {
+                return parseFloat(input);
+            }
+            else {
+                return parseFloat(input.replace(/\,/g, '').replace(' ', ''));
+            }
+        }
+
+        var $FeePerDelegate = $('@Html.JquerySelectorFor(m=>m.Booking.FeePerDelegate)');
+        var $DiscountPercent = $('@Html.JquerySelectorFor(m=>m.Booking.DiscountPercent)');
+        var $TotalWrittenRevenue = $('@Html.JquerySelectorFor(m=>m.Booking.TotalWrittenRevenue)');
+        function TotalWrittenRevenue() {
+            var totalAmount = parseToDecimal($FeePerDelegate.val()) * TotalDelegate();
+            var discountAmount = totalAmount * parseToDecimal($DiscountPercent.val()) / 100;
+            $TotalWrittenRevenue.val(Math.round(totalAmount - discountAmount));
+        }
+
+        $FeePerDelegate.on("change",
+            function () {
+                TotalWrittenRevenue();
+            });
+
+        $DiscountPercent.on("change",
+            function () {
+                TotalWrittenRevenue();
+            });
+
+        function TotalDelegate() {
+            var allOrderElements =
+                $("#delegateContain").find("input[id*='Order']");
+            return allOrderElements.length;
         }
     </script>
     )

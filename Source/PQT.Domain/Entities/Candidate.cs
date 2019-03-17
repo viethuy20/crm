@@ -24,6 +24,7 @@ namespace PQT.Domain.Entities
         public string ApplicationSource { get; set; }
         public string Remarks { get; set; }
         public string Resume { get; set; }
+        public string Information { get; set; }
         public int? OfficeLocationID { get; set; }
         [ForeignKey("OfficeLocationID")]
         public virtual OfficeLocation OfficeLocation { get; set; }
