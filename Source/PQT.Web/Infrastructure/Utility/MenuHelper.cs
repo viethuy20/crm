@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
+using PQT.Domain.Enum;
 
 namespace PQT.Web.Infrastructure.Utility
 {
@@ -21,7 +22,7 @@ namespace PQT.Web.Infrastructure.Utility
             if (!CurrentUser.IsAuthenticated)
                 return new Menu[] { };
 
-            return MenuRepository.GetAllChildrenByUser(CurrentUser.Identity!=null?CurrentUser.Identity.ID:0, parentId);
+            return MenuRepository.GetAllChildrenByUser(CurrentUser.Identity != null ? CurrentUser.Identity.ID : 0, parentId);
         }
     }
 }

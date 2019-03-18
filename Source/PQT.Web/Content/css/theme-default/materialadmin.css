@@ -1973,7 +1973,7 @@ body:not(.menubar-first) .menubar-fixed-panel {
     margin-bottom: 12px;
 }
 
-    .gui-controls > li > a {
+    .gui-controls > li > a:not(.btn-icon-toggle) {
         position: relative;
         display: block;
         text-decoration: none;
@@ -1987,6 +1987,13 @@ body:not(.menubar-first) .menubar-fixed-panel {
         z-index: 1;
     }
 
+    .gui-controls > li .btn-bell {
+        position: absolute;
+        display: block;
+        left: 200px;
+        top: 2px;
+        z-index: 2;
+    }
         .gui-controls > li > a.btn-flat {
             padding: 12px 0px;
         }
@@ -2195,7 +2202,7 @@ body:not(.menubar-first) .menubar-fixed-panel {
     opacity: 1;
 }
 
-.gui-folder > a:after {
+.gui-folder > a:not(.btn-bell):after {
     content: "+";
     position: absolute;
     top: 7px;

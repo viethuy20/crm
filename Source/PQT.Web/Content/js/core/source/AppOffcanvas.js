@@ -45,7 +45,8 @@
 		$('[data-toggle="offcanvas"]').on('click', function (e) {
 			e.preventDefault();
 			o._handleOffcanvasOpen($(e.currentTarget));
-		});$('[data-dismiss="offcanvas"]').on('click', function (e) {
+        });
+        $('[data-dismiss="offcanvas"]').on('click', function (e) {
 			o._handleOffcanvasClose();
 		});
 		$('#base').on('click', '> .backdrop', function (e) {

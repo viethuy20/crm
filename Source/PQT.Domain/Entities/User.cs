@@ -93,6 +93,14 @@ namespace PQT.Domain.Entities
             BankAccountName = user.BankAccountName;
             BankAccountNumber = user.BankAccountNumber;
             BranchAddress = user.BranchAddress;
+            BookingNotifyNumber = user.BookingNotifyNumber;
+            InvoiceNotifyNumber = user.InvoiceNotifyNumber;
+            RecruitmentNotifyNumber = user.RecruitmentNotifyNumber;
+            OpeEventNotifyNumber = user.OpeEventNotifyNumber;
+            NewEventNotifyNumber = user.NewEventNotifyNumber;
+            MasterFilesNotifyNumber = user.MasterFilesNotifyNumber;
+            ReportCallNotifyNumber = user.ReportCallNotifyNumber;
+            LeaveNotifyNumber = user.LeaveNotifyNumber;
         }
 
         #region Primitive
@@ -121,6 +129,14 @@ namespace PQT.Domain.Entities
         //public User TransferUser { get; set; }
 
         public int NotifyNumber { get; set; }
+        public int BookingNotifyNumber { get; set; }
+        public int InvoiceNotifyNumber { get; set; }
+        public int RecruitmentNotifyNumber { get; set; }
+        public int OpeEventNotifyNumber { get; set; }
+        public int NewEventNotifyNumber { get; set; }
+        public int MasterFilesNotifyNumber { get; set; }
+        public int ReportCallNotifyNumber { get; set; }
+        public int LeaveNotifyNumber { get; set; }
         public BusinessDevelopmentUnit BusinessDevelopmentUnit { get; set; }
         public SalesManagementUnit SalesManagementUnit { get; set; }
         public SalesSupervision SalesSupervision { get; set; }

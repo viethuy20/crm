@@ -221,31 +221,31 @@
             @if (Model.Candidate.PsSummary != null)
             {
                 <div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-12">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().TextAreaFor(m => m.Candidate.PsSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary).LabelText("PS Summary").ShowRequiredStar(true)
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.DateSelectedDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.DateSelected).LabelText("Date")
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.Interviewer).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.Interviewer)
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.Status)
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.PsSummary.ReasonRejected).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.PsSummary.ReasonRejected).LabelText("Reason")
@@ -256,34 +256,47 @@
             @if (Model.Candidate.OneFaceToFaceSummary != null)
             {
                 <div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-12">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().TextAreaFor(m => m.Candidate.OneFaceToFaceSummary.Remarks).Rows(3).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary).LabelText("1F2F Summary").ShowRequiredStar(true)
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.DateSelectedDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.DateSelected).LabelText("Date")
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.Interviewer).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.Interviewer)
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.Status)
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.OneFaceToFaceSummary.ReasonRejected).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.OneFaceToFaceSummary.ReasonRejected).LabelText("Reason")
+                        </div>
+                    </div>
+                    <div class=" col-sm-6">
+                        <div class="form-group">
+                            @if (!string.IsNullOrEmpty(Model.Candidate.Information))
+                            {
+                                <a class="form-control" readonly="readonly" href="@FileUpload.GetImageUrl(FileUploadType.Recruitment, Model.Candidate.Information)" target="_blank">@Model.Candidate.Information</a>
+                            }
+                            else
+                            {
+                                <div class="form-control" readonly="readonly"></div>
+                            }
+                            @Html.Bootstrap().LabelFor(m => m.Candidate.Information).LabelText("Candidate Information").ShowRequiredStar(true)
                         </div>
                     </div>
                 </div>
@@ -291,31 +304,31 @@
             @if (Model.Candidate.TwoFaceToFaceSummary != null)
             {
                 <div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-12">
                         <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.Remarks).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().TextAreaFor(m => m.Candidate.TwoFaceToFaceSummary.Remarks).Rows(3).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary).LabelText("2F2F Summary").ShowRequiredStar(true)
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.DateSelectedDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.DateSelected).LabelText("Date")
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.Interviewer).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.Interviewer)
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.StatusDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.Status)
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Candidate.TwoFaceToFaceSummary.ReasonRejected).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Candidate.TwoFaceToFaceSummary.ReasonRejected).LabelText("Reason")
@@ -334,64 +347,77 @@
             </div>
             <div class="card-body text-default-light form">
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.DisplayName).Disabled().Class("form-control text-capitalize").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.DisplayName).LabelText("Display Name").ShowRequiredStar(true)
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.FirstName).Disabled().Class("form-control text-capitalize").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.FirstName).ShowRequiredStar(true)
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.LastName).Disabled().Class("form-control text-capitalize").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.LastName).ShowRequiredStar(true)
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.Email).Disabled().Class("form-control text-lowercase").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.Email).LabelText("Email").ShowRequiredStar(true)
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.MobilePhone).Disabled().Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.MobilePhone)
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.PersonalEmail).Disabled().Class("form-control text-lowercase").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.PersonalEmail)
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.PassportID).Disabled().Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.PassportID).LabelText("Passport/ID")
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.DateOfBirthDisplay).Disabled().Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.DateOfBirth)
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.Nationality).Disabled().Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.Nationality)
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.OfficeLocation.Name).Disabled().Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.OfficeLocation)
+                        </div>
+                    </div>
+                    <div class=" col-sm-4">
+                        <div class="form-group">
+                            @if (!string.IsNullOrEmpty(Model.Employee.OfferLetter))
+                            {
+                                <a class="form-control" readonly="readonly" href="@UserPicture.GetContractUrl(Model.Employee.OfferLetter)" target="_blank">@Model.Employee.OfferLetter</a>
+                            }
+                            else
+                            {
+                                <div class="form-control" readonly="readonly"></div>
+                            }
+                            @Html.Bootstrap().LabelFor(m => m.OfferLetterFile).LabelText("Employment Offer Letter").ShowRequiredStar(true)
                         </div>
                     </div>
                 </div>
@@ -421,13 +447,13 @@
                             @Html.Bootstrap().LabelFor(m => m.Employee.FirstEvaluationDate)
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.BasicSalary).Disabled().Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.BasicSalary)
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Employee.SalaryCurrency.DisplayName).Disabled().Class("form-control").ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Employee.SalaryCurrency)
@@ -517,6 +543,19 @@
                                 <div class="form-control" readonly="readonly"></div>
                             }
                             @Html.Bootstrap().LabelFor(m => m.Employee.IDCard)
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group ">
+                            @if (!string.IsNullOrEmpty(Model.Employee.TerminationLetter))
+                            {
+                                <a class="form-control" readonly="readonly" href="@UserPicture.GetContractUrl(Model.Employee.TerminationLetter)" target="_blank">@Model.Employee.TerminationLetter</a>
+                            }
+                            else
+                            {
+                                <div class="form-control" readonly="readonly"></div>
+                            }
+                            @Html.Bootstrap().LabelFor(m => m.Employee.TerminationLetter)
                         </div>
                     </div>
                 </div>

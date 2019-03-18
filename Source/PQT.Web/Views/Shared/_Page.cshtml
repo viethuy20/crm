@@ -8,10 +8,19 @@
     var currentUser = CurrentUser.Identity;
     Layout = "~/Views/Shared/_BigBang.cshtml";
 
+    Dictionary<string, int> menuNotifications = new Dictionary<string, int>();
     var count = 0;
     if (currentUser != null)
     {
         count = currentUser.NotifyNumber;
+        menuNotifications.Add("Bookings", currentUser.BookingNotifyNumber);
+        menuNotifications.Add("Invoicing", currentUser.InvoiceNotifyNumber);
+        menuNotifications.Add("Candidates", currentUser.RecruitmentNotifyNumber);
+        menuNotifications.Add("Operation", currentUser.OpeEventNotifyNumber);
+        menuNotifications.Add("New Event", currentUser.NewEventNotifyNumber);
+        menuNotifications.Add("Master Files", currentUser.MasterFilesNotifyNumber);
+        menuNotifications.Add("Report Calls", currentUser.ReportCallNotifyNumber);
+        menuNotifications.Add("Leave Management", currentUser.LeaveNotifyNumber);
     }
     var menus = MenuHelper.GetAll();
     var debugMode = ConfigurationManager.AppSettings["TEST_MODE"];
@@ -43,7 +52,7 @@
         <div class="headerbar-right">
             <ul class="header-nav header-nav-options">
                 @if (ViewContext.RouteData.Values["action"] == "Index" &&
-                     ViewContext.RouteData.Values["controller"] == "Home")
+     ViewContext.RouteData.Values["controller"] == "Home")
                 {
                     <li style="padding: 0">
                         @using (Html.BeginForm("Index", "Home"))
@@ -66,8 +75,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#offcanvas-notify" data-toggle="offcanvas" title="Notifications" class="btn btn-icon-toggle btn-default" id="notify-trigger">
-                        <i class="fa fa-bell"></i><sup class="badge style-danger count @(count == 0 ? "hide" : "")">@(count)</sup>
+                    <a href="#" data-toggle="offcanvas" data-type="" title="Notifications" class="btn btn-icon-toggle btn-default seen-notify-trigger" id="notify-trigger">
+                        <i class="fa fa-bell"></i><sup class="badge style-danger notify-count @(count == 0 ? "hide" : "")">@(count)</sup>
                     </a>
                 </li>
                 @*<li>
@@ -159,6 +168,11 @@
 
                     var children = MenuHelper.GetAll(item.ID).ToList();
                     var title = item.Title;
+                    var notifyNumber = -1;
+                    if (menuNotifications.ContainsKey(item.Title))
+                    {
+                        notifyNumber = menuNotifications[item.Title];
+                    }
                     if (item.Title.ToUpper() == "MASTER FILES")
                     {
                         children = children.OrderBy(m => m.Title).ToList();
@@ -167,13 +181,22 @@
                             continue;
                         }
                     }
-                    <li class="@(children.Any()?"gui-folder":"")">
+                    <li class="@(children.Any()?"gui-folder":"") menu_notify_child_@(item.NotifyType)">
                         @if (string.IsNullOrEmpty(item.Url))
                         {
                             <a>
-                                <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
+                                <div class="gui-icon">
+                                    <span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span>
+                                </div>
+                                <sup class="badge style-danger notify-count @(notifyNumber > 0?"":"hide")" style="left: 30px;border-radius: 10px;">@notifyNumber</sup>
                                 <span class="title">@title</span>
                             </a>
+                            if (notifyNumber >= 0)
+                            {
+                                <a href="#" data-type="@(item.NotifyType)" data-toggle="offcanvas" title="Notifications" class="btn btn-icon-toggle btn-default btn-bell notify-trigger-child seen-notify-trigger">
+                                    <i class="fa fa-bell"></i>
+                                </a>
+                            }
                             <ul>
                                 @{
                                     foreach (var childItem in children)
@@ -185,7 +208,11 @@
                                              + "/" + ViewContext.RouteData.Values["action"].ToString()))
                                         {
 
-                                            <li><a class="active" href="@childItem.Url"><span class="title">@childTitle</span></a></li>
+                                            <li>
+                                                <a class="active" href="@childItem.Url">
+                                                    <span class="title">@childTitle</span>
+                                                </a>
+                                            </li>
                                         }
                                         else
                                         {
@@ -203,15 +230,29 @@
                                         {
                                             <a href="@item.Url" class="active">
                                                 <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
+                                                <sup class="badge style-danger notify-count @(notifyNumber > 0?"":"hide")" style="left: 30px;border-radius: 10px;">@notifyNumber</sup>
                                                 <span class="title">@title</span>
                                             </a>
+                                            if (notifyNumber >= 0)
+                                            {
+                                                <a href="#" data-type="@(item.NotifyType)" data-toggle="offcanvas" title="Notifications" class="btn btn-icon-toggle btn-default btn-bell notify-trigger-child seen-notify-trigger">
+                                                    <i class="fa fa-bell"></i>
+                                                </a>
+                                            }
                                         }
                                         else
                                         {
                                             <a href="@item.Url">
                                                 <div class="gui-icon"><span class="@(string.IsNullOrEmpty(item.Icon) ? "fa fa-cube" : item.Icon)"></span></div>
+                                                <sup class="badge style-danger notify-count @(notifyNumber > 0?"":"hide")" style="left: 30px;border-radius: 10px;">@notifyNumber</sup>
                                                 <span class="title">@title</span>
                                             </a>
+                                            if (notifyNumber >= 0)
+                                            {
+                                                <a href="#" data-type="@(item.NotifyType)" data-toggle="offcanvas" title="Notifications" class="btn btn-icon-toggle btn-default btn-bell notify-trigger-child seen-notify-trigger">
+                                                    <i class="fa fa-bell"></i>
+                                                </a>
+                                            }
                                         }
                                     }
                     </li>
@@ -232,10 +273,10 @@
     <!-- END MENUBAR -->
 
 
+    <a href="#offcanvas-notify" id="open_offcancas" data-toggle="offcanvas" class="hide"></a>
     <div id="panel-notification">
         @*@Html.Action("PanelNotification", "Home")*@
     </div>
-
 </div><!--end #base-->
 <!-- END BASE -->
 @section css
@@ -260,29 +301,27 @@
 
         $('.prepend-icon').prepend("<i class='icon-list'></i>");
 
-        $("#notify-trigger").on("click",
+        $(".seen-notify-trigger").on("click",
             function(e) {
                 e.preventDefault();
-                if ($("#offcanvas-notify").length > 0) {
-                    $('#offcanvas-notify').toggleClass('toggled');
-                } else {
-                    $.ajax({
-                        url: '@Url.Action("PanelNotification", "Home")',
-                        type: 'GET',
-                        success: function (contentHtml) {
-                            if (contentHtml) {
-                                $("#panel-notification").html(contentHtml);
-                                $("#notify-trigger").click();
-                            } else {
-                                bootbox.alert("Get data failed");
-                            }
-                        },
-                        error: function() {
-                            bootbox.alert("Data error");
+                $("#panel-notification").html("");
+                $.ajax({
+                    url: '@Url.Action("PanelNotification", "Home")?type='+$(this).data("type"),
+                    type: 'GET',
+                    success: function (contentHtml) {
+                        if (contentHtml) {
+                            $("#panel-notification").html(contentHtml);
+                            $("#open_offcancas").click();
+                        } else {
+                            bootbox.alert("Get data failed");
                         }
-                    });
-                }
+                    },
+                    error: function() {
+                        bootbox.alert("Data error");
+                    }
+                });
             });
+
         $("select[data-display=select2]").select2({
             placeholder: "@Resource.PleaseSelect",
             width: '100%',
@@ -525,8 +564,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
         var notificator = $.connection.notificationHub,
-            $triggerNotify = $('#notify-trigger'),
-            $notifyCounter = $triggerNotify.find('.count'),
+            $triggerNotify = $('.seen-notify-trigger'),
             $notifyFlyerContent = $('.notify-trigger-no-content'),
             documentTitle = document.title;
 
@@ -548,9 +586,13 @@
 
             UserNotification.prototype.notify = function() {
                 this.notifyRequest();
-                var notifyCount = parseInt($notifyCounter.text()) + 1;
-                $notifyCounter.html(notifyCount);
-                $notifyCounter.removeClass('hide');
+                var $notifyCount = $triggerNotify.find('.notify-count');
+                if (this.notifyData.NotifyTypeCode != '@NotifyType.Lead.Value') {
+                    $notifyCount = $(".menu_notify_child_" + this.notifyData.NotifyTypeCode).find('.notify-count');
+                }
+                var notifyCount = parseInt($notifyCount.text()) + 1;
+                $notifyCount.html(notifyCount);
+                $notifyCount.removeClass('hide');
                 documentTitle = documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
                 document.title = '(' + notifyCount + ') ' + documentTitle;
                 //toastr.info(this.notifyData.Description, this.notifyData.Title);
@@ -566,62 +608,7 @@
             };
 
             UserNotification.prototype.notifyRequest = function() {
-                if ($notifyFlyerContent) {
-                    var urlNotify = '@Url.Action("Detail", "Lead")?id=' +
-                        this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
-                    if (this.notifyData.NotifyTypeCode == '@NotifyType.Booking.Value') {
-                        urlNotify = '@Url.Action("Detail", "Booking")?id=' +
-                            this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
-                    }else if (this.notifyData.NotifyTypeCode == '@NotifyType.Recruitment.Value') {
-                        urlNotify = '@Url.Action("Detail", "Recruitment")?id=' +
-                            this.notifyData.EntryId;
-                    }else if (this.notifyData.NotifyTypeCode == '@NotifyType.RecruitmentPosition.Value') {
-                        urlNotify = '@Url.Action("Detail", "RecruitmentPosition")?id=' +
-                            this.notifyData.EntryId;
-                    }else if (this.notifyData.NotifyTypeCode == '@NotifyType.OpeEvent.Value') {
-                        urlNotify = '@Url.Action("Detail", "Operation")?id=' +
-                            this.notifyData.EntryId;
-                    }else if (this.notifyData.NotifyTypeCode == '@NotifyType.NewEvent.Value') {
-                        urlLink = '@Url.Action("Detail", "NewEvent")?id=' +
-                            this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
-                    }else if (this.notifyData.NotifyTypeCode == '@NotifyType.Invoice.Value') {
-                        urlLink = '@Url.Action("Detail", "Invoice")?id=' +
-                            this.notifyData.EntryId + '&eventId=' + this.notifyData.EventId;
-                    }
-                    var row =
-                        '<li class="tile" style="border-bottom: 1px solid rgba(150, 156, 156, 0.3);\
-                        border-left: 4px solid ' +
-                            this.notifyData.HighlightColor +
-                            ';">\
-                    <a class="tile-content ink-reaction" href="' + urlNotify + '">\
-                    <div class="tile-text">\
-                        <b>' +
-                            this.notifyData.Description +
-                            ' - ' +
-                            this.notifyData.EventCode +
-                            '</b>\
-                        <br/>' +
-                            this.notifyData.Title +
-                            '\
-                        <small class="timestamp" title="' +
-                            this.notifyData.Timestamp +
-                            '" data-time="' +
-                            this.notifyData.TimeToString +
-                            '">' +
-                            moment(this.notifyData.TimeToString, "DDMMYYYYhhmmss").fromNow() +
-                            '</small>\
-                    </div>\
-                    </a>\
-                    </li>';
-                    $(row).insertAfter($notifyFlyerContent);
-                    var notifyFlyerPanel = $notifyFlyerContent.parents(".nano-content");
-                    if (notifyFlyerPanel.length > 0) {
-                        notifyFlyerPanel[0].scrollTop = 0;
-                        notifyFlyerPanel.find(".notify_not_found").remove();
-                    }
-                    $notifyFlyerContent.addClass('hide');
-//            $notifyFlyerContent.append(row);
-                }
+
 
                 if (this.notifyData.NotifyTypeCode == '@NotifyType.NewEvent.Value') {
                     var $dashboardNotify = $("#dashboard_notify_new_event");
@@ -790,12 +777,12 @@
         $triggerNotify.on('click',
             function(e) {
                 e.preventDefault();
-                $notifyCounter.addClass('hide');
-                $notifyCounter.html('0');
+                $(this).parent().find('.notify-count').addClass('hide');
+                $(this).parent().find('.notify-count').html('0');
                 document.title = documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
                 $.ajax({
                     global: false,
-                    url: '@Url.Action("RemoveNotifyCounter", "Home")',
+                    url: '@Url.Action("RemoveNotifyCounter", "Home")?type=' + $(this).data("type"),
                     type: 'GET',
                     success: function(data) {
                     },

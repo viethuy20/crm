@@ -154,12 +154,6 @@ namespace PQT.Web.Infrastructure.Notification
         {
             get { return DependencyResolver.Current.GetService<IUserNotificationService>(); }
         }
-        public static void NotifyEmailForUser(IEnumerable<User> users, Booking booking)
-        {
-            if (booking == null)
-                return;
-            NotificationService.NotifyUser(users, booking);
-        }
         public static void NotifyUpdateBooking(int bookingId, bool reloadTableLead = true)
         {
             var thread = new Thread(() =>
@@ -208,7 +202,7 @@ namespace PQT.Web.Infrastructure.Notification
                             notify.Title = title;
                         }
                         notify = UserNotificationService.CreateUserNotification(notify);
-                        user.NotifyNumber++;
+                        user.BookingNotifyNumber++;
                         MemberService.UpdateUser(user);
                         NotificationHub.NotifyUser(user, notify);
                     }
@@ -296,7 +290,7 @@ namespace PQT.Web.Infrastructure.Notification
                             NotifyType = NotifyType.OpeEvent,
                             Title = title,
                             EventCode = eventData.EventCode,
-                            Description = "",
+                            Description = "Operation Request",
                             HighlightColor = eventData.BackgroundColor
                         };
                         if (!string.IsNullOrEmpty(title))
@@ -304,7 +298,7 @@ namespace PQT.Web.Infrastructure.Notification
                             notify.Title = title;
                         }
                         notify = UserNotificationService.CreateUserNotification(notify);
-                        user.NotifyNumber++;
+                        user.OpeEventNotifyNumber++;
                         MemberService.UpdateUser(user);
                         NotificationHub.NotifyUser(user, notify);
                     }
@@ -387,7 +381,7 @@ namespace PQT.Web.Infrastructure.Notification
                             notify.Title = title;
                         }
                         notify = UserNotificationService.CreateUserNotification(notify);
-                        user.NotifyNumber++;
+                        user.RecruitmentNotifyNumber++;
                         MemberService.UpdateUser(user);
                         NotificationHub.NotifyUser(user, notify);
                     }
@@ -473,7 +467,7 @@ namespace PQT.Web.Infrastructure.Notification
                             UserID = user.ID,
                             EntryId = eventData.ID,
                             EventId = 0,
-                            NotifyType = NotifyType.RecruitmentPosition,
+                            NotifyType = NotifyType.MasterFiles,
                             Title = title,
                             EventCode = "",
                             Description = eventData.Description,
@@ -484,7 +478,7 @@ namespace PQT.Web.Infrastructure.Notification
                             notify.Title = title;
                         }
                         notify = UserNotificationService.CreateUserNotification(notify);
-                        user.NotifyNumber++;
+                        user.MasterFilesNotifyNumber++;
                         MemberService.UpdateUser(user);
                         NotificationHub.NotifyUser(user, notify);
                     }
@@ -506,7 +500,7 @@ namespace PQT.Web.Infrastructure.Notification
             var currentUserId = CurrentUser.Identity.ID;
             var thread = new Thread(() =>
             {
-                var setting = SettingRepository.GetNotifySetting(NotifyType.RecruitmentPosition, notifyAction);
+                var setting = SettingRepository.GetNotifySetting(NotifyType.MasterFiles, notifyAction);
                 if (setting != null)
                 {
                     var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
@@ -521,7 +515,7 @@ namespace PQT.Web.Infrastructure.Notification
             var currentUserId = CurrentUser.Identity.ID;
             var thread = new Thread(() =>
             {
-                var setting = SettingRepository.GetNotifySetting(NotifyType.RecruitmentPosition, notifyAction);
+                var setting = SettingRepository.GetNotifySetting(NotifyType.MasterFiles, notifyAction);
                 if (setting != null)
                 {
                     var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
@@ -579,7 +573,7 @@ namespace PQT.Web.Infrastructure.Notification
                             HighlightColor = booking.EventColor
                         };
                         notify = UserNotificationService.CreateUserNotification(notify);
-                        user.NotifyNumber++;
+                        user.NewEventNotifyNumber++;
                         MemberService.UpdateUser(user);
                         NotificationHub.NotifyUser(user, notify);
                     }
@@ -662,7 +656,7 @@ namespace PQT.Web.Infrastructure.Notification
                             HighlightColor = "#ffffff"
                         };
                         notify = UserNotificationService.CreateUserNotification(notify);
-                        user.NotifyNumber++;
+                        user.ReportCallNotifyNumber++;
                         MemberService.UpdateUser(user);
                         NotificationHub.NotifyUser(user, notify);
                     }
@@ -733,7 +727,7 @@ namespace PQT.Web.Infrastructure.Notification
                             HighlightColor = invoice.Booking.EventColor
                         };
                         notify = UserNotificationService.CreateUserNotification(notify);
-                        user.NotifyNumber++;
+                        user.InvoiceNotifyNumber++;
                         MemberService.UpdateUser(user);
                         NotificationHub.NotifyUser(user, notify);
                     }
@@ -741,21 +735,6 @@ namespace PQT.Web.Infrastructure.Notification
                     {
                     }
                 }
-            });
-            thread.Start();
-        }
-        public static void NotifyUser(NotifyAction notifyAction, List<User> users, int leadId, string title)
-        {
-            var currentUserId = CurrentUser.Identity.ID;
-            var thread = new Thread(() =>
-            {
-                var setting = SettingRepository.GetNotifySetting(NotifyType.Invoice, notifyAction);
-                if (setting != null)
-                {
-                    var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
-                    users.AddRange(notiUsers);
-                }
-                NotifyUser(currentUserId, users, leadId, title);
             });
             thread.Start();
         }

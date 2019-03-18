@@ -6,7 +6,6 @@
         font-style: italic;
     }
 </style>
-
 <div class="offcanvas">
     <!-- BEGIN OFFCANVAS SEARCH -->
     <div id="offcanvas-notify" class="offcanvas-pane width-8">
@@ -28,10 +27,10 @@
                 @foreach (var item in Model)
                 {
                     var url = item.NotifyType == NotifyType.Booking ? Url.Action("Detail", "Booking", new { id = item.EntryId, eventId = item.EventId }) :
-                (item.NotifyType == NotifyType.NewEvent ? Url.Action("Detail", "NewEvent", new {id = item.EntryId, eventId = item.EventId}) : (item.NotifyType == NotifyType.OpeEvent ? Url.Action("Detail", "Operation", new { id = item.EntryId }) : 
-                            (item.NotifyType == NotifyType.Recruitment ? Url.Action("Detail", "Recruitment", new { id = item.EntryId }) : 
-                                (item.NotifyType == NotifyType.RecruitmentPosition ? Url.Action("Detail", "RecruitmentPosition", new { id = item.EntryId }) : 
-                                    (item.NotifyType == NotifyType.ReportCall ? Url.Action("Detail", "ReportCall", new { id = item.EntryId }) : 
+                (item.NotifyType == NotifyType.NewEvent ? Url.Action("Detail", "NewEvent", new {id = item.EntryId, eventId = item.EventId}) : (item.NotifyType == NotifyType.OpeEvent ? Url.Action("Detail", "Operation", new { id = item.EntryId }) :
+                            (item.NotifyType == NotifyType.Recruitment ? Url.Action("Detail", "Recruitment", new { id = item.EntryId }) :
+                                (item.NotifyType == NotifyType.MasterFiles ? Url.Action("Detail", "RecruitmentPosition", new { id = item.EntryId }) :
+                                    (item.NotifyType == NotifyType.ReportCall ? Url.Action("Detail", "ReportCall", new { id = item.EntryId }) :
                                         Url.Action("Detail", "Lead", new { id = item.EntryId, eventId = item.EventId }))))));
                     <li class="tile" style="border-bottom: 1px solid rgba(150, 156, 156, 0.3);
                                        border-left: 4px solid @item.HighlightColor;">

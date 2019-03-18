@@ -175,24 +175,94 @@ namespace PQT.Web.Controllers
 
         [AjaxOnly]
         [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
-        public ActionResult PanelNotification()
+        public ActionResult PanelNotification(string type = "")
         {
             var notify = new List<UserNotification>();
             if (CurrentUser.Identity != null)
             {
-                notify = _notificationService.GetAllUserNotifications(CurrentUser.Identity.ID, Settings.System.NotificationNumber()).ToList();
+                notify = _notificationService.GetAllUserNotifications(CurrentUser.Identity.ID, type, Settings.System.NotificationNumber()).ToList();
             }
             return PartialView(notify);
         }
 
         [AjaxOnly]
         [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
-        public ActionResult RemoveNotifyCounter()
+        public ActionResult RemoveNotifyCounter(string type = "")
         {
             if (CurrentUser.Identity != null)
             {
-                CurrentUser.Identity.NotifyNumber = 0;
-                _membershipService.UpdateUser(CurrentUser.Identity);
+                if (type == NotifyType.Booking)
+                {
+                    if (CurrentUser.Identity.BookingNotifyNumber > 0)
+                    {
+                        CurrentUser.Identity.BookingNotifyNumber = 0;
+                        _membershipService.UpdateUser(CurrentUser.Identity);
+                    }
+                }
+                else if (type == NotifyType.Invoice)
+                {
+                    if (CurrentUser.Identity.InvoiceNotifyNumber > 0)
+                    {
+                        CurrentUser.Identity.InvoiceNotifyNumber = 0;
+                        _membershipService.UpdateUser(CurrentUser.Identity);
+                    }
+                }
+                else if (type == NotifyType.Recruitment)
+                {
+                    if (CurrentUser.Identity.RecruitmentNotifyNumber > 0)
+                    {
+                        CurrentUser.Identity.RecruitmentNotifyNumber = 0;
+                        _membershipService.UpdateUser(CurrentUser.Identity);
+                    }
+                }
+                else if (type == NotifyType.OpeEvent)
+                {
+                    if (CurrentUser.Identity.OpeEventNotifyNumber > 0)
+                    {
+                        CurrentUser.Identity.OpeEventNotifyNumber = 0;
+                        _membershipService.UpdateUser(CurrentUser.Identity);
+                    }
+                }
+                else if (type == NotifyType.NewEvent)
+                {
+                    if (CurrentUser.Identity.NewEventNotifyNumber > 0)
+                    {
+                        CurrentUser.Identity.NewEventNotifyNumber = 0;
+                        _membershipService.UpdateUser(CurrentUser.Identity);
+                    }
+                }
+                else if (type == NotifyType.MasterFiles)
+                {
+                    if (CurrentUser.Identity.MasterFilesNotifyNumber > 0)
+                    {
+                        CurrentUser.Identity.MasterFilesNotifyNumber = 0;
+                        _membershipService.UpdateUser(CurrentUser.Identity);
+                    }
+                }
+                else if (type == NotifyType.ReportCall)
+                {
+                    if (CurrentUser.Identity.ReportCallNotifyNumber > 0)
+                    {
+                        CurrentUser.Identity.ReportCallNotifyNumber = 0;
+                        _membershipService.UpdateUser(CurrentUser.Identity);
+                    }
+                }
+                else if (type == NotifyType.Leave)
+                {
+                    if (CurrentUser.Identity.LeaveNotifyNumber > 0)
+                    {
+                        CurrentUser.Identity.LeaveNotifyNumber = 0;
+                        _membershipService.UpdateUser(CurrentUser.Identity);
+                    }
+                }
+                else
+                {
+                    if (CurrentUser.Identity.NotifyNumber > 0)
+                    {
+                        CurrentUser.Identity.NotifyNumber = 0;
+                        _membershipService.UpdateUser(CurrentUser.Identity);
+                    }
+                }
             }
             return Json(true, JsonRequestBehavior.AllowGet);
         }
@@ -206,10 +276,77 @@ namespace PQT.Web.Controllers
                 var countSeen = _notificationService.SeenUserNotification(CurrentUser.Identity.ID, entryId, type);
                 if (countSeen > 0)
                 {
-                    CurrentUser.Identity.NotifyNumber = CurrentUser.Identity.NotifyNumber - countSeen;
-                    if (CurrentUser.Identity.NotifyNumber < 0)
+                    if (type == NotifyType.Booking)
                     {
-                        CurrentUser.Identity.NotifyNumber = 0;
+                        CurrentUser.Identity.BookingNotifyNumber = CurrentUser.Identity.BookingNotifyNumber - countSeen;
+                        if (CurrentUser.Identity.BookingNotifyNumber < 0)
+                        {
+                            CurrentUser.Identity.BookingNotifyNumber = 0;
+                        }
+                    }
+                    else if (type == NotifyType.Invoice)
+                    {
+                        CurrentUser.Identity.InvoiceNotifyNumber = CurrentUser.Identity.InvoiceNotifyNumber - countSeen;
+                        if (CurrentUser.Identity.InvoiceNotifyNumber < 0)
+                        {
+                            CurrentUser.Identity.InvoiceNotifyNumber = 0;
+                        }
+                    }
+                    else if (type == NotifyType.Recruitment)
+                    {
+                        CurrentUser.Identity.RecruitmentNotifyNumber = CurrentUser.Identity.RecruitmentNotifyNumber - countSeen;
+                        if (CurrentUser.Identity.RecruitmentNotifyNumber < 0)
+                        {
+                            CurrentUser.Identity.RecruitmentNotifyNumber = 0;
+                        }
+                    }
+                    else if (type == NotifyType.OpeEvent)
+                    {
+                        CurrentUser.Identity.OpeEventNotifyNumber = CurrentUser.Identity.OpeEventNotifyNumber - countSeen;
+                        if (CurrentUser.Identity.OpeEventNotifyNumber < 0)
+                        {
+                            CurrentUser.Identity.OpeEventNotifyNumber = 0;
+                        }
+                    }
+                    else if (type == NotifyType.NewEvent)
+                    {
+                        CurrentUser.Identity.NewEventNotifyNumber = CurrentUser.Identity.NewEventNotifyNumber - countSeen;
+                        if (CurrentUser.Identity.NewEventNotifyNumber < 0)
+                        {
+                            CurrentUser.Identity.NewEventNotifyNumber = 0;
+                        }
+                    }
+                    else if (type == NotifyType.MasterFiles)
+                    {
+                        CurrentUser.Identity.MasterFilesNotifyNumber = CurrentUser.Identity.MasterFilesNotifyNumber - countSeen;
+                        if (CurrentUser.Identity.MasterFilesNotifyNumber < 0)
+                        {
+                            CurrentUser.Identity.MasterFilesNotifyNumber = 0;
+                        }
+                    }
+                    else if (type == NotifyType.ReportCall)
+                    {
+                        CurrentUser.Identity.ReportCallNotifyNumber = CurrentUser.Identity.ReportCallNotifyNumber - countSeen;
+                        if (CurrentUser.Identity.ReportCallNotifyNumber < 0)
+                        {
+                            CurrentUser.Identity.ReportCallNotifyNumber = 0;
+                        }
+                    }
+                    else if (type == NotifyType.Leave)
+                    {
+                        CurrentUser.Identity.LeaveNotifyNumber = CurrentUser.Identity.LeaveNotifyNumber - countSeen;
+                        if (CurrentUser.Identity.LeaveNotifyNumber < 0)
+                        {
+                            CurrentUser.Identity.LeaveNotifyNumber = 0;
+                        }
+                    }
+                    else
+                    {
+                        CurrentUser.Identity.NotifyNumber = CurrentUser.Identity.NotifyNumber - countSeen;
+                        if (CurrentUser.Identity.NotifyNumber < 0)
+                        {
+                            CurrentUser.Identity.NotifyNumber = 0;
+                        }
                     }
                     _membershipService.UpdateUser(CurrentUser.Identity);
                 }

@@ -9,7 +9,7 @@ namespace PQT.Domain.Abstract
 {
     public interface IUserNotificationService
     {
-        IEnumerable<UserNotification> GetAllUserNotifications(int userId, int pageSize = 10, int page = 1);
+        IEnumerable<UserNotification> GetAllUserNotifications(int userId, string type, int pageSize = 10, int page = 1);
         IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int eventId, int pageSize = 10, int page = 1);
         IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int[] eventId, int pageSize = 10, int page = 1);
         IEnumerable<UserNotification> GetAllUserNotificationsByNewEvent(int userId, int pageSize = 10, int page = 1);
