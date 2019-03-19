@@ -34,6 +34,7 @@ namespace PQT.Domain.Entities
         public string PersonalEmail { get; set; }
         public FollowUpStatus FirstFollowUpStatus { get; set; }
         public FinalStatus FinalStatus { get; set; }
+        public bool ExpiredForReopen { get; set; }
         public int? LeadStatusID { get; set; }
         [ForeignKey("LeadStatusID")]
         public virtual LeadStatusRecord LeadStatusRecord { get; set; }

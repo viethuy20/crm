@@ -15,6 +15,7 @@
         color: #3c763d;
         background-color: #c7fcca;
     }
+
     #kpiTable tbody .NewEventRequest {
         color: #333;
         background-color: #fafcc7;
@@ -25,64 +26,86 @@
         <div class="col-md-12">
             <div class="card  card-underline">
                 <div class="card-head">
+                    <header><i class="fa fa-database"></i> Top Sales</header>
+                </div>
+                <div class="card-body">
+                    <table class="table" id="topsaleskpiTable">
+                        <thead>
+                            <tr>
+                                <th>Salesman</th>
+                                <th class="text-center">@DateTime.Today.AddMonths(-2).ToString("MMM")</th>
+                                <th class="text-center">@DateTime.Today.AddMonths(-1).ToString("MMM")</th>
+                                <th class="text-center">@DateTime.Today.ToString("MMM")</th>
+                                <th class="text-center">Total Written Revenue</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <!--end .card-body -->
+            </div><!--end .card -->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card  card-underline">
+                <div class="card-head">
                     <header><i class="fa fa-database"></i> @ViewBag.Title</header>
                 </div>
-
                 <div class="card-body">
-                    @using (Html.BeginForm("PrintConsolidate", "Kpi", null, FormMethod.Post, new {@class = "form no_loader"}))
+                    @using (Html.BeginForm("PrintConsolidate", "Kpi", null, FormMethod.Post, new { @class = "form no_loader" }))
                     {
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                @Html.Bootstrap().DropDownListFor(m => m.EventID, Model.Events.ToSelectList(m => m.ID, m => m.EventName)).HtmlAttributes(new {@class = "select-ajax form-control"})
-                                <label>Event</label>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.Bootstrap().DropDownListFor(m => m.EventID, Model.Events.ToSelectList(m => m.ID, m => m.EventName)).HtmlAttributes(new { @class = "select-ajax form-control" })
+                                    <label>Event</label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <div class="input-daterange input-group">
-                                    <div class="input-group-content">
-                                        @Html.DatePickerRangeFor(m => m.DateFrom, new {@class = "input-clear form-control"})
-                                        @Html.Bootstrap().LabelFor(m => m.DateFrom)
-                                    </div>
-                                    <span class="input-group-addon">to</span>
-                                    <div class="input-group-content">
-                                        @Html.DatePickerRangeFor(m => m.DateTo, new {@class = "input-clear form-control"})
-                                        @Html.Bootstrap().LabelFor(m => m.DateTo)
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <div class="input-daterange input-group">
+                                        <div class="input-group-content">
+                                            @Html.DatePickerRangeFor(m => m.DateFrom, new { @class = "input-clear form-control" })
+                                            @Html.Bootstrap().LabelFor(m => m.DateFrom)
+                                        </div>
+                                        <span class="input-group-addon">to</span>
+                                        <div class="input-group-content">
+                                            @Html.DatePickerRangeFor(m => m.DateTo, new { @class = "input-clear form-control" })
+                                            @Html.Bootstrap().LabelFor(m => m.DateTo)
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                @Html.Bootstrap().DropDownListFor(m => m.UserID, Model.Users.ToSelectList(m => m.ID, m => m.DisplayName)).HtmlAttributes(new {@class = "select-ajax form-control"})
-                                <label>Salesman</label>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    @Html.Bootstrap().DropDownListFor(m => m.UserID, Model.Users.ToSelectList(m => m.ID, m => m.DisplayName)).HtmlAttributes(new { @class = "select-ajax form-control" })
+                                    <label>Salesman</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-offset-4">
-                            @Html.Bootstrap().Button().Text("Clear").Id("btnClear").PrependIcon("md md-close").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-default"})
-                            @Html.Bootstrap().Button().Text("Search").Id("btnSearch").PrependIcon("md md-search").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-primary"})
-                            @if (CurrentUser.HasPermission("Kpi", "PrintConsolidate"))
-                            {
-                                @Html.Bootstrap().SubmitButton().Text("Print").PrependIcon("md md-print").Size(ButtonSize.Mini).HtmlAttributes(new {@class = "btn btn-info"})
-                            }
-                        </div>
-                    </div>
+                            <div class="row">
+                                <div class="col-md-offset-4">
+                                    @Html.Bootstrap().Button().Text("Clear").Id("btnClear").PrependIcon("md md-close").Size(ButtonSize.Mini).HtmlAttributes(new { @class = "btn btn-default" })
+                                    @Html.Bootstrap().Button().Text("Search").Id("btnSearch").PrependIcon("md md-search").Size(ButtonSize.Mini).HtmlAttributes(new { @class = "btn btn-primary" })
+                                    @if (CurrentUser.HasPermission("Kpi", "PrintConsolidate"))
+                                    {
+                                        @Html.Bootstrap().SubmitButton().Text("Print").PrependIcon("md md-print").Size(ButtonSize.Mini).HtmlAttributes(new { @class = "btn btn-info" })
+                                    }
+                                </div>
+                            </div>
                     }
-                        <table class="table" id="kpiTable">
-                            <thead>
-                                <tr>
-                                    <th>Salesman</th>
-                                    <th class="text-center">(USD) Written Revenue</th>
-                                    <th class="text-center">New Event Request</th>
-                                    <th class="text-center">KPI</th>
-                                    <th class="text-center">No KPI</th>
-                                    <th class="text-center">Call No Check</th>
-                                </tr>
-                            </thead>
-                        </table>
+                    <table class="table" id="kpiTable">
+                        <thead>
+                            <tr>
+                                <th>Salesman</th>
+                                <th class="text-center">(USD) Written Revenue</th>
+                                <th class="text-center">New Event Request</th>
+                                <th class="text-center">KPI</th>
+                                <th class="text-center">No KPI</th>
+                                <th class="text-center">Call No Check</th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
                 <!--end .card-body -->
             </div><!--end .card -->
@@ -92,7 +115,49 @@
 
 
 @Html.Script(
-@<script>
+    @<script>
+        var topsalesTable = $("#topsaleskpiTable");
+        topsalesTable.dataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "url": "@Url.Action("AjaxGetTopSalesConsolidateKpis")",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function (d) {
+                 }
+             },
+             "columns": [
+                 { "data": "UserName", "name": "UserName", "orderable": true },
+                 { "data": "WrittenRevenue1", "name": "WrittenRevenue1", "orderable": true },
+                 { "data": "WrittenRevenue2", "name": "WrittenRevenue2", "orderable": true },
+                 { "data": "WrittenRevenue3", "name": "WrittenRevenue3", "orderable": true },
+                 { "data": "TotalWrittenRevenue", "name": "TotalWrittenRevenue", "orderable": true },
+             ],
+             "iDisplayLength": 10,
+             "aaSorting": [[4, "desc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 $(nRow).find('td:eq(1)').attr("style", "text-align:center");
+                 $(nRow).find('td:eq(2)').attr("style", "text-align:center");
+                 $(nRow).find('td:eq(3)').attr("style", "text-align:center");
+                 $(nRow).find('td:eq(4)').attr("style", "text-align:center");
+             },
+             initComplete: function () {
+                 var _table = this;
+                 _table.parent().find('input[type="search"]').unbind();
+                 var timeOutTyping;
+                 _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function () {
+                         _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                     }, 600);
+                 });
+             },
+        });
+
          var oTable = $("#kpiTable");
          oTable.dataTable({
              "processing": true, // for show progress bar
@@ -159,6 +224,6 @@
 
          initAjaxDropdown($('@Html.JquerySelectorFor(m=>m.EventID)'), "@Url.Action("GetPossibleEvent", "Event")", "Search for event");
          initAjaxDropdown($('@Html.JquerySelectorFor(m=>m.UserID)'), "@Url.Action("GetPossibleSalesman", "Users")", "Search for user");
-</script>
+    </script>
 
 )

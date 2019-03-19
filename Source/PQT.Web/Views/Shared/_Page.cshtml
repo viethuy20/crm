@@ -193,7 +193,7 @@
                             </a>
                             if (notifyNumber >= 0)
                             {
-                                <a href="#" data-type="@(item.NotifyType)" data-toggle="offcanvas" title="Notifications" class="btn btn-icon-toggle btn-default btn-bell notify-trigger-child seen-notify-trigger">
+                                <a href="#" data-type="@(item.NotifyType)" data-toggle="offcanvas" title="Notifications" class="btn btn-icon-toggle btn-default btn-bell hide seen-notify-trigger">
                                     <i class="fa fa-bell"></i>
                                 </a>
                             }
@@ -235,7 +235,7 @@
                                             </a>
                                             if (notifyNumber >= 0)
                                             {
-                                                <a href="#" data-type="@(item.NotifyType)" data-toggle="offcanvas" title="Notifications" class="btn btn-icon-toggle btn-default btn-bell notify-trigger-child seen-notify-trigger">
+                                                <a href="#" data-type="@(item.NotifyType)" data-toggle="offcanvas" title="Notifications" class="btn btn-icon-toggle btn-default btn-bell  hide seen-notify-trigger">
                                                     <i class="fa fa-bell"></i>
                                                 </a>
                                             }
@@ -249,7 +249,7 @@
                                             </a>
                                             if (notifyNumber >= 0)
                                             {
-                                                <a href="#" data-type="@(item.NotifyType)" data-toggle="offcanvas" title="Notifications" class="btn btn-icon-toggle btn-default btn-bell notify-trigger-child seen-notify-trigger">
+                                                <a href="#" data-type="@(item.NotifyType)" data-toggle="offcanvas" title="Notifications" class="btn btn-icon-toggle btn-default btn-bell  hide seen-notify-trigger">
                                                     <i class="fa fa-bell"></i>
                                                 </a>
                                             }
@@ -833,6 +833,8 @@
                 },
                 5000); // Restart connection after 5 seconds.you can set the time based your requirement
         });
+
+        $(".seen-notify-trigger").removeClass("hide");
     </script>
 
     <script>

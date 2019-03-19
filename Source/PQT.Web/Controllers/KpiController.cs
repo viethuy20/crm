@@ -1030,6 +1030,131 @@ namespace PQT.Web.Controllers
         }
 
         [AjaxOnly]
+        public ActionResult AjaxGetTopSalesConsolidateKpis()
+        {
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var draw = Request.Form.GetValues("draw").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var start = Request.Form.GetValues("start").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var length = Request.Form.GetValues("length").FirstOrDefault();
+            //Find Order Column
+            var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+            var searchValue = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
+            }
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
+            IEnumerable<Booking> bookings = new HashSet<Booking>();
+            var dateMonth = DateTime.Today.AddMonths(-2);
+            var month = new DateTime(dateMonth.Year, dateMonth.Month, 1);
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                bookings = _bookingService.GetAllBookings(m =>
+                    m.BookingStatusRecord == BookingStatus.Approved &&
+                    m.CreatedTime >= month &&
+                    ((m.Salesman != null && m.Salesman.Email.Contains(searchValue)) ||
+                     m.SalesmanName.Contains(searchValue))
+                );
+            }
+            else
+            {
+                bookings = _bookingService.GetAllBookings(m =>
+                    m.BookingStatusRecord == BookingStatus.Approved &&
+                    m.CreatedTime >= month
+                );
+            }
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var model = new ConsolidateKPIModel();
+            model.Prepare(bookings);
+
+            #region sort
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "Email":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.User.Email).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "WrittenRevenue1":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.WrittenRevenue1).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "WrittenRevenue2":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.WrittenRevenue2).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "WrittenRevenue3":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.WrittenRevenue3).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "TotalWrittenRevenue":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.TotalWrittenRevenue).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    default:
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.User.DisplayName).ToList();
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "Email":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.User.Email).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "WrittenRevenue1":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.WrittenRevenue1).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "WrittenRevenue2":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.WrittenRevenue2).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "WrittenRevenue3":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.WrittenRevenue3).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "TotalWrittenRevenue":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.TotalWrittenRevenue).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    default:
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.User.DisplayName).ToList();
+                        break;
+                }
+            }
+
+            #endregion sort
+
+            recordsTotal = model.ConsolidateKpis.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            var data = model.ConsolidateKpis.Skip(skip).Take(pageSize).ToList();
+
+            var json = new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data.Select(m => new
+                {
+                    UserID = m.User.ID,
+                    UserName = m.User.DisplayName,
+                    UserEmail = m.User.Email,
+                    WrittenRevenue1 = m.WrittenRevenue1.ToString("N0"),
+                    WrittenRevenue2 = m.WrittenRevenue2.ToString("N0"),
+                    WrittenRevenue3 = m.WrittenRevenue3.ToString("N0"),
+                    TotalWrittenRevenue = m.TotalWrittenRevenue.ToString("N0"),
+                })
+            };
+            return Json(json, JsonRequestBehavior.AllowGet);
+        }
+
+        [AjaxOnly]
         public ActionResult AjaxGetHRKpis()
         {
             // ReSharper disable once AssignNullToNotNullAttribute

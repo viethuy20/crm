@@ -126,5 +126,40 @@ namespace PQT.Web.Infrastructure.Helpers
 
             }).Start();
         }
+
+
+        public static void MakeExpiredLead()
+        {
+            new Thread(() =>
+            {
+                var leadService = DependencyHelper.GetService<ILeadService>();
+                var auditService = DependencyHelper.GetService<IAuditTracker>();
+                var leads = leadService.GetAllLeads(m =>
+                    !m.ExpiredForReopen &&
+                    (m.LeadStatusRecord != LeadStatus.Booked) &&
+                    m.Event.ClosingDate != null &&
+                    m.Event.ClosingDate < DateTime.Today);
+                foreach (var lead in leads)
+                {
+                    lead.ExpiredForReopen = true;
+                    leadService.UpdateLead(lead);
+                }
+                var record = new Audit
+                {
+                    Username = "",
+                    Email = "",
+                    IPAddress = "",
+                    UrlAccessed = "",
+                    TimeAccessed = DateTime.Now,
+                    SessionId = "",
+                    Data = "Count Leads:" + leads.Count(),
+                    Message = "Make Expired Lead",
+                    Type = (int)AuditType.Auto,
+                    ActionId = 0
+                };
+                auditService.CreateRecord(record);
+
+            }).Start();
+        }
     }
 }

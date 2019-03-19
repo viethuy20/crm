@@ -295,7 +295,7 @@ namespace PQT.Web.Controllers
                 {
                     var currentUser = CurrentUser.Identity;
                     var daysExpired = Settings.Lead.NumberDaysExpired();
-                    var allLeads = _repo.GetAllLeads(m => m.EventID == model.EventID);
+                    var allLeads = _repo.GetAllLeads(m => m.EventID == model.EventID && !m.ExpiredForReopen);
                     var leadExists = allLeads.Where(m => m.UserID != currentUser.ID &&
                                                          m.User.UserStatus == UserStatus.Live &&
                                                          m.User.TransferUserID != currentUser.ID &&
@@ -443,6 +443,7 @@ namespace PQT.Web.Controllers
             var callExists = _repo.GetAllLeads(m =>
                 m.EventID == model.EventID &&
                 m.ID != model.LeadID &&
+                !m.ExpiredForReopen &&
                 (m.LeadStatusRecord != LeadStatus.Initial &&
                  m.LeadStatusRecord != LeadStatus.Reject &&
                  m.LeadStatusRecord != LeadStatus.Deleted) &&
@@ -901,6 +902,7 @@ namespace PQT.Web.Controllers
             {
                 leads = _repo.GetAllLeads(m => m.EventID == eventId &&
                                                m.User.UserStatus == UserStatus.Live &&
+                                               !m.ExpiredForReopen &&
                                                m.CheckInNCL(daysExpired) && (
                                                    m.Salesman.Contains(searchValue) ||
                                                    m.StatusUpdateTimeStr.Contains(searchValue) ||
@@ -912,7 +914,8 @@ namespace PQT.Web.Controllers
             else
             {
                 leads = _repo.GetAllLeads(m => m.EventID == eventId &&
-                                               m.User.UserStatus == UserStatus.Live
+                                               m.User.UserStatus == UserStatus.Live &&
+                                               !m.ExpiredForReopen
                                                && m.CheckInNCL(daysExpired));
             }
             // ReSharper disable once AssignNullToNotNullAttribute
@@ -1035,6 +1038,7 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 leads = _repo.GetAllLeads(m => m.EventID == eventId &&
+                                               !m.ExpiredForReopen &&
                                                m.User.UserStatus == UserStatus.Live &&
                                                (m.LeadStatusRecord == LeadStatus.Blocked ||
                                                 m.LeadStatusRecord == LeadStatus.Live ||
@@ -1068,6 +1072,7 @@ namespace PQT.Web.Controllers
             {
                 leads = _repo.GetAllLeads(m =>
                     m.EventID == eventId &&
+                    !m.ExpiredForReopen &&
                     m.User.UserStatus == UserStatus.Live
                     && (m.LeadStatusRecord == LeadStatus.Blocked ||
                         m.LeadStatusRecord == LeadStatus.Live ||
@@ -1279,6 +1284,7 @@ namespace PQT.Web.Controllers
             var daysExpired = Settings.Lead.NumberDaysExpired();
             var saleId = CurrentUser.Identity.ID;
             var leads = _repo.GetAllLeads(m => m.EventID == eventId &&
+                                               !m.ExpiredForReopen &&
                                                m.User.UserStatus == UserStatus.Live &&
                                                (saleId == 0 || m.UserID == saleId ||
                                                 (m.User != null && m.User.TransferUserID == saleId)) &&
@@ -1303,6 +1309,7 @@ namespace PQT.Web.Controllers
         {
             var saleId = CurrentUser.Identity.ID;
             var leads = _repo.GetAllLeads(m =>
+                !m.ExpiredForReopen &&
                 m.LeadStatusRecord == LeadStatus.Blocked &&
                 (m.Event.EventStatus == EventStatus.Live ||
                  m.Event.EventStatus == EventStatus.Confirmed) &&
@@ -1321,6 +1328,7 @@ namespace PQT.Web.Controllers
             var daysExpired = Settings.Lead.NumberDaysExpired();
             //var saleId = PermissionHelper.SalesmanId();
             var leads = _repo.GetAllLeads(m => m.EventID == eventId &&
+                                               !m.ExpiredForReopen &&
                                                m.User.UserStatus == UserStatus.Live &&
                                                (m.MarkKPI ||
                                                 (m.LeadStatusRecord == LeadStatus.LOI &&
@@ -1599,7 +1607,7 @@ namespace PQT.Web.Controllers
         public ActionResult AjaxGetTotalCallSummary(int eventId)
         {
             //var saleId = PermissionHelper.SalesmanId();
-            var leads = _repo.GetAllLeads(m => m.EventID == eventId);// && (saleId == 0 || m.UserID == saleId ||
+            var leads = _repo.GetAllLeads(m => m.EventID == eventId && !m.ExpiredForReopen);// && (saleId == 0 || m.UserID == saleId ||
                                                                      //(m.User != null && m.User.TransferUserID == saleId)));
             var eventData = _eventService.GetEvent(eventId);
             return Json(new
@@ -1622,7 +1630,7 @@ namespace PQT.Web.Controllers
             }
             //var saleId = PermissionHelper.SalesmanId();
             var ids = eventIds.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => Convert.ToInt32(m));
-            var leads = _repo.GetAllLeads(m => ids.Contains(m.EventID));// && (saleId == 0 || m.UserID == saleId ||
+            var leads = _repo.GetAllLeads(m => !m.ExpiredForReopen &&ids.Contains(m.EventID));// && (saleId == 0 || m.UserID == saleId ||
             //(m.User != null && m.User.TransferUserID == saleId)));
             var listObj = new List<object>();
             foreach (var id in ids)

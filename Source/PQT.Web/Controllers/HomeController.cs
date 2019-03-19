@@ -396,6 +396,12 @@ namespace PQT.Web.Controllers
                 return Json(e.Message, JsonRequestBehavior.AllowGet);
             }
         }
+        [AjaxOnly]
+        public ActionResult MakeExpiredLead()
+        {
+            LeadHelper.MakeExpiredLead();
+            return Json("successful", JsonRequestBehavior.AllowGet);
+        }
 
         [AjaxOnly]
         public ActionResult UpdateActiveKey(string key)

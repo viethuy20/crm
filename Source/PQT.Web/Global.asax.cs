@@ -44,7 +44,7 @@ namespace PQT.Web
             //ScheduleHelper.BookingPaymentReminder("Subaru_BookingPaymentReminder", "Subaru_BookingPaymentReminder_1");
             //ScheduleHelper.BookingDailyReport("Subaru_BookingDailyReport", "Subaru_BookingDailyReport_1");
             //ScheduleHelper.AllocationReminder("Subaru_AllocationReminder", "Subaru_AllocationReminder");
-            //ScheduleHelper.SetPriceScheduleTrigger("UpdatePriceSchedule", "UpdatePriceSchedule");
+            ScheduleHelper.CheckLeadExpireDaily("CheckLeadExpireSchedule", "CheckLeadExpireSchedule");
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
             MiniProfilerEF.Initialize();

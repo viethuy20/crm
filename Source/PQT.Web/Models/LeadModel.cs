@@ -57,7 +57,9 @@ namespace PQT.Web.Models
             if (lead == null) return "Block failed";
             if (lead.LeadStatusRecord == LeadStatus.Booked)
                 return "Cannot process ... This item has been booked";
-            var leads = leadRepo.GetAllLeads(m => m.Event.EventStatus == EventStatus.Live || m.Event.EventStatus == EventStatus.Confirmed);
+            var leads = leadRepo.GetAllLeads(m =>
+                        !m.ExpiredForReopen && (m.Event.EventStatus == EventStatus.Live ||
+            m.Event.EventStatus == EventStatus.Confirmed));
             var maxBlock = Settings.Lead.MaxBlockeds();
             var currentUser = CurrentUser.Identity;
             if (leads.Count(m => (m.User.TransferUserID == currentUser.ID || m.UserID == currentUser.ID) && m.LeadStatusRecord == LeadStatus.Blocked) >= maxBlock)
@@ -119,7 +121,8 @@ namespace PQT.Web.Models
             //if (lead.LeadStatusRecord != LeadStatus.Initial && lead.LeadStatusRecord != LeadStatus.Reject) return "Submit failed";
 
             var daysExpired = Settings.Lead.NumberDaysExpired();
-            var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
+            var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID &&
+                                                  !m.ExpiredForReopen);
             var currentUser = CurrentUser.Identity;
             if (leads.Any(m => m.User.TransferUserID != currentUser.ID &&
                                m.UserID != currentUser.ID &&
@@ -205,7 +208,7 @@ namespace PQT.Web.Models
                     IsSuccess = false
                 };
 
-            var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID);
+            var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID && !m.ExpiredForReopen);
             var daysExpired = Settings.Lead.NumberDaysExpired();
             if (leads.Any(m => m.UserID != lead.UserID &&
                                m.User.TransferUserID != lead.UserID &&
