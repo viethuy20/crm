@@ -868,6 +868,10 @@ namespace PQT.Web.Models
                 if (LeadNew != null)
                 {
                     LeadNew.AssignUserID = AssignSales;
+                    if (LeadNew.FirstAssignDate == default(DateTime))
+                    {
+                        LeadNew.FirstAssignDate = DateTime.Now;
+                    }
                     LeadNew.AssignDate = DateTime.Now;
                     if (leadRepo.UpdateLeadNew(LeadNew))
                     {

@@ -81,7 +81,15 @@ namespace PQT.Web.Models
                             var cate = unitRepo.GetEventCategory(temp.EventCategoryStr);
                             if (cate == null)
                             {
-                                temp.Error += "- Event Category does not exist.<br/>";
+                                cate = unitRepo.CreateEventCategory(new EventCategory {Name = temp.EventCategoryStr});
+                                if (cate == null)
+                                {
+                                    temp.Error += "- Event Category does not exist.<br/>";
+                                }
+                                else
+                                {
+                                    temp.EventCategoryID = cate.ID;
+                                }
                             }
                             else
                             {

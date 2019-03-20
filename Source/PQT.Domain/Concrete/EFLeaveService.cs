@@ -79,6 +79,14 @@ namespace PQT.Domain.Concrete
                 .Include(m => m.CreatedUser)
                 .AsEnumerable();
         }
+        public IEnumerable<Leave> GetAllLeavesNotInclude(Func<Leave, bool> predicate)
+        {
+            if (predicate != null)
+                return _db.Set<Leave>()
+                    .Where(predicate).AsEnumerable();
+            return _db.Set<Leave>()
+                .AsEnumerable();
+        }
 
         public Leave GetLeave(int id)
         {
@@ -161,6 +169,15 @@ namespace PQT.Domain.Concrete
             }
             return _db.Set<NonSalesDay>()
                 .Include(m => m.User).AsEnumerable();
+        }
+        public IEnumerable<NonSalesDay> GetAllNonSalesDaysNotInclude(Func<NonSalesDay, bool> predicate)
+        {
+            if (predicate != null)
+            {
+                return _db.Set<NonSalesDay>()
+                    .Where(predicate).AsEnumerable();
+            }
+            return _db.Set<NonSalesDay>().AsEnumerable();
         }
         public NonSalesDay GetNonSalesDay(int id)
         {
@@ -246,6 +263,15 @@ namespace PQT.Domain.Concrete
             }
             return _db.Set<TechnicalIssueDay>()
                 .Include(m => m.User).AsEnumerable();
+        }
+        public IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDaysNotInclude(Func<TechnicalIssueDay, bool> predicate)
+        {
+            if (predicate != null)
+            {
+                return _db.Set<TechnicalIssueDay>()
+                    .Where(predicate).AsEnumerable();
+            }
+            return _db.Set<TechnicalIssueDay>().AsEnumerable();
         }
         public TechnicalIssueDay GetTechnicalIssueDay(int id)
         {

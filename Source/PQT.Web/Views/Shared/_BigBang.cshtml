@@ -38,17 +38,18 @@
             white-space: initial;
         }
 
-         #accordion2 .dropdown-menu {
-             display: block;
-             position: initial;
-             float: initial;
-             border: 0px
-         }
+        #accordion2 .dropdown-menu {
+            display: block;
+            position: initial;
+            float: initial;
+            border: 0px
+        }
 
         #accordion2 .dropdown-menu li a {
             padding-left: 50px;
         }
     </style>
+    <link href="/Content/css/theme-default/materialadmin.css?v=12" rel="stylesheet">
 </head>
 @*@(Request.Cookies["menubar-pin"] == null || Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")*@
 @*<body class="header-fixed menubar-first @(Request.Cookies["menubar-pin"] != null && Convert.ToBoolean(Request.Cookies["menubar-pin"].Value) ? (ViewBag.MenuBarColl != null ? "" : "menubar-pin") : "")">*@

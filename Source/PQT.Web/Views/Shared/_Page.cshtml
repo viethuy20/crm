@@ -22,7 +22,11 @@
         menuNotifications.Add("Master Files", currentUser.MasterFilesNotifyNumber);
         menuNotifications.Add("Report Calls", currentUser.ReportCallNotifyNumber);
         menuNotifications.Add("Leave Management", currentUser.LeaveNotifyNumber);
-        hasLeavePermission = currentUser.DirectSupervisorID > 0 || CurrentUser.HasRole("Manager");
+        hasLeavePermission = currentUser.FinanceAdminUnit != FinanceAdminUnit.None ||
+                             currentUser.SalesManagementUnit != SalesManagementUnit.None ||
+                             currentUser.HumanResourceUnit == HumanResourceUnit.Coordinator ||
+                             currentUser.ProjectManagementUnit != ProjectManagementUnit.None || 
+                             CurrentUser.HasRole("Manager");
     }
     var menus = MenuHelper.GetAll();
     var debugMode = ConfigurationManager.AppSettings["TEST_MODE"];

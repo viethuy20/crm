@@ -12,6 +12,7 @@ namespace PQT.Domain.Abstract
         int GetCountLeaves(Func<Leave, bool> predicate);
         IEnumerable<Leave> GetAllLeaves(Func<Leave, bool> predicate, string sortColumnDir, Func<Leave, object> orderBy, int page, int pageSize);
         IEnumerable<Leave> GetAllLeaves(Func<Leave, bool> predicate);
+        IEnumerable<Leave> GetAllLeavesNotInclude(Func<Leave, bool> predicate);
         Leave GetLeave(int id);
         Leave CreateLeave(Leave info);
         bool UpdateLeave(Leave info);
@@ -22,6 +23,7 @@ namespace PQT.Domain.Abstract
         int GetCountNonSalesDays(Func<NonSalesDay, bool> predicate);
         IEnumerable<NonSalesDay> GetAllNonSalesDays(Func<NonSalesDay, bool> predicate, string sortColumnDir,Func<NonSalesDay, object> orderBy, int page, int pageSize);
         IEnumerable<NonSalesDay> GetAllNonSalesDays(Func<NonSalesDay, bool> predicate);
+        IEnumerable<NonSalesDay> GetAllNonSalesDaysNotInclude(Func<NonSalesDay, bool> predicate);
 
         NonSalesDay GetNonSalesDay(int id);
         NonSalesDay GetNonSalesDayByMonth(DateTime month);
@@ -35,6 +37,7 @@ namespace PQT.Domain.Abstract
         int GetCountTechnicalIssueDays(Func<TechnicalIssueDay, bool> predicate);
         IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDays(Func<TechnicalIssueDay, bool> predicate, string sortColumnDir, Func<TechnicalIssueDay, object> orderBy, int page, int pageSize);
         IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDays(Func<TechnicalIssueDay, bool> predicate);
+        IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDaysNotInclude(Func<TechnicalIssueDay, bool> predicate);
 
         TechnicalIssueDay GetTechnicalIssueDay(int id);
         TechnicalIssueDay GetTechnicalIssueDayByMonth(DateTime month);

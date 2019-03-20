@@ -41,7 +41,6 @@ namespace PQT.Web
                 , "~/Content/css/theme-default/libs/toastr/toastr.min.css"
                 , "~/Content/css/theme-default/libs/wizard/wizard.css"
                 , "~/Content/css/theme-default/libs/summernote/summernote.css"
-                , "~/Content/css/theme-default/materialadmin.css"
                 ));
             bundles.Add(new JsBundle("~/content/js/min").Include(
 

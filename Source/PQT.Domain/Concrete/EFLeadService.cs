@@ -24,6 +24,53 @@ namespace PQT.Domain.Concrete
             return GetAll(predicate2, m => m.Event, m => m.LeadStatusRecord).AsEnumerable();
         }
 
+        public IEnumerable<Lead> GetAllLeadsForKPI(int eventId, int userId, Func<Lead, bool> predicate)
+        {
+            Func<Lead, bool> predicate2 = null;
+            if (eventId > 0 && userId > 0)
+            {
+                predicate2 =
+                    m => m.EventID == eventId &&
+                         (m.UserID == userId || m.User.TransferUserID == userId) &&
+                         m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
+                          m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
+                          m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value &&
+                        predicate(m);
+            }
+            else if (eventId > 0)
+            {
+                predicate2 =
+                    m => m.EventID == eventId &&
+                         m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
+                         m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
+                         m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value &&
+                         predicate(m);
+            }
+            else if (userId > 0)
+            {
+                predicate2 =
+                    m => (m.UserID == userId || m.User.TransferUserID == userId) &&
+                         m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
+                         m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
+                         m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value &&
+                         predicate(m);
+            }
+            else
+            {
+                predicate2 =
+                    m =>
+                        m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
+                        m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
+                        m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value &&
+                        predicate(m);
+            }
+
+            return _db.Set<Lead>()
+                .Include(m=>m.LeadStatusRecord)
+                .Include(m=>m.User)
+                .Where(predicate2).AsEnumerable();
+
+        }
         public Lead GetLead(int id)
         {
             if (id == 0)

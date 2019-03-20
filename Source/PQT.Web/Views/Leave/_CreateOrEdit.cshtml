@@ -29,7 +29,7 @@
         </div>
         <div class="col-sm-4">
             <div class="form-group">
-                @Html.Bootstrap().DropDownListFor(m => m.Leave.UserID, Model.Users.ToSelectList(m => m.ID, m => m.DisplayName)).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                @Html.Bootstrap().DropDownListFor(m => m.Leave.UserID, Model.Users.ToSelectList(m => m.ID, m => m.DisplayName)).OptionLabel("").Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.Leave.UserID).LabelText("User").ShowRequiredStar(true)
             </div>
         </div>

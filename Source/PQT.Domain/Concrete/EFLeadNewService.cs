@@ -23,6 +23,39 @@ namespace PQT.Domain.Concrete
             return GetAll(predicate2, m => m.Event,m=>m.AssignUser).AsEnumerable();
         }
 
+        public IEnumerable<LeadNew> GetAllLeadNewsForKPI(int eventId, int userId, Func<LeadNew, bool> predicate)
+        {
+            Func<LeadNew, bool> predicate2 = null;
+            if (eventId > 0 && userId > 0)
+            {
+                predicate2 =
+                    m => m.EventID == eventId &&
+                         (m.UserID == userId || m.User.TransferUserID == userId)
+                         && predicate(m);
+            }
+            else if (eventId > 0)
+            {
+                predicate2 =
+                    m => m.EventID == eventId
+                         && predicate(m);
+            }
+            else if (userId > 0)
+            {
+                predicate2 =
+                    m => (m.UserID == userId || m.User.TransferUserID == userId)
+                         && predicate(m);
+            }
+            else
+            {
+                predicate2 =
+                    m => predicate(m);
+            }
+
+            return _db.Set<LeadNew>()
+                .Include(m => m.User)
+                .Where(predicate2).AsEnumerable();
+
+        }
         public LeadNew GetLeadNew(int id)
         {
             if (id == 0)

@@ -882,65 +882,41 @@ namespace PQT.Web.Controllers
             IEnumerable<Lead> leads = new HashSet<Lead>();
             IEnumerable<LeadNew> leadNews = new HashSet<LeadNew>();
             IEnumerable<Booking> bookings = new HashSet<Booking>();
-            IEnumerable<Leave> leaves = new HashSet<Leave>();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                leads = _leadService.GetAllLeads(m =>
-                    (m.LeadStatusRecord != LeadStatus.Reject &&
-                     m.LeadStatusRecord != LeadStatus.Initial &&
-                     m.LeadStatusRecord != LeadStatus.Deleted) &&
-                    (datefrom == default(DateTime) || datefrom <= m.CreatedTime.Date) &&
-                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto) &&
-                    (eventId == 0 || m.EventID == eventId) &&
-                    (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
-                    ((m.User != null && m.User.Email.Contains(searchValue)) ||
-                     m.SalesmanName.Contains(searchValue))
+                leads = _leadService.GetAllLeadsForKPI(eventId, userId, m =>
+                     datefrom <= m.CreatedTime.Date &&
+                     m.CreatedTime.Date <= dateto &&
+                     m.SalesmanName.Contains(searchValue)
                 );
-                leadNews = _leadNewService.GetAllLeadNews(m =>
-                    (m.AssignUserID > 0) &&
-                    (datefrom == default(DateTime) || datefrom <= m.AssignDate.Date) &&
-                    (dateto == default(DateTime) || m.AssignDate.Date <= dateto) &&
-                    (eventId == 0 || m.EventID == eventId) &&
-                    (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
-                    ((m.User != null && m.User.Email.Contains(searchValue)) ||
-                     m.SalesmanName.Contains(searchValue))
+                leadNews = _leadNewService.GetAllLeadNewsForKPI(eventId, userId, m =>
+                     m.AssignUserID > 0 &&
+                     datefrom <= m.FirstAssignDate.Date &&
+                     m.FirstAssignDate.Date <= dateto &&
+                      m.SalesmanName.Contains(searchValue)
                 );
-                bookings = _bookingService.GetAllBookings(m =>
-                    m.BookingStatusRecord == BookingStatus.Approved &&
-                    (datefrom == default(DateTime) || datefrom <= m.BookingDate.Date) &&
-                    (dateto == default(DateTime) || m.BookingDate.Date <= dateto) &&
-                    (eventId == 0 || m.EventID == eventId) &&
-                    (userId == 0 || m.SalesmanID == userId ||
-                     (m.Salesman != null && m.Salesman.TransferUserID == userId)) &&
-                    ((m.Salesman != null && m.Salesman.Email.Contains(searchValue)) ||
-                     m.SalesmanName.Contains(searchValue))
+                bookings = _bookingService.GetAllBookingsForKPI(eventId, userId, m =>
+                    m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value &&
+                    datefrom <= m.BookingDate.Date &&
+                   m.BookingDate.Date <= dateto &&
+                     m.SalesmanName.Contains(searchValue)
                 );
             }
             else
             {
-                leads = _leadService.GetAllLeads(m =>
-                    (m.LeadStatusRecord != LeadStatus.Reject &&
-                     m.LeadStatusRecord != LeadStatus.Initial &&
-                     m.LeadStatusRecord != LeadStatus.Deleted) &&
-                    (datefrom == default(DateTime) || datefrom <= m.CreatedTime.Date) &&
-                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto) &&
-                    (eventId == 0 || m.EventID == eventId) &&
-                    (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
+                leads = _leadService.GetAllLeadsForKPI(eventId, userId, m =>
+                    datefrom <= m.CreatedTime.Date &&
+                    m.CreatedTime.Date <= dateto
                 );
-                leadNews = _leadNewService.GetAllLeadNews(m =>
-                    (m.AssignUserID > 0) &&
-                    (datefrom == default(DateTime) || datefrom <= m.AssignDate.Date) &&
-                    (dateto == default(DateTime) || m.AssignDate.Date <= dateto) &&
-                    (eventId == 0 || m.EventID == eventId) &&
-                    (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
+                leadNews = _leadNewService.GetAllLeadNewsForKPI(eventId, userId, m =>
+                    m.AssignUserID > 0 &&
+                    datefrom <= m.FirstAssignDate.Date &&
+                    m.FirstAssignDate.Date <= dateto
                 );
-                bookings = _bookingService.GetAllBookings(m =>
-                    m.BookingStatusRecord == BookingStatus.Approved &&
-                    (datefrom == default(DateTime) || datefrom <= m.BookingDate.Date) &&
-                    (dateto == default(DateTime) || m.BookingDate.Date <= dateto) &&
-                    (eventId == 0 || m.EventID == eventId) &&
-                    (userId == 0 || m.SalesmanID == userId ||
-                     (m.Salesman != null && m.Salesman.TransferUserID == userId))
+                bookings = _bookingService.GetAllBookingsForKPI(eventId, userId, m =>
+                    m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value &&
+                    datefrom <= m.BookingDate.Date &&
+                    m.BookingDate.Date <= dateto
                 );
             }
             // ReSharper disable once AssignNullToNotNullAttribute
@@ -1075,17 +1051,16 @@ namespace PQT.Web.Controllers
             var month = new DateTime(dateMonth.Year, dateMonth.Month, 1);
             if (!string.IsNullOrEmpty(searchValue))
             {
-                bookings = _bookingService.GetAllBookings(m =>
-                    m.BookingStatusRecord == BookingStatus.Approved &&
+                bookings = _bookingService.GetAllBookingsForKPI(0,0, m =>
+                    m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value &&
                     m.CreatedTime >= month &&
-                    ((m.Salesman != null && m.Salesman.Email.Contains(searchValue)) ||
-                     m.SalesmanName.Contains(searchValue))
+                     m.SalesmanName.Contains(searchValue)
                 );
             }
             else
             {
-                bookings = _bookingService.GetAllBookings(m =>
-                    m.BookingStatusRecord == BookingStatus.Approved &&
+                bookings = _bookingService.GetAllBookingsForKPI(0, 0, m =>
+                    m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value &&
                     m.CreatedTime >= month
                 );
             }

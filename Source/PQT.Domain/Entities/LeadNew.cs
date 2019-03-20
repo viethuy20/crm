@@ -46,6 +46,7 @@ namespace PQT.Domain.Entities
         [ForeignKey("AssignUserID")]
         public virtual User AssignUser { get; set; }
         public DateTime AssignDate { get; set; }
+        public DateTime FirstAssignDate { get; set; }
         public int? EstimatedDelegateNumber { get; set; }
         public int GoodTrainingMonth { get; set; }
         public string NewTopics { get; set; }

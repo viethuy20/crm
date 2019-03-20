@@ -25,6 +25,40 @@ namespace PQT.Domain.Concrete
             return GetAll(predicate, m => m.Delegates).AsEnumerable();
         }
 
+        public IEnumerable<Booking> GetAllBookingsForKPI(int eventId, int userId, Func<Booking, bool> predicate)
+        {
+            Func<Booking, bool> predicate2 = null;
+            if (eventId > 0 && userId > 0)
+            {
+                predicate2 =
+                    m => m.EventID == eventId &&
+                         (m.SalesmanID == userId || m.Salesman.TransferUserID == userId)
+                         && predicate(m);
+            }
+            else if (eventId > 0)
+            {
+                predicate2 =
+                    m => m.EventID == eventId
+                         && predicate(m);
+            }
+            else if (userId > 0)
+            {
+                predicate2 =
+                    m => (m.SalesmanID == userId || m.Salesman.TransferUserID == userId)
+                         && predicate(m);
+            }
+            else
+            {
+                predicate2 =
+                    m => predicate(m);
+            }
+
+            return _db.Set<Booking>()
+                .Include(m => m.BookingStatusRecord)
+                .Include(m => m.Salesman)
+                .Where(predicate2).AsEnumerable();
+
+        }
         public Booking GetBooking(int id)
         {
             return Get<Booking>(m => m.ID == id);

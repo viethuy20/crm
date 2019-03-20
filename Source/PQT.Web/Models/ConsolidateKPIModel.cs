@@ -29,14 +29,14 @@ namespace PQT.Web.Models
         {
             var settingService = DependencyHelper.GetService<ISettingRepository>();
             var leaveService = DependencyHelper.GetService<ILeaveService>();
-            var leaves = leaveService.GetAllLeaves(m => m.LeaveDate >= DateFrom &&
+            var leaves = leaveService.GetAllLeavesNotInclude(m => m.LeaveDate >= DateFrom &&
                                                      m.LeaveDate <= DateTo &&
                                                      m.LeaveType.Value == LeaveType.Leave.Value &&
                                                      m.LeaveStatus.Value == LeaveStatus.Approved.Value
             );
-            var nonSalesDays = leaveService.GetAllNonSalesDays(m => m.IssueMonth.Month >= DateFrom.Month &&
+            var nonSalesDays = leaveService.GetAllNonSalesDaysNotInclude(m => m.IssueMonth.Month >= DateFrom.Month &&
                                                                     m.IssueMonth.Month <= DateTo.Month).Sum(m => m.NonSalesDays);
-            var technicialIssueDays = leaveService.GetAllTechnicalIssueDays(m => m.IssueMonth.Month >= DateFrom.Month &&
+            var technicialIssueDays = leaveService.GetAllTechnicalIssueDaysNotInclude(m => m.IssueMonth.Month >= DateFrom.Month &&
                                                                                  m.IssueMonth.Month <= DateTo.Month).Sum(m => m.TechnicalIssueDays);
             var totalSundayDays = DateTimeHelper.CountDays(DayOfWeek.Sunday, DateFrom, DateTo);
             var totalSaturdayDays = DateTimeHelper.CountDays(DayOfWeek.Saturday, DateFrom, DateTo);

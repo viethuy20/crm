@@ -9,8 +9,8 @@ namespace PQT.Domain.Abstract
 {
     public interface IBookingService
     {
-        IEnumerable<Booking> GetAllBookings();
         IEnumerable<Booking> GetAllBookings(Func<Booking, bool> predicate);
+        IEnumerable<Booking> GetAllBookingsForKPI(int eventId, int userId, Func<Booking, bool> predicate);
         Booking GetBooking(int id);
         Booking GetBookingByLeadId(int leadId);
         Booking CreateBooking(Booking info);

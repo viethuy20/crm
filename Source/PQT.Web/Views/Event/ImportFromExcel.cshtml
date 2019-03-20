@@ -119,7 +119,7 @@
     <div class="form-group row">
         <div class="col-sm-6">
             @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
-            @Html.Bootstrap().Button().Id("btnUpload").HtmlAttributes(new {@class = "DTTT_button btn btn-info"}).Text("Import Excel File").PrependIcon("md md-cloud-upload")
+            @Html.Bootstrap().Button().Id("btnUpload").HtmlAttributes(new { @class = "DTTT_button btn btn-info" }).Text("Import Excel File").PrependIcon("md md-cloud-upload")
             @if (Model.Events != null && Model.Events.Count > 0)
             {
                 @Html.Bootstrap().Button().Text("Confirm Upload").Style(ButtonStyle.Success).PrependIcon("md md-done").Id("finish")
@@ -132,19 +132,17 @@
                 <table class="table" id="importContentTable">
                     <thead>
                         <tr>
-                            <th>S/No.</th>
-                            <th>Country</th>
-                            <th>Salutation</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Organisation</th>
-                            <th>Role</th>
-                            <th>Direct Line</th>
-                            <th>Mobile Phone1</th>
-                            <th>Mobile Phone2</th>
-                            <th>Mobile Phone3</th>
-                            <th>Work Email</th>
-                            <th>Personal Email</th>
+                            <th>Event Code </th>
+                            <th>Event Status</th>
+                            <th>Event Category</th>
+                            <th>Event Name</th>
+                            <th>Event First Date</th>
+                            <th>Event Last Date</th>
+                            <th>Date of Confirmation</th>
+                            <th>Date of Closing Sales</th>
+                            <th>Date of Open (Cross Sell)</th>
+                            <th>Location</th>
+                            <th>Event Summary</th>
                             <th>Error</th>
                         </tr>
                     </thead>
