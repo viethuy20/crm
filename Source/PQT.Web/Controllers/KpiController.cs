@@ -23,14 +23,16 @@ namespace PQT.Web.Controllers
         private readonly IEventService _eventService;
         private readonly IBookingService _bookingService;
         private readonly IRecruitmentService _recruitmentService;
+        private readonly ILeaveService _leaveService;
 
-        public KpiController(ILeadService leadService, IEventService eventService, ILeadNewService leadNewService, IBookingService bookingService, IRecruitmentService recruitmentService)
+        public KpiController(ILeadService leadService, IEventService eventService, ILeadNewService leadNewService, IBookingService bookingService, IRecruitmentService recruitmentService, ILeaveService leaveService)
         {
             _leadService = leadService;
             _eventService = eventService;
             _leadNewService = leadNewService;
             _bookingService = bookingService;
             _recruitmentService = recruitmentService;
+            _leaveService = leaveService;
         }
 
         [DisplayName(@"Enquire KPIs")]
@@ -880,6 +882,7 @@ namespace PQT.Web.Controllers
             IEnumerable<Lead> leads = new HashSet<Lead>();
             IEnumerable<LeadNew> leadNews = new HashSet<LeadNew>();
             IEnumerable<Booking> bookings = new HashSet<Booking>();
+            IEnumerable<Leave> leaves = new HashSet<Leave>();
             if (!string.IsNullOrEmpty(searchValue))
             {
                 leads = _leadService.GetAllLeads(m =>
@@ -941,7 +944,7 @@ namespace PQT.Web.Controllers
                 );
             }
             // ReSharper disable once AssignNullToNotNullAttribute
-            var model = new ConsolidateKPIModel();
+            var model = new ConsolidateKPIModel { DateFrom = datefrom, DateTo = dateto };
             model.Prepare(leads, leadNews, bookings);
 
             #region sort
@@ -966,6 +969,12 @@ namespace PQT.Web.Controllers
                         break;
                     case "WrittenRevenue":
                         model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.WrittenRevenue).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "ActualCallKpis":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.ActualCallKpis).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "ActualRequiredCallKpis":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.ActualRequiredCallKpis).ThenBy(s => s.User.ID).ToList();
                         break;
                     default:
                         model.ConsolidateKpis = model.ConsolidateKpis.OrderBy(s => s.User.DisplayName).ToList();
@@ -993,6 +1002,12 @@ namespace PQT.Web.Controllers
                         break;
                     case "WrittenRevenue":
                         model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.WrittenRevenue).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "ActualCallKpis":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.ActualCallKpis).ThenBy(s => s.User.ID).ToList();
+                        break;
+                    case "ActualRequiredCallKpis":
+                        model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.ActualRequiredCallKpis).ThenBy(s => s.User.ID).ToList();
                         break;
                     default:
                         model.ConsolidateKpis = model.ConsolidateKpis.OrderByDescending(s => s.User.DisplayName).ToList();
@@ -1022,6 +1037,8 @@ namespace PQT.Web.Controllers
                     m.NewEventRequest,
                     m.KPI,
                     m.NoKPI,
+                    m.ActualCallKpis,
+                    m.ActualRequiredCallKpis,
                     WrittenRevenue = m.WrittenRevenue.ToString("N0"),
                     m.NoCheck,
                 })

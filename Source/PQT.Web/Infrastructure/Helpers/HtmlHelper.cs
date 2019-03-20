@@ -18,6 +18,10 @@ namespace PQT.Web.Infrastructure.Helpers
             return htmlHelper.DatePickerFor(expression, format, null);
         }
 
+        public static MvcHtmlString MonthPickerFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TValue>> expression, object htmlAttributes)
+        {
+            return htmlHelper.MonthPickerFor(expression, null, htmlAttributes);
+        }
         public static MvcHtmlString DatePickerFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TValue>> expression, object htmlAttributes)
         {
             return htmlHelper.DatePickerFor(expression, null, htmlAttributes);
@@ -61,6 +65,29 @@ namespace PQT.Web.Infrastructure.Helpers
                 attributes["placeholder"] = "dd/mm/yyyy";
             }
             //attributes["data-provide"] = "datetimepicker";
+            attributes["data-date-format"] = "dd/mm/yyyy";
+
+            if (string.IsNullOrEmpty(format))
+                format = "{0:dd/MM/yyyy}";
+            else
+                format = "{0:" + format + "}";
+
+            string name = ExpressionHelper.GetExpressionText(expression);
+            var date = (DateTime)(htmlHelper.ViewData.Eval(name) ?? default(DateTime));
+            object value = date == default(DateTime)
+                               ? (object)""
+                               : date;
+
+            return htmlHelper.TextBox(name, value, format, attributes);
+        }
+        public static MvcHtmlString MonthPickerFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TValue>> expression, string format, object htmlAttributes)
+        {
+            var attributes = new RouteValueDictionary(htmlAttributes);
+            attributes["class"] += " month-picker";
+            if (attributes["placeholder"] == null)
+            {
+                attributes["placeholder"] = "mm/yyyy";
+            }
             attributes["data-date-format"] = "dd/mm/yyyy";
 
             if (string.IsNullOrEmpty(format))

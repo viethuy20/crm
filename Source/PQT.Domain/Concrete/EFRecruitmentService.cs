@@ -21,11 +21,96 @@ namespace PQT.Domain.Concrete
         //{
         //    return string.Format("CAN{0}", GetNextTempCounter("Candidate", 1).ToString("D3"));
         //}
+
+        public int GetCountCandidates(Func<Candidate, bool> predicate)
+        {
+            if (predicate != null)
+            {
+                Func<Candidate, bool> predicate2 =
+                    m => predicate(m) && m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value;
+                return _db.Set<Candidate>()
+                    .Include(m => m.CandidateStatusRecord)
+                    .Include(m => m.OfficeLocation)
+                    .Include(m => m.PsSummary)
+                    .Include(m => m.OneFaceToFaceSummary)
+                    .Include(m => m.TwoFaceToFaceSummary)
+                    .Include(m => m.RecruitmentPosition)
+                    .Include(m => m.User)
+                    .Count(predicate2);
+            }
+            return _db.Set<Candidate>().Count(m => m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value);
+        }
+
+        public IEnumerable<Candidate> GetAllCandidates(Func<Candidate, bool> predicate, string sortColumnDir, Func<Candidate, object> orderBy, int page, int pageSize)
+        {
+            if (predicate != null)
+            {
+                Func<Candidate, bool> predicate2 =
+                    m => predicate(m) && m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value;
+                if (sortColumnDir == "asc")
+                {
+                    return _db.Set<Candidate>()
+                        .Include(m => m.CandidateStatusRecord)
+                        .Include(m => m.OfficeLocation)
+                        .Include(m => m.PsSummary)
+                        .Include(m => m.OneFaceToFaceSummary)
+                        .Include(m => m.TwoFaceToFaceSummary)
+                        .Include(m => m.RecruitmentPosition)
+                        .Include(m => m.User)
+                        .Where(predicate2).OrderBy(orderBy).ThenByDescending(s => s.ID)
+                        .Skip(page).Take(pageSize).AsEnumerable();
+                }
+                return _db.Set<Candidate>()
+                    .Include(m => m.CandidateStatusRecord)
+                    .Include(m => m.OfficeLocation)
+                    .Include(m => m.PsSummary)
+                    .Include(m => m.OneFaceToFaceSummary)
+                    .Include(m => m.TwoFaceToFaceSummary)
+                    .Include(m => m.RecruitmentPosition)
+                    .Include(m => m.User)
+                    .Where(predicate2).OrderByDescending(orderBy).ThenByDescending(s => s.ID)
+                    .Skip(page).Take(pageSize).AsEnumerable();
+            }
+            if (sortColumnDir == "asc")
+            {
+                return _db.Set<Candidate>()
+                    .Include(m => m.CandidateStatusRecord)
+                    .Include(m => m.OfficeLocation)
+                    .Include(m => m.PsSummary)
+                    .Include(m => m.OneFaceToFaceSummary)
+                    .Include(m => m.TwoFaceToFaceSummary)
+                    .Include(m => m.RecruitmentPosition)
+                    .Include(m => m.User)
+                    .Where(m => m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value)
+                    .OrderBy(orderBy).ThenByDescending(s => s.ID).Skip(page)
+                    .Take(pageSize).AsEnumerable();
+            }
+            return _db.Set<Candidate>()
+                .Include(m => m.CandidateStatusRecord)
+                .Include(m => m.OfficeLocation)
+                .Include(m => m.PsSummary)
+                .Include(m => m.OneFaceToFaceSummary)
+                .Include(m => m.TwoFaceToFaceSummary)
+                .Include(m => m.RecruitmentPosition)
+                .Include(m => m.User)
+                .Where(m => m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value)
+                .OrderByDescending(orderBy).ThenByDescending(s => s.ID)
+                .Skip(page).Take(pageSize).AsEnumerable();
+        }
+
         public IEnumerable<Candidate> GetAllCandidates(Func<Candidate, bool> predicate)
         {
             Func<Candidate, bool> predicate2 =
-                m => predicate(m) && m.CandidateStatusRecord != CandidateStatus.Deleted;
-            return GetAll(predicate2, m => m.CandidateStatusRecord).AsEnumerable();
+                m => predicate(m) && m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value;
+            return _db.Set<Candidate>()
+                .Include(m => m.CandidateStatusRecord)
+                .Include(m => m.OfficeLocation)
+                .Include(m => m.PsSummary)
+                .Include(m => m.OneFaceToFaceSummary)
+                .Include(m => m.TwoFaceToFaceSummary)
+                .Include(m => m.RecruitmentPosition)
+                .Include(m => m.User)
+                .Where(predicate2).AsEnumerable();
         }
 
         public Candidate GetCandidate(int id)

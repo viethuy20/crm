@@ -10,9 +10,8 @@ namespace PQT.Domain.Abstract
     {
         //string GetTempUserNo();
         int GetCountUsers(Func<User, bool> predicate);
-        IEnumerable<User> GetUsers(Func<User, bool> predicate, string sortColumnDir, string sortColumn, int page, int pageSize);
-        IEnumerable<User> GetUsers(string sortColumnDir, string sortColumn, int page, int pageSize);
-        IEnumerable<User> GetUsers(Func<User, bool> predicate);
+        IEnumerable<User> GetUsers(Func<User, bool> predicate, string sortColumnDir, Func<User, object> orderBy, int page, int pageSize);
+        IEnumerable<User> GetUsers(Func<User, bool> predicate = null);
         IEnumerable<User> GetUsersDeleted();
         User GetUser(int id);
         User GetUserIncludeAll(int id);
@@ -28,6 +27,7 @@ namespace PQT.Domain.Abstract
         bool ReActiveUser(int id);
 
         IEnumerable<User> GetAllSalesmans();
+        IEnumerable<User> GetAllSupervisors();
 
     }
 }

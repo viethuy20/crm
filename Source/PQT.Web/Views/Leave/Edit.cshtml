@@ -1,0 +1,40 @@
+﻿@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.LeaveModel
+@{
+    ViewBag.Title = "Edit Leave";
+}
+@using (Html.BeginForm("Edit", "Leave", FormMethod.Post, new { @class = "form", enctype = "multipart/form-data" }))
+{
+    <section>
+        <div class="section-header">
+            <h2 class="text-primary">@ViewBag.Title</h2>
+        </div>
+        @Html.HiddenFor(m => m.Leave.ID)
+        @Html.HiddenFor(m => m.Leave.AprroveUserID)
+        @Html.HiddenFor(m => m.Leave.CreatedUserID)
+        @Html.HiddenFor(m => m.Leave.ReasonReject)
+        @Html.HiddenFor(m => m.Leave.LeaveStatus)
+        @Html.HiddenFor(m => m.Leave.CreatedTime)
+        @Html.Partial("_CreateOrEdit", Model)
+        <div class="row">
+            <div class="form-group  col-md-offset-2">
+                @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("submitbutton").PrependIcon("md md-done").Style(ButtonStyle.Success)
+            </div>
+        </div>
+    </section>
+}
+@Html.Script(
+    @<script>
+         $(".submitbutton").on('click', function (e) {
+             e.preventDefault();
+             bootbox.confirm('@Resource.ConfirmSave', function (isOK) {
+                 if (isOK) {
+                     var form = $('.submitbutton').parents("form");
+                     form.submit();
+                 }
+             });
+         });
+    </script>
+    )

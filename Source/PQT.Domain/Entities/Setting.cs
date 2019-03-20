@@ -76,7 +76,8 @@ namespace PQT.Domain.Entities
             public enum KPI
             {
                 VoIpBuffer,
-                ExceptCode
+                ExceptCode,
+                BufferForNewUser
             }
         }
 

@@ -103,6 +103,8 @@
                                 <th class="text-center">KPI</th>
                                 <th class="text-center">No KPI</th>
                                 <th class="text-center">Call No Check</th>
+                                <th class="text-center">Actual Call KPIs</th>
+                                <th class="text-center">Actual Required Call KPIs</th>
                             </tr>
                         </thead>
                     </table>
@@ -182,7 +184,9 @@
                  { "data": "NewEventRequest", "name": "NewEventRequest", "orderable": true },
                  { "data": "KPI", "name": "KPI", "orderable": true },
                  { "data": "NoKPI", "name": "NoKPI", "orderable": true },
-                 { "data": "NoCheck", "name": "NoCheck", "NoCheck": true },
+                 { "data": "NoCheck", "name": "NoCheck", "orderable": true },
+                 { "data": "ActualCallKpis", "name": "ActualCallKpis", "orderable": true },
+                 { "data": "ActualRequiredCallKpis", "name": "ActualRequiredCallKpis", "orderable": true },
              ],
              "iDisplayLength": 25,
              "aaSorting": [[0, "asc"]],
@@ -195,6 +199,8 @@
                  $(nRow).find('td:eq(4)').addClass("NoKPI");
                  $(nRow).find('td:eq(4)').attr("style", "text-align:center");
                  $(nRow).find('td:eq(5)').attr("style", "text-align:center");
+                 $(nRow).find('td:eq(6)').attr("style", "text-align:center");
+                 $(nRow).find('td:eq(7)').attr("style", "text-align:center");
              },
              initComplete: function () {
                  var _table = this;

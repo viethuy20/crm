@@ -1,0 +1,55 @@
+﻿@using System.Web.UI.WebControls
+@using NS.Mvc
+@using PQT.Domain.Abstract
+@using PQT.Domain.Enum
+@using Resources
+@model PQT.Domain.Entities.TechnicalIssueDay
+@{
+//var memberService = DependencyHelper.GetService<IMembershipService>();
+//var salesmans = memberService.GetAllSalesmans();
+}
+<div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
+    <div class="card-head">
+        <header>@(Model.ID > 0 ? "Edit Data" : "Add New Data")</header>
+    </div><!--end .card-head -->
+
+    @using (Ajax.BeginForm("CreateOrEdit", "routeValues", new AjaxOptions { HttpMethod = "Post", OnFailure = "onFail", OnSuccess = "onSuccess" }, new { @id = "CreateOrEditForm", @class = "form" }))
+    {
+        <div class="card-body">
+            <div class="success hide">
+                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Success).Closeable()))
+                {
+                    @Html.Bootstrap().Label("success").HtmlAttributes(new { @class = "textsuccess" }).LabelText(Resource.SaveSuccessful)
+                }
+            </div>
+            <div class="error hide alert-danger">
+                @using (Html.Bootstrap().Begin(new Alert().Style(AlertColor.Error).Closeable()))
+                {
+                    @Html.Bootstrap().Label("error").HtmlAttributes(new { @class = "texterror" }).LabelText(Resource.SaveFailed)
+                }
+            </div>
+            @Html.HiddenFor(m => m.ID)
+            @Html.HiddenFor(m => m.CreatedTime)
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.TempMonth).Class("form-control month-picker").Placeholder("mm/yyyy").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.TempMonth).LabelText("Month").ShowRequiredStar(true)
+            </div>
+            @*<div class="form-group">
+                @Html.Bootstrap().DropDownListFor(m => m.UserID, salesmans.ToSelectList(m => m.ID, m => m.DisplayName)).HtmlAttributes(new { required = "required" }).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.UserID).LabelText("Sales").ShowRequiredStar(true)
+            </div>*@            
+            <div class="form-group">
+                @Html.Bootstrap().TextBoxFor(m => m.TechnicalIssueDays).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.TechnicalIssueDays).ShowRequiredStar(true)
+            </div>
+            <div class="form-group">
+                <div class="pull-right">
+                    @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+                    @Html.Bootstrap().SubmitButton().Text(Resource.Save).Id("submitbutton").PrependIcon("md md-done").Style(ButtonStyle.Success)
+                </div>
+            </div>
+        </div><!--end .card-body -->
+    }
+</div><!--end .card -->
+<script>
+</script>

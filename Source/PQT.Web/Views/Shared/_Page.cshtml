@@ -10,6 +10,7 @@
 
     Dictionary<string, int> menuNotifications = new Dictionary<string, int>();
     var count = 0;
+    var hasLeavePermission = false;
     if (currentUser != null)
     {
         count = currentUser.NotifyNumber;
@@ -21,6 +22,7 @@
         menuNotifications.Add("Master Files", currentUser.MasterFilesNotifyNumber);
         menuNotifications.Add("Report Calls", currentUser.ReportCallNotifyNumber);
         menuNotifications.Add("Leave Management", currentUser.LeaveNotifyNumber);
+        hasLeavePermission = currentUser.DirectSupervisorID > 0 || CurrentUser.HasRole("Manager");
     }
     var menus = MenuHelper.GetAll();
     var debugMode = ConfigurationManager.AppSettings["TEST_MODE"];
@@ -181,6 +183,13 @@
                             continue;
                         }
                     }
+                    if (item.Title == "Leave Management")
+                    {
+                        if (!hasLeavePermission)
+                        {
+                            continue;
+                        }
+                    }
                     <li class="@(children.Any()?"gui-folder":"") menu_notify_child_@(item.NotifyType)">
                         @if (string.IsNullOrEmpty(item.Url))
                         {
@@ -328,6 +337,15 @@
             allowClear: true,
         });
 
+        function initMonthpicker() {
+            $('.month-picker').datepicker({
+                autoclose: true,
+                todayHighlight: true,
+                format: "mm/yyyy",
+                viewMode: "months",
+                minViewMode: "months"
+            });
+        }
         function initDatepicker() {
             $('.date-picker, .datepicker').datepicker({
                 autoclose: true,

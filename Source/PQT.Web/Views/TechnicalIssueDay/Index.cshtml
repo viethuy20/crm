@@ -1,0 +1,113 @@
+﻿@using Resources
+@model IEnumerable<PQT.Domain.Entities.TechnicalIssueDay>
+@{
+    ViewBag.Title = "Technical Issue Days";
+}
+
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+
+            @if (CurrentUser.HasPermission("TechnicalIssueDay", "CreateOrEdit"))
+            {
+                @Html.Bootstrap().ActionLinkButton(Resource.AddNew, "CreateOrEdit").RouteValues(new { id = 0 }).PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary simple-ajax-popup-align-top" })
+            }
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <table class="table" id="table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Technical Issue Days</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</section>
+
+
+@Html.Script(
+    @<script>
+
+         var $Table = $('#table');
+        $Table.dataTable({
+            "processing": true, // for show progress bar
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "stateSave": false,
+            "ajax": {
+                "url": "@Url.Action("AjaxGetAlls")",
+                "type": "POST",
+                "datatype": "json",
+                "data": function(d) {
+                }
+            },
+            "columns": [
+                { "data": "IssueMonthDisplay", "name": "IssueMonthDisplay", "orderable": true },
+                { "data": "TechnicalIssueDays", "name": "TechnicalIssueDays", "orderable": true },
+                { "data": "ID", "name": "ID", "orderable": false },
+            ],
+            "iDisplayLength": 25,
+            "aaSorting": [[0, "desc"]],
+            "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                $(nRow).find('td:eq(2)').html('<a class="simple-ajax-popup-align-top" data-action="edit" href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '"><i class="md md-edit text-info"></i></a>');
+                $(nRow).attr("data-id", aData["ID"]);
+            },
+            initComplete: function () {
+                var _table = this;
+                _table.parent().find('input[type="search"]').unbind();
+                var timeOutTyping;
+                _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                    clearTimeout(timeOutTyping);
+                    timeOutTyping = setTimeout(function () {
+                        _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                    }, 600);
+                });
+            },
+        });
+
+        function onFail() {
+            $(".error").removeClass('hide');
+            $(".success").addClass('hide');
+            $(".texterror").text("@Resource.Error");
+        }
+        function onSuccess(data) {
+            $(".error").addClass('hide');
+            $(".success").addClass('hide');
+
+            if (data.Code == 1 || data.Code == 3) {
+                $(".success").removeClass('hide');
+                if (data.Code == 1) {
+                    $(".textsuccess").text('@Resource.AddSuccessful');
+                    $Table.fnFilter('');
+                    $("#CreateOrEditForm").get(0).reset();
+                    $.magnificPopup.close();
+                }
+                if (data.Code == 3) {
+                    $("textsuccess").data('@Resource.SaveSuccessful');
+                    $Table.fnFilter('');
+                    $("#CreateOrEditForm").get(0).reset();
+                    $.magnificPopup.close();
+                }
+            } else {
+                if (data.ErrorMessage)
+                    $(".texterror").text(data.ErrorMessage);
+                else if (data.Code == 2)
+                    $(".texterror").text('@Resource.AddError');
+                else if (data.Code == 4)
+                    $(".texterror").text('@Resource.SaveError');
+                else if (data.Code == 5)
+                    $(".texterror").text("@Resource.CodeExists");
+                $(".error").removeClass('hide');
+            }
+        }
+        
+    </script>)

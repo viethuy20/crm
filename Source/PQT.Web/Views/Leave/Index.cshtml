@@ -1,0 +1,196 @@
+﻿@using PQT.Domain.Enum
+@using Resources
+@model PQT.Domain.Entities.Leave
+@{
+    ViewBag.Title = "Leave Management";
+}
+
+<style>
+    .DTFC_Cloned {
+        background: #fff;
+    }
+
+    .DTFC_Cloned td {
+        background-color: #fff;
+    }
+
+    .DTFC_Cloned th {
+        background-color: #f5f5f5 !important;
+    }
+
+        #leaveTable tbody tr.Request td,
+        .DTFC_Cloned tbody tr.Request td {
+            color: #333;
+            background-color: #fff !important;
+        }
+
+
+        #leaveTable tbody tr.Rejected td,
+        .DTFC_Cloned tbody tr.Rejected td {
+            color: #333;
+            background-color: #ffa7a7 !important;
+        }
+
+        #leaveTable tbody tr.Approved td,
+        .DTFC_Cloned tbody tr.Approved td {
+            color: #333;
+            background-color: #abffc5 !important;
+        }
+
+
+</style>
+<style>
+    .delegateItem {
+        padding: 20px;
+        border: 1px solid #e2e2e2;
+    }
+
+    .color_status {
+        cursor: default;
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        border: 1px solid #c3c3c3;
+        border-radius: 50%;
+        margin-top: 7px;
+    }
+</style>
+<section>
+    <div class="section-header">
+        <h2 class="text-primary">@ViewBag.Title</h2>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            @if (CurrentUser.HasPermission("Leave", "Create"))
+            {
+                @Html.Bootstrap().ActionLinkButton("Request Leave", "Create").RouteValues(new { id = 0 }).PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary" })
+            }
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <div class="card-body">
+                    <table class="table" id="leaveTable">
+                        <thead>
+                            <tr>
+                                <th>Leave Date</th>
+                                <th>User Name</th>
+                                <th>Type</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Approver</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="row">
+                        <table>
+                            <tr>
+                                <td colspan="14"><b>Leave Status</b></td>
+                            </tr>
+                            <tr>
+                                <td><span class="color_status" style="background: #fff;">&nbsp;</span></td>
+                                <td>&nbsp;Request</td>
+                                <td style="width: 20px"></td>
+                                <td><span class="color_status" style="background: #ffa7a7;">&nbsp;</span></td>
+                                <td>&nbsp;Rejected</td>
+                                <td style="width: 20px"></td>
+                                <td><span class="color_status" style="background: #abffc5;">&nbsp;</span></td>
+                                <td>&nbsp;Passed</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div><!--end .card-body -->
+            </div><!--end .card -->
+        </div>
+    </div>
+</section>
+
+
+@Html.Script(
+
+    @<script>
+         var windowW = $(window).width();
+         var windowH = $(window).height();
+         var fixedColumn = 0;
+         var sizeLenght = 50;
+
+         var leaveTable = $("#leaveTable");
+         leaveTable.dataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "url": "@Url.Action("AjaxGetAlls")",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function(d) {
+                 }
+             },
+             "columns": [
+                 { "data": "LeaveDateDisplay", "name": "LeaveDateDisplay", "orderable": true },
+                 { "data": "UserDisplay", "name": "UserDisplay", "orderable": true },
+                 { "data": "LeaveType", "name": "LeaveType", "orderable": true },
+                 { "data": "ReasonLeave", "name": "ReasonLeave", "orderable": true },
+                 { "data": "LeaveStatus", "name": "LeaveStatus", "orderable": true },
+                 { "data": "AprroveUserDisplay", "name": "AprroveUserDisplay", "orderable": true },
+                 { "data": "ID", "name": "ID", "orderable": false },
+             ],
+             "iDisplayLength": sizeLenght,
+             "aaSorting": [[0, "desc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 var actionHtml = '<a href="@Url.Action("Detail")/' + aData["ID"] + '">' +
+                     '<i class="fa fa-eye"></i></a>';
+                 if ('@CurrentUser.HasPermission("Leave", "Edit")' == 'True' && aData["LeaveStatus"] != '@LeaveStatus.Approved') {
+                     actionHtml += ' | <a href="@Url.Action("Edit")?id=' + aData["ID"] +
+                         '" data-action="edit"><i class="md md-edit text-info"></i></a>';
+                 }
+                 if ('@CurrentUser.HasPermission("Leave", "Delete")' == 'True') {
+                     actionHtml += ' | <a href="#"  data-action="delete" data-id="' + aData["ID"] + '"><i class="md md-delete text-danger"></i></a>';
+                 }
+                 $(nRow).find('td:eq(6)').html(actionHtml);
+                 $(nRow).find('td:eq(6)').css("white-space","nowrap");
+                 $(nRow).addClass(aData["LeaveStatus"]);
+                 //$(nRow).attr("data-id", aData["ID"]);
+             },
+             initComplete: function () {
+                 var _table = this;
+                 _table.parent().find('input[type="search"]').unbind();
+                 var timeOutTyping;
+                 _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function () {
+                         _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                     }, 600);
+                 });
+             },
+         });
+
+         leaveTable.on('click', '[data-action="delete"]', function (e) {
+             e.preventDefault();
+             var selftr = $(this);
+             bootbox.confirm("@Resource.ConfirmDelete", function (isOK) {
+                 if (isOK) {
+                     $.ajax({
+                         url: '@Url.Action("Delete")/' + selftr.data('id'),
+                         type: 'POST',
+                         success: function (data) {
+                             if (data == true) {
+                                 leaveTable.fnDeleteRow(selftr.closest('tr')[0]);
+                             } else {
+                                 bootbox.alert("@Resource.DeleteFailed");
+                             }
+                         },
+                         error: function () {
+                             bootbox.alert("@Resource.DeleteFailed");
+                         }
+                     });
+                 }
+             });
+         });
+
+    </script>)

@@ -753,4 +753,85 @@ namespace PQT.Web.Infrastructure.Notification
             thread.Start();
         }
     }
+
+
+
+    public class LeaveNotificator
+    {
+        private static IMembershipService MemberService
+        {
+            get { return DependencyResolver.Current.GetService<IMembershipService>(); }
+        }
+        private static ISettingRepository SettingRepository
+        {
+            get { return DependencyResolver.Current.GetService<ISettingRepository>(); }
+        }
+        private static ILeaveService LeaveService
+        {
+            get { return DependencyResolver.Current.GetService<ILeaveService>(); }
+        }
+        private static IUserNotificationService UserNotificationService
+        {
+            get { return DependencyResolver.Current.GetService<IUserNotificationService>(); }
+        }
+        private static void NotifyUser(int currentUserId, IEnumerable<User> users, int id, string title)
+        {
+            var thread = new Thread(() =>
+            {
+                var eventData = LeaveService.GetLeave(id);
+                if (eventData == null)
+                    return;
+                foreach (var user in users)
+                {
+                    if (user == null || currentUserId == user.ID)
+                    {
+                        continue;
+                    }
+                    try
+                    {
+                        var notify = new UserNotification
+                        {
+                            UserID = user.ID,
+                            EntryId = eventData.ID,
+                            EventId = 0,
+                            NotifyType = NotifyType.Leave,
+                            Title = title,
+                            EventCode = "",
+                            Description = eventData.LeaveDateDisplay + " - " + eventData.UserDisplay,
+                            HighlightColor = "#ffffff"
+                        };
+                        if (!string.IsNullOrEmpty(title))
+                        {
+                            notify.Title = title;
+                        }
+                        notify = UserNotificationService.CreateUserNotification(notify);
+                        user.LeaveNotifyNumber++;
+                        MemberService.UpdateUser(user);
+                        NotificationHub.NotifyUser(user, notify);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
+
+
+            });
+            thread.Start();
+        }
+        public static void NotifyUser(NotifyAction notifyAction, List<User> users, int leadId, string title)
+        {
+            var currentUserId = CurrentUser.Identity.ID;
+            var thread = new Thread(() =>
+            {
+                var setting = SettingRepository.GetNotifySetting(NotifyType.Leave, notifyAction);
+                if (setting != null)
+                {
+                    var notiUsers = MemberService.GetUsersInRole(setting.AllRoles);
+                    users.AddRange(notiUsers);
+                }
+                NotifyUser(currentUserId, users, leadId, title);
+            });
+            thread.Start();
+        }
+    }
 }

@@ -123,6 +123,10 @@ namespace PQT.Web.Infrastructure.Utility
                 var value = Convert.ToString(GetSetting(Setting.ModuleType.KPI, Setting.ModuleKey.KPI.ExceptCode, typeof(string)));
                 return !string.IsNullOrEmpty(value) ? value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries) : new List<string>().ToArray();
             }
+            public static int BufferForNewUser()
+            {
+                return Convert.ToInt32(GetSetting(Setting.ModuleType.KPI, Setting.ModuleKey.KPI.BufferForNewUser, typeof(int)));
+            }
         }
     }
     #endregion

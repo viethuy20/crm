@@ -112,13 +112,13 @@ namespace PQT.Web
             kernel.Bind<IRecruitmentService>().To<EFRecruitmentService>();
             kernel.Bind<ILeadNewService>().To<EFLeadNewService>();
             kernel.Bind<IReportCallService>().To<EFReportCallService>();
+            kernel.Bind<ILeaveService>().To<EFLeaveService>();
 
             // Notification services
             kernel.Bind<INotificationService<Lead>>().To<LeadNotificationService>();
             kernel.Bind<INotificationService<Booking>>().To<BookingNotificationService>();
 
             kernel.Bind<IStringEncryptor>().To<SimplerAES>();
-
             kernel.Bind<IValidator<User>>().To<UserValidator>();
             kernel.Bind<IValidator<Menu>>().To<MenuValidator>();
             kernel.Bind<IValidator<Company>>().To<CompanyValidator>();

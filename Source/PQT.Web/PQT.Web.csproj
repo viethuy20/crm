@@ -355,6 +355,9 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\MapperConfig.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
+    <Compile Include="Controllers\LeaveController.cs" />
+    <Compile Include="Controllers\TechnicalIssueDayController.cs" />
+    <Compile Include="Controllers\NonSalesDayController.cs" />
     <Compile Include="Controllers\ReportCallController.cs" />
     <Compile Include="Controllers\EventCategoryController.cs" />
     <Compile Include="Controllers\RecruitmentPositionController.cs" />
@@ -415,6 +418,8 @@
     <Compile Include="Models\LeadMarkKPIModel.cs" />
     <Compile Include="Models\LeadModel.cs" />
     <Compile Include="Models\LeadModelView.cs" />
+    <Compile Include="Models\LeaveModel.cs" />
+    <Compile Include="Models\LeaveMonthlyReport.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\MenuModel.cs" />
     <Compile Include="Models\EventModel.cs" />
@@ -2675,6 +2680,17 @@
     <Content Include="Views\ReportCall\Detail.cshtml" />
     <Content Include="Views\ReportCall\Index.cshtml" />
     <Content Include="Views\Event\ImportFromExcel.cshtml" />
+    <Content Include="Views\NonSalesDay\CreateOrEdit.cshtml" />
+    <Content Include="Views\NonSalesDay\Index.cshtml" />
+    <Content Include="Views\TechnicalIssueDay\CreateOrEdit.cshtml" />
+    <Content Include="Views\TechnicalIssueDay\Index.cshtml" />
+    <Content Include="Views\Leave\_CreateOrEdit.cshtml" />
+    <Content Include="Views\Leave\Create.cshtml" />
+    <Content Include="Views\Leave\Detail.cshtml" />
+    <Content Include="Views\Leave\Edit.cshtml" />
+    <Content Include="Views\Leave\Index.cshtml" />
+    <Content Include="Views\Leave\RejectLeave.cshtml" />
+    <Content Include="Views\Leave\MonthlyReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

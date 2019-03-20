@@ -32,390 +32,44 @@ namespace PQT.Domain.Concrete
             }
             return _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(m => m.Status == EntityUserStatus.Normal).Count();
         }
-        public IEnumerable<User> GetUsers(Func<User, bool> predicate, string sortColumnDir, string sortColumn, int page, int pageSize)
+        public IEnumerable<User> GetUsers(Func<User, bool> predicate, string sortColumnDir, Func<User, object> orderBy, int page, int pageSize)
         {
-            IEnumerable<User> users = new HashSet<User>();
+            if (predicate != null)
+            {
+                if (sortColumnDir == "asc")
+                {
+                    return _db.Set<User>()
+                        .Include(m => m.DirectSupervisor)
+                        .Include(m => m.Roles.Select(r => r.Permissions))
+                        .Where(predicate).OrderBy(orderBy).ThenByDescending(s => s.ID).Skip(page)
+                        .Take(pageSize).AsEnumerable();
+                }
+                return _db.Set<User>()
+                    .Include(m => m.DirectSupervisor)
+                    .Include(m => m.Roles.Select(r => r.Permissions))
+                    .Where(predicate).OrderByDescending(orderBy).ThenByDescending(s => s.ID).Skip(page)
+                    .Take(pageSize).AsEnumerable();
+            }
             if (sortColumnDir == "asc")
             {
-                switch (sortColumn)
-                {
-                    case "UserNo":
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.UserNo).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    case "DisplayName":
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.DisplayName).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    case "FirstName":
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.FirstName).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    case "LastName":
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.LastName).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    case "Email":
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.Email).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    case "PersonalEmail":
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.PersonalEmail).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    case "UserStatus":
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.UserStatusDisplay).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    case "DirectSupervisor":
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.DirectSupervisorDisplay).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    case "BusinessPhone":
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.BusinessPhone).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    case "MobilePhone":
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    case "Extension":
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.Extension).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    case "RolesHtml":
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    case "DateOfBirth":
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.DateOfBirth).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    default:
-                        users = _db.Set<User>()
-                            .Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(predicate).OrderBy(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                }
+                return _db.Set<User>()
+                    .Include(m => m.DirectSupervisor)
+                    .Include(m => m.Roles.Select(r => r.Permissions))
+                    .OrderBy(orderBy).ThenByDescending(s => s.ID).Skip(page)
+                    .Take(pageSize).AsEnumerable();
             }
-            else
-            {
-                switch (sortColumn)
-                {
-                    case "UserNo":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.UserNo).ThenByDescending(s => s.ID).Skip(page).Take(pageSize)
-                            .AsEnumerable();
-                        break;
-                    case "DisplayName":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.DisplayName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize)
-                            .AsEnumerable();
-                        break;
-                    case "FirstName":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.FirstName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize)
-                            .AsEnumerable();
-                        break;
-                    case "LastName":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.LastName).ThenByDescending(s => s.ID).Skip(page).Take(pageSize)
-                            .AsEnumerable();
-                        break;
-                    case "Email":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.Email).ThenByDescending(s => s.ID).Skip(page).Take(pageSize)
-                            .AsEnumerable();
-                        break;
-                    case "PersonalEmail":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.PersonalEmail).ThenByDescending(s => s.ID).Skip(page).Take(pageSize)
-                            .AsEnumerable();
-                        break;
-                    case "UserStatus":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.UserStatusDisplay).ThenByDescending(s => s.ID).Skip(page).Take(pageSize)
-                            .AsEnumerable();
-                        break;
-                    case "DirectSupervisor":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.DirectSupervisorDisplay).ThenByDescending(s => s.ID).Skip(page).Take(pageSize)
-                            .AsEnumerable();
-                        break;
-                    case "BusinessPhone":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.BusinessPhone).ThenByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                    case "MobilePhone":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.MobilePhone).ThenByDescending(s => s.ID).Skip(page).Take(pageSize)
-                            .AsEnumerable();
-                        break;
-                    case "Extension":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.Extension).ThenByDescending(s => s.ID).Skip(page).Take(pageSize)
-                            .AsEnumerable();
-                        break;
-                    case "RolesHtml":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.RolesHtml).ThenByDescending(s => s.ID).Skip(page).Take(pageSize)
-                            .AsEnumerable();
-                        break;
-                    case "DateOfBirth":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.DateOfBirth).ThenByDescending(s => s.ID).Skip(page).Take(pageSize)
-                            .AsEnumerable();
-                        break;
-                    default:
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate)
-                            .OrderByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                }
-            }
-            return users;
+            return _db.Set<User>()
+                .Include(m => m.DirectSupervisor)
+                .Include(m => m.Roles.Select(r => r.Permissions))
+                .OrderByDescending(orderBy).ThenByDescending(s => s.ID).Skip(page)
+                .Take(pageSize).AsEnumerable();
         }
-        public IEnumerable<User> GetUsers(string sortColumnDir, string sortColumn, int page, int pageSize)
+        public IEnumerable<User> GetUsers(Func<User, bool> predicate = null)
         {
-            IEnumerable<User> users = new HashSet<User>();
-            if (sortColumnDir == "asc")
+            if (predicate == null)
             {
-                switch (sortColumn)
-                {
-                    case "UserNo":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.UserNo)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "DisplayName":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.DisplayName)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "FirstName":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.FirstName)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "LastName":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.LastName)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "Email":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.Email)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "PersonalEmail":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.PersonalEmail)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "UserStatus":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.UserStatusDisplay)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "DirectSupervisor":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.DirectSupervisorDisplay)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "BusinessPhone":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.BusinessPhone)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "MobilePhone":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.MobilePhone)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "Extension":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.Extension)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "RolesHtml":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.RolesHtml)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "DateOfBirth":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.DateOfBirth)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    default:
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderBy(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                }
+                return _db.Set<User>().AsEnumerable();
             }
-            else
-            {
-                switch (sortColumn)
-                {
-                    case "UserNo":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.UserNo)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "DisplayName":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.DisplayName)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "FirstName":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.FirstName)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "LastName":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.LastName)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "Email":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.Email)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "PersonalEmail":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.PersonalEmail)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "UserStatus":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.UserStatusDisplay)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "DirectSupervisor":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.DirectSupervisorDisplay)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "BusinessPhone":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.BusinessPhone)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "MobilePhone":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.MobilePhone)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "Extension":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.Extension)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "RolesHtml":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.RolesHtml)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    case "DateOfBirth":
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.DateOfBirth)
-                            .ThenByDescending(s => s.ID).Skip(page).Take(pageSize).AsEnumerable();
-                        break;
-                    default:
-                        users = _db.Set<User>().Include(m => m.DirectSupervisor)
-                            .Include(m => m.Roles.Select(r => r.Permissions))
-                            .Where(m => m.Status == EntityUserStatus.Normal).OrderByDescending(s => s.ID).Skip(page)
-                            .Take(pageSize).AsEnumerable();
-                        break;
-                }
-            }
-            return users;
-        }
-        public IEnumerable<User> GetUsers(Func<User, bool> predicate)
-        {
             return _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).Where(predicate).AsEnumerable();
         }
         public IEnumerable<User> GetUsersDeleted()
@@ -460,52 +114,46 @@ namespace PQT.Domain.Concrete
 
         public virtual User GetUser(int id)
         {
-            return Get<User>(u => u.ID == id, u => new
-            {
-                Roles = u.Roles.Select(r => r.Permissions),
-            });
+            return _db.Set<User>().Include(m => m.Roles.Select(r => r.Permissions)).FirstOrDefault(u => u.ID == id);
         }
         public User GetUserIncludeAll(int id)
         {
-            return Get<User>(u => u.ID == id, u => new
-            {
-                u.UserSalaryHistories,
-                u.UserContracts,
-                u.OfficeLocation,
-                Roles = u.Roles.Select(r => r.Permissions),
-            });
+            return _db.Set<User>()
+                .Include(m => m.Roles)
+                .Include(m => m.Roles.Select(r => r.Permissions))
+                .Include(m => m.UserSalaryHistories)
+                .Include(m => m.UserContracts)
+                .Include(m => m.OfficeLocation)
+                .FirstOrDefault(u => u.ID == id);
         }
 
         public User GetUserByNo(string userNo)
         {
-            return string.IsNullOrWhiteSpace(userNo)
-                ? null
-                : Get<User>(u => u.Status.Value == EntityStatus.Normal && u.UserNo != null &&
-                                 u.UserNo.Trim().ToUpper() == userNo.Trim().ToUpper(),
-                    u => new
-                    {
-                        Roles = u.Roles.Select(r => r.Permissions),
-                    });
+             if(string.IsNullOrWhiteSpace(userNo))
+                 return null;
+            var number = userNo.Trim().ToUpper();
+            return _db.Set<User>()
+                .FirstOrDefault(u => u.Status.Value == EntityStatus.Normal.Value && u.UserNo != null &&
+                                     u.UserNo.Trim().ToUpper() == number);
         }
         public User GetUserByEmail(string email)
         {
-            return string.IsNullOrWhiteSpace(email)
-                ? null
-                : Get<User>(u => u.Status.Value == EntityStatus.Normal && u.Email != null &&
-                                 u.Email.Trim().ToLower() == email.Trim().ToLower(),
-                    u => new
-                    {
-                        Roles = u.Roles.Select(r => r.Permissions),
-                    });
+            if (string.IsNullOrWhiteSpace(email))
+                return null;
+            var number = email.Trim().ToLower();
+            return _db.Set<User>()
+                .FirstOrDefault(u => u.Status.Value == EntityStatus.Normal.Value && u.Email != null &&
+                                     u.Email.Trim().ToLower() == number);
         }
         public User ValidateLogin(string email, string password)
         {
-            //password = EncryptHelper.EncryptPassword(password);
-            return Get<User>(u => u.Email != null &&
-                                  u.Email.Trim().ToLower() == email.Trim().ToLower() &&
-                                  u.Password == password &&
-                                  u.UserStatus == UserStatus.Live &&
-                                  u.Status == EntityUserStatus.Normal);
+            var emaiLower = email.Trim().ToLower();
+            return _db.Set<User>()
+                .FirstOrDefault(u => u.Email != null &&
+                                     u.Email.Trim().ToLower() == emaiLower &&
+                                     u.Password == password &&
+                                     u.UserStatus.Value == UserStatus.Live.Value &&
+                                     u.Status.Value == EntityUserStatus.Normal.Value);
         }
 
         public User CreateUser(User user)
@@ -545,31 +193,28 @@ namespace PQT.Domain.Concrete
             {
                 return new List<User>();
             }
-            return GetAll<User>(u => u.Roles
+            return _db.Set<User>()
+                .Include(m => m.Roles)
+                .Include(m => m.Roles.Select(r => r.Permissions))
+                .Include(m => m.UserSalaryHistories)
+                .Include(m => m.UserContracts)
+                .Include(m => m.OfficeLocation)
+                .Where(u => u.Roles
                     .Select(r => r.Name.ToUpper())
                     .Intersect(roleName.Select(r1 => r1.ToUpper()))
-                    .Any(),
-                u => new
-                {
-                    Roles = u.Roles.Select(r => r.Permissions),
-                    OfficeLocation = u.OfficeLocation,
-                    DirectSupervisor = u.DirectSupervisor,
-                    UserContracts = u.UserContracts,
-                    UserSalaryHistories = u.UserSalaryHistories,
-                }).AsEnumerable();
+                    .Any()).AsEnumerable();
         }
         public IEnumerable<User> GetUsersInRoleLevel(params string[] roleName)
         {
-            return GetAll<User>(u => u.Status == EntityUserStatus.Normal &&
-            u.UserStatus == UserStatus.Live &&
-            u.Roles
-                    .Select(r => r.RoleLevel.Value)
-                    .Intersect(roleName.Select(r1 => r1.ToUpper()))
-                    .Any(),
-                u => new
-                {
-                    Roles = u.Roles.Select(r => r.Permissions),
-                }).AsEnumerable();
+            return _db.Set<User>()
+                .Include(m => m.Roles)
+                .Include(m => m.Roles.Select(r => r.Permissions))
+                .Where(u => u.Status.Value == EntityUserStatus.Normal.Value &&
+                            u.UserStatus.Value == UserStatus.Live.Value &&
+                            u.Roles
+                                .Select(r => r.RoleLevel.Value)
+                                .Intersect(roleName.Select(r1 => r1.ToUpper()))
+                                .Any()).AsEnumerable();
         }
 
         #endregion
@@ -582,12 +227,18 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<User> GetAllSalesmans()
         {
-            return GetAll<User>(u => u.Status == EntityUserStatus.Normal && u.UserStatus == UserStatus.Live &&
-            u.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel),
-                    u => new
-                    {
-                        Roles = u.Roles.Select(r => r.Permissions),
-                    }).AsEnumerable();
+            return _db.Set<User>()
+                .Include(m => m.Roles.Select(r => r.Permissions))
+                .Where(u => u.Status.Value == EntityUserStatus.Normal.Value &&
+                            u.UserStatus.Value == UserStatus.Live.Value &&
+                            u.Roles.Any(r => r.RoleLevel.Value == RoleLevel.SalesLevel.Value)).AsEnumerable();
+        }
+        public IEnumerable<User> GetAllSupervisors()
+        {
+            return _db.Set<User>()
+                .Where(u => u.DirectSupervisorID != null && 
+                u.Status.Value == EntityUserStatus.Normal.Value && 
+                u.UserStatus.Value == UserStatus.Live.Value).Select(m => m.DirectSupervisor).Distinct().AsEnumerable();
         }
 
     }

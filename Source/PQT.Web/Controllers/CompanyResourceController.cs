@@ -63,7 +63,7 @@ namespace PQT.Web.Controllers
             {
                 existResources =
                     _comRepo.GetAllCompanyResources(
-                            m => m.ID != model.CompanyResource.ID && 
+                            m => m.ID != model.CompanyResource.ID &&
                             !string.IsNullOrEmpty(m.DirectLine) &&
                                   m.DirectLine == model.CompanyResource.DirectLine)
                         .FirstOrDefault();
@@ -772,6 +772,14 @@ namespace PQT.Web.Controllers
             // ReSharper disable once AssignNullToNotNullAttribute
             var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
 
+            var searchValue = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
+            }
+
             var comId = 0;
             // ReSharper disable once AssignNullToNotNullAttribute
             if (Request.Form.GetValues("ComId") != null && !string.IsNullOrEmpty(Request.Form.GetValues("ComId").FirstOrDefault()))
@@ -829,7 +837,6 @@ namespace PQT.Web.Controllers
             }
             else if (comId > 0)
                 companyResources = _comRepo.GetAllCompanyResources(m => m.CompanyID == comId);
-
             Func<CompanyResource, bool> predicate = m =>
                 (string.IsNullOrEmpty(name) ||
                  (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(name))) &&
@@ -845,6 +852,18 @@ namespace PQT.Web.Controllers
                  ) &&
                 (string.IsNullOrEmpty(role) ||
                  (!string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(role)));
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                predicate = m =>
+                     (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(searchValue));
+            }
             companyResources = companyResources.Where(predicate);
 
             #region sort

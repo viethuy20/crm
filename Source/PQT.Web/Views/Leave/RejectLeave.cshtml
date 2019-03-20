@@ -1,0 +1,42 @@
+﻿@model PQT.Web.Models.LeaveModel
+
+<div class="card card-underline" style="background: white; margin: auto; max-width: 900px; position: relative;">
+    <div class="card-head">
+        <header><b>Reject Booking</b> @*- <span style="font-size: 18px;">Company: @Model.Booking.Company.CompanyName - Sender: @Model.Booking.SenderName </span>*@</header>
+    </div>
+    @using (Html.BeginForm("RejectLeave", "Leave", FormMethod.Post, new { @class = "form", enctype = "multipart/form-data" }))
+    {
+        <div class="card-body">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Leave.LeaveDateDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Leave.LeaveDate)
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Leave.UserDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Leave.UserDisplay).LabelText("User name")
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Leave.ReasonLeave).Class("form-control").Disabled().ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Leave.ReasonLeave).LabelText("Leave Reason")
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.HiddenFor(m => m.LeaveID)
+                    @Html.Bootstrap().TextAreaFor(m => m.Message).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Message).LabelText("Rejection reason")
+                </div>
+            </div>
+        </div>
+        <div class="card-actionbar">
+            <div class="card-actionbar-row">
+                <button type="submit" class="btn btn-warning btnReject"><i class="md md-warning"></i> Reject</button>
+            </div>
+        </div>
+    }
+</div>

@@ -604,9 +604,68 @@ namespace PQT.Web.Controllers
                     (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID));
             }
 
-            users = _membershipService.GetUsers(predicate, sortColumnDir, sortColumn,
-                skip, pageSize);
             recordsTotal = _membershipService.GetCountUsers(predicate);
+
+
+            switch (sortColumn)
+            {
+                case "UserNo":
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.UserNo,
+                        skip, pageSize);
+                    break;
+                case "DisplayName":
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.DisplayName,
+                        skip, pageSize);
+                    break;
+                case "FirstName":
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.FirstName,
+                        skip, pageSize);
+                    break;
+                case "LastName":
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.LastName,
+                        skip, pageSize);
+                    break;
+                case "Email":
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.Email,
+                        skip, pageSize);
+                    break;
+                case "PersonalEmail":
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.PersonalEmail,
+                        skip, pageSize);
+                    break;
+                case "UserStatus":
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.UserStatusDisplay,
+                        skip, pageSize);
+                    break;
+                case "DirectSupervisor":
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.DirectSupervisorDisplay,
+                        skip, pageSize);
+                    break;
+                case "BusinessPhone":
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.BusinessPhone,
+                        skip, pageSize);
+                    break;
+                case "MobilePhone":
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.MobilePhone,
+                        skip, pageSize);
+                    break;
+                case "Extension":
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.Extension,
+                        skip, pageSize);
+                    break;
+                case "RolesHtml":
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.RolesHtml,
+                        skip, pageSize);
+                    break;
+                case "DateOfBirth":
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.DateOfBirth,
+                        skip, pageSize);
+                    break;
+                default:
+                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.ID,
+                        skip, pageSize);
+                    break;
+            }
 
             #endregion For Search
 

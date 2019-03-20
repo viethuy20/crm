@@ -41,6 +41,9 @@ namespace PQT.Domain
         public DbSet<BankAccount> BankAccounts { get; set; }
         public DbSet<NotifySetting> NotifySettings { get; set; }
         public DbSet<ReportCall> ReportCalls { get; set; }
+        public DbSet<Leave> Leaves { get; set; }
+        public DbSet<NonSalesDay> NonSalesDays { get; set; }
+        public DbSet<TechnicalIssueDay> TechnicalIssueDays { get; set; }
         protected override void OnModelCreating(DbModelBuilder mb)
         {
             mb.Entity<Company>().HasMany(m => m.ManagerUsers).WithMany().Map(map => map.ToTable("Company_Users").MapLeftKey("Company_Id").MapRightKey("User_Id"));

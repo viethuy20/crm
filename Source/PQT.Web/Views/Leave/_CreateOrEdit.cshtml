@@ -1,0 +1,80 @@
+﻿@using System.Web.Script.Serialization
+@using NS.Mvc
+@using PQT.Domain.Abstract
+@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.LeaveModel
+<style>
+    .nowrap {
+        white-space: nowrap;
+    }
+
+    #calltable tbody tr {
+        cursor: pointer;
+    }
+
+    #calltable tbody tr:hover {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div class="card">
+    <div class="card-body">
+        <div class="col-sm-4">
+            <div class="form-group ">
+                @Html.DatePickerFor(m => m.Leave.LeaveDate, new { @class = "form-control", required = "required" })
+                @Html.ValidationMessageFor(m => m.Leave.LeaveDate)
+                @Html.Bootstrap().LabelFor(m => m.Leave.LeaveDate).ShowRequiredStar(true)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Bootstrap().DropDownListFor(m => m.Leave.UserID, Model.Users.ToSelectList(m => m.ID, m => m.DisplayName)).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Leave.UserID).LabelText("User").ShowRequiredStar(true)
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                @Html.Bootstrap().DropDownListFor(m => m.Leave.LeaveType, EnumerationHelper.ToSelectList<LeaveType>()).OptionLabel("").Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Leave.LeaveType).ShowRequiredStar(true)
+            </div>
+        </div>
+        <div class="col-sm-4 hide type_1">
+            <div class="form-group">
+                @Html.Bootstrap().DropDownListFor(m => m.Leave.TypeOfLeave, EnumerationHelper.ToSelectList<TypeOfLeave>()).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Leave.TypeOfLeave).ShowRequiredStar(true)
+            </div>
+        </div>
+        <div class="col-sm-4 hide type_2">
+            <div class="form-group">
+                @Html.Bootstrap().DropDownListFor(m => m.Leave.TypeOfLatenes, EnumerationHelper.ToSelectList<TypeOfLatenes>()).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Leave.TypeOfLatenes).ShowRequiredStar(true)
+            </div>
+        </div>
+        <div class=" col-sm-4">
+            <div class="form-group">
+                @if (Model.Leave != null && !string.IsNullOrEmpty(Model.Leave.Document))
+                {
+                    <a href="@FileUpload.GetImageUrl(FileUploadType.Leave, Model.Leave.Document)" target="_blank">@Model.Leave.Document</a>
+                }
+                @Html.Bootstrap().FileFor(m => m.Leave.Document).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Leave.Document).LabelText("Evidence Document")
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group ">
+                @Html.Bootstrap().TextAreaFor(m => m.Leave.Summary).Rows(5).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Leave.Summary)
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Script(
+    @<script>
+        $('@Html.JquerySelectorFor(m=>m.Leave.LeaveType)').on('change',
+            function() {
+                $(".type_1").addClass("hide");
+                $(".type_2").addClass("hide");
+                $(".type_"+$(this).val()).removeClass("hide");
+            }).change();
+    </script>)

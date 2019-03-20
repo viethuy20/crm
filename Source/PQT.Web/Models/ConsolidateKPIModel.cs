@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using NS.Helpers;
+using NS.Mvc;
+using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
+using PQT.Web.Infrastructure.Helpers;
+using PQT.Web.Infrastructure.Utility;
 
 namespace PQT.Web.Models
 {
@@ -13,6 +17,8 @@ namespace PQT.Web.Models
         public List<ConsolidateKPI> ConsolidateKpis { get; set; }
         public string EventName { get; set; }
         public string Date { get; set; }
+        public DateTime DateFrom { get; set; }
+        public DateTime DateTo { get; set; }
 
         public ConsolidateKPIModel()
         {
@@ -21,20 +27,104 @@ namespace PQT.Web.Models
         }
         public void Prepare(IEnumerable<Lead> leads, IEnumerable<LeadNew> leadNews, IEnumerable<Booking> bookings)
         {
+            var settingService = DependencyHelper.GetService<ISettingRepository>();
+            var leaveService = DependencyHelper.GetService<ILeaveService>();
+            var leaves = leaveService.GetAllLeaves(m => m.LeaveDate >= DateFrom &&
+                                                     m.LeaveDate <= DateTo &&
+                                                     m.LeaveType.Value == LeaveType.Leave.Value &&
+                                                     m.LeaveStatus.Value == LeaveStatus.Approved.Value
+            );
+            var nonSalesDays = leaveService.GetAllNonSalesDays(m => m.IssueMonth.Month >= DateFrom.Month &&
+                                                                    m.IssueMonth.Month <= DateTo.Month).Sum(m => m.NonSalesDays);
+            var technicialIssueDays = leaveService.GetAllTechnicalIssueDays(m => m.IssueMonth.Month >= DateFrom.Month &&
+                                                                                 m.IssueMonth.Month <= DateTo.Month).Sum(m => m.TechnicalIssueDays);
+            var totalSundayDays = DateTimeHelper.CountDays(DayOfWeek.Sunday, DateFrom, DateTo);
+            var totalSaturdayDays = DateTimeHelper.CountDays(DayOfWeek.Saturday, DateFrom, DateTo);
+            var totalWorkingDays = (DateTo - DateFrom).TotalDays - totalSaturdayDays - totalSundayDays;
+            var defaultBufferForNew = Settings.KPI.BufferForNewUser();
             ConsolidateKpis = new List<ConsolidateKPI>();
             var users = leads.DistinctBy(m => m.UserID).Select(m => m.User).ToList();
             users.AddRange(leadNews.DistinctBy(m => m.UserID).Select(m => m.User));
-            foreach (var user in users.DistinctBy(m => m.ID))
+            foreach (var user in users.Where(m => m.UserStatus == UserStatus.Live).DistinctBy(m => m.ID))
             {
+                int? country = null;
+                if (user.OfficeLocation != null)
+                    country = user.OfficeLocation.CountryID;
+                var totalHolidays = settingService.TotalHolidays(DateFrom, DateTo, country);
+                var totalLeave = leaves.Count(m => m.UserID == user.ID && m.TypeOfLeave != TypeOfLeave.HalfDayUnpaid) +
+                    ((double)leaves.Count(m => m.UserID == user.ID && m.TypeOfLeave == TypeOfLeave.HalfDayUnpaid) / 2);
+                var actualWorkingDays = totalWorkingDays - totalHolidays - totalLeave;
+
+                //var totalNonSalesDays = nonSalesDays.Where(m => m.UserID == user.ID).Sum(m => m.NonSalesDays);
+
+                var bufferForNewSales = GetBufferForNewSales(user, country, defaultBufferForNew, settingService);
+
+                var actualRequiredCallKpis =
+                    (actualWorkingDays - bufferForNewSales - nonSalesDays - technicialIssueDays) * 3;
                 var item = new ConsolidateKPI
                 {
                     User = user
                 };
                 item.Prepare(leads.Where(m => m.User.TransferUserID == user.ID || m.UserID == user.ID),
                     leadNews.Where(m => m.User.TransferUserID == user.ID || m.UserID == user.ID),
-                    bookings.Where(m => m.Salesman.TransferUserID == user.ID || m.SalesmanID == user.ID));
+                    bookings.Where(m => m.Salesman.TransferUserID == user.ID || m.SalesmanID == user.ID),
+                    actualRequiredCallKpis);
                 ConsolidateKpis.Add(item);
             }
+        }
+
+        public double GetBufferForNewSales(User user, int? country, int defaultBufferForNewUser, ISettingRepository settingService)
+        {
+            if (user.EmploymentDate == null ||
+                user.UserContracts.Count > 1 ||
+                user.EmploymentDate > DateTo ||
+                user.EmploymentDate < DateTime.Today.AddDays(-31))
+                return 0;
+            var employmentDate = Convert.ToDateTime(user.EmploymentDate);
+            var employmentDateEndBuffer = employmentDate.AddDays(defaultBufferForNewUser);
+            var totalSundayDays = DateTimeHelper.CountDays(DayOfWeek.Sunday, employmentDate, employmentDateEndBuffer);
+            var totalSaturdayDays = DateTimeHelper.CountDays(DayOfWeek.Saturday, employmentDate, employmentDateEndBuffer);
+            employmentDateEndBuffer = employmentDateEndBuffer.AddDays(totalSundayDays + totalSaturdayDays);//add weekend days
+            var totalHolidays = settingService.TotalHolidays(employmentDate, employmentDateEndBuffer, country);
+            employmentDateEndBuffer = employmentDateEndBuffer.AddDays(totalHolidays);//add hoiday days
+
+            if (employmentDateEndBuffer < DateFrom)
+            {
+                return 0;
+            }
+            if (DateFrom <= employmentDate && employmentDateEndBuffer <= DateTo)
+            {
+                return defaultBufferForNewUser;
+            }
+
+            if (employmentDate <= DateFrom && employmentDateEndBuffer <= DateTo)
+            {
+                var totalDays = (employmentDateEndBuffer - DateFrom).TotalDays;
+
+                var totalSundayDays1 = DateTimeHelper.CountDays(DayOfWeek.Sunday, DateFrom, employmentDateEndBuffer);
+                var totalSaturdayDays1 = DateTimeHelper.CountDays(DayOfWeek.Saturday, DateFrom, employmentDateEndBuffer);
+                var totalHolidays1 = settingService.TotalHolidays(DateFrom, employmentDateEndBuffer, country);
+                return totalDays - totalSundayDays1 - totalSaturdayDays1 - totalHolidays1;
+            }
+
+            if (employmentDate <= DateFrom && DateTo <= employmentDateEndBuffer)
+            {
+                var totalDays = (DateTo - DateFrom).TotalDays;
+                var totalSundayDays1 = DateTimeHelper.CountDays(DayOfWeek.Sunday, DateFrom, DateTo);
+                var totalSaturdayDays1 = DateTimeHelper.CountDays(DayOfWeek.Saturday, DateFrom, DateTo);
+                var totalHolidays1 = settingService.TotalHolidays(DateFrom, DateTo, country);
+                return totalDays - totalSundayDays1 - totalSaturdayDays1 - totalHolidays1;
+            }
+
+            if (DateFrom <= employmentDate && DateTo <= employmentDateEndBuffer)
+            {
+                var totalDays = (DateTo - employmentDate).TotalDays;
+                var totalSundayDays1 = DateTimeHelper.CountDays(DayOfWeek.Sunday, employmentDate, DateTo);
+                var totalSaturdayDays1 = DateTimeHelper.CountDays(DayOfWeek.Saturday, employmentDate, DateTo);
+                var totalHolidays1 = settingService.TotalHolidays(employmentDate, DateTo, country);
+                return totalDays - totalSundayDays1 - totalSaturdayDays1 - totalHolidays1;
+            }
+            return 0;
         }
         public void Prepare(IEnumerable<Booking> bookings)
         {
@@ -89,13 +179,17 @@ namespace PQT.Web.Models
         public int KPI { get; set; }
         public int NoKPI { get; set; }
         public int NoCheck { get; set; }
-        public void Prepare(IEnumerable<Lead> leads, IEnumerable<LeadNew> leadNews, IEnumerable<Booking> bookings)
+        public double ActualCallKpis { get; set; }
+        public double ActualRequiredCallKpis { get; set; }
+        public void Prepare(IEnumerable<Lead> leads, IEnumerable<LeadNew> leadNews, IEnumerable<Booking> bookings, double actualRequiredCallKpis)
         {
             NewEventRequest = leadNews.Count();
             WrittenRevenue = bookings.Sum(m => m.TotalWrittenRevenue);
             KPI = leads.Count(m => m.MarkKPI);
             NoKPI = leads.Count(m => !m.MarkKPI && !string.IsNullOrEmpty(m.FileNameImportKPI));
             NoCheck = leads.Count(m => string.IsNullOrEmpty(m.FileNameImportKPI));
+            ActualCallKpis = KPI + NoKPI + NoCheck + NewEventRequest;
+            ActualRequiredCallKpis = actualRequiredCallKpis;
         }
         public void Prepare(IEnumerable<Booking> bookings)
         {

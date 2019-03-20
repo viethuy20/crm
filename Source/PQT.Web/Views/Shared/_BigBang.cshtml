@@ -141,6 +141,14 @@
                                 format: 'dd/mm/yyyy'
                             }).on('changeDate', function (ev) {
                                 $(this).datepicker('hide');
+                                });
+                            
+                            $('.month-picker').datepicker({
+                                autoclose: true,
+                                todayHighlight: true,
+                                format: "mm/yyyy",
+                                viewMode: "months",
+                                minViewMode: "months"
                             });
 
                             $(".mfp-container select:not(.select-ajax)").select2({

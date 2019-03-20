@@ -1,0 +1,95 @@
+﻿@using PQT.Domain.Enum
+@model PQT.Web.Models.LeaveMonthlyReport
+
+@{
+    ViewBag.Title = "Monthly attendance report";
+}
+
+<section>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card  card-underline">
+                <div class="card-head">
+                    <header><i class="fa fa-database"></i> @ViewBag.Title</header>
+                </div>
+                <div class="card-body">
+                    <div class="row form">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                @Html.Bootstrap().TextBoxFor(m => m.Month).Class("form-control month-picker").Placeholder("mm/yyyy").ShowValidationMessage(true)
+                                @Html.Bootstrap().LabelFor(m => m.Month).LabelText("Month")
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            @Html.Bootstrap().Button().Text("Search").Id("btnSearch").PrependIcon("md md-search").Size(ButtonSize.Mini).HtmlAttributes(new { @class = "btn btn-primary" })
+                        </div>
+                    </div>
+                    <table class="table" id="kpiTable">
+                        <thead>
+                            <tr>
+                                <th>User name</th>
+                                <th class="text-center">Leave</th>
+                                <th class="text-center">Lateness</th>
+                                <th class="text-center">Resignation</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <!--end .card-body -->
+            </div><!--end .card -->
+        </div>
+    </div>
+</section>
+
+
+@Html.Script(
+    @<script>
+         initMonthpicker();
+         var oTable = $("#kpiTable");
+         oTable.dataTable({
+             "processing": true, // for show progress bar
+             "serverSide": true, // for process server side
+             "filter": true, // this is for disable filter (search box)
+             "orderMulti": false, // for disable multiple column at once
+             "stateSave": false,
+             "ajax": {
+                 "url": "@Url.Action("AjaxGetMonthlyReport")",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function (d) {
+                     d.Month = $('@Html.JquerySelectorFor(m=>m.Month)').val();
+                 }
+             },
+             "columns": [
+                 { "data": "UserName", "name": "UserName", "orderable": true },
+                 { "data": "Leaves", "name": "Leaves", "orderable": true },
+                 { "data": "Lateness", "name": "Lateness", "orderable": true },
+                 { "data": "Resignation", "name": "Resignation", "orderable": true }
+             ],
+             "iDisplayLength": 25,
+             "aaSorting": [[0, "asc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 $(nRow).find('td:eq(1)').attr("style", "text-align:center");
+                 $(nRow).find('td:eq(2)').attr("style", "text-align:center");
+                 $(nRow).find('td:eq(3)').attr("style", "text-align:center");
+             },
+             initComplete: function () {
+                 var _table = this;
+                 _table.parent().find('input[type="search"]').unbind();
+                 var timeOutTyping;
+                 _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function () {
+                         _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                     }, 600);
+                 });
+             },
+         });
+
+         $('#btnSearch').click(function () {
+             oTable.fnFilter('');
+         });
+
+    </script>
+
+)

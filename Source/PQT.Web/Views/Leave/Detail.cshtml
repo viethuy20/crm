@@ -1,0 +1,191 @@
+﻿@using PQT.Domain.Enum
+@using Resources
+@model PQT.Web.Models.LeaveModel
+
+@{
+    ViewBag.Title = "Leave Detail";
+    var currentUserId = CurrentUser.Identity.ID;
+}
+<style>
+    .card .Rejected {
+        background-color: #faebd4 !important;
+    }
+
+        .card .Rejected input {
+            color: #8a6d3b;
+        }
+
+
+    .card .Approved {
+        background-color: #d4fad6 !important;
+    }
+
+        .card .Approved input {
+            color: #3c763d;
+        }
+</style>
+<section>
+
+    <div class="row section-header" style="height: auto">
+        <h2 class="text-primary col-sm-3">@ViewBag.Title</h2>
+
+    </div>
+    <div class="row">
+        <div class="col-sm-12" style="padding-right: 24px; padding-bottom: 12px">
+            @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
+            @if (CurrentUser.HasPermission("Leave", "Edit") && (Model.Leave.LeaveStatus != LeaveStatus.Approved))
+            {
+                @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.Leave.ID }).Class(" btn-primary").PrependIcon("md md-edit")
+            }
+            @if (Model.Leave.CreatedUserID != currentUserId && Model.Leave.UserID != currentUserId)
+            {
+                if (CurrentUser.HasPermission("Leave", "ApproveLeave") && (Model.Leave.LeaveStatus == LeaveStatus.Request))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Approve Leave", "ApproveLeave").RouteValues(new { id = Model.Leave.ID }).Id("approve_action").Class("btn-success btnApprove").PrependIcon("md md-done")
+                }
+                if (CurrentUser.HasPermission("Leave", "RejectLeave") && (Model.Leave.LeaveStatus == LeaveStatus.Request))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Reject Leave", "RejectLeave").RouteValues(new { id = Model.Leave.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
+                }
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body @Model.Leave.LeaveStatus.DisplayName form">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Leave.LeaveStatus.DisplayName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Leave.LeaveStatus.DisplayName).LabelText("Leave Status")
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Leave.AprroveUserDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Leave.AprroveUserDisplay).LabelText((Model.Leave.LeaveStatus == LeaveStatus.Rejected ? "Rejected By" : (Model.Leave.LeaveStatus == LeaveStatus.Approved ? "Approved By" : "Changed by")))
+                    </div>
+                </div>
+                @if (Model.Leave.LeaveStatus == LeaveStatus.Rejected)
+                {
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Leave.ReasonReject).Class("form-control").HtmlAttributes(new { @style = "color:#f44336" }).Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Leave.ReasonReject).LabelText("Reason Of Rejection")
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body form">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Leave.LeaveDateDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Leave.LeaveDate)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Leave.UserDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Leave.UserDisplay).LabelText("User name")
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Leave.LeaveType.DisplayName).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Leave.LeaveType)
+                    </div>
+                </div>
+                @if (Model.Leave.LeaveType == LeaveType.Resignation)
+                {
+                    <div class=" col-sm-4">
+                        <div class="form-group">
+                            @if (!string.IsNullOrEmpty(Model.Leave.Document))
+                            {
+                                @Html.Bootstrap().Link(Model.Leave.Document, FileUpload.GetImageUrl(FileUploadType.Leave, Model.Leave.Document)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                            }
+                            else
+                            {
+                                <div class="form-control" readonly></div>
+                            }
+                            @Html.Bootstrap().LabelFor(m => m.Leave.Document).LabelText("Evidence Document")
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextAreaFor(m => m.Leave.Summary).Rows(5).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Leave.Summary).LabelText("Summary")
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Leave.ReasonLeave).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Leave.ReasonLeave).LabelText("Leave Reason")
+                        </div>
+                    </div>
+                    <div class=" col-sm-4">
+                        <div class="form-group">
+                            @if (!string.IsNullOrEmpty(Model.Leave.Document))
+                            {
+                                @Html.Bootstrap().Link(Model.Leave.Document, FileUpload.GetImageUrl(FileUploadType.Leave, Model.Leave.Document)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                            }
+                            else
+                            {
+                                <div class="form-control" readonly></div>
+                            }
+                            @Html.Bootstrap().LabelFor(m => m.Leave.Document).LabelText("Evidence Document")
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextAreaFor(m => m.Leave.Summary).Rows(5).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Leave.Summary).LabelText("Summary")
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</section>
+
+@Html.Script(
+    @<script>
+
+         UpdateSeenNotify(@Model.Leave.ID, @NotifyType.Leave.Value);
+
+         $(document).on('click', '.btnApprove', function (e) {
+             e.preventDefault();
+             var $sefl = $(this);
+             bootbox.confirm("Are you sure you want to approve this leave?", function (isOK) {
+                 if (isOK) {
+                     location.href = $sefl.attr('href');
+                 }
+             });
+         });
+         $(document).on('click', '.btnReject', function (e) {
+             e.preventDefault();
+             var $sefl = $(this);
+             bootbox.confirm("Are you sure you want to reject this leave?", function (isOK) {
+                 if (isOK) {
+                     $sefl.closest('form').submit();
+                 }
+             });
+         });
+
+
+         //$("#btnBacklist").on("click",
+         //    function(e) {
+         //        e.preventDefault();
+         //        //if (document.referrer.contains("dashboard")) {
+
+         //        //}
+         //    });
+    </script>
+    )

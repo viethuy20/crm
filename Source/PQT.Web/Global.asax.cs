@@ -62,7 +62,7 @@ namespace PQT.Web
 
         protected void Session_End()
         {
-//            Session["DbName"] = null;
+            //            Session["DbName"] = null;
 
             //if (Request.Cookies["DatabaseName"] != null)
             //{
@@ -97,13 +97,14 @@ namespace PQT.Web
             {
             }
 
-            //if (Request.IsLocal)
-                //MiniProfiler.Start();
+            if (Request.IsLocal)
+                MiniProfiler.Start();
         }
 
         protected void Application_EndRequest()
         {
-            //MiniProfiler.Stop();
+            if (Request.IsLocal)
+                MiniProfiler.Stop();
         }
 
         private void UpdateCookie(string cookieName, string cookieValue)
