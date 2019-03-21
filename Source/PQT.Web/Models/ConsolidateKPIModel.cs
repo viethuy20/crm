@@ -40,7 +40,7 @@ namespace PQT.Web.Models
                                                                                  m.IssueMonth.Month <= DateTo.Month).Sum(m => m.TechnicalIssueDays);
             var totalSundayDays = DateTimeHelper.CountDays(DayOfWeek.Sunday, DateFrom, DateTo);
             var totalSaturdayDays = DateTimeHelper.CountDays(DayOfWeek.Saturday, DateFrom, DateTo);
-            var totalWorkingDays = (DateTo - DateFrom).TotalDays - totalSaturdayDays - totalSundayDays;
+            var totalWorkingDays = (DateTo - DateFrom).TotalDays + 1 - totalSaturdayDays - totalSundayDays;
             var defaultBufferForNew = Settings.KPI.BufferForNewUser();
             ConsolidateKpis = new List<ConsolidateKPI>();
             var users = leads.DistinctBy(m => m.UserID).Select(m => m.User).ToList();
@@ -65,9 +65,9 @@ namespace PQT.Web.Models
                 {
                     User = user
                 };
-                item.Prepare(leads.Where(m => m.User.TransferUserID == user.ID || m.UserID == user.ID),
-                    leadNews.Where(m => m.User.TransferUserID == user.ID || m.UserID == user.ID),
-                    bookings.Where(m => m.Salesman.TransferUserID == user.ID || m.SalesmanID == user.ID),
+                item.Prepare(leads.Where(m => m.UserID == user.ID),
+                    leadNews.Where(m => m.UserID == user.ID),
+                    bookings.Where(m => m.SalesmanID == user.ID),
                     actualRequiredCallKpis);
                 ConsolidateKpis.Add(item);
             }
@@ -99,7 +99,7 @@ namespace PQT.Web.Models
 
             if (employmentDate <= DateFrom && employmentDateEndBuffer <= DateTo)
             {
-                var totalDays = (employmentDateEndBuffer - DateFrom).TotalDays;
+                var totalDays = (employmentDateEndBuffer - DateFrom).TotalDays + 1;
 
                 var totalSundayDays1 = DateTimeHelper.CountDays(DayOfWeek.Sunday, DateFrom, employmentDateEndBuffer);
                 var totalSaturdayDays1 = DateTimeHelper.CountDays(DayOfWeek.Saturday, DateFrom, employmentDateEndBuffer);
@@ -109,7 +109,7 @@ namespace PQT.Web.Models
 
             if (employmentDate <= DateFrom && DateTo <= employmentDateEndBuffer)
             {
-                var totalDays = (DateTo - DateFrom).TotalDays;
+                var totalDays = (DateTo - DateFrom).TotalDays + 1;
                 var totalSundayDays1 = DateTimeHelper.CountDays(DayOfWeek.Sunday, DateFrom, DateTo);
                 var totalSaturdayDays1 = DateTimeHelper.CountDays(DayOfWeek.Saturday, DateFrom, DateTo);
                 var totalHolidays1 = settingService.TotalHolidays(DateFrom, DateTo, country);
@@ -118,7 +118,7 @@ namespace PQT.Web.Models
 
             if (DateFrom <= employmentDate && DateTo <= employmentDateEndBuffer)
             {
-                var totalDays = (DateTo - employmentDate).TotalDays;
+                var totalDays = (DateTo - employmentDate).TotalDays + 1;
                 var totalSundayDays1 = DateTimeHelper.CountDays(DayOfWeek.Sunday, employmentDate, DateTo);
                 var totalSaturdayDays1 = DateTimeHelper.CountDays(DayOfWeek.Saturday, employmentDate, DateTo);
                 var totalHolidays1 = settingService.TotalHolidays(employmentDate, DateTo, country);
@@ -136,7 +136,7 @@ namespace PQT.Web.Models
                 {
                     User = user
                 };
-                item.Prepare(bookings.Where(m => m.Salesman.TransferUserID == user.ID || m.SalesmanID == user.ID));
+                item.Prepare(bookings.Where(m => m.SalesmanID == user.ID));
                 ConsolidateKpis.Add(item);
             }
         }
@@ -162,7 +162,7 @@ namespace PQT.Web.Models
                 {
                     User = user
                 };
-                item.Prepare(leads.Where(m => m.User.TransferUserID == user.ID || m.UserID == user.ID));
+                item.Prepare(leads.Where(m => m.UserID == user.ID));
                 HrConsolidateKpis.Add(item);
             }
         }
@@ -193,9 +193,12 @@ namespace PQT.Web.Models
         }
         public void Prepare(IEnumerable<Booking> bookings)
         {
-            WrittenRevenue1 = bookings.Where(m => m.CreatedTime.Month >= DateTime.Today.AddMonths(-2).Month).Sum(m => m.TotalWrittenRevenue);
-            WrittenRevenue2 = bookings.Where(m => m.CreatedTime.Month >= DateTime.Today.AddMonths(-1).Month).Sum(m => m.TotalWrittenRevenue);
-            WrittenRevenue3 = bookings.Where(m => m.CreatedTime.Month >= DateTime.Today.Month).Sum(m => m.TotalWrittenRevenue);
+            var month1 = DateTime.Today.AddMonths(-2);
+            WrittenRevenue1 = bookings.Where(m => m.CreatedTime.Month == month1.Month && m.CreatedTime.Year == month1.Year).Sum(m => m.TotalWrittenRevenue);
+            var month2 = DateTime.Today.AddMonths(-1);
+            WrittenRevenue2 = bookings.Where(m => m.CreatedTime.Month == month2.Month && m.CreatedTime.Year == month2.Year).Sum(m => m.TotalWrittenRevenue);
+            var month3 = DateTime.Today;
+            WrittenRevenue3 = bookings.Where(m => m.CreatedTime.Month == month3.Month && m.CreatedTime.Year == month3.Year).Sum(m => m.TotalWrittenRevenue);
             TotalWrittenRevenue = WrittenRevenue1 + WrittenRevenue2 + WrittenRevenue3;
         }
     }

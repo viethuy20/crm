@@ -32,7 +32,9 @@ namespace PQT.Domain.Concrete
             {
                 predicate2 =
                     m => m.EventID == eventId &&
-                         (m.SalesmanID == userId || m.Salesman.TransferUserID == userId)
+                         (m.SalesmanID == userId 
+                         //|| m.Salesman.TransferUserID == userId
+                         )
                          && predicate(m);
             }
             else if (eventId > 0)
@@ -44,7 +46,8 @@ namespace PQT.Domain.Concrete
             else if (userId > 0)
             {
                 predicate2 =
-                    m => (m.SalesmanID == userId || m.Salesman.TransferUserID == userId)
+                    //m => (m.SalesmanID == userId || m.Salesman.TransferUserID == userId)
+                    m => (m.SalesmanID == userId )
                          && predicate(m);
             }
             else

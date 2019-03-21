@@ -31,7 +31,9 @@ namespace PQT.Domain.Concrete
             {
                 predicate2 =
                     m => m.EventID == eventId &&
-                         (m.UserID == userId || m.User.TransferUserID == userId) &&
+                         (m.UserID == userId 
+                         //|| m.User.TransferUserID == userId
+                         ) &&
                          m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
                           m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
                           m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value &&
@@ -49,7 +51,9 @@ namespace PQT.Domain.Concrete
             else if (userId > 0)
             {
                 predicate2 =
-                    m => (m.UserID == userId || m.User.TransferUserID == userId) &&
+                    m => (m.UserID == userId 
+                    //|| m.User.TransferUserID == userId
+                    ) &&
                          m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
                          m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
                          m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value &&
