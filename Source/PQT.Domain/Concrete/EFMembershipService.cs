@@ -118,13 +118,20 @@ namespace PQT.Domain.Concrete
         }
         public User GetUserIncludeAll(int id)
         {
-            return _db.Set<User>()
-                .Include(m => m.Roles)
-                .Include(m => m.Roles.Select(r => r.Permissions))
-                .Include(m => m.UserSalaryHistories)
-                .Include(m => m.UserContracts)
-                .Include(m => m.OfficeLocation)
-                .FirstOrDefault(u => u.ID == id);
+            return Get<User>(u => u.ID == id, u => new
+            {
+                u.UserSalaryHistories,
+                u.UserContracts,
+                u.OfficeLocation,
+                Roles = u.Roles.Select(r => r.Permissions),
+            });
+            //return _db.Set<User>()
+            //    .Include(m => m.Roles)
+            //    .Include(m => m.Roles.Select(r => r.Permissions))
+            //    .Include(m => m.UserSalaryHistories)
+            //    .Include(m => m.UserContracts)
+            //    .Include(m => m.OfficeLocation)
+            //    .FirstOrDefault(u => u.ID == id);
         }
 
         public User GetUserByNo(string userNo)
@@ -193,28 +200,31 @@ namespace PQT.Domain.Concrete
             {
                 return new List<User>();
             }
-            return _db.Set<User>()
-                .Include(m => m.Roles)
-                .Include(m => m.Roles.Select(r => r.Permissions))
-                .Include(m => m.UserSalaryHistories)
-                .Include(m => m.UserContracts)
-                .Include(m => m.OfficeLocation)
-                .Where(u => u.Roles
+            return GetAll<User>(u => u.Roles
                     .Select(r => r.Name.ToUpper())
                     .Intersect(roleName.Select(r1 => r1.ToUpper()))
-                    .Any()).AsEnumerable();
+                    .Any(),
+                u => new
+                {
+                    Roles = u.Roles.Select(r => r.Permissions),
+                    OfficeLocation = u.OfficeLocation,
+                    DirectSupervisor = u.DirectSupervisor,
+                    UserContracts = u.UserContracts,
+                    UserSalaryHistories = u.UserSalaryHistories,
+                }).AsEnumerable();
         }
         public IEnumerable<User> GetUsersInRoleLevel(params string[] roleName)
         {
-            return _db.Set<User>()
-                .Include(m => m.Roles)
-                .Include(m => m.Roles.Select(r => r.Permissions))
-                .Where(u => u.Status.Value == EntityUserStatus.Normal.Value &&
-                            u.UserStatus.Value == UserStatus.Live.Value &&
-                            u.Roles
-                                .Select(r => r.RoleLevel.Value)
-                                .Intersect(roleName.Select(r1 => r1.ToUpper()))
-                                .Any()).AsEnumerable();
+            return GetAll<User>(u => u.Status == EntityUserStatus.Normal &&
+                                     u.UserStatus == UserStatus.Live &&
+                                     u.Roles
+                                         .Select(r => r.RoleLevel.Value)
+                                         .Intersect(roleName.Select(r1 => r1.ToUpper()))
+                                         .Any(),
+                u => new
+                {
+                    Roles = u.Roles.Select(r => r.Permissions),
+                }).AsEnumerable();
         }
 
         #endregion

@@ -345,11 +345,12 @@ namespace PQT.Domain.Entities
 
         public bool CheckInNCL(int daysExpired)
         {
-            return (LeadStatusRecord == LeadStatus.Blocked ||
-                    LeadStatusRecord == LeadStatus.Live ||
-                    LeadStatusRecord == LeadStatus.LOI ||
-                    LeadStatusRecord == LeadStatus.Booked) &&
-                   !CheckNCLExpired(daysExpired);
+            return (LeadStatusRecord == LeadStatus.Booked ||
+                    ((LeadStatusRecord == LeadStatus.Blocked ||
+                      LeadStatusRecord == LeadStatus.Live ||
+                      LeadStatusRecord == LeadStatus.LOI) &&
+                      User.UserStatus == UserStatus.Live &&
+                     !CheckNCLExpired(daysExpired)));
         }
         public string ClassKPIStatus
         {

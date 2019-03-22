@@ -1,0 +1,7 @@
+2018 New Trainer Contract
+
+1. Combine all training dates of 01 trainer into 01 contract (Different from 2017-different contracts, different dates causing lengthy admin issues)
+2. Use date/ date range of confirmation instead of diagram
+3. All trainer payment must be within 30 days from last date of training delivered
+4. All training fee daily must be USD 500 or less
+5. All training must be confirmed 03 weeks prior to departure dates.

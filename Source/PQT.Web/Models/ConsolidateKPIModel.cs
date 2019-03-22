@@ -210,7 +210,7 @@ namespace PQT.Web.Models
         public void Prepare(IEnumerable<Candidate> leads)
         {
             RecruitmentCallKPIs = leads.Count();
-            EmployeeKPIs = leads.Count(m => m.CandidateStatusRecord == CandidateStatus.ApprovedEmployment);
+            EmployeeKPIs = leads.Count(m => m.CandidateStatusRecord.Status.Value == CandidateStatus.ApprovedEmployment.Value);
         }
     }
 }

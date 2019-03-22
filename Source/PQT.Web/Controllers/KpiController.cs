@@ -1204,7 +1204,7 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 candidates = _recruitmentService.GetAllCandidates(m =>
-                    (m.CandidateStatusRecord != CandidateStatus.Deleted) &&
+                    (m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value) &&
                     (datefrom == default(DateTime) || datefrom.Date <= m.CreatedTime.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
@@ -1215,7 +1215,7 @@ namespace PQT.Web.Controllers
             else
             {
                 candidates = _recruitmentService.GetAllCandidates(m =>
-                    (m.CandidateStatusRecord != CandidateStatus.Deleted) &&
+                    (m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value) &&
                     (datefrom == default(DateTime) || datefrom.Date <= m.CreatedTime.Date) &&
                     (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
                     (userId == 0 || m.UserID == userId ||
