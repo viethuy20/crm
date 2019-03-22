@@ -65,9 +65,9 @@ namespace PQT.Web.Models
                 {
                     User = user
                 };
-                item.Prepare(leads.Where(m => m.UserID == user.ID),
-                    leadNews.Where(m => m.UserID == user.ID),
-                    bookings.Where(m => m.SalesmanID == user.ID),
+                item.Prepare(leads.Where(m => m.UserID == user.ID).AsEnumerable(),
+                    leadNews.Where(m => m.UserID == user.ID).AsEnumerable(),
+                    bookings.Where(m => m.SalesmanID == user.ID).AsEnumerable(),
                     actualRequiredCallKpis);
                 ConsolidateKpis.Add(item);
             }
@@ -155,14 +155,14 @@ namespace PQT.Web.Models
         public void Prepare(IEnumerable<Candidate> leads)
         {
             HrConsolidateKpis = new List<HRConsolidateKPI>();
-            var users = leads.DistinctBy(m => m.UserID).Select(m => m.User);
+            var users = leads.DistinctBy(m => m.UserID).Select(m => m.User).ToList();
             foreach (var user in users)
             {
                 var item = new HRConsolidateKPI
                 {
                     User = user
                 };
-                item.Prepare(leads.Where(m => m.UserID == user.ID));
+                item.Prepare(leads.Where(m => m.UserID == user.ID).AsEnumerable());
                 HrConsolidateKpis.Add(item);
             }
         }

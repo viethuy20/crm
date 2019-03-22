@@ -298,14 +298,8 @@ namespace PQT.Web.Controllers
                     var daysExpired = Settings.Lead.NumberDaysExpired();
                     var allLeads = _repo.GetAllLeads(m => m.EventID == model.EventID && !m.ExpiredForReopen);
                     var leadExists = allLeads.Where(m =>
-                        //m.UserID != currentUser.ID &&
-                        //m.User.TransferUserID != currentUser.ID &&
-                        m.User.UserStatus == UserStatus.Live &&
                         m.CompanyID == model.CompanyID &&
-                        m.LeadStatusRecord != LeadStatus.Initial &&
-                        m.LeadStatusRecord != LeadStatus.Reject &&
-                        m.LeadStatusRecord != LeadStatus.Deleted &&
-                        !m.CheckNCLExpired(daysExpired));
+                        m.CheckInNCL(daysExpired));
                     if (leadExists.Any())
                     {
                         TempData["error"] = "Cannot process... This company is existing in NCL";
@@ -1044,11 +1038,12 @@ namespace PQT.Web.Controllers
             {
                 leads = _repo.GetAllLeads(m => m.EventID == eventId &&
                                                !m.ExpiredForReopen &&
-                                               (m.LeadStatusRecord == LeadStatus.Booked || 
-                                               (m.User.UserStatus == UserStatus.Live &&
-                                               (m.LeadStatusRecord == LeadStatus.Blocked ||
-                                                m.LeadStatusRecord == LeadStatus.Live ||
-                                                m.LeadStatusRecord == LeadStatus.LOI))) && (
+                                               (m.LeadStatusRecord == LeadStatus.Booked ||
+                                                ((m.User.UserStatus == UserStatus.Live ||
+                                                  m.User.DirectSupervisorID > 0) &&
+                                                 (m.LeadStatusRecord == LeadStatus.Blocked ||
+                                                  m.LeadStatusRecord == LeadStatus.Live ||
+                                                  m.LeadStatusRecord == LeadStatus.LOI))) && (
                                                    m.StatusUpdateTimeStr.Contains(searchValue) ||
                                                    m.StatusDisplay.ToLower().Contains(searchValue) ||
                                                    m.CompanyName.ToLower().Contains(searchValue) ||
@@ -1079,7 +1074,8 @@ namespace PQT.Web.Controllers
                     m.EventID == eventId &&
                     !m.ExpiredForReopen &&
                     (m.LeadStatusRecord == LeadStatus.Booked ||
-                     (m.User.UserStatus == UserStatus.Live &&
+                     ((m.User.UserStatus == UserStatus.Live ||
+                       m.User.DirectSupervisorID > 0) &&
                       (m.LeadStatusRecord == LeadStatus.Blocked ||
                        m.LeadStatusRecord == LeadStatus.Live ||
                        m.LeadStatusRecord == LeadStatus.LOI))));
@@ -1293,7 +1289,8 @@ namespace PQT.Web.Controllers
                                                (saleId == 0 || m.UserID == saleId ||
                                                 (m.User != null && m.User.TransferUserID == saleId)) &&
                                                (m.LeadStatusRecord == LeadStatus.Booked ||
-                                                (m.User.UserStatus == UserStatus.Live &&
+                                                ((m.User.UserStatus == UserStatus.Live ||
+                                                  m.User.DirectSupervisorID > 0) &&
                                                  (m.MarkKPI ||
                                                   (m.LeadStatusRecord == LeadStatus.LOI &&
                                                    !m.CheckNCLExpired(daysExpired)) ||
@@ -1335,7 +1332,8 @@ namespace PQT.Web.Controllers
             var leads = _repo.GetAllLeads(m => m.EventID == eventId &&
                                                !m.ExpiredForReopen &&
                                                (m.LeadStatusRecord == LeadStatus.Booked ||
-                                               (m.User.UserStatus == UserStatus.Live &&
+                                               ((m.User.UserStatus == UserStatus.Live ||
+                                                 m.User.DirectSupervisorID > 0) &&
                                                (m.MarkKPI ||
                                                 (m.LeadStatusRecord == LeadStatus.LOI &&
                                                  !m.CheckNCLExpired(daysExpired)) ||
@@ -1466,13 +1464,7 @@ namespace PQT.Web.Controllers
             if (eventLead != null)
             {
                 var daysExpired = Settings.Lead.NumberDaysExpired();
-                companiesInNcl = _repo.GetAllLeads(m => m.EventID == eventId).Where(m =>
-                    m.UserID != currentUser.ID &&
-                    m.User.TransferUserID != currentUser.ID &&
-                    m.User.UserStatus == UserStatus.Live &&
-                    m.LeadStatusRecord != LeadStatus.Initial &&
-                    m.LeadStatusRecord != LeadStatus.Reject
-                    && !m.CheckNCLExpired(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
+                companiesInNcl = _repo.GetAllLeads(m => m.EventID == eventId).Where(m => m.CheckInNCL(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
                 companies = eventLead.EventCompanies.Where(m =>
                         m.EntityStatus == EntityStatus.Normal && m.Company != null &&
                         m.Company.EntityStatus == EntityStatus.Normal)

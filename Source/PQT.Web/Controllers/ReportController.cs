@@ -68,28 +68,20 @@ namespace PQT.Web.Controllers
             IEnumerable<LeadNew> leadNews = new HashSet<LeadNew>();
             IEnumerable<Lead> leads = new HashSet<Lead>();
             IEnumerable<Booking> bookings = new HashSet<Booking>();
-            leads = _leadService.GetAllLeads(m =>
-                (m.LeadStatusRecord != LeadStatus.Reject &&
-                 m.LeadStatusRecord != LeadStatus.Initial &&
-                 m.LeadStatusRecord != LeadStatus.Deleted) &&
-                (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
-                (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
-                (eventId == 0 || m.EventID == eventId) &&
-                (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
+
+            leads = _leadService.GetAllLeadsForKPI(eventId, userId, m =>
+                datefrom <= m.CreatedTime.Date &&
+                m.CreatedTime.Date <= dateto
             );
-            leadNews = _leadNewService.GetAllLeadNews(m =>
-                (m.AssignUserID > 0) &&
-                (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
-                (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
-                (eventId == 0 || m.EventID == eventId) &&
-                (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
+            leadNews = _leadNewService.GetAllLeadNewsForKPI(eventId, userId, m =>
+                m.AssignUserID > 0 &&
+                datefrom <= m.FirstAssignDate.Date &&
+                m.FirstAssignDate.Date <= dateto
             );
-            bookings = _bookingService.GetAllBookings(m =>
-                m.BookingStatusRecord == BookingStatus.Approved &&
-                (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
-                (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
-                (eventId == 0 || m.EventID == eventId) &&
-                (userId == 0 || m.SalesmanID == userId || (m.Salesman != null && m.Salesman.TransferUserID == userId))
+            bookings = _bookingService.GetAllBookingsForKPI(eventId, userId, m =>
+                m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value &&
+                datefrom <= m.BookingDate.Date &&
+                m.BookingDate.Date <= dateto
             );
             model.Prepare(leads, leadNews, bookings);
             return View(model);
@@ -126,12 +118,22 @@ namespace PQT.Web.Controllers
                 model.Date = "All";
             }
             IEnumerable<Candidate> candidates = new HashSet<Candidate>();
-            candidates = _recruitmentService.GetAllCandidates(m =>
-                (m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value) &&
-                (datefrom == default(DateTime) || m.CreatedTime.Date >= datefrom.Date) &&
-                (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
-                (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId))
-            );
+            if (userId > 0)
+            {
+                candidates = _recruitmentService.GetAllCandidates(m =>
+                    m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value &&
+                    datefrom <= m.CreatedTime.Date &&
+                    m.CreatedTime.Date <= dateto
+                );
+            }
+            else
+            {
+                candidates = _recruitmentService.GetAllCandidates(m =>
+                    m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value &&
+                    datefrom <= m.CreatedTime.Date &&
+                    m.CreatedTime.Date <= dateto
+                );
+            }
             model.Prepare(candidates);
             return View(model);
         }

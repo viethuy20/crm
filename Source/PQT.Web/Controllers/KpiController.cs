@@ -1051,10 +1051,10 @@ namespace PQT.Web.Controllers
             var month = new DateTime(dateMonth.Year, dateMonth.Month, 1);
             if (!string.IsNullOrEmpty(searchValue))
             {
-                bookings = _bookingService.GetAllBookingsForKPI(0,0, m =>
-                    m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value &&
-                    m.CreatedTime >= month &&
-                     m.SalesmanName.Contains(searchValue)
+                bookings = _bookingService.GetAllBookingsForKPI(0, 0, m =>
+                     m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value &&
+                     m.CreatedTime >= month &&
+                      m.SalesmanName.Contains(searchValue)
                 );
             }
             else
@@ -1203,24 +1203,39 @@ namespace PQT.Web.Controllers
             IEnumerable<Candidate> candidates = new HashSet<Candidate>();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                candidates = _recruitmentService.GetAllCandidates(m =>
-                    (m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value) &&
-                    (datefrom == default(DateTime) || datefrom.Date <= m.CreatedTime.Date) &&
-                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
-                    (userId == 0 || m.UserID == userId || (m.User != null && m.User.TransferUserID == userId)) &&
-                    ((m.User != null && m.User.Email.Contains(searchValue)) ||
-                     m.SalesmanName.Contains(searchValue))
-                );
+                if (userId > 0)
+                {
+                    candidates = _recruitmentService.GetAllCandidatesForKpis(m =>
+                        datefrom <= m.CreatedTime.Date &&
+                        m.CreatedTime.Date <= dateto && m.UserID == userId &&
+                        m.SalesmanName.Contains(searchValue)
+                    );
+                }
+                else
+                {
+                    candidates = _recruitmentService.GetAllCandidatesForKpis(m =>
+                        datefrom <= m.CreatedTime.Date &&
+                        m.CreatedTime.Date <= dateto &&
+                        m.SalesmanName.Contains(searchValue)
+                    );
+                }
             }
             else
             {
-                candidates = _recruitmentService.GetAllCandidates(m =>
-                    (m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value) &&
-                    (datefrom == default(DateTime) || datefrom.Date <= m.CreatedTime.Date) &&
-                    (dateto == default(DateTime) || m.CreatedTime.Date <= dateto.Date) &&
-                    (userId == 0 || m.UserID == userId ||
-                    (m.User != null && m.User.TransferUserID == userId))
-                );
+                if (userId > 0)
+                {
+                    candidates = _recruitmentService.GetAllCandidatesForKpis(m =>
+                        datefrom <= m.CreatedTime.Date &&
+                        m.CreatedTime.Date <= dateto
+                    );
+                }
+                else
+                {
+                    candidates = _recruitmentService.GetAllCandidatesForKpis(m =>
+                        datefrom <= m.CreatedTime.Date &&
+                        m.CreatedTime.Date <= dateto
+                    );
+                }
             }
             // ReSharper disable once AssignNullToNotNullAttribute
             var model = new HRConsolidateKPIModel();

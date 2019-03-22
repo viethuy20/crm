@@ -112,6 +112,15 @@ namespace PQT.Domain.Concrete
                 .Include(m => m.User)
                 .Where(predicate2).AsEnumerable();
         }
+        public IEnumerable<Candidate> GetAllCandidatesForKpis(Func<Candidate, bool> predicate)
+        {
+            Func<Candidate, bool> predicate2 =
+                m => predicate(m) && m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value;
+            return _db.Set<Candidate>()
+                .Include(m => m.CandidateStatusRecord)
+                .Include(m => m.User)
+                .Where(predicate2).AsEnumerable();
+        }
 
         public Candidate GetCandidate(int id)
         {

@@ -21,7 +21,7 @@ namespace PQT.Domain.Entities
         }
         public string DirectLine { get; set; } //Direct Line/Mobile number
         public string JobTitle { get; set; } //Client Name/Job Title
-        public string LineExtension { get; set; } 
+        public string LineExtension { get; set; }
         public string Remark { get; set; }
         public string Salutation { get; set; }
         public string FirstName { get; set; }
@@ -349,7 +349,8 @@ namespace PQT.Domain.Entities
                     ((LeadStatusRecord == LeadStatus.Blocked ||
                       LeadStatusRecord == LeadStatus.Live ||
                       LeadStatusRecord == LeadStatus.LOI) &&
-                      User.UserStatus == UserStatus.Live &&
+                      (User.UserStatus == UserStatus.Live ||
+                       User.DirectSupervisorID > 0) &&
                      !CheckNCLExpired(daysExpired)));
         }
         public string ClassKPIStatus
