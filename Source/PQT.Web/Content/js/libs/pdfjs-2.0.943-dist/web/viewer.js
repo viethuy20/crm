@@ -1653,7 +1653,7 @@ function webViewerInitialized() {
     PDFViewerApplication.pdfSidebar.toggle();
   });
   try {
-    webViewerOpenFileViaURL(file);
+    //webViewerOpenFileViaURL(file);
   } catch (reason) {
     PDFViewerApplication.l10n.get('loading_error', null, 'An error occurred while loading the PDF.').then(function (msg) {
       PDFViewerApplication.error(msg, reason);
