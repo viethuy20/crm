@@ -166,7 +166,12 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.MobileNumber).Class("form-control").Disabled().ShowValidationMessage(true)
+                        <div class="input-group">
+                            <span class="input-group-addon dialingCode" style="color: #000;font-size: 16px;padding-bottom: 9px;font-weight: 500;">@Model.Candidate.DialingCode</span>
+                            <div class="input-group-content">
+                                @Html.Bootstrap().TextBoxFor(m => m.Candidate.MobileNumber).Class("form-control").Disabled().ShowValidationMessage(true)
+                            </div>
+                        </div>
                         @Html.Bootstrap().LabelFor(m => m.Candidate.MobileNumber)
                     </div>
                 </div>

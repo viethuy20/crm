@@ -11,10 +11,8 @@
             <h2 class="text-primary">@ViewBag.Title</h2>
         </div>
         @Html.HiddenFor(m => m.Leave.ID)
-        @Html.HiddenFor(m => m.Leave.AprroveUserID)
         @Html.HiddenFor(m => m.Leave.CreatedUserID)
         @Html.HiddenFor(m => m.Leave.ReasonReject)
-        @Html.HiddenFor(m => m.Leave.LeaveStatus)
         @Html.HiddenFor(m => m.Leave.CreatedTime)
         @Html.Partial("_CreateOrEdit", Model)
         <div class="row">

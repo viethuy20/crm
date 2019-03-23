@@ -14,11 +14,11 @@ namespace PQT.Domain.Entities
             LeaveDate = DateTime.Today;
             TypeOfLeave = TypeOfLeave.None;
             TypeOfLatenes = TypeOfLatenes.None;
-            LeaveStatus = LeaveStatus.None;
+            //LeaveStatus = LeaveStatus.None;
         }
         public DateTime LeaveDate { get; set; }
         public string Summary { get; set; }
-        public LeaveStatus LeaveStatus { get; set; }
+        //public LeaveStatus LeaveStatus { get; set; }
         public LeaveType LeaveType { get; set; }
         public TypeOfLeave TypeOfLeave { get; set; }
         public TypeOfLatenes TypeOfLatenes { get; set; }
@@ -30,9 +30,9 @@ namespace PQT.Domain.Entities
         public int? CreatedUserID { get; set; }//approve or reject user
         [ForeignKey("CreatedUserID")]
         public User CreatedUser { get; set; }
-        public int? AprroveUserID { get; set; }//approve or reject user
-        [ForeignKey("AprroveUserID")]
-        public User AprroveUser { get; set; }
+        //public int? AprroveUserID { get; set; }//approve or reject user
+        //[ForeignKey("AprroveUserID")]
+        //public User AprroveUser { get; set; }
 
         public string LeaveDateDisplay
         {
@@ -51,8 +51,8 @@ namespace PQT.Domain.Entities
         {
             get
             {
-                if (AprroveUser != null)
-                    return AprroveUser.DisplayName;
+                if (CreatedUser != null)
+                    return CreatedUser.DisplayName;
                 return "";
             }
         }

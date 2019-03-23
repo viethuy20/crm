@@ -202,6 +202,8 @@ namespace PQT.Web.Controllers
                     MobilePhone = model.Candidate.MobileNumber,
                     PersonalEmail = model.Candidate.PersonalEmail,
                     CandidateID = model.Candidate.ID,
+                    OfficeLocationID = model.Candidate.OfficeLocationID,
+                    Nationality = model.Candidate.OfficeLocation.CountryName
                     //UserNo = _membershipService.GetTempUserNo()
                 };
             var role = _roleService.GetRoleByName(model.Candidate.RecruitmentPosition.Department);

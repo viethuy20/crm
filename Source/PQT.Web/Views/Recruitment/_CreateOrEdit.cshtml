@@ -18,11 +18,11 @@
     <div class="card-body">
         <div class="row">
             @*<div class="col-sm-3">
-                <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.CandidateNo).Class("form-control code").Readonly().ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Candidate.CandidateNo).LabelText("Candidate ID").ShowRequiredStar(true)
-                </div>
-            </div>*@
+                    <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.CandidateNo).Class("form-control code").Readonly().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.CandidateNo).LabelText("Candidate ID").ShowRequiredStar(true)
+                    </div>
+                </div>*@
             <div class="col-sm-4">
                 <div class="form-group">
                     @Html.Bootstrap().TextBoxFor(m => m.Candidate.FirstName).Class("form-control text-capitalize").ShowValidationMessage(true)
@@ -43,7 +43,12 @@
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.MobileNumber).Class("form-control").ShowValidationMessage(true)
+                    <div class="input-group">
+                        <span class="input-group-addon dialingCode" style="color: #000;font-size: 16px;padding-bottom: 9px;font-weight: 500;"></span>
+                        <div class="input-group-content">
+                            @Html.Bootstrap().TextBoxFor(m => m.Candidate.MobileNumber).Class("form-control").ShowValidationMessage(true)
+                        </div>
+                    </div>
                     @Html.Bootstrap().LabelFor(m => m.Candidate.MobileNumber).ShowRequiredStar(true)
                 </div>
             </div>
@@ -61,7 +66,13 @@
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.OfficeLocationID, officeLocations.ToSelectList(m => m.ID, m => m.Name)).HtmlAttributes(new { required = "required" }).Class("form-control").OptionLabel("").ShowValidationMessage(true)
+                    <select class="form-control" id="@Html.IdFor(m=>m.Candidate.OfficeLocationID)" name="@Html.NameFor(m => m.Candidate.OfficeLocationID)" required="required">
+                        <option value="" dialingcode=""></option>
+                        @foreach (var trainer in officeLocations)
+                        {
+                            <option value="@trainer.ID" dialingcode="@trainer.DialingCode" selected="@(Model.Candidate.OfficeLocationID == trainer.ID)">@trainer.Name</option>
+                        }
+                    </select>
                     @Html.Bootstrap().LabelFor(m => m.Candidate.OfficeLocation).ShowRequiredStar(true)
                 </div>
             </div>
@@ -233,5 +244,8 @@
 
 @Html.Script(
     @<script>
-
+         $('@Html.JquerySelectorFor(m=>m.Candidate.OfficeLocationID)').on("change",
+             function() {
+                 $(".dialingCode").text(this.options[this.selectedIndex].getAttribute('dialingcode'));
+             }).change();
     </script>)

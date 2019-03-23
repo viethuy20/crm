@@ -18,5 +18,9 @@ namespace PQT.Domain.Entities
         {
             get { return Country != null ? Country.Name : ""; }
         }
+        public string DialingCode
+        {
+            get { return Country != null ? Country.DialingCode : ""; }
+        }
     }
 }

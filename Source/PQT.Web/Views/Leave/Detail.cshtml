@@ -28,54 +28,14 @@
 
     <div class="row section-header" style="height: auto">
         <h2 class="text-primary col-sm-3">@ViewBag.Title</h2>
-
     </div>
     <div class="row">
         <div class="col-sm-12" style="padding-right: 24px; padding-bottom: 12px">
             @Html.Bootstrap().ActionLinkButton(Resource.ButtonBackToList, "Index").PrependIcon("md md-arrow-back")
-            @if (CurrentUser.HasPermission("Leave", "Edit") && (Model.Leave.LeaveStatus != LeaveStatus.Approved))
+            @if (CurrentUser.HasPermission("Leave", "Edit") && Model.Leave.CreatedUserID == currentUserId)
             {
                 @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.Leave.ID }).Class(" btn-primary").PrependIcon("md md-edit")
             }
-            @if (Model.Leave.CreatedUserID != currentUserId && Model.Leave.UserID != currentUserId)
-            {
-                if (CurrentUser.HasPermission("Leave", "ApproveLeave") && (Model.Leave.LeaveStatus == LeaveStatus.Request))
-                {
-                    @Html.Bootstrap().ActionLinkButton("Approve Leave", "ApproveLeave").RouteValues(new { id = Model.Leave.ID }).Id("approve_action").Class("btn-success btnApprove").PrependIcon("md md-done")
-                }
-                if (CurrentUser.HasPermission("Leave", "RejectLeave") && (Model.Leave.LeaveStatus == LeaveStatus.Request))
-                {
-                    @Html.Bootstrap().ActionLinkButton("Reject Leave", "RejectLeave").RouteValues(new { id = Model.Leave.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
-                }
-            }
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-body @Model.Leave.LeaveStatus.DisplayName form">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Leave.LeaveStatus.DisplayName).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Leave.LeaveStatus.DisplayName).LabelText("Leave Status")
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Leave.AprroveUserDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Leave.AprroveUserDisplay).LabelText((Model.Leave.LeaveStatus == LeaveStatus.Rejected ? "Rejected By" : (Model.Leave.LeaveStatus == LeaveStatus.Approved ? "Approved By" : "Changed by")))
-                    </div>
-                </div>
-                @if (Model.Leave.LeaveStatus == LeaveStatus.Rejected)
-                {
-                    <div class="col-sm-12">
-                        <div class="form-group">
-                            @Html.Bootstrap().TextBoxFor(m => m.Leave.ReasonReject).Class("form-control").HtmlAttributes(new { @style = "color:#f44336" }).Disabled().ShowValidationMessage(true)
-                            @Html.Bootstrap().LabelFor(m => m.Leave.ReasonReject).LabelText("Reason Of Rejection")
-                        </div>
-                    </div>
-                }
-            </div>
         </div>
     </div>
     <div class="card">
@@ -114,6 +74,12 @@
                             @Html.Bootstrap().LabelFor(m => m.Leave.Document).LabelText("Evidence Document")
                         </div>
                     </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Leave.AprroveUserDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Leave.AprroveUserDisplay).LabelText("Approver")
+                        </div>
+                    </div>
                     <div class="col-sm-12">
                         <div class="form-group">
                             @Html.Bootstrap().TextAreaFor(m => m.Leave.Summary).Rows(5).Class("form-control").Disabled().ShowValidationMessage(true)
@@ -123,10 +89,16 @@
                 }
                 else
                 {
-                    <div class="col-sm-8">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             @Html.Bootstrap().TextBoxFor(m => m.Leave.ReasonLeave).Class("form-control").Disabled().ShowValidationMessage(true)
                             @Html.Bootstrap().LabelFor(m => m.Leave.ReasonLeave).LabelText("Leave Reason")
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Bootstrap().TextBoxFor(m => m.Leave.AprroveUserDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
+                            @Html.Bootstrap().LabelFor(m => m.Leave.AprroveUserDisplay).LabelText("Approver")
                         </div>
                     </div>
                     <div class=" col-sm-4">

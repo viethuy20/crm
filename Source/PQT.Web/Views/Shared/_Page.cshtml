@@ -10,7 +10,7 @@
 
     Dictionary<string, int> menuNotifications = new Dictionary<string, int>();
     var count = 0;
-    var hasLeavePermission = false;
+    //var hasLeavePermission = false;
     if (currentUser != null)
     {
         count = currentUser.NotifyNumber;
@@ -21,12 +21,12 @@
         menuNotifications.Add("New Event", currentUser.NewEventNotifyNumber);
         menuNotifications.Add("Master Files", currentUser.MasterFilesNotifyNumber);
         menuNotifications.Add("Report Calls", currentUser.ReportCallNotifyNumber);
-        menuNotifications.Add("Leave Management", currentUser.LeaveNotifyNumber);
-        hasLeavePermission = currentUser.FinanceAdminUnit != FinanceAdminUnit.None ||
-                             currentUser.SalesManagementUnit != SalesManagementUnit.None ||
-                             currentUser.HumanResourceUnit == HumanResourceUnit.Coordinator ||
-                             currentUser.ProjectManagementUnit != ProjectManagementUnit.None || 
-                             CurrentUser.HasRole("Manager");
+        //menuNotifications.Add("Leave Management", currentUser.LeaveNotifyNumber);
+        //hasLeavePermission = currentUser.FinanceAdminUnit != FinanceAdminUnit.None ||
+        //                     currentUser.SalesManagementUnit != SalesManagementUnit.None ||
+        //                     currentUser.HumanResourceUnit == HumanResourceUnit.Coordinator ||
+        //                     currentUser.ProjectManagementUnit != ProjectManagementUnit.None ||
+        //                     CurrentUser.HasRole("Manager");
     }
     var menus = MenuHelper.GetAll();
     var debugMode = ConfigurationManager.AppSettings["TEST_MODE"];
@@ -187,13 +187,13 @@
                             continue;
                         }
                     }
-                    if (item.Title == "Leave Management")
-                    {
-                        if (!hasLeavePermission)
-                        {
-                            continue;
-                        }
-                    }
+                    //if (item.Title == "Leave Management")
+                    //{
+                    //    if (!hasLeavePermission)
+                    //    {
+                    //        continue;
+                    //    }
+                    //}
                     <li class="@(children.Any()?"gui-folder":"") menu_notify_child_@(item.NotifyType)">
                         @if (string.IsNullOrEmpty(item.Url))
                         {

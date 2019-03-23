@@ -31,8 +31,7 @@ namespace PQT.Web.Models
             var leaveService = DependencyHelper.GetService<ILeaveService>();
             var leaves = leaveService.GetAllLeavesNotInclude(m => m.LeaveDate >= DateFrom &&
                                                      m.LeaveDate <= DateTo &&
-                                                     m.LeaveType.Value == LeaveType.Leave.Value &&
-                                                     m.LeaveStatus.Value == LeaveStatus.Approved.Value
+                                                     m.LeaveType.Value == LeaveType.Leave.Value 
             );
             var nonSalesDays = leaveService.GetAllNonSalesDaysNotInclude(m => m.IssueMonth.Month >= DateFrom.Month &&
                                                                     m.IssueMonth.Month <= DateTo.Month).Sum(m => m.NonSalesDays);

@@ -23,19 +23,25 @@ namespace PQT.Web.Models
             var leaveService = DependencyHelper.GetService<ILeaveService>();
             Leave = id > 0 ? leaveService.GetLeave(id) : new Leave();
             var memberService = DependencyHelper.GetService<IMembershipService>();
-            Users = memberService.GetUsers(m => m.UserStatus.Value == UserStatus.Live.Value && m.Status.Value != EntityUserStatus.Deleted);
+            if (CurrentUser.HasRole("Manager"))
+                Users = memberService.GetUsers(m => m.UserStatus.Value == UserStatus.Live.Value &&
+                                                    m.Status.Value != EntityUserStatus.Deleted);
+            else
+                Users = memberService.GetUsers(m => m.UserStatus.Value == UserStatus.Live.Value &&
+                                                    m.Status.Value != EntityUserStatus.Deleted &&
+                                                    m.DirectSupervisorID == CurrentUser.Identity.ID);
         }
         public bool Create()
         {
             var leaveService = DependencyHelper.GetService<ILeaveService>();
-            var memberService = DependencyHelper.GetService<IMembershipService>();
-            Leave.LeaveStatus = LeaveStatus.Request;
+            //var memberService = DependencyHelper.GetService<IMembershipService>();
+            //Leave.LeaveStatus = LeaveStatus.Request;
             Leave.CreatedUserID = CurrentUser.Identity.ID;
             Leave = leaveService.CreateLeave(Leave);
             if (Leave != null)
             {
-                var supervisors = memberService.GetAllSupervisors().Where(m => m.ID != Leave.UserID);
-                LeaveNotificator.NotifyUser(NotifyAction.Request, supervisors.ToList(), Leave.ID, Leave.LeaveType.DisplayName + " Request ");
+                //var supervisors = memberService.GetAllSupervisors().Where(m => m.ID != Leave.UserID);
+                //LeaveNotificator.NotifyUser(NotifyAction.Request, supervisors.ToList(), Leave.ID, Leave.LeaveType.DisplayName + " Request ");
                 return true;
             }
             return false;
@@ -43,21 +49,21 @@ namespace PQT.Web.Models
         public bool Update()
         {
             var leaveService = DependencyHelper.GetService<ILeaveService>();
-            var memberService = DependencyHelper.GetService<IMembershipService>();
-            var notify = false;
-            if (Leave.LeaveStatus == LeaveStatus.Rejected)
-            {
-                Leave.LeaveStatus = LeaveStatus.Request;
-                Leave.CreatedUserID = CurrentUser.Identity.ID;
-                notify = true;
-            }
+            //var memberService = DependencyHelper.GetService<IMembershipService>();
+            //var notify = false;
+            //if (Leave.LeaveStatus == LeaveStatus.Rejected)
+            //{
+            //    Leave.LeaveStatus = LeaveStatus.Request;
+            //    Leave.CreatedUserID = CurrentUser.Identity.ID;
+            //    notify = true;
+            //}
             if (leaveService.UpdateLeave(Leave))
             {
-                if (notify)
-                {
-                    var supervisors = memberService.GetAllSupervisors().Where(m => m.ID != Leave.UserID);
-                    LeaveNotificator.NotifyUser(NotifyAction.Request, supervisors.ToList(), Leave.ID, Leave.LeaveType.DisplayName + " Request ");
-                }
+                //if (notify)
+                //{
+                //    var supervisors = memberService.GetAllSupervisors().Where(m => m.ID != Leave.UserID);
+                //    LeaveNotificator.NotifyUser(NotifyAction.Request, supervisors.ToList(), Leave.ID, Leave.LeaveType.DisplayName + " Request ");
+                //}
                 return true;
             }
             return false;
@@ -67,48 +73,48 @@ namespace PQT.Web.Models
             var leaveService = DependencyHelper.GetService<ILeaveService>();
             return leaveService.DeleteLeave(LeaveID);
         }
-        public bool Approve()
-        {
-            var leaveService = DependencyHelper.GetService<ILeaveService>();
-            var leaveExist = leaveService.GetLeave(LeaveID);
-            if (leaveExist == null)
-            {
-                throw new ObjectAlreadyExistsException("Leave not found");
-            }
-            if (leaveExist.LeaveStatus != LeaveStatus.Request)
-            {
-                throw new ObjectAlreadyExistsException("This leave has been " + leaveExist.LeaveStatus.DisplayName);
-            }
-            leaveExist.AprroveUserID = CurrentUser.Identity.ID;
-            leaveExist.LeaveStatus = LeaveStatus.Approved;
-            if (leaveService.UpdateLeave(leaveExist))
-            {
-                LeaveNotificator.NotifyUser(NotifyAction.Approved, new List<User> { leaveExist.User }, leaveExist.ID, "Leave has been approved");
-                return true;
-            }
-            return false;
-        }
-        public bool Reject()
-        {
-            var leaveService = DependencyHelper.GetService<ILeaveService>();
-            var leaveExist = leaveService.GetLeave(LeaveID);
-            if (leaveExist == null)
-            {
-                throw new ObjectAlreadyExistsException("Leave not found");
-            }
-            if (leaveExist.LeaveStatus != LeaveStatus.Request)
-            {
-                throw new ObjectAlreadyExistsException("This leave has been " + leaveExist.LeaveStatus.DisplayName);
-            }
-            leaveExist.AprroveUserID = CurrentUser.Identity.ID;
-            leaveExist.LeaveStatus = LeaveStatus.Rejected;
-            leaveExist.ReasonReject = Message;
-            if (leaveService.UpdateLeave(leaveExist))
-            {
-                LeaveNotificator.NotifyUser(NotifyAction.Rejected, new List<User> { leaveExist.User }, leaveExist.ID, "Leave has been rejected");
-                return true;
-            }
-            return false;
-        }
+        //public bool Approve()
+        //{
+        //    var leaveService = DependencyHelper.GetService<ILeaveService>();
+        //    var leaveExist = leaveService.GetLeave(LeaveID);
+        //    if (leaveExist == null)
+        //    {
+        //        throw new ObjectAlreadyExistsException("Leave not found");
+        //    }
+        //    if (leaveExist.LeaveStatus != LeaveStatus.Request)
+        //    {
+        //        throw new ObjectAlreadyExistsException("This leave has been " + leaveExist.LeaveStatus.DisplayName);
+        //    }
+        //    leaveExist.AprroveUserID = CurrentUser.Identity.ID;
+        //    leaveExist.LeaveStatus = LeaveStatus.Approved;
+        //    if (leaveService.UpdateLeave(leaveExist))
+        //    {
+        //        LeaveNotificator.NotifyUser(NotifyAction.Approved, new List<User> { leaveExist.User }, leaveExist.ID, "Leave has been approved");
+        //        return true;
+        //    }
+        //    return false;
+        //}
+        //public bool Reject()
+        //{
+        //    var leaveService = DependencyHelper.GetService<ILeaveService>();
+        //    var leaveExist = leaveService.GetLeave(LeaveID);
+        //    if (leaveExist == null)
+        //    {
+        //        throw new ObjectAlreadyExistsException("Leave not found");
+        //    }
+        //    if (leaveExist.LeaveStatus != LeaveStatus.Request)
+        //    {
+        //        throw new ObjectAlreadyExistsException("This leave has been " + leaveExist.LeaveStatus.DisplayName);
+        //    }
+        //    leaveExist.AprroveUserID = CurrentUser.Identity.ID;
+        //    leaveExist.LeaveStatus = LeaveStatus.Rejected;
+        //    leaveExist.ReasonReject = Message;
+        //    if (leaveService.UpdateLeave(leaveExist))
+        //    {
+        //        LeaveNotificator.NotifyUser(NotifyAction.Rejected, new List<User> { leaveExist.User }, leaveExist.ID, "Leave has been rejected");
+        //        return true;
+        //    }
+        //    return false;
+        //}
     }
 }

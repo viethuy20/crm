@@ -3,6 +3,13 @@
 @model PQT.Domain.Entities.Leave
 @{
     ViewBag.Title = "Leave Management";
+    var currentUser = CurrentUser.Identity;
+    var currentUserId = currentUser.ID;
+    var hasLeavePermission = currentUser.FinanceAdminUnit != FinanceAdminUnit.None ||
+                         currentUser.SalesManagementUnit != SalesManagementUnit.None ||
+                         currentUser.HumanResourceUnit == HumanResourceUnit.Coordinator ||
+                         currentUser.ProjectManagementUnit != ProjectManagementUnit.None ||
+                         CurrentUser.HasRole("Manager");
 }
 
 <style>
@@ -61,7 +68,7 @@
     </div>
     <div class="form-group row">
         <div class="col-sm-6">
-            @if (CurrentUser.HasPermission("Leave", "Create"))
+            @if (hasLeavePermission && CurrentUser.HasPermission("Leave", "Create"))
             {
                 @Html.Bootstrap().ActionLinkButton("Request Leave", "Create").RouteValues(new { id = 0 }).PrependIcon("md md-add").HtmlAttributes(new { @class = "btn btn-primary" })
             }
@@ -79,29 +86,11 @@
                                 <th>User Name</th>
                                 <th>Type</th>
                                 <th>Reason</th>
-                                <th>Status</th>
                                 <th>Approver</th>
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
                     </table>
-                    <div class="row">
-                        <table>
-                            <tr>
-                                <td colspan="14"><b>Leave Status</b></td>
-                            </tr>
-                            <tr>
-                                <td><span class="color_status" style="background: #fff;">&nbsp;</span></td>
-                                <td>&nbsp;Request</td>
-                                <td style="width: 20px"></td>
-                                <td><span class="color_status" style="background: #ffa7a7;">&nbsp;</span></td>
-                                <td>&nbsp;Rejected</td>
-                                <td style="width: 20px"></td>
-                                <td><span class="color_status" style="background: #abffc5;">&nbsp;</span></td>
-                                <td>&nbsp;Passed</td>
-                            </tr>
-                        </table>
-                    </div>
                 </div><!--end .card-body -->
             </div><!--end .card -->
         </div>
@@ -136,7 +125,6 @@
                  { "data": "UserDisplay", "name": "UserDisplay", "orderable": true },
                  { "data": "LeaveType", "name": "LeaveType", "orderable": true },
                  { "data": "ReasonLeave", "name": "ReasonLeave", "orderable": true },
-                 { "data": "LeaveStatus", "name": "LeaveStatus", "orderable": true },
                  { "data": "AprroveUserDisplay", "name": "AprroveUserDisplay", "orderable": true },
                  { "data": "ID", "name": "ID", "orderable": false },
              ],
@@ -145,16 +133,15 @@
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                  var actionHtml = '<a href="@Url.Action("Detail")/' + aData["ID"] + '">' +
                      '<i class="fa fa-eye"></i></a>';
-                 if ('@CurrentUser.HasPermission("Leave", "Edit")' == 'True' && aData["LeaveStatus"] != '@LeaveStatus.Approved') {
+                 if ('@CurrentUser.HasPermission("Leave", "Edit")' === 'True' && aData["CreatedUserID"] === @currentUserId) {
                      actionHtml += ' | <a href="@Url.Action("Edit")?id=' + aData["ID"] +
                          '" data-action="edit"><i class="md md-edit text-info"></i></a>';
                  }
-                 if ('@CurrentUser.HasPermission("Leave", "Delete")' == 'True') {
+                 if ('@CurrentUser.HasPermission("Leave", "Delete")' === 'True' && aData["CreatedUserID"] === @currentUserId) {
                      actionHtml += ' | <a href="#"  data-action="delete" data-id="' + aData["ID"] + '"><i class="md md-delete text-danger"></i></a>';
                  }
-                 $(nRow).find('td:eq(6)').html(actionHtml);
-                 $(nRow).find('td:eq(6)').css("white-space","nowrap");
-                 $(nRow).addClass(aData["LeaveStatus"]);
+                 $(nRow).find('td:eq(5)').html(actionHtml);
+                 $(nRow).find('td:eq(5)').css("white-space","nowrap");
                  //$(nRow).attr("data-id", aData["ID"]);
              },
              initComplete: function () {

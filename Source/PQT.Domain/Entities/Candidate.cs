@@ -250,6 +250,18 @@ namespace PQT.Domain.Entities
                 return "";
             }
         }
+        public string DialingCode
+        {
+            get
+            {
+                if (OfficeLocation != null)
+                {
+                    return OfficeLocation.Country.DialingCode;
+                }
+
+                return "";
+            }
+        }
     }
 
     public class RecruitmentPosition : EntityBase

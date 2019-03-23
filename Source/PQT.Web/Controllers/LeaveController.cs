@@ -127,62 +127,62 @@ namespace PQT.Web.Controllers
             return View(model);
         }
 
-        [DisplayName(@"Approve Leave")]
-        public ActionResult ApproveLeave(int id)
-        {
-            var model = new LeaveModel { LeaveID = id };
-            try
-            {
-                if (model.Approve())
-                {
-                    TempData["message"] = Resource.SaveSuccessful;
-                    return RedirectToAction("Detail", new { id = id });
-                }
-                TempData["error"] = Resource.SaveError;
-            }
-            catch (Exception e)
-            {
-                TempData["error"] = e.Message;
-            }
-            return RedirectToAction("Index");
-        }
-        [DisplayName(@"Reject Leave")]
-        public ActionResult RejectLeave(int id)
-        {
-            var model = new LeaveModel();
-            model.LeaveID = id;
-            model.Leave = _leaveService.GetLeave(id);
-            if (model.Leave == null)
-            {
-                TempData["error"] = "Leave not found";
-                return RedirectToAction("Index");
-            }
-            return PartialView(model);
-        }
-        [DisplayName(@"Reject Leave")]
-        [HttpPost]
-        public ActionResult RejectLeave(LeaveModel model)
-        {
-            if (string.IsNullOrEmpty(model.Message))
-            {
-                TempData["error"] = "`Reason` must not be empty";
-                return RedirectToAction("Detail", new { id = model.LeaveID });
-            }
-            try
-            {
-                if (model.Reject())
-                {
-                    TempData["message"] = Resource.SaveSuccessful;
-                    return RedirectToAction("Detail", new { id = model.LeaveID });
-                }
-                TempData["error"] = Resource.SaveError;
-            }
-            catch (Exception e)
-            {
-                TempData["error"] = e.Message;
-            }
-            return RedirectToAction("Index");
-        }
+        //[DisplayName(@"Approve Leave")]
+        //public ActionResult ApproveLeave(int id)
+        //{
+        //    var model = new LeaveModel { LeaveID = id };
+        //    try
+        //    {
+        //        if (model.Approve())
+        //        {
+        //            TempData["message"] = Resource.SaveSuccessful;
+        //            return RedirectToAction("Detail", new { id = id });
+        //        }
+        //        TempData["error"] = Resource.SaveError;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        TempData["error"] = e.Message;
+        //    }
+        //    return RedirectToAction("Index");
+        //}
+        //[DisplayName(@"Reject Leave")]
+        //public ActionResult RejectLeave(int id)
+        //{
+        //    var model = new LeaveModel();
+        //    model.LeaveID = id;
+        //    model.Leave = _leaveService.GetLeave(id);
+        //    if (model.Leave == null)
+        //    {
+        //        TempData["error"] = "Leave not found";
+        //        return RedirectToAction("Index");
+        //    }
+        //    return PartialView(model);
+        //}
+        //[DisplayName(@"Reject Leave")]
+        //[HttpPost]
+        //public ActionResult RejectLeave(LeaveModel model)
+        //{
+        //    if (string.IsNullOrEmpty(model.Message))
+        //    {
+        //        TempData["error"] = "`Reason` must not be empty";
+        //        return RedirectToAction("Detail", new { id = model.LeaveID });
+        //    }
+        //    try
+        //    {
+        //        if (model.Reject())
+        //        {
+        //            TempData["message"] = Resource.SaveSuccessful;
+        //            return RedirectToAction("Detail", new { id = model.LeaveID });
+        //        }
+        //        TempData["error"] = Resource.SaveError;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        TempData["error"] = e.Message;
+        //    }
+        //    return RedirectToAction("Index");
+        //}
         [HttpPost]
         public ActionResult Delete(int id)
         {
@@ -224,18 +224,65 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
+            var currentUser = CurrentUser.Identity;
+            var currentUserId = CurrentUser.HasRole("Manager") ? 0 : currentUser.ID;
+            var isSupervisor = currentUser.FinanceAdminUnit != FinanceAdminUnit.None ||
+                                 currentUser.SalesManagementUnit != SalesManagementUnit.None ||
+                                 currentUser.HumanResourceUnit == HumanResourceUnit.Coordinator ||
+                                 currentUser.ProjectManagementUnit != ProjectManagementUnit.None;
             IEnumerable<Leave> data = new HashSet<Leave>();
             Func<Leave, bool> predicate = null;
-
             if (!string.IsNullOrEmpty(searchValue))
             {
-                predicate = m =>
-                    (m.Summary != null && m.Summary.ToLower().Contains(searchValue)) ||
-                    (m.LeaveStatus.DisplayName.ToLower().Contains(searchValue)) ||
-                    (m.LeaveType.DisplayName.ToLower().Contains(searchValue)) ||
-                    (m.TypeOfLeave.DisplayName.ToLower().Contains(searchValue)) ||
-                    (m.TypeOfLatenes.DisplayName.ToLower().Contains(searchValue)) ||
-                    m.LeaveDateDisplay.ToLower().Contains(searchValue);
+                if (currentUserId > 0)
+                {
+                    if (isSupervisor)
+                    {
+                        predicate = m =>
+                            (m.UserID == currentUserId || m.User.DirectSupervisorID == currentUserId) &&
+                            ((m.AprroveUserDisplay.ToLower().Contains(searchValue)) ||
+                             (m.Summary != null && m.Summary.ToLower().Contains(searchValue)) ||
+                             (m.LeaveType.DisplayName.ToLower().Contains(searchValue)) ||
+                             (m.TypeOfLeave.DisplayName.ToLower().Contains(searchValue)) ||
+                             (m.TypeOfLatenes.DisplayName.ToLower().Contains(searchValue)) ||
+                             m.LeaveDateDisplay.ToLower().Contains(searchValue));
+                    }
+                    else
+                    {
+                        predicate = m =>
+                            (m.UserID == currentUserId) &&
+                            ((m.AprroveUserDisplay.ToLower().Contains(searchValue)) ||
+                             (m.Summary != null && m.Summary.ToLower().Contains(searchValue)) ||
+                             (m.LeaveType.DisplayName.ToLower().Contains(searchValue)) ||
+                             (m.TypeOfLeave.DisplayName.ToLower().Contains(searchValue)) ||
+                             (m.TypeOfLatenes.DisplayName.ToLower().Contains(searchValue)) ||
+                             m.LeaveDateDisplay.ToLower().Contains(searchValue));
+                    }
+                }
+                else
+                {
+                    predicate = m =>
+                        (m.AprroveUserDisplay.ToLower().Contains(searchValue)) ||
+                        (m.Summary != null && m.Summary.ToLower().Contains(searchValue)) ||
+                        (m.LeaveType.DisplayName.ToLower().Contains(searchValue)) ||
+                        (m.TypeOfLeave.DisplayName.ToLower().Contains(searchValue)) ||
+                        (m.TypeOfLatenes.DisplayName.ToLower().Contains(searchValue)) ||
+                        m.LeaveDateDisplay.ToLower().Contains(searchValue);
+                }
+            }
+            else
+            {
+                if (currentUserId > 0)
+                {
+                    if (isSupervisor)
+                    {
+                        predicate = m => (m.UserID == currentUserId || m.User.DirectSupervisorID == currentUserId);
+                    }
+                    else
+                    {
+                        predicate = m => (m.UserID == currentUserId);
+                    }
+                }
             }
             recordsTotal = _leaveService.GetCountLeaves(predicate);
 
@@ -244,14 +291,11 @@ namespace PQT.Web.Controllers
                 case "UserDisplay":
                     data = _leaveService.GetAllLeaves(predicate, sortColumnDir, s => s.UserDisplay, skip, pageSize);
                     break;
-                case "AprroveUserDisplay":
-                    data = _leaveService.GetAllLeaves(predicate, sortColumnDir, s => s.AprroveUserDisplay, skip, pageSize);
-                    break;
                 case "LeaveDateDisplay":
                     data = _leaveService.GetAllLeaves(predicate, sortColumnDir, s => s.LeaveDate, skip, pageSize);
                     break;
-                case "LeaveStatus":
-                    data = _leaveService.GetAllLeaves(predicate, sortColumnDir, s => s.LeaveStatus.DisplayName, skip, pageSize);
+                case "AprroveUserDisplay":
+                    data = _leaveService.GetAllLeaves(predicate, sortColumnDir, s => s.AprroveUserDisplay, skip, pageSize);
                     break;
                 case "LeaveType":
                     data = _leaveService.GetAllLeaves(predicate, sortColumnDir, s => s.LeaveType.DisplayName, skip, pageSize);
@@ -272,11 +316,11 @@ namespace PQT.Web.Controllers
                 data = data.Select(m => new
                 {
                     m.ID,
+                    m.CreatedUserID,
                     m.UserDisplay,
-                    m.AprroveUserDisplay,
                     m.LeaveDateDisplay,
+                    m.AprroveUserDisplay,
                     m.Summary,
-                    LeaveStatus = m.LeaveStatus.DisplayName,
                     LeaveType = m.LeaveType.DisplayName,
                     m.ReasonLeave,
                 })
@@ -318,21 +362,62 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
+            var currentUser = CurrentUser.Identity;
+            var currentUserId = CurrentUser.HasRole("Manager") ? 0 : currentUser.ID;
+            var isSupervisor = currentUser.FinanceAdminUnit != FinanceAdminUnit.None ||
+                               currentUser.SalesManagementUnit != SalesManagementUnit.None ||
+                               currentUser.HumanResourceUnit == HumanResourceUnit.Coordinator ||
+                               currentUser.ProjectManagementUnit != ProjectManagementUnit.None;
             IEnumerable<Leave> leaves = new HashSet<Leave>();
             if (!string.IsNullOrEmpty(searchValue))
             {
-                leaves = _leaveService.GetAllLeaves(m =>
-                    m.LeaveStatus.Value == LeaveStatus.Approved &&
-                    m.LeaveDate.Month == monthReport.Month &&
-                    (m.User != null && m.User.DisplayName.ToLower().Contains(searchValue))
-                );
+                if (currentUserId > 0)
+                {
+                    if (isSupervisor)
+                    {
+                        leaves = _leaveService.GetAllLeaves(m =>
+                            (m.UserID == currentUserId || m.User.DirectSupervisorID == currentUserId) &&
+                            m.LeaveDate.Month == monthReport.Month &&
+                            (m.User.DisplayName.ToLower().Contains(searchValue)));
+                    }
+                    else
+                    {
+                        leaves = _leaveService.GetAllLeaves(m =>
+                            (m.UserID == currentUserId) &&
+                            m.LeaveDate.Month == monthReport.Month &&
+                            (m.User.DisplayName.ToLower().Contains(searchValue)));
+                    }
+                }
+                else
+                {
+                    leaves = _leaveService.GetAllLeaves(m =>
+                        m.LeaveDate.Month == monthReport.Month &&
+                        (m.User.DisplayName.ToLower().Contains(searchValue)));
+                }
             }
             else
             {
-                leaves = _leaveService.GetAllLeaves(m =>
-                    m.LeaveStatus.Value == LeaveStatus.Approved &&
-                    m.LeaveDate.Month == monthReport.Month
-                );
+                if (currentUserId > 0)
+                {
+                    if (isSupervisor)
+                    {
+                        leaves = _leaveService.GetAllLeaves(m =>
+                            (m.UserID == currentUserId || m.User.DirectSupervisorID == currentUserId) &&
+                            m.LeaveDate.Month == monthReport.Month);
+                    }
+                    else
+                    {
+                        leaves = _leaveService.GetAllLeaves(m =>
+                            (m.UserID == currentUserId) &&
+                            m.LeaveDate.Month == monthReport.Month);
+                    }
+                }
+                else
+                {
+                    leaves = _leaveService.GetAllLeaves(m =>
+                        m.LeaveDate.Month == monthReport.Month
+                    );
+                }
             }
             // ReSharper disable once AssignNullToNotNullAttribute
             var model = new LeaveMonthlyReport();

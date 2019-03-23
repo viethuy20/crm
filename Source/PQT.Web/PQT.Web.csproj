@@ -3091,7 +3091,6 @@
     <Content Include="Views\Leave\Detail.cshtml" />
     <Content Include="Views\Leave\Edit.cshtml" />
     <Content Include="Views\Leave\Index.cshtml" />
-    <Content Include="Views\Leave\RejectLeave.cshtml" />
     <Content Include="Views\Leave\MonthlyReport.cshtml" />
   </ItemGroup>
   <ItemGroup>

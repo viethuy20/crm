@@ -21,7 +21,6 @@ namespace PQT.Domain.Concrete
             {
                 return _db.Set<Leave>()
                     .Include(m => m.User)
-                    .Include(m => m.AprroveUser)
                     .Include(m => m.CreatedUser)
                     .Count(predicate);
             }
@@ -36,14 +35,12 @@ namespace PQT.Domain.Concrete
                 {
                     return _db.Set<Leave>()
                         .Include(m => m.User)
-                        .Include(m => m.AprroveUser)
                         .Include(m => m.CreatedUser)
                         .Where(predicate).OrderBy(orderBy).ThenByDescending(s => s.ID)
                         .Skip(page).Take(pageSize).AsEnumerable();
                 }
                 return _db.Set<Leave>()
                     .Include(m => m.User)
-                    .Include(m => m.AprroveUser)
                     .Include(m => m.CreatedUser)
                     .Where(predicate).OrderByDescending(orderBy).ThenByDescending(s => s.ID)
                     .Skip(page).Take(pageSize).AsEnumerable();
@@ -52,14 +49,12 @@ namespace PQT.Domain.Concrete
             {
                 return _db.Set<Leave>()
                     .Include(m => m.User)
-                    .Include(m => m.AprroveUser)
                     .Include(m => m.CreatedUser)
                     .OrderBy(orderBy).ThenByDescending(s => s.ID)
                     .Skip(page).Take(pageSize).AsEnumerable();
             }
             return _db.Set<Leave>()
                 .Include(m => m.User)
-                .Include(m => m.AprroveUser)
                 .Include(m => m.CreatedUser)
                 .OrderByDescending(orderBy).ThenByDescending(s => s.ID)
                 .Skip(page).Take(pageSize).AsEnumerable();
@@ -70,12 +65,10 @@ namespace PQT.Domain.Concrete
             if (predicate != null)
                 return _db.Set<Leave>()
                     .Include(m => m.User)
-                    .Include(m => m.AprroveUser)
                     .Include(m => m.CreatedUser)
                     .Where(predicate).AsEnumerable();
             return _db.Set<Leave>()
                 .Include(m => m.User)
-                .Include(m => m.AprroveUser)
                 .Include(m => m.CreatedUser)
                 .AsEnumerable();
         }
@@ -96,7 +89,6 @@ namespace PQT.Domain.Concrete
             }
             return _db.Set<Leave>()
                 .Include(m => m.User)
-                .Include(m => m.AprroveUser)
                 .Include(m => m.CreatedUser)
                 .FirstOrDefault(m => m.ID == id);
         }
