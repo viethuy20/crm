@@ -71,6 +71,7 @@ namespace PQT.Web.Controllers
                 var callExists = _recruitmentService.GetAllCandidates(m => (
                     m.RecruitmentPositionID == model.Candidate.RecruitmentPositionID &&
                     m.OfficeLocationID == model.Candidate.OfficeLocationID &&
+                    m.Nationality == model.Candidate.Nationality &&
                     (!string.IsNullOrEmpty(m.MobileNumber) && m.MobileNumber == model.Candidate.MobileNumber)));
                 if (callExists.Any())
                 {
@@ -80,6 +81,7 @@ namespace PQT.Web.Controllers
                 callExists = _recruitmentService.GetAllCandidates(m => (
                                     m.RecruitmentPositionID == model.Candidate.RecruitmentPositionID &&
                                     m.OfficeLocationID == model.Candidate.OfficeLocationID &&
+                                    m.Nationality == model.Candidate.Nationality &&
                                     (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail == model.Candidate.PersonalEmail)));
                 if (callExists.Any())
                 {
@@ -203,7 +205,7 @@ namespace PQT.Web.Controllers
                     PersonalEmail = model.Candidate.PersonalEmail,
                     CandidateID = model.Candidate.ID,
                     OfficeLocationID = model.Candidate.OfficeLocationID,
-                    Nationality = model.Candidate.OfficeLocation.CountryName
+                    Nationality = model.Candidate.Nationality
                     //UserNo = _membershipService.GetTempUserNo()
                 };
             var role = _roleService.GetRoleByName(model.Candidate.RecruitmentPosition.Department);
@@ -438,8 +440,8 @@ namespace PQT.Web.Controllers
             if (!string.IsNullOrEmpty(searchValue))
             {
                 predicate = m =>
-                    //(saleId == 0 || m.UserID == saleId ||
-                    // (m.User != null && m.User.TransferUserID == saleId)) && 
+                     //(saleId == 0 || m.UserID == saleId ||
+                     // (m.User != null && m.User.TransferUserID == saleId)) && 
                      ((m.CandidateNo.ToLower().Contains(searchValue)) ||
                         (m.EnglishName != null && m.EnglishName.ToLower().Contains(searchValue)) ||
                         (m.FirstName.ToLower().Contains(searchValue)) ||
@@ -603,8 +605,8 @@ namespace PQT.Web.Controllers
                            //bool isRecruitmentIntern = CurrentUser.HasRole("HR") || CurrentUser.HasRole("Recruitment Intern");
                            //if (isRecruitmentIntern)
                            //{
-            //    saleId = CurrentUser.Identity.ID;
-            //}
+                           //    saleId = CurrentUser.Identity.ID;
+                           //}
 
             IEnumerable<Candidate> data = new HashSet<Candidate>();
             Func<Candidate, bool> predicate = null;
@@ -616,8 +618,8 @@ namespace PQT.Web.Controllers
                      (m.OneFaceToFaceSummary != null && m.OneFaceToFaceSummary.DateSelected == today) ||
                      (m.TwoFaceToFaceSummary != null && m.TwoFaceToFaceSummary.DateSelected == today)
                     ) &&
-                    //(saleId == 0 || m.UserID == saleId ||
-                    // (m.User != null && m.User.TransferUserID == saleId)) && 
+                     //(saleId == 0 || m.UserID == saleId ||
+                     // (m.User != null && m.User.TransferUserID == saleId)) && 
                      ((m.CandidateNo.ToLower().Contains(searchValue)) ||
                         (m.EnglishName != null && m.EnglishName.ToLower().Contains(searchValue)) ||
                         (m.FirstName.ToLower().Contains(searchValue)) ||
@@ -634,7 +636,7 @@ namespace PQT.Web.Controllers
                     ((m.PsSummary != null && m.PsSummary.DateSelected == today) ||
                      (m.OneFaceToFaceSummary != null && m.OneFaceToFaceSummary.DateSelected == today) ||
                      (m.TwoFaceToFaceSummary != null && m.TwoFaceToFaceSummary.DateSelected == today)
-                    ) 
+                    )
                     //&& (saleId == 0 || m.UserID == saleId || (m.User != null && m.User.TransferUserID == saleId))
                     ;
             }

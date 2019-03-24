@@ -189,6 +189,12 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
+                        @Html.Bootstrap().TextBoxFor(m => m.Candidate.Nationality).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Candidate.Nationality)
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
                         @Html.Bootstrap().TextBoxFor(m => m.Candidate.OfficeLocationDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
                         @Html.Bootstrap().LabelFor(m => m.Candidate.OfficeLocation)
                     </div>

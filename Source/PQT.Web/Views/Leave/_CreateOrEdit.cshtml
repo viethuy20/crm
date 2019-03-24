@@ -57,7 +57,8 @@
                 {
                     <a href="@FileUpload.GetImageUrl(FileUploadType.Leave, Model.Leave.Document)" target="_blank">@Model.Leave.Document</a>
                 }
-                @Html.Bootstrap().FileFor(m => m.Leave.Document).Class("form-control").ShowValidationMessage(true)
+                @Html.HiddenFor(m=>m.Leave.Document)
+                @Html.Bootstrap().FileFor(m => m.DocumentFile).Class("form-control").ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.Leave.Document).LabelText("Evidence Document")
             </div>
         </div>

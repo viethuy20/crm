@@ -18,6 +18,7 @@ namespace PQT.Web.Models
         public IEnumerable<User> Users { get; set; }
         public int LeaveID { get; set; }
         public string Message { get; set; }
+        public HttpPostedFileBase DocumentFile { get; set; }
         public void Prepare(int id = 0)
         {
             var leaveService = DependencyHelper.GetService<ILeaveService>();
@@ -37,6 +38,15 @@ namespace PQT.Web.Models
             //var memberService = DependencyHelper.GetService<IMembershipService>();
             //Leave.LeaveStatus = LeaveStatus.Request;
             Leave.CreatedUserID = CurrentUser.Identity.ID;
+
+            if (DocumentFile != null)
+            {
+                string uploadPicture = FileUpload.Upload(FileUploadType.Leave, DocumentFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    Leave.Document = uploadPicture;
+                }
+            }
             Leave = leaveService.CreateLeave(Leave);
             if (Leave != null)
             {
@@ -57,6 +67,14 @@ namespace PQT.Web.Models
             //    Leave.CreatedUserID = CurrentUser.Identity.ID;
             //    notify = true;
             //}
+            if (DocumentFile != null)
+            {
+                string uploadPicture = FileUpload.Upload(FileUploadType.Leave, DocumentFile);
+                if (!string.IsNullOrEmpty(uploadPicture))
+                {
+                    Leave.Document = uploadPicture;
+                }
+            }
             if (leaveService.UpdateLeave(Leave))
             {
                 //if (notify)

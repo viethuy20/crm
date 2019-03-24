@@ -24,6 +24,8 @@ namespace PQT.Domain.Entities
         public string ApplicationSource { get; set; }
         public string Remarks { get; set; }
         public string Resume { get; set; }
+        public string Nationality { get; set; }
+        public string DialingCode { get; set; }
         public string Information { get; set; }
         public int? OfficeLocationID { get; set; }
         [ForeignKey("OfficeLocationID")]
@@ -245,18 +247,6 @@ namespace PQT.Domain.Entities
                 if (User != null)
                 {
                     return User.DisplayName;
-                }
-
-                return "";
-            }
-        }
-        public string DialingCode
-        {
-            get
-            {
-                if (OfficeLocation != null)
-                {
-                    return OfficeLocation.Country.DialingCode;
                 }
 
                 return "";
