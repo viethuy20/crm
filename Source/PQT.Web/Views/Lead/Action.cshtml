@@ -2,6 +2,7 @@
 @model PQT.Domain.Entities.Lead
 @{
     var eventClosed = Model.Event != null && (Model.Event.IsEventEnd || Model.Event.EndDate.Date < DateTime.Today) ? true : false;
+    var daysExpired = Settings.Lead.NumberDaysExpired();
 }
 
 <div class="card card-underline" style="background: white; margin: auto; max-width: 950px; position: relative;">
@@ -98,14 +99,14 @@
                     }
                 }
                 @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord == LeadStatus.Initial ||
-                                Model.LeadStatusRecord == LeadStatus.Reject))
+                                Model.LeadStatusRecord == LeadStatus.Reject || Model.CheckNCLExpired(daysExpired)))
                 {
                     <a href="#" data-id="@Model.ID" class="btn btn-info btnRequestNCL"><i class="md md-phone-locked"></i> Request To NCL</a>
                 }
                 @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.LeadStatusRecord == LeadStatus.Initial ||
                                 Model.LeadStatusRecord == LeadStatus.Reject ||
                                 Model.LeadStatusRecord == LeadStatus.RequestNCL ||
-                                Model.LeadStatusRecord == LeadStatus.Live))
+                                Model.LeadStatusRecord == LeadStatus.Live || Model.CheckNCLExpired(daysExpired)))
                 {
                     @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.ID, requestType = LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
                 }

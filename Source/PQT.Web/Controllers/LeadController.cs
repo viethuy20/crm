@@ -294,11 +294,14 @@ namespace PQT.Web.Controllers
                 }
                 else
                 {
-                    //var currentUser = CurrentUser.Identity;
+                    var currentUser = CurrentUser.Identity;
                     var daysExpired = Settings.Lead.NumberDaysExpired();
                     var allLeads = _repo.GetAllLeads(m => m.EventID == model.EventID && !m.ExpiredForReopen);
                     var leadExists = allLeads.Where(m =>
                         m.CompanyID == model.CompanyID &&
+                        m.UserID != currentUser.ID &&
+                        m.User.UserStatus == UserStatus.Live &&
+                        m.User.TransferUserID != currentUser.ID &&
                         m.CheckInNCL(daysExpired));
                     if (leadExists.Any())
                     {
@@ -311,11 +314,9 @@ namespace PQT.Web.Controllers
                                                             m.WorkEmail1 == model.WorkEmail1) ||
                                                            (!string.IsNullOrEmpty(m.PersonalEmail) &&
                                                             m.PersonalEmail == model.PersonalEmail)) &&
-                                                          (
-                                                              //m.UserID != currentUser.ID &&
-                                                              //  m.User.TransferUserID != currentUser.ID &&
-                                                              m.LeadStatusRecord != LeadStatus.Deleted &&
-                                                              !m.CheckNCLExpired(daysExpired)));
+                                                          (m.UserID == currentUser.ID &&
+                                                              //m.User.TransferUserID == currentUser.ID &&
+                                                              m.LeadStatusRecord != LeadStatus.Deleted));
                     if (emailExists.Any())
                     {
                         TempData["error"] = "Email existing in another entry of same event";
@@ -328,7 +329,7 @@ namespace PQT.Web.Controllers
                                                             (!string.IsNullOrEmpty(m.PersonalEmail) &&
                                                              m.PersonalEmail == model.PersonalEmail)) &&
                                                            (
-                                                               //m.UserID == currentUser.ID &&
+                                                               m.UserID == currentUser.ID &&
                                                                //  m.User.TransferUserID == currentUser.ID &&
                                                                m.LeadStatusRecord != LeadStatus.Deleted));
                     if (email2Exists.Any())
@@ -348,10 +349,9 @@ namespace PQT.Web.Controllers
                                                           (!string.IsNullOrEmpty(m.MobilePhone3) &&
                                                            m.MobilePhone3 == model.MobilePhone3)) &&
                                                          (
-                                                         //m.UserID != currentUser.ID &&
-                                                         //  m.User.TransferUserID != currentUser.ID &&
-                                                           m.LeadStatusRecord != LeadStatus.Deleted &&
-                                                           !m.CheckNCLExpired(daysExpired)));
+                                                         m.UserID == currentUser.ID &&
+                                                           //  m.User.TransferUserID != currentUser.ID &&
+                                                           m.LeadStatusRecord != LeadStatus.Deleted));
                     if (callExists.Any())
                     {
                         TempData["error"] = "Number existing in another entry of same event";
@@ -367,9 +367,9 @@ namespace PQT.Web.Controllers
                                                            (!string.IsNullOrEmpty(m.MobilePhone3) &&
                                                             m.MobilePhone3 == model.MobilePhone3)) &&
                                                           (
-                                                          //m.UserID == currentUser.ID &&
-                                                          //  m.User.TransferUserID == currentUser.ID &&
-                                                            m.LeadStatusRecord != LeadStatus.Deleted));
+                                                              m.UserID == currentUser.ID &&
+                                                              //  m.User.TransferUserID == currentUser.ID &&
+                                                              m.LeadStatusRecord != LeadStatus.Deleted));
                     if (call2Exists.Any())
                     {
                         TempData["error"] = "02 or more numbers cannot be overlapped inside 01 entry";
@@ -445,8 +445,8 @@ namespace PQT.Web.Controllers
                 m.ID != model.LeadID &&
                 !m.ExpiredForReopen &&
                 (
-                //m.LeadStatusRecord != LeadStatus.Initial &&
-                // m.LeadStatusRecord != LeadStatus.Reject &&
+                 //m.LeadStatusRecord != LeadStatus.Initial &&
+                 // m.LeadStatusRecord != LeadStatus.Reject &&
                  m.LeadStatusRecord != LeadStatus.Deleted) &&
                 ((!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail == model.WorkEmail) ||
                  (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1 == model.WorkEmail1) ||
@@ -1464,7 +1464,11 @@ namespace PQT.Web.Controllers
             if (eventLead != null)
             {
                 var daysExpired = Settings.Lead.NumberDaysExpired();
-                companiesInNcl = _repo.GetAllLeads(m => m.EventID == eventId).Where(m => m.CheckInNCL(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
+                companiesInNcl = _repo.GetAllLeads(m => m.EventID == eventId).Where(m =>
+                    m.UserID != currentUser.ID &&
+                    m.User.TransferUserID != currentUser.ID &&
+                    m.User.UserStatus == UserStatus.Live &&
+                    m.CheckInNCL(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
                 companies = eventLead.EventCompanies.Where(m =>
                         m.EntityStatus == EntityStatus.Normal && m.Company != null &&
                         m.Company.EntityStatus == EntityStatus.Normal)
@@ -1605,7 +1609,7 @@ namespace PQT.Web.Controllers
         {
             //var saleId = PermissionHelper.SalesmanId();
             var leads = _repo.GetAllLeads(m => m.EventID == eventId && !m.ExpiredForReopen);// && (saleId == 0 || m.UserID == saleId ||
-                                                                     //(m.User != null && m.User.TransferUserID == saleId)));
+                                                                                            //(m.User != null && m.User.TransferUserID == saleId)));
             var eventData = _eventService.GetEvent(eventId);
             return Json(new
             {
@@ -1627,7 +1631,7 @@ namespace PQT.Web.Controllers
             }
             //var saleId = PermissionHelper.SalesmanId();
             var ids = eventIds.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => Convert.ToInt32(m));
-            var leads = _repo.GetAllLeads(m => !m.ExpiredForReopen &&ids.Contains(m.EventID));// && (saleId == 0 || m.UserID == saleId ||
+            var leads = _repo.GetAllLeads(m => !m.ExpiredForReopen && ids.Contains(m.EventID));// && (saleId == 0 || m.UserID == saleId ||
             //(m.User != null && m.User.TransferUserID == saleId)));
             var listObj = new List<object>();
             foreach (var id in ids)

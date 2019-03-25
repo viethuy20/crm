@@ -5,6 +5,7 @@
 @{
     ViewBag.Title = "Call Detail";
     var eventClosed = Model.Event != null && (Model.Event.IsEventEnd || Model.Event.EndDate.Date < DateTime.Today) ? true : false;
+    var daysExpired = Settings.Lead.NumberDaysExpired();
 }
 <style>
     .card .Reject {
@@ -83,7 +84,7 @@
                     }
                 }
                 @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
-                                                                    Model.Lead.LeadStatusRecord == LeadStatus.Reject))
+                                                                    Model.Lead.LeadStatusRecord == LeadStatus.Reject || Model.Lead.CheckNCLExpired(daysExpired)))
                 {
                     @Html.Bootstrap().ActionLinkButton("Request To NCL", "RequestAction").Id("request_ncl").Class("btn-info").PrependIcon("md md-phone-locked")
                 }
@@ -106,7 +107,7 @@
                 @if (!eventClosed && CurrentUser.HasPermission("Lead", "RequestAction") && (Model.Lead.LeadStatusRecord == LeadStatus.Initial ||
                                                                     Model.Lead.LeadStatusRecord == LeadStatus.Reject ||
                                                                     Model.Lead.LeadStatusRecord == LeadStatus.RequestNCL ||
-                                                                    Model.Lead.LeadStatusRecord == LeadStatus.Live))
+                                                                    Model.Lead.LeadStatusRecord == LeadStatus.Live || Model.Lead.CheckNCLExpired(daysExpired)))
                 {
                     @Html.Bootstrap().ActionLinkButton("Request To LOI", "RequestAction").RouteValues(new { id = Model.Lead.ID, requestType = LeadStatus.RequestLOI }).Class("simple-ajax-popup-align-top btn-info").PrependIcon("md md-mail")
                 }

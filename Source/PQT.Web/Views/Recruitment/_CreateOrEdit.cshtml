@@ -15,6 +15,7 @@
 @Html.HiddenFor(m => m.Candidate.CandidateStatusID)
 @Html.HiddenFor(m => m.Candidate.EmployeeID)
 @Html.HiddenFor(m => m.Candidate.CandidateNo)
+@Html.HiddenFor(m => m.Candidate.DialingCode)
 <div class="card">
     <div class="card-body">
         <div class="row">
@@ -42,82 +43,81 @@
                     @Html.Bootstrap().LabelFor(m => m.Candidate.EnglishName)
                 </div>
             </div>
-            @Html.HiddenFor(m => m.Candidate.DialingCode)
             <div class="col-sm-4">
                 <div class="form-group">
                     <span class="input-group-addon dialingCode" style="color: #000;font-size: 16px;padding-bottom: 9px;font-weight: 500;"></span>
-                    <div class="input-group-content">
+                    <div class="input-group-content" style="padding-top:0">
                         @Html.Bootstrap().TextBoxFor(m => m.Candidate.MobileNumber).Class("form-control").ShowValidationMessage(true)
                     </div>
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.MobileNumber).ShowRequiredStar(true)
                 </div>
-                @Html.Bootstrap().LabelFor(m => m.Candidate.MobileNumber).ShowRequiredStar(true)
             </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Candidate.PersonalEmail).Class("form-control text-lowercase").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Candidate.PersonalEmail).ShowRequiredStar(true)
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.PersonalEmail).Class("form-control text-lowercase").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.PersonalEmail).ShowRequiredStar(true)
+                </div>
             </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                @Html.Bootstrap().TextBoxFor(m => m.Candidate.ApplicationSource).Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Candidate.ApplicationSource)
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().TextBoxFor(m => m.Candidate.ApplicationSource).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.ApplicationSource)
+                </div>
             </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                <select class="form-control" id="@Html.IdFor(m=>m.Candidate.Nationality)" name="@Html.NameFor(m => m.Candidate.Nationality)">
-                    <option value="" dialingcode=""></option>
-                    @foreach (var trainer in countries)
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <select class="form-control" id="@Html.IdFor(m=>m.Candidate.Nationality)" name="@Html.NameFor(m => m.Candidate.Nationality)">
+                        <option value="" dialingcode=""></option>
+                        @foreach (var trainer in countries)
+                        {
+                            <option value="@trainer.Name" dialingcode="@trainer.DialingCode" selected="@(Model.Candidate.Nationality == trainer.Name)">@trainer.Name</option>
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(m => m.Candidate.Nationality)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.Nationality)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <select class="form-control" id="@Html.IdFor(m=>m.Candidate.OfficeLocationID)" name="@Html.NameFor(m => m.Candidate.OfficeLocationID)" required="required">
+                        <option value=""></option>
+                        @foreach (var trainer in officeLocations)
+                        {
+                            <option value="@trainer.ID" dialingcode="@trainer.DialingCode" selected="@(Model.Candidate.OfficeLocationID == trainer.ID)">@trainer.Name</option>
+                        }
+                    </select>
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.OfficeLocation).ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @Html.HiddenFor(m => m.Candidate.Resume)
+                <div class="form-group ">
+                    @if (!string.IsNullOrEmpty(Model.Candidate.Resume))
                     {
-                        <option value="@trainer.Name" dialingcode="@trainer.DialingCode" selected="@(Model.Candidate.Nationality == trainer.Name)">@trainer.Name</option>
+                        <a href="@FileUpload.GetImageUrl(FileUploadType.Recruitment, Model.Candidate.Resume)" target="_blank">@Model.Candidate.Resume</a>
                     }
-                </select>
-                @Html.ValidationMessageFor(m => m.Candidate.Nationality)
-                @Html.Bootstrap().LabelFor(m => m.Candidate.Nationality)
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                <select class="form-control" id="@Html.IdFor(m=>m.Candidate.OfficeLocationID)" name="@Html.NameFor(m => m.Candidate.OfficeLocationID)" required="required">
-                    <option value=""></option>
-                    @foreach (var trainer in officeLocations)
+                    @if (Model.Candidate != null && Model.Candidate.ID > 0)
                     {
-                        <option value="@trainer.ID" dialingcode="@trainer.DialingCode" selected="@(Model.Candidate.OfficeLocationID == trainer.ID)">@trainer.Name</option>
+                        @Html.Bootstrap().FileFor(m => m.ResumeFile).Class("form-control").ShowValidationMessage(true)
                     }
-                </select>
-                @Html.Bootstrap().LabelFor(m => m.Candidate.OfficeLocation).ShowRequiredStar(true)
+                    else
+                    {
+                        @Html.Bootstrap().FileFor(m => m.ResumeFile).Class("form-control").ShowValidationMessage(true).HtmlAttributes(new { required = "required" })
+                    }
+                    @Html.Bootstrap().LabelFor(m => m.ResumeFile).LabelText("Resume").ShowRequiredStar(true)
+                </div>
             </div>
-        </div>
-        <div class="col-sm-4">
-            @Html.HiddenFor(m => m.Candidate.Resume)
-            <div class="form-group ">
-                @if (!string.IsNullOrEmpty(Model.Candidate.Resume))
-                {
-                    <a href="@FileUpload.GetImageUrl(FileUploadType.Recruitment, Model.Candidate.Resume)" target="_blank">@Model.Candidate.Resume</a>
-                }
-                @if (Model.Candidate != null && Model.Candidate.ID > 0)
-                {
-                    @Html.Bootstrap().FileFor(m => m.ResumeFile).Class("form-control").ShowValidationMessage(true)
-                }
-                else
-                {
-                    @Html.Bootstrap().FileFor(m => m.ResumeFile).Class("form-control").ShowValidationMessage(true).HtmlAttributes(new { required = "required" })
-                }
-                @Html.Bootstrap().LabelFor(m => m.ResumeFile).LabelText("Resume").ShowRequiredStar(true)
+            <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.RecruitmentPositionID, recruitmentPositions.ToSelectList(m => m.ID, m => m.Description)).HtmlAttributes(new { required = "required" }).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.RecruitmentPosition).ShowRequiredStar(true)
+                </div>
             </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                @Html.Bootstrap().DropDownListFor(m => m.Candidate.RecruitmentPositionID, recruitmentPositions.ToSelectList(m => m.ID, m => m.Description)).HtmlAttributes(new { required = "required" }).OptionLabel("").Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Candidate.RecruitmentPosition).ShowRequiredStar(true)
-            </div>
-        </div>
-        <div class="col-sm-12">
-            <div class="form-group">
-                @Html.Bootstrap().TextAreaFor(m => m.Candidate.Remarks).Rows(5).Class("form-control").ShowValidationMessage(true)
-                @Html.Bootstrap().LabelFor(m => m.Candidate.Remarks)
+            <div class="col-sm-12">
+                <div class="form-group">
+                    @Html.Bootstrap().TextAreaFor(m => m.Candidate.Remarks).Rows(5).Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.Remarks)
+                </div>
             </div>
         </div>
     </div>
