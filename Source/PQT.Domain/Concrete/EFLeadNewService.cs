@@ -20,45 +20,27 @@ namespace PQT.Domain.Concrete
         {
             Func<LeadNew, bool> predicate2 =
                 m => predicate(m);
-            return GetAll(predicate2, m => m.Event,m=>m.AssignUser).AsEnumerable();
+            return GetAll(predicate2, m => m.Event, m => m.AssignUser).AsEnumerable();
         }
 
-        public IEnumerable<LeadNew> GetAllLeadNewsForKPI(int eventId, int userId, Func<LeadNew, bool> predicate)
+        public IEnumerable<LeadNew> GetAllLeadNewsForKPI(int eventId, int userId, DateTime dateFrom, DateTime dateTo, string searchValue)
         {
-            Func<LeadNew, bool> predicate2 = null;
-            if (eventId > 0 && userId > 0)
+            dateTo = dateTo.AddDays(1);
+            var queries = _db.Set<LeadNew>().Where(m =>
+                dateFrom <= m.FirstAssignDate &&
+                m.FirstAssignDate < dateTo &&
+                m.AssignUserID > 0);
+            if (!string.IsNullOrEmpty(searchValue))
+                queries = queries.Where(m => m.User.DisplayName.Contains(searchValue));
+            if (eventId > 0)
             {
-                predicate2 =
-                    m => m.EventID == eventId &&
-                         (m.UserID == userId 
-                         //|| m.User.TransferUserID == userId
-                         )
-                         && predicate(m);
+                queries = queries.Where(m => m.EventID == eventId);
             }
-            else if (eventId > 0)
+            if (userId > 0)
             {
-                predicate2 =
-                    m => m.EventID == eventId
-                         && predicate(m);
+                queries = queries.Where(m => m.UserID == userId);
             }
-            else if (userId > 0)
-            {
-                predicate2 =
-                    m => (m.UserID == userId 
-                    //|| m.User.TransferUserID == userId
-                    )
-                         && predicate(m);
-            }
-            else
-            {
-                predicate2 =
-                    m => predicate(m);
-            }
-
-            return _db.Set<LeadNew>()
-                .Include(m => m.User)
-                .Where(predicate2).AsEnumerable();
-
+            return queries.Include(m => m.User).ToList();
         }
         public LeadNew GetLeadNew(int id)
         {

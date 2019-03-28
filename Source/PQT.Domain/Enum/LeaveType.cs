@@ -29,6 +29,7 @@ namespace PQT.Domain.Enum
         public static readonly TypeOfLeave Maternity = New<TypeOfLeave>(4, "Maternity Leave");
         public static readonly TypeOfLeave FullDayUnpaid = New<TypeOfLeave>(5, "Full day Unpaid Leave");
         public static readonly TypeOfLeave HalfDayUnpaid = New<TypeOfLeave>(6, "Half day Unpaid Leave");
+        public static readonly TypeOfLeave Absentism = New<TypeOfLeave>(7, "Absentism");
     }
     public class TypeOfLatenes : Enumeration
     {

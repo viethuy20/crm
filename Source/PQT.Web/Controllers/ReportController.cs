@@ -69,20 +69,9 @@ namespace PQT.Web.Controllers
             IEnumerable<Lead> leads = new HashSet<Lead>();
             IEnumerable<Booking> bookings = new HashSet<Booking>();
 
-            leads = _leadService.GetAllLeadsForKPI(eventId, userId, m =>
-                datefrom <= m.CreatedTime.Date &&
-                m.CreatedTime.Date <= dateto
-            );
-            leadNews = _leadNewService.GetAllLeadNewsForKPI(eventId, userId, m =>
-                m.AssignUserID > 0 &&
-                datefrom <= m.FirstAssignDate.Date &&
-                m.FirstAssignDate.Date <= dateto
-            );
-            bookings = _bookingService.GetAllBookingsForKPI(eventId, userId, m =>
-                m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value &&
-                datefrom <= m.BookingDate.Date &&
-                m.BookingDate.Date <= dateto
-            );
+            leads = _leadService.GetAllLeadsForKPI(eventId, userId, datefrom, dateto,null);
+            leadNews = _leadNewService.GetAllLeadNewsForKPI(eventId, userId, datefrom, dateto, null);
+            bookings = _bookingService.GetAllBookingsForKPI(eventId, userId, datefrom, dateto, null);
             model.Prepare(leads, leadNews, bookings);
             return View(model);
         }
@@ -118,22 +107,7 @@ namespace PQT.Web.Controllers
                 model.Date = "All";
             }
             IEnumerable<Candidate> candidates = new HashSet<Candidate>();
-            if (userId > 0)
-            {
-                candidates = _recruitmentService.GetAllCandidates(m =>
-                    m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value &&
-                    datefrom <= m.CreatedTime.Date &&
-                    m.CreatedTime.Date <= dateto
-                );
-            }
-            else
-            {
-                candidates = _recruitmentService.GetAllCandidates(m =>
-                    m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value &&
-                    datefrom <= m.CreatedTime.Date &&
-                    m.CreatedTime.Date <= dateto
-                );
-            }
+            candidates = _recruitmentService.GetAllCandidatesForKpis(null, userId, datefrom, dateto).AsEnumerable();
             model.Prepare(candidates);
             return View(model);
         }

@@ -24,13 +24,8 @@ namespace PQT.Web.Models
             var leaveService = DependencyHelper.GetService<ILeaveService>();
             Leave = id > 0 ? leaveService.GetLeave(id) : new Leave();
             var memberService = DependencyHelper.GetService<IMembershipService>();
-            if (CurrentUser.HasRole("Manager"))
-                Users = memberService.GetUsers(m => m.UserStatus.Value == UserStatus.Live.Value &&
-                                                    m.Status.Value != EntityUserStatus.Deleted);
-            else
-                Users = memberService.GetUsers(m => m.UserStatus.Value == UserStatus.Live.Value &&
-                                                    m.Status.Value != EntityUserStatus.Deleted &&
-                                                    m.DirectSupervisorID == CurrentUser.Identity.ID);
+            Users = memberService.GetAllUsersForLeave(CurrentUser.Identity.ID);
+
         }
         public bool Create()
         {
@@ -38,7 +33,6 @@ namespace PQT.Web.Models
             //var memberService = DependencyHelper.GetService<IMembershipService>();
             //Leave.LeaveStatus = LeaveStatus.Request;
             Leave.CreatedUserID = CurrentUser.Identity.ID;
-
             if (DocumentFile != null)
             {
                 string uploadPicture = FileUpload.Upload(FileUploadType.Leave, DocumentFile);

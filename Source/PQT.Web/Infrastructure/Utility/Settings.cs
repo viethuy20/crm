@@ -127,6 +127,14 @@ namespace PQT.Web.Infrastructure.Utility
             {
                 return Convert.ToInt32(GetSetting(Setting.ModuleType.KPI, Setting.ModuleKey.KPI.BufferForNewUser, typeof(int)));
             }
+            public static int DailyRequiredCallKpiForIntern()
+            {
+                return Convert.ToInt32(GetSetting(Setting.ModuleType.KPI, Setting.ModuleKey.KPI.DailyRequiredCallKpiForIntern, typeof(int)));
+            }
+            public static int DailyRequiredCallKpiForFull()
+            {
+                return Convert.ToInt32(GetSetting(Setting.ModuleType.KPI, Setting.ModuleKey.KPI.DailyRequiredCallKpiForFull, typeof(int)));
+            }
         }
     }
     #endregion

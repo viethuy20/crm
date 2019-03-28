@@ -47,14 +47,7 @@ namespace PQT.Web.Controllers
             var model = new RecruitmentModel();
             model.Candidate = new Candidate { UserID = CurrentUser.Identity.ID };
             var rolesInterviewer = new List<string> { "manager", "hr", "admin" };
-            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value != EntityStatus.Deleted.Value && (
-                                                                      m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
-                                                                      m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                                      m.FinanceAdminUnit == FinanceAdminUnit.Manager ||
-                                                                      m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
-                                                                          .Select(r => r.Name.ToUpper())
-                                                                          .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
-                                                                          .Any()));
+            var allSupervisors = _membershipService.GetAllInterviewers(rolesInterviewer.ToArray());
             model.Interviewers = allSupervisors;
             return View(model);
         }
@@ -68,22 +61,24 @@ namespace PQT.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var callExists = _recruitmentService.GetAllCandidates(m => (
-                    m.RecruitmentPositionID == model.Candidate.RecruitmentPositionID &&
-                    m.OfficeLocationID == model.Candidate.OfficeLocationID &&
-                    m.Nationality == model.Candidate.Nationality &&
-                    (!string.IsNullOrEmpty(m.MobileNumber) && m.MobileNumber == model.Candidate.MobileNumber)));
-                if (callExists.Any())
+                var canExist =
+                    _recruitmentService.GetExistCandidatesByMobile(
+                        (int)model.Candidate.RecruitmentPositionID,
+                        (int)model.Candidate.OfficeLocationID,
+                        model.Candidate.Nationality,
+                        model.Candidate.MobileNumber);
+                if (canExist != null)
                 {
                     TempData["error"] = "Number existing in another entry of same position";
                     return RedirectToAction("Create");
                 }
-                callExists = _recruitmentService.GetAllCandidates(m => (
-                                    m.RecruitmentPositionID == model.Candidate.RecruitmentPositionID &&
-                                    m.OfficeLocationID == model.Candidate.OfficeLocationID &&
-                                    m.Nationality == model.Candidate.Nationality &&
-                                    (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail == model.Candidate.PersonalEmail)));
-                if (callExists.Any())
+                canExist =
+                    _recruitmentService.GetExistCandidatesByEmail(
+                        (int) model.Candidate.RecruitmentPositionID,
+                        (int) model.Candidate.OfficeLocationID,
+                        model.Candidate.Nationality,
+                        model.Candidate.PersonalEmail);
+                if (canExist != null)
                 {
                     TempData["error"] = "Emails existing in another entry of same position";
                     return RedirectToAction("Create");
@@ -97,14 +92,7 @@ namespace PQT.Web.Controllers
             }
 
             var rolesInterviewer = new List<string> { "manager", "hr", "admin" };
-            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value != EntityStatus.Deleted.Value && (
-                                                                      m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
-                                                                      m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                                      m.FinanceAdminUnit == FinanceAdminUnit.Manager ||
-                                                                      m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
-                                                                          .Select(r => r.Name.ToUpper())
-                                                                          .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
-                                                                          .Any()));
+            var allSupervisors = _membershipService.GetAllInterviewers(rolesInterviewer.ToArray());
             model.Interviewers = allSupervisors;
             TempData["error"] = "Save failed";
             return View(model);
@@ -115,14 +103,7 @@ namespace PQT.Web.Controllers
             model.PrepareEdit(id);
 
             var rolesInterviewer = new List<string> { "manager", "hr", "admin" };
-            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value != EntityStatus.Deleted.Value && (
-                                                                      m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
-                                                                      m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                                      m.FinanceAdminUnit == FinanceAdminUnit.Manager ||
-                                                                      m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
-                                                                          .Select(r => r.Name.ToUpper())
-                                                                          .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
-                                                                          .Any()));
+            var allSupervisors = _membershipService.GetAllInterviewers(rolesInterviewer.ToArray());
             model.Interviewers = allSupervisors;
             if (model.Candidate == null)
             {
@@ -146,14 +127,7 @@ namespace PQT.Web.Controllers
                 }
             }
             var rolesInterviewer = new List<string> { "manager", "hr", "admin" };
-            var allSupervisors = _membershipService.GetUsers(m => m.Status.Value != EntityStatus.Deleted.Value && (
-                                                                      m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
-                                                                      m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                                      m.FinanceAdminUnit == FinanceAdminUnit.Manager ||
-                                                                      m.ProjectManagementUnit != ProjectManagementUnit.None || m.Roles
-                                                                          .Select(r => r.Name.ToUpper())
-                                                                          .Intersect(rolesInterviewer.Select(r1 => r1.ToUpper()))
-                                                                          .Any()));
+            var allSupervisors = _membershipService.GetAllInterviewers(rolesInterviewer.ToArray());
             model.Interviewers = allSupervisors;
             TempData["error"] = "Save failed";
             return View(model);
@@ -437,107 +411,9 @@ namespace PQT.Web.Controllers
             //}
             IEnumerable<Candidate> data = new HashSet<Candidate>();
             Func<Candidate, bool> predicate = null;
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                predicate = m =>
-                     //(saleId == 0 || m.UserID == saleId ||
-                     // (m.User != null && m.User.TransferUserID == saleId)) && 
-                     ((m.CandidateNo.ToLower().Contains(searchValue)) ||
-                        (m.EnglishName != null && m.EnglishName.ToLower().Contains(searchValue)) ||
-                        (m.FirstName.ToLower().Contains(searchValue)) ||
-                        (m.LastName.ToLower().Contains(searchValue)) ||
-                        (m.MobileNumber.ToLower().Contains(searchValue)) ||
-                        (m.PersonalEmail.ToLower().Contains(searchValue)) ||
-                        (m.ApplicationSource != null && m.ApplicationSource.ToLower().Contains(searchValue)) ||
-                        (m.PsSummaryDateDisplay.ToLower().Contains(searchValue)) ||
-                        (m.OneFaceToFaceSummaryDateDisplay.ToLower().Contains(searchValue)) ||
-                        (m.TwoFaceToFaceSummaryDateDisplay.ToLower().Contains(searchValue)) ||
-                        (m.OfficeLocationDisplay.ToLower().Contains(searchValue)));
-            }
-            else
-            {
-                //predicate = m =>
-                //    (saleId == 0 || m.UserID == saleId || (m.User != null && m.User.TransferUserID == saleId));
-            }
-            recordsTotal = _recruitmentService.GetCountCandidates(predicate);
+            recordsTotal = _recruitmentService.GetCountCandidates(searchValue);
             // ReSharper disable once AssignNullToNotNullAttribute
-            #region sort
-            switch (sortColumn)
-            {
-                case "CandidateNo":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.CandidateNo, skip, pageSize);
-                    break;
-                case "CreatedTime":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.CreatedTime, skip, pageSize);
-                    break;
-                case "EnglishName":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.EnglishName, skip, pageSize);
-                    break;
-                case "FirstName":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.FirstName, skip, pageSize);
-                    break;
-                case "LastName":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.LastName, skip, pageSize);
-                    break;
-                case "MobileNumber":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.MobileNumber, skip, pageSize);
-                    break;
-                case "PersonalEmail":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.PersonalEmail, skip, pageSize);
-                    break;
-                case "ApplicationSource":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.ApplicationSource, skip, pageSize);
-                    break;
-                case "OfficeLocationDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.OfficeLocationDisplay, skip, pageSize);
-                    break;
-                case "PsSummaryDateDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.PsSummaryDate, skip, pageSize);
-                    break;
-                case "PsSummaryInterviewer":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.PsSummaryInterviewer, skip, pageSize);
-                    break;
-                case "PsSummaryStatusDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.PsSummaryStatusDisplay, skip, pageSize);
-                    break;
-                case "PsSummaryStatusReason":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.PsSummaryStatusReason, skip, pageSize);
-                    break;
-                case "OneFaceToFaceSummaryDateDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.OneFaceToFaceSummaryDate, skip, pageSize);
-                    break;
-                case "OneFaceToFaceSummaryInterviewer":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.OneFaceToFaceSummaryInterviewer, skip, pageSize);
-                    break;
-                case "OneFaceToFaceSummaryStatusDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.OneFaceToFaceSummaryStatusDisplay, skip, pageSize);
-                    break;
-                case "OneFaceToFaceSummaryStatusReason":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.OneFaceToFaceSummaryStatusReason, skip, pageSize);
-                    break;
-                case "TwoFaceToFaceSummaryDateDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.TwoFaceToFaceSummaryDate, skip, pageSize);
-                    break;
-                case "TwoFaceToFaceSummaryInterviewer":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.TwoFaceToFaceSummaryInterviewer, skip, pageSize);
-                    break;
-                case "TwoFaceToFaceSummaryStatusDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.TwoFaceToFaceSummaryStatusDisplay, skip, pageSize);
-                    break;
-                case "TwoFaceToFaceSummaryStatusReason":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.TwoFaceToFaceSummaryStatusReason, skip, pageSize);
-                    break;
-                case "UserDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.UserDisplay, skip, pageSize);
-                    break;
-                case "StatusDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.StatusDisplay, skip, pageSize);
-                    break;
-                default:
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.ID, skip, pageSize);
-                    break;
-            }
-            #endregion sort
+            data = _recruitmentService.GetAllCandidates(searchValue, sortColumnDir, sortColumn, skip, pageSize);
 
             var json = new
             {
@@ -601,126 +477,16 @@ namespace PQT.Web.Controllers
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
-            var saleId = 0;//CurrentUser.Identity.ID;
-                           //bool isRecruitmentIntern = CurrentUser.HasRole("HR") || CurrentUser.HasRole("Recruitment Intern");
-                           //if (isRecruitmentIntern)
-                           //{
-                           //    saleId = CurrentUser.Identity.ID;
-                           //}
-
+            var saleId = 0;
+            //CurrentUser.Identity.ID;
+            //bool isRecruitmentIntern = CurrentUser.HasRole("HR") || CurrentUser.HasRole("Recruitment Intern");
+            //if (isRecruitmentIntern)
+            //{
+            //    saleId = CurrentUser.Identity.ID;
+            //}
             IEnumerable<Candidate> data = new HashSet<Candidate>();
-            Func<Candidate, bool> predicate = null;
-            var today = DateTime.Today;
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                predicate = m =>
-                    ((m.PsSummary != null && m.PsSummary.DateSelected == today) ||
-                     (m.OneFaceToFaceSummary != null && m.OneFaceToFaceSummary.DateSelected == today) ||
-                     (m.TwoFaceToFaceSummary != null && m.TwoFaceToFaceSummary.DateSelected == today)
-                    ) &&
-                     //(saleId == 0 || m.UserID == saleId ||
-                     // (m.User != null && m.User.TransferUserID == saleId)) && 
-                     ((m.CandidateNo.ToLower().Contains(searchValue)) ||
-                        (m.EnglishName != null && m.EnglishName.ToLower().Contains(searchValue)) ||
-                        (m.FirstName.ToLower().Contains(searchValue)) ||
-                        (m.LastName.ToLower().Contains(searchValue)) ||
-                        (m.MobileNumber.ToLower().Contains(searchValue)) ||
-                        (m.PersonalEmail.ToLower().Contains(searchValue)) ||
-                        (m.ApplicationSource != null && m.ApplicationSource.ToLower().Contains(searchValue)) ||
-                        (m.OfficeLocationDisplay.ToLower().Contains(searchValue)));
-            }
-            else
-            {
-
-                predicate = m =>
-                    ((m.PsSummary != null && m.PsSummary.DateSelected == today) ||
-                     (m.OneFaceToFaceSummary != null && m.OneFaceToFaceSummary.DateSelected == today) ||
-                     (m.TwoFaceToFaceSummary != null && m.TwoFaceToFaceSummary.DateSelected == today)
-                    )
-                    //&& (saleId == 0 || m.UserID == saleId || (m.User != null && m.User.TransferUserID == saleId))
-                    ;
-            }
-            recordsTotal = _recruitmentService.GetCountCandidates(predicate);
-
-
-            #region sort
-            switch (sortColumn)
-            {
-                case "CandidateNo":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.CandidateNo, skip, pageSize);
-                    break;
-                case "CreatedTime":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.CreatedTime, skip, pageSize);
-                    break;
-                case "EnglishName":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.EnglishName, skip, pageSize);
-                    break;
-                case "FirstName":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.FirstName, skip, pageSize);
-                    break;
-                case "LastName":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.LastName, skip, pageSize);
-                    break;
-                case "MobileNumber":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.MobileNumber, skip, pageSize);
-                    break;
-                case "PersonalEmail":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.PersonalEmail, skip, pageSize);
-                    break;
-                case "ApplicationSource":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.ApplicationSource, skip, pageSize);
-                    break;
-                case "OfficeLocationDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.OfficeLocationDisplay, skip, pageSize);
-                    break;
-                case "PsSummaryDateDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.PsSummaryDate, skip, pageSize);
-                    break;
-                case "PsSummaryInterviewer":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.PsSummaryInterviewer, skip, pageSize);
-                    break;
-                case "PsSummaryStatusDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.PsSummaryStatusDisplay, skip, pageSize);
-                    break;
-                case "PsSummaryStatusReason":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.PsSummaryStatusReason, skip, pageSize);
-                    break;
-                case "OneFaceToFaceSummaryDateDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.OneFaceToFaceSummaryDate, skip, pageSize);
-                    break;
-                case "OneFaceToFaceSummaryInterviewer":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.OneFaceToFaceSummaryInterviewer, skip, pageSize);
-                    break;
-                case "OneFaceToFaceSummaryStatusDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.OneFaceToFaceSummaryStatusDisplay, skip, pageSize);
-                    break;
-                case "OneFaceToFaceSummaryStatusReason":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.OneFaceToFaceSummaryStatusReason, skip, pageSize);
-                    break;
-                case "TwoFaceToFaceSummaryDateDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.TwoFaceToFaceSummaryDate, skip, pageSize);
-                    break;
-                case "TwoFaceToFaceSummaryInterviewer":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.TwoFaceToFaceSummaryInterviewer, skip, pageSize);
-                    break;
-                case "TwoFaceToFaceSummaryStatusDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.TwoFaceToFaceSummaryStatusDisplay, skip, pageSize);
-                    break;
-                case "TwoFaceToFaceSummaryStatusReason":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.TwoFaceToFaceSummaryStatusReason, skip, pageSize);
-                    break;
-                case "UserDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.UserDisplay, skip, pageSize);
-                    break;
-                case "StatusDisplay":
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.StatusDisplay, skip, pageSize);
-                    break;
-                default:
-                    data = _recruitmentService.GetAllCandidates(predicate, sortColumnDir, s => s.ID, skip, pageSize);
-                    break;
-            }
-            #endregion sort
-
+            recordsTotal = _recruitmentService.GetCountCandidatesInterviewToday(searchValue);
+            data = _recruitmentService.GetAllCandidatesInterviewToday(searchValue, sortColumnDir, sortColumn, skip, pageSize);
             var json = new
             {
                 draw = draw,

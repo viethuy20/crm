@@ -144,14 +144,14 @@ namespace PQT.Web.Controllers
             ViewBag.HomeSearch = model.HomeSearch;
             return View(model);
         }
-        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
-        public ActionResult GetNotifyForEvent(int eventId, int page = 1)
-        {
-            var notifications =
-                _notificationService.GetAllUserNotificationsByEvent(CurrentUser.Identity.ID, eventId,
-                    Settings.System.NotificationNumber());
-            return Json(notifications, JsonRequestBehavior.AllowGet);
-        }
+        //[ExcludeFilters(typeof(RequestAuthorizeAttribute))]
+        //public ActionResult GetNotifyForEvent(int eventId, int page = 1)
+        //{
+        //    var notifications =
+        //        _notificationService.GetAllUserNotificationsByEvent(CurrentUser.Identity.ID, eventId,
+        //            Settings.System.NotificationNumber());
+        //    return Json(notifications, JsonRequestBehavior.AllowGet);
+        //}
 
         public ActionResult GetNotifyForEvents(string eventIds)
         {

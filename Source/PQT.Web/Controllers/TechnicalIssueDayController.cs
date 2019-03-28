@@ -45,7 +45,7 @@ namespace PQT.Web.Controllers
         public ActionResult CreateOrEdit(TechnicalIssueDay model)
         {
             model.IssueMonth = DateTime.ParseExact(model.TempMonth, "MM/yyyy", CultureInfo.InvariantCulture);
-            var exist = _unitRepo.GetTechnicalIssueDayByMonth(model.IssueMonth);
+            var exist = _unitRepo.GetTechnicalIssueDayByMonth(model.IssueMonth, model.UserID);
             if (exist != null && exist.ID != model.ID)
                 return Json(new
                 {
@@ -113,31 +113,8 @@ namespace PQT.Web.Controllers
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
             IEnumerable<TechnicalIssueDay> data = new HashSet<TechnicalIssueDay>();
-            Func<TechnicalIssueDay, bool> predicate = null;
-
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                predicate = m =>
-                    m.IssueMonth.ToString("MMM/yyyy").ToLower().Contains(searchValue);
-            }
-            recordsTotal = _unitRepo.GetCountTechnicalIssueDays(predicate);
-
-            switch (sortColumn)
-            {
-                case "UserDisplay":
-                    data = _unitRepo.GetAllTechnicalIssueDays(predicate, sortColumnDir, s => s.UserDisplay, skip, pageSize);
-                    break;
-                case "IssueMonthDisplay":
-                    data = _unitRepo.GetAllTechnicalIssueDays(predicate, sortColumnDir, s => s.IssueMonth, skip, pageSize);
-                    break;
-                case "TechnicalIssueDays":
-                    data = _unitRepo.GetAllTechnicalIssueDays(predicate, sortColumnDir, s => s.TechnicalIssueDays, skip, pageSize);
-                    break;
-                default:
-                    data = _unitRepo.GetAllTechnicalIssueDays(predicate, sortColumnDir, s => s.ID, skip, pageSize); ;
-                    break;
-            }
-
+            recordsTotal = _unitRepo.GetCountTechnicalIssueDays(searchValue);
+            data = _unitRepo.GetAllTechnicalIssueDays(searchValue, sortColumnDir, sortColumn, skip, pageSize);
             var json = new
             {
                 draw = draw,
@@ -147,6 +124,7 @@ namespace PQT.Web.Controllers
                 {
                     m.ID,
                     m.UserDisplay,
+                    m.Remarks,
                     m.UserID,
                     m.TechnicalIssueDays,
                     m.IssueMonth,

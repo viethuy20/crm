@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using NS;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
+using PQT.Domain.Enum;
 
 namespace PQT.Domain.Concrete
 {
@@ -15,70 +18,280 @@ namespace PQT.Domain.Concrete
         {
         }
         #region Leave
-        public int GetCountLeaves(Func<Leave, bool> predicate)
+        public int GetCountLeaves(int userId, bool isSupervisor, string searchValue)
         {
-            if (predicate != null)
+            IQueryable<Leave> queries = null;
+            if (userId > 0)
             {
-                return _db.Set<Leave>()
-                    .Include(m => m.User)
-                    .Include(m => m.CreatedUser)
-                    .Count(predicate);
+                if (isSupervisor)
+                    queries = _db.Set<Leave>().Where(m => m.UserID == userId ||
+                                                          m.User.DirectSupervisorID == userId);
+                else
+                    queries = _db.Set<Leave>().Where(m => m.UserID == userId);
             }
-            return _db.Set<Leave>().Count();
-        }
-
-        public IEnumerable<Leave> GetAllLeaves(Func<Leave, bool> predicate, string sortColumnDir, Func<Leave, object> orderBy, int page, int pageSize)
-        {
-            if (predicate != null)
+            else
             {
-                if (sortColumnDir == "asc")
+                queries = _db.Set<Leave>();
+            }
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                bool isValid = DateTime.TryParseExact(
+                    searchValue, "dd/MM/yyyy", CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out var dtSearch);
+                if (isValid)
+                    queries = queries.Where(m => m.LeaveDateFrom == dtSearch || m.LeaveDateTo == dtSearch);
+                else
                 {
-                    return _db.Set<Leave>()
-                        .Include(m => m.User)
-                        .Include(m => m.CreatedUser)
-                        .Where(predicate).OrderBy(orderBy).ThenByDescending(s => s.ID)
-                        .Skip(page).Take(pageSize).AsEnumerable();
+                    var searchLeaveTypes = Enumeration.GetAll<LeaveType>()
+                        .Where(m => m.DisplayName.ToLower().Contains(searchValue)).Select(m => m.Value).ToArray();
+                    var searchTypeOfLeaves = Enumeration.GetAll<TypeOfLeave>()
+                        .Where(m => m.DisplayName.ToLower().Contains(searchValue)).Select(m => m.Value).ToArray();
+                    var searchTypeOfLateness = Enumeration.GetAll<TypeOfLatenes>()
+                        .Where(m => m.DisplayName.ToLower().Contains(searchValue)).Select(m => m.Value).ToArray();
+                    queries = queries.Where(m =>
+                        m.CreatedUser.DisplayName.ToLower().Contains(searchValue) ||
+                        m.User.DisplayName.ToLower().Contains(searchValue) ||
+                        (m.Summary != null && m.Summary.ToLower().Contains(searchValue)) ||
+                        searchLeaveTypes.Contains(m.LeaveType.Value) ||
+                        searchTypeOfLeaves.Contains(m.TypeOfLeave.Value) ||
+                        searchTypeOfLateness.Contains(m.TypeOfLatenes.Value));
                 }
-                return _db.Set<Leave>()
-                    .Include(m => m.User)
-                    .Include(m => m.CreatedUser)
-                    .Where(predicate).OrderByDescending(orderBy).ThenByDescending(s => s.ID)
-                    .Skip(page).Take(pageSize).AsEnumerable();
             }
-            if (sortColumnDir == "asc")
-            {
-                return _db.Set<Leave>()
-                    .Include(m => m.User)
-                    .Include(m => m.CreatedUser)
-                    .OrderBy(orderBy).ThenByDescending(s => s.ID)
-                    .Skip(page).Take(pageSize).AsEnumerable();
-            }
-            return _db.Set<Leave>()
-                .Include(m => m.User)
-                .Include(m => m.CreatedUser)
-                .OrderByDescending(orderBy).ThenByDescending(s => s.ID)
-                .Skip(page).Take(pageSize).AsEnumerable();
+            return queries.Count();
         }
 
-        public IEnumerable<Leave> GetAllLeaves(Func<Leave, bool> predicate)
+        public IEnumerable<Leave> GetAllLeaves(int userId, bool isSupervisor, string searchValue, string sortColumnDir,
+            string sortColumn, int page, int pageSize)
         {
-            if (predicate != null)
-                return _db.Set<Leave>()
-                    .Include(m => m.User)
-                    .Include(m => m.CreatedUser)
-                    .Where(predicate).AsEnumerable();
-            return _db.Set<Leave>()
+            IQueryable<Leave> queries = null;
+            if (userId > 0)
+            {
+                if (isSupervisor)
+                    queries = _db.Set<Leave>().Where(m => m.UserID == userId ||
+                                                          m.User.DirectSupervisorID == userId);
+                else
+                    queries = _db.Set<Leave>().Where(m => m.UserID == userId);
+            }
+            else
+            {
+                queries = _db.Set<Leave>();
+            }
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                bool isValid = DateTime.TryParseExact(
+                    searchValue, "dd/MM/yyyy", CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out var dtSearch);
+                if (isValid)
+                    queries = queries.Where(m => m.LeaveDateFrom == dtSearch || m.LeaveDateTo == dtSearch);
+                else
+                {
+                    var searchLeaveTypes = Enumeration.GetAll<LeaveType>()
+                        .Where(m => m.DisplayName.ToLower().Contains(searchValue)).Select(m => m.Value).ToArray();
+                    var searchTypeOfLeaves = Enumeration.GetAll<TypeOfLeave>()
+                        .Where(m => m.DisplayName.ToLower().Contains(searchValue)).Select(m => m.Value).ToArray();
+                    var searchTypeOfLateness = Enumeration.GetAll<TypeOfLatenes>()
+                        .Where(m => m.DisplayName.ToLower().Contains(searchValue)).Select(m => m.Value).ToArray();
+                    queries = queries.Where(m =>
+                        m.CreatedUser.DisplayName.ToLower().Contains(searchValue) ||
+                        m.User.DisplayName.ToLower().Contains(searchValue) ||
+                        (m.Summary != null && m.Summary.ToLower().Contains(searchValue)) ||
+                        searchLeaveTypes.Contains(m.LeaveType.Value) ||
+                        searchTypeOfLeaves.Contains(m.TypeOfLeave.Value) ||
+                        searchTypeOfLateness.Contains(m.TypeOfLatenes.Value));
+                }
+            }
+
+            switch (sortColumn)
+            {
+                case "UserDisplay":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.User.DisplayName)
+                        : queries.OrderByDescending(s => s.User.DisplayName);
+                    break;
+                case "LeaveDateDesc":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.LeaveDateFrom)
+                        : queries.OrderByDescending(s => s.LeaveDateFrom);
+                    break;
+                case "AprroveUserDisplay":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.CreatedUser.DisplayName)
+                        : queries.OrderByDescending(s => s.CreatedUser.DisplayName);
+                    break;
+                case "LeaveType":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.LeaveType.Value)
+                        : queries.OrderByDescending(s => s.LeaveType.Value);
+                    break;
+                case "ReasonLeave":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.ReasonLeave)
+                        : queries.OrderByDescending(s => s.ReasonLeave);
+                    break;
+                default:
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.ID)
+                        : queries.OrderByDescending(s => s.ID);
+                    break;
+            }
+            return queries.Skip(page).Take(pageSize)
                 .Include(m => m.User)
                 .Include(m => m.CreatedUser)
-                .AsEnumerable();
+                .ToList();
         }
-        public IEnumerable<Leave> GetAllLeavesNotInclude(Func<Leave, bool> predicate)
+        public int GetCountLeavesByMonthlyReport(DateTime month, int userId, bool isSupervisor, string searchValue)
         {
-            if (predicate != null)
-                return _db.Set<Leave>()
-                    .Where(predicate).AsEnumerable();
-            return _db.Set<Leave>()
-                .AsEnumerable();
+            var monthInt = month.Month;
+            var yearInt = month.Year;
+            IQueryable<Leave> queries = _db.Set<Leave>()
+                .Where(m => m.LeaveDateFrom.Month == monthInt &&
+                            m.LeaveDateFrom.Year == yearInt ||
+                            m.LeaveDateTo.Month == monthInt &&
+                            m.LeaveDateTo.Year == yearInt);
+            if (userId > 0)
+            {
+                if (isSupervisor)
+                    queries = queries.Where(m => m.UserID == userId ||
+                                                          m.User.DirectSupervisorID == userId);
+                else
+                    queries = queries.Where(m => m.UserID == userId);
+            }
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                bool isValid = DateTime.TryParseExact(
+                    searchValue, "dd/MM/yyyy", CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out var dtSearch);
+                if (isValid)
+                    queries = queries.Where(m => m.LeaveDateFrom == dtSearch || m.LeaveDateTo == dtSearch);
+                else
+                {
+                    var searchLeaveTypes = Enumeration.GetAll<LeaveType>()
+                        .Where(m => m.DisplayName.ToLower().Contains(searchValue)).Select(m => m.Value).ToArray();
+                    var searchTypeOfLeaves = Enumeration.GetAll<TypeOfLeave>()
+                        .Where(m => m.DisplayName.ToLower().Contains(searchValue)).Select(m => m.Value).ToArray();
+                    var searchTypeOfLateness = Enumeration.GetAll<TypeOfLatenes>()
+                        .Where(m => m.DisplayName.ToLower().Contains(searchValue)).Select(m => m.Value).ToArray();
+                    queries = queries.Where(m => m.User.DisplayName.ToLower().Contains(searchValue) ||
+                                                 (m.Summary != null && m.Summary.ToLower().Contains(searchValue)) ||
+                                                 searchLeaveTypes.Contains(m.LeaveType.Value) ||
+                                                 searchTypeOfLeaves.Contains(m.TypeOfLeave.Value) ||
+                                                 searchTypeOfLateness.Contains(m.TypeOfLatenes.Value));
+                }
+            }
+            return queries.Count();
+        }
+        public IEnumerable<Leave> GetAllLeavesByMonthlyReport(DateTime month, int userId, bool isSupervisor, string searchValue, string sortColumnDir,
+            string sortColumn, int page, int pageSize)
+        {
+            var monthInt = month.Month;
+            var yearInt = month.Year;
+            IQueryable<Leave> queries = _db.Set<Leave>()
+                .Where(m => m.LeaveDateFrom.Month == monthInt &&
+                            m.LeaveDateFrom.Year == yearInt ||
+                            m.LeaveDateTo.Month == monthInt &&
+                            m.LeaveDateTo.Year == yearInt);
+            if (userId > 0)
+            {
+                if (isSupervisor)
+                    queries = queries.Where(m => m.UserID == userId ||
+                                                          m.User.DirectSupervisorID == userId);
+                else
+                    queries = queries.Where(m => m.UserID == userId);
+            }
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                bool isValid = DateTime.TryParseExact(
+                    searchValue, "dd/MM/yyyy", CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out var dtSearch);
+                if (isValid)
+                    queries = queries.Where(m => m.LeaveDateFrom == dtSearch || m.LeaveDateTo == dtSearch);
+                else
+                {
+                    var searchLeaveTypes = Enumeration.GetAll<LeaveType>()
+                        .Where(m => m.DisplayName.ToLower().Contains(searchValue)).Select(m => m.Value).ToArray();
+                    var searchTypeOfLeaves = Enumeration.GetAll<TypeOfLeave>()
+                        .Where(m => m.DisplayName.ToLower().Contains(searchValue)).Select(m => m.Value).ToArray();
+                    var searchTypeOfLateness = Enumeration.GetAll<TypeOfLatenes>()
+                        .Where(m => m.DisplayName.ToLower().Contains(searchValue)).Select(m => m.Value).ToArray();
+                    queries = queries.Where(m => m.User.DisplayName.ToLower().Contains(searchValue) ||
+                                                 (m.Summary != null && m.Summary.ToLower().Contains(searchValue)) ||
+                                                 searchLeaveTypes.Contains(m.LeaveType.Value) ||
+                                                 searchTypeOfLeaves.Contains(m.TypeOfLeave.Value) ||
+                                                 searchTypeOfLateness.Contains(m.TypeOfLatenes.Value));
+                }
+            }
+
+            switch (sortColumn)
+            {
+                case "UserDisplay":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.User.DisplayName)
+                        : queries.OrderByDescending(s => s.User.DisplayName);
+                    break;
+                case "LeaveDateDesc":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.LeaveDateFrom)
+                        : queries.OrderByDescending(s => s.LeaveDateFrom);
+                    break;
+                case "AprroveUserDisplay":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.CreatedUser.DisplayName)
+                        : queries.OrderByDescending(s => s.CreatedUser.DisplayName);
+                    break;
+                case "LeaveType":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.LeaveType.Value)
+                        : queries.OrderByDescending(s => s.LeaveType.Value);
+                    break;
+                case "ReasonLeave":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.ReasonLeave)
+                        : queries.OrderByDescending(s => s.ReasonLeave);
+                    break;
+                default:
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.ID)
+                        : queries.OrderByDescending(s => s.ID);
+                    break;
+            }
+            return queries.Skip(page).Take(pageSize)
+                .Include(m => m.User)
+                .Include(m => m.CreatedUser)
+                .ToList();
+        }
+        public IEnumerable<Leave> GetAllLeavesMonthlyReport(DateTime month, int userId, bool isSupervisor, string searchValue)
+        {
+            var monthInt = month.Month;
+            var yearInt = month.Year;
+            var queries = _db.Set<Leave>()
+                .Where(m => m.LeaveDateFrom.Month == monthInt &&
+                            m.LeaveDateFrom.Year == yearInt ||
+                            m.LeaveDateTo.Month == monthInt &&
+                            m.LeaveDateTo.Year == yearInt);
+            if (userId > 0)
+            {
+                if (isSupervisor)
+                    queries = queries.Where(m => m.UserID == userId || m.User.DirectSupervisorID == userId);
+                else
+                    queries = queries.Where(m => m.UserID == userId);
+            }
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                queries = queries.Where(m => m.User.DisplayName.ToLower().Contains(searchValue));
+            }
+
+            return queries
+                .Include(m => m.User)
+                .ToList();
+        }
+        public IEnumerable<Leave> GetAllLeavesForKpi(DateTime dateFrom, DateTime dateTo)
+        {
+            var leaveTypeValue = LeaveType.Leave.Value;
+            return _db.Set<Leave>().Where(m => ((m.LeaveDateFrom >= dateFrom &&
+                                               m.LeaveDateFrom <= dateTo) ||
+                                                (m.LeaveDateTo >= dateFrom &&
+                                                 m.LeaveDateTo <= dateTo)) &&
+                                               m.LeaveType.Value == leaveTypeValue).ToList();
         }
 
         public Leave GetLeave(int id)
@@ -87,10 +300,10 @@ namespace PQT.Domain.Concrete
             {
                 return null;
             }
-            return _db.Set<Leave>()
+            return _db.Set<Leave>().Where(m => m.ID == id)
                 .Include(m => m.User)
                 .Include(m => m.CreatedUser)
-                .FirstOrDefault(m => m.ID == id);
+                .FirstOrDefault();
         }
 
         public Leave CreateLeave(Leave info)
@@ -113,63 +326,78 @@ namespace PQT.Domain.Concrete
         #region NonSalesDay
 
 
-        public int GetCountNonSalesDays(Func<NonSalesDay, bool> predicate)
+        public int GetCountNonSalesDays(string searchValue)
         {
-            if (predicate != null)
-            {
-                return _db.Set<NonSalesDay>().Include(m => m.User).Count(predicate);
-            }
-            return _db.Set<NonSalesDay>().Count();
+            IQueryable<NonSalesDay> queries = _db.Set<NonSalesDay>();
+            if (string.IsNullOrEmpty(searchValue)) return queries.Count();
+            bool isValid = DateTime.TryParseExact(
+                searchValue, "dd/MM/yyyy", CultureInfo.InvariantCulture,
+                DateTimeStyles.None, out var dtSearch);
+            if (isValid)
+                queries = queries.Where(m => m.IssueMonth == dtSearch);
+            else
+                queries = queries.Where(m => m.User != null && m.User.DisplayName.ToLower().Contains(searchValue));
+            return queries.Count();
         }
 
-        public IEnumerable<NonSalesDay> GetAllNonSalesDays(Func<NonSalesDay, bool> predicate, string sortColumnDir, Func<NonSalesDay, object> orderBy, int page, int pageSize)
+        public IEnumerable<NonSalesDay> GetAllNonSalesDays(string searchValue, string sortColumnDir, string sortColumn, int page, int pageSize)
         {
-            if (predicate != null)
+            IQueryable<NonSalesDay> queries = _db.Set<NonSalesDay>();
+            if (!string.IsNullOrEmpty(searchValue))
             {
-                if (sortColumnDir == "asc")
+                bool isValid = DateTime.TryParseExact(
+                    searchValue, "MMM yyyy", CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out var dtSearch);
+                if (isValid)
                 {
-                    return _db.Set<NonSalesDay>()
-                        .Include(m => m.User)
-                        .Where(predicate).OrderBy(orderBy).ThenByDescending(s => s.ID).Skip(page)
-                        .Take(pageSize).AsEnumerable();
+                    queries = queries.Where(m => m.IssueMonth == dtSearch);
                 }
-                return _db.Set<NonSalesDay>()
-                    .Include(m => m.User)
-                    .Where(predicate).OrderByDescending(orderBy).ThenByDescending(s => s.ID).Skip(page)
-                    .Take(pageSize).AsEnumerable();
+                else
+                {
+                    queries = queries.Where(m => m.User != null && m.User.DisplayName.ToLower().Contains(searchValue) ||
+                                                 m.Remarks != null && m.Remarks.ToLower().Contains(searchValue));
+                }
             }
-            if (sortColumnDir == "asc")
+            switch (sortColumn)
             {
-                return _db.Set<NonSalesDay>()
-                    .Include(m => m.User)
-                    .OrderBy(orderBy).ThenByDescending(s => s.ID).Skip(page)
-                    .Take(pageSize).AsEnumerable();
+                case "UserDisplay":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.User.DisplayName)
+                        : queries.OrderByDescending(s => s.User.DisplayName);
+                    break;
+                case "IssueMonthDisplay":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.IssueMonth)
+                        : queries.OrderByDescending(s => s.IssueMonth);
+                    break;
+                case "NonSalesDays":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.NonSalesDays)
+                        : queries.OrderByDescending(s => s.NonSalesDays);
+                    break;
+                case "Remarks":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.Remarks)
+                        : queries.OrderByDescending(s => s.Remarks);
+                    break;
+                default:
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.ID)
+                        : queries.OrderByDescending(s => s.ID);
+                    break;
             }
-            return _db.Set<NonSalesDay>()
+            return queries.Skip(page).Take(pageSize)
                 .Include(m => m.User)
-                .OrderByDescending(orderBy).ThenByDescending(s => s.ID).Skip(page)
-                .Take(pageSize).AsEnumerable();
+                .ToList();
         }
 
-        public IEnumerable<NonSalesDay> GetAllNonSalesDays(Func<NonSalesDay, bool> predicate)
+        public IEnumerable<NonSalesDay> GetAllNonSalesDaysForKpi(DateTime dateFrom, DateTime dateTo)
         {
-            if (predicate != null)
-            {
-                return _db.Set<NonSalesDay>()
-                    .Include(m => m.User)
-                    .Where(predicate).AsEnumerable();
-            }
+            var dateFromMonth = new DateTime(dateFrom.Year, dateFrom.Month, 1);
+            var dateToMonth = new DateTime(dateTo.Year, dateTo.Month, 1);
             return _db.Set<NonSalesDay>()
-                .Include(m => m.User).AsEnumerable();
-        }
-        public IEnumerable<NonSalesDay> GetAllNonSalesDaysNotInclude(Func<NonSalesDay, bool> predicate)
-        {
-            if (predicate != null)
-            {
-                return _db.Set<NonSalesDay>()
-                    .Where(predicate).AsEnumerable();
-            }
-            return _db.Set<NonSalesDay>().AsEnumerable();
+                .Where(m => m.IssueMonth >= dateFromMonth &&
+                            m.IssueMonth <= dateToMonth).ToList();
         }
         public NonSalesDay GetNonSalesDay(int id)
         {
@@ -178,15 +406,15 @@ namespace PQT.Domain.Concrete
                 return null;
             }
             return _db.Set<NonSalesDay>()
+                .Where(m => m.ID == id)
                 .Include(m => m.User)
-                .FirstOrDefault(m => m.ID == id);
+                .FirstOrDefault();
         }
 
-        public NonSalesDay GetNonSalesDayByMonth(DateTime month)
+        public NonSalesDay GetNonSalesDayByMonth(DateTime month, int? userId)
         {
             return _db.Set<NonSalesDay>()
-                .Include(m => m.User)
-                .FirstOrDefault(m => m.IssueMonth == month);
+                .FirstOrDefault(m => m.IssueMonth == month && m.UserID == userId);
         }
 
         public NonSalesDay CreateNonSalesDay(NonSalesDay info)
@@ -206,64 +434,80 @@ namespace PQT.Domain.Concrete
 
 
         #endregion NonSalesDay
+
         #region TechnicalIssueDay
-        public int GetCountTechnicalIssueDays(Func<TechnicalIssueDay, bool> predicate)
+
+        public int GetCountTechnicalIssueDays(string searchValue)
         {
-            if (predicate != null)
-            {
-                return _db.Set<TechnicalIssueDay>().Include(m => m.User).Count(predicate);
-            }
-            return _db.Set<TechnicalIssueDay>().Count();
+            IQueryable<TechnicalIssueDay> queries = _db.Set<TechnicalIssueDay>();
+            if (string.IsNullOrEmpty(searchValue)) return queries.Count();
+            bool isValid = DateTime.TryParseExact(
+                searchValue, "dd/MM/yyyy", CultureInfo.InvariantCulture,
+                DateTimeStyles.None, out var dtSearch);
+            if (isValid)
+                queries = queries.Where(m => m.IssueMonth == dtSearch);
+            else
+                queries = queries.Where(m => m.User != null && m.User.DisplayName.ToLower().Contains(searchValue));
+            return queries.Count();
         }
 
-        public IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDays(Func<TechnicalIssueDay, bool> predicate, string sortColumnDir, Func<TechnicalIssueDay, object> orderBy, int page, int pageSize)
+        public IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDays(string searchValue, string sortColumnDir, string sortColumn, int page, int pageSize)
         {
-            if (predicate != null)
+            IQueryable<TechnicalIssueDay> queries = _db.Set<TechnicalIssueDay>();
+            if (!string.IsNullOrEmpty(searchValue))
             {
-                if (sortColumnDir == "asc")
+                bool isValid = DateTime.TryParseExact(
+                    searchValue, "MMM yyyy", CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out var dtSearch);
+                if (isValid)
                 {
-                    return _db.Set<TechnicalIssueDay>()
-                        .Include(m => m.User)
-                        .Where(predicate).OrderBy(orderBy).ThenByDescending(s => s.ID).Skip(page)
-                        .Take(pageSize).AsEnumerable();
+                    queries = queries.Where(m => m.IssueMonth == dtSearch);
                 }
-                return _db.Set<TechnicalIssueDay>()
-                    .Include(m => m.User)
-                    .Where(predicate).OrderByDescending(orderBy).ThenByDescending(s => s.ID).Skip(page)
-                    .Take(pageSize).AsEnumerable();
+                else
+                {
+                    queries = queries.Where(m => m.User != null && m.User.DisplayName.ToLower().Contains(searchValue) ||
+                                                 m.Remarks != null && m.Remarks.ToLower().Contains(searchValue));
+                }
             }
-            if (sortColumnDir == "asc")
+            switch (sortColumn)
             {
-                return _db.Set<TechnicalIssueDay>()
-                    .Include(m => m.User)
-                    .OrderBy(orderBy).ThenByDescending(s => s.ID).Skip(page)
-                    .Take(pageSize).AsEnumerable();
+                case "UserDisplay":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.User.DisplayName)
+                        : queries.OrderByDescending(s => s.User.DisplayName);
+                    break;
+                case "IssueMonthDisplay":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.IssueMonth)
+                        : queries.OrderByDescending(s => s.IssueMonth);
+                    break;
+                case "TechnicalIssueDays":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.TechnicalIssueDays)
+                        : queries.OrderByDescending(s => s.TechnicalIssueDays);
+                    break;
+                case "Remarks":
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.Remarks)
+                        : queries.OrderByDescending(s => s.Remarks);
+                    break;
+                default:
+                    queries = sortColumnDir == "asc"
+                        ? queries.OrderBy(s => s.ID)
+                        : queries.OrderByDescending(s => s.ID);
+                    break;
             }
-            return _db.Set<TechnicalIssueDay>()
+            return queries.Skip(page).Take(pageSize)
                 .Include(m => m.User)
-                .OrderByDescending(orderBy).ThenByDescending(s => s.ID).Skip(page)
-                .Take(pageSize).AsEnumerable();
+                .ToList();
         }
-
-        public IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDays(Func<TechnicalIssueDay, bool> predicate)
+        public IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDaysForKpi(DateTime dateFrom, DateTime dateTo)
         {
-            if (predicate != null)
-            {
-                return _db.Set<TechnicalIssueDay>()
-                    .Include(m => m.User)
-                    .Where(predicate).AsEnumerable();
-            }
+            var dateFromMonth = new DateTime(dateFrom.Year, dateFrom.Month, 1);
+            var dateToMonth = new DateTime(dateTo.Year, dateTo.Month, 1);
             return _db.Set<TechnicalIssueDay>()
-                .Include(m => m.User).AsEnumerable();
-        }
-        public IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDaysNotInclude(Func<TechnicalIssueDay, bool> predicate)
-        {
-            if (predicate != null)
-            {
-                return _db.Set<TechnicalIssueDay>()
-                    .Where(predicate).AsEnumerable();
-            }
-            return _db.Set<TechnicalIssueDay>().AsEnumerable();
+                .Where(m => m.IssueMonth >= dateFromMonth &&
+                            m.IssueMonth <= dateToMonth).ToList();
         }
         public TechnicalIssueDay GetTechnicalIssueDay(int id)
         {
@@ -272,14 +516,13 @@ namespace PQT.Domain.Concrete
                 return null;
             }
             return _db.Set<TechnicalIssueDay>()
-                .Include(m => m.User)
-                .FirstOrDefault(m => m.ID == id);
+                .Where(m => m.ID == id)
+                .Include(m => m.User).FirstOrDefault();
         }
-        public TechnicalIssueDay GetTechnicalIssueDayByMonth(DateTime month)
+        public TechnicalIssueDay GetTechnicalIssueDayByMonth(DateTime month, int? userId)
         {
             return _db.Set<TechnicalIssueDay>()
-                .Include(m => m.User)
-                .FirstOrDefault(m => m.IssueMonth == month);
+                .FirstOrDefault(m => m.IssueMonth == month && m.UserID == userId);
         }
 
         public TechnicalIssueDay CreateTechnicalIssueDay(TechnicalIssueDay info)

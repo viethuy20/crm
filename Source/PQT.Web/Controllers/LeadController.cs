@@ -294,94 +294,100 @@ namespace PQT.Web.Controllers
                 }
                 else
                 {
-                    var currentUser = CurrentUser.Identity;
-                    var daysExpired = Settings.Lead.NumberDaysExpired();
-                    var allLeads = _repo.GetAllLeads(m => m.EventID == model.EventID && !m.ExpiredForReopen);
-                    var leadExists = allLeads.Where(m =>
-                        m.CompanyID == model.CompanyID &&
-                        m.UserID != currentUser.ID &&
-                        m.User.UserStatus == UserStatus.Live &&
-                        m.User.TransferUserID != currentUser.ID &&
-                        m.CheckInNCL(daysExpired));
-                    if (leadExists.Any())
-                    {
-                        TempData["error"] = "Cannot process... This company is existing in NCL";
-                        return RedirectToAction("Index", new { id = model.EventID });
-                    }
-                    var emailExists = allLeads.Where(m => ((!string.IsNullOrEmpty(m.WorkEmail) &&
-                                                            m.WorkEmail == model.WorkEmail) ||
-                                                           (!string.IsNullOrEmpty(m.WorkEmail1) &&
-                                                            m.WorkEmail1 == model.WorkEmail1) ||
-                                                           (!string.IsNullOrEmpty(m.PersonalEmail) &&
-                                                            m.PersonalEmail == model.PersonalEmail)) &&
-                                                          (m.UserID == currentUser.ID &&
-                                                              //m.User.TransferUserID == currentUser.ID &&
-                                                              m.LeadStatusRecord != LeadStatus.Deleted));
-                    if (emailExists.Any())
-                    {
-                        TempData["error"] = "Email existing in another entry of same event";
-                        return RedirectToAction("StartCallForm", new { id = model.EventID });
-                    }
-                    var email2Exists = allLeads.Where(m => ((!string.IsNullOrEmpty(m.WorkEmail) &&
-                                                             m.WorkEmail == model.WorkEmail) ||
-                                                            (!string.IsNullOrEmpty(m.WorkEmail1) &&
-                                                             m.WorkEmail1 == model.WorkEmail1) ||
-                                                            (!string.IsNullOrEmpty(m.PersonalEmail) &&
-                                                             m.PersonalEmail == model.PersonalEmail)) &&
-                                                           (
-                                                               m.UserID == currentUser.ID &&
-                                                               //  m.User.TransferUserID == currentUser.ID &&
-                                                               m.LeadStatusRecord != LeadStatus.Deleted));
-                    if (email2Exists.Any())
+                    var isValid = true;
+                    if ((!string.IsNullOrEmpty(model.WorkEmail) &&
+                         (model.WorkEmail == model.WorkEmail1 ||
+                          model.WorkEmail == model.PersonalEmail)) ||
+                        (!string.IsNullOrEmpty(model.WorkEmail1) &&
+                         (model.WorkEmail1 == model.WorkEmail ||
+                          model.WorkEmail1 == model.PersonalEmail)) ||
+                        (!string.IsNullOrEmpty(model.PersonalEmail) &&
+                         (model.PersonalEmail == model.WorkEmail ||
+                          model.PersonalEmail == model.WorkEmail1)))
                     {
                         TempData["error"] = "02 or more emails cannot be overlapped inside 01 entry";
-                        return RedirectToAction("StartCallForm", new { id = model.EventID });
+                        isValid = false;
+                        //return RedirectToAction("StartCallForm", new { id = model.EventID });
                     }
 
-
-                    var callExists = allLeads.Where(m => ((!string.IsNullOrEmpty(m.DirectLine) &&
-                                                           m.DirectLine == model.DirectLine &&
-                                                           m.LineExtension == model.LineExtension) ||
-                                                          (!string.IsNullOrEmpty(m.MobilePhone1) &&
-                                                           m.MobilePhone1 == model.MobilePhone1) ||
-                                                          (!string.IsNullOrEmpty(m.MobilePhone2) &&
-                                                           m.MobilePhone2 == model.MobilePhone2) ||
-                                                          (!string.IsNullOrEmpty(m.MobilePhone3) &&
-                                                           m.MobilePhone3 == model.MobilePhone3)) &&
-                                                         (
-                                                         m.UserID == currentUser.ID &&
-                                                           //  m.User.TransferUserID != currentUser.ID &&
-                                                           m.LeadStatusRecord != LeadStatus.Deleted));
-                    if (callExists.Any())
-                    {
-                        TempData["error"] = "Number existing in another entry of same event";
-                        return RedirectToAction("StartCallForm", new { id = model.EventID });
-                    }
-                    var call2Exists = allLeads.Where(m => ((!string.IsNullOrEmpty(m.DirectLine) &&
-                                                            m.DirectLine == model.DirectLine &&
-                                                            m.LineExtension == model.LineExtension) ||
-                                                           (!string.IsNullOrEmpty(m.MobilePhone1) &&
-                                                            m.MobilePhone1 == model.MobilePhone1) ||
-                                                           (!string.IsNullOrEmpty(m.MobilePhone2) &&
-                                                            m.MobilePhone2 == model.MobilePhone2) ||
-                                                           (!string.IsNullOrEmpty(m.MobilePhone3) &&
-                                                            m.MobilePhone3 == model.MobilePhone3)) &&
-                                                          (
-                                                              m.UserID == currentUser.ID &&
-                                                              //  m.User.TransferUserID == currentUser.ID &&
-                                                              m.LeadStatusRecord != LeadStatus.Deleted));
-                    if (call2Exists.Any())
+                    if ((!string.IsNullOrEmpty(model.MobilePhone1) &&
+                         (model.MobilePhone1 == model.MobilePhone2 ||
+                          model.MobilePhone1 == model.MobilePhone3)) ||
+                        (!string.IsNullOrEmpty(model.MobilePhone2) &&
+                         (model.MobilePhone2 == model.MobilePhone1 ||
+                          model.MobilePhone2 == model.MobilePhone3)) ||
+                        (!string.IsNullOrEmpty(model.MobilePhone3) &&
+                         (model.MobilePhone3 == model.MobilePhone1 ||
+                          model.MobilePhone3 == model.MobilePhone2))
+                    )
                     {
                         TempData["error"] = "02 or more numbers cannot be overlapped inside 01 entry";
-                        return RedirectToAction("StartCallForm", new { id = model.EventID });
+                        isValid = false;
+                        //return RedirectToAction("StartCallForm", new {id = model.EventID});
+                    }
+                    if (isValid)
+                    {
+                        var currentUser = CurrentUser.Identity;
+                        var daysExpired = Settings.Lead.NumberDaysExpired();
+                        var allLeads = _repo.GetAllLeads(m => m.EventID == model.EventID && !m.ExpiredForReopen);
+                        var leadExists = allLeads.Where(m =>
+                            m.CompanyID == model.CompanyID &&
+                            m.UserID != currentUser.ID &&
+                            m.User.UserStatus == UserStatus.Live &&
+                            m.User.TransferUserID != currentUser.ID &&
+                            m.CheckInNCL(daysExpired));
+                        if (leadExists.Any())
+                        {
+                            TempData["error"] = "Cannot process... This company is existing in NCL";
+                            return RedirectToAction("Index", new { id = model.EventID });
+                        }
+                        var emailExists = allLeads.Where(m => ((!string.IsNullOrEmpty(m.WorkEmail) &&
+                                                                m.WorkEmail == model.WorkEmail) ||
+                                                               (!string.IsNullOrEmpty(m.WorkEmail1) &&
+                                                                m.WorkEmail1 == model.WorkEmail1) ||
+                                                               (!string.IsNullOrEmpty(m.PersonalEmail) &&
+                                                                m.PersonalEmail == model.PersonalEmail)) &&
+                                                              (m.UserID == currentUser.ID &&
+                                                                  //m.User.TransferUserID == currentUser.ID &&
+                                                                  m.LeadStatusRecord != LeadStatus.Deleted));
+                        if (emailExists.Any())
+                        {
+                            TempData["error"] = "Email existing in another entry of same event";
+                            isValid = false;
+                            //return RedirectToAction("StartCallForm", new { id = model.EventID });
+                        }
+
+
+                        var callExists = allLeads.Where(m => ((!string.IsNullOrEmpty(m.DirectLine) &&
+                                                               m.DirectLine == model.DirectLine &&
+                                                               m.LineExtension == model.LineExtension) ||
+                                                              (!string.IsNullOrEmpty(m.MobilePhone1) &&
+                                                               m.MobilePhone1 == model.MobilePhone1) ||
+                                                              (!string.IsNullOrEmpty(m.MobilePhone2) &&
+                                                               m.MobilePhone2 == model.MobilePhone2) ||
+                                                              (!string.IsNullOrEmpty(m.MobilePhone3) &&
+                                                               m.MobilePhone3 == model.MobilePhone3)) &&
+                                                             (
+                                                             m.UserID == currentUser.ID &&
+                                                               //  m.User.TransferUserID != currentUser.ID &&
+                                                               m.LeadStatusRecord != LeadStatus.Deleted));
+                        if (callExists.Any())
+                        {
+                            TempData["error"] = "Number existing in another entry of same event";
+                            isValid = false;
+                            //return RedirectToAction("StartCallForm", new { id = model.EventID });
+                        }
                     }
 
-                    if (model.Create())
+                    if (isValid)
                     {
-                        TempData["message"] = "Call successful";
-                        return RedirectToAction("Detail", new { id = model.Lead.ID });
+                        if (model.Create())
+                        {
+                            TempData["message"] = "Call successful";
+                            return RedirectToAction("Detail", new { id = model.Lead.ID });
+                        }
+                        TempData["error"] = "Save failed";
                     }
-                    TempData["error"] = "Save failed";
                 }
             }
             model.PrepareCall(model.EventID, 0, 0);
@@ -405,7 +411,6 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Call Back Form")]
         public ActionResult CallingForm(CallingModel model)
         {
-
             if (model.TypeSubmit == "requestnewevent")
             {
                 var errorMessage = "";
@@ -439,39 +444,73 @@ namespace PQT.Web.Controllers
                     TempData["error"] = errorMessage;
                 return View(model);
             }
+            var isValid = true;
+            if ((!string.IsNullOrEmpty(model.WorkEmail) &&
+                 (model.WorkEmail == model.WorkEmail1 ||
+                  model.WorkEmail == model.PersonalEmail)) ||
+                (!string.IsNullOrEmpty(model.WorkEmail1) &&
+                 (model.WorkEmail1 == model.WorkEmail ||
+                  model.WorkEmail1 == model.PersonalEmail)) ||
+                (!string.IsNullOrEmpty(model.PersonalEmail) &&
+                 (model.PersonalEmail == model.WorkEmail ||
+                  model.PersonalEmail == model.WorkEmail1)))
+            {
+                TempData["error"] = "02 or more emails cannot be overlapped inside 01 entry";
+                isValid = false;
+                //return RedirectToAction("StartCallForm", new { id = model.EventID });
+            }
 
-            var callExists = _repo.GetAllLeads(m =>
-                m.EventID == model.EventID &&
-                m.ID != model.LeadID &&
-                !m.ExpiredForReopen &&
-                (
-                 //m.LeadStatusRecord != LeadStatus.Initial &&
-                 // m.LeadStatusRecord != LeadStatus.Reject &&
-                 m.LeadStatusRecord != LeadStatus.Deleted) &&
-                ((!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail == model.WorkEmail) ||
-                 (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1 == model.WorkEmail1) ||
-                 (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail == model.PersonalEmail) ||
-                 (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine == model.DirectLine &&
-                  m.LineExtension == model.LineExtension) ||
-                 (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1 == model.MobilePhone1) ||
-                 (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2 == model.MobilePhone2) ||
-                 (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3 == model.MobilePhone3)));
-            if (callExists.Any())
+            if ((!string.IsNullOrEmpty(model.MobilePhone1) &&
+                 (model.MobilePhone1 == model.MobilePhone2 ||
+                  model.MobilePhone1 == model.MobilePhone3)) ||
+                (!string.IsNullOrEmpty(model.MobilePhone2) &&
+                 (model.MobilePhone2 == model.MobilePhone1 ||
+                  model.MobilePhone2 == model.MobilePhone3)) ||
+                (!string.IsNullOrEmpty(model.MobilePhone3) &&
+                 (model.MobilePhone3 == model.MobilePhone1 ||
+                  model.MobilePhone3 == model.MobilePhone2))
+            )
             {
-                TempData["error"] = "Client contact exists in called list";
-                return RedirectToAction("CallingForm", new { id = model.LeadID });
+                TempData["error"] = "02 or more numbers cannot be overlapped inside 01 entry";
+                isValid = false;
+                //return RedirectToAction("StartCallForm", new {id = model.EventID});
             }
-            if (model.Save())
+            if (isValid)
             {
-                TempData["message"] = "Call successful";
-                return RedirectToAction("Detail", new { id = model.LeadID });
+                var callExists = _repo.GetAllLeads(m =>
+                    m.EventID == model.EventID &&
+                    m.ID != model.LeadID &&
+                    !m.ExpiredForReopen &&
+                    (
+                     //m.LeadStatusRecord != LeadStatus.Initial &&
+                     // m.LeadStatusRecord != LeadStatus.Reject &&
+                     m.LeadStatusRecord != LeadStatus.Deleted) &&
+                    ((!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail == model.WorkEmail) ||
+                     (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1 == model.WorkEmail1) ||
+                     (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail == model.PersonalEmail) ||
+                     (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine == model.DirectLine &&
+                      m.LineExtension == model.LineExtension) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1 == model.MobilePhone1) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2 == model.MobilePhone2) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3 == model.MobilePhone3)));
+                if (callExists.Any())
+                {
+                    TempData["error"] = "Client contact exists in called list";
+                    return RedirectToAction("CallingForm", new { id = model.LeadID });
+                }
+                if (model.Save())
+                {
+                    TempData["message"] = "Call successful";
+                    return RedirectToAction("Detail", new { id = model.LeadID });
+                }
+                TempData["error"] = "Save failed";
             }
+
             model.PrepareCalling(model.LeadID);
             if (model.Event == null)
             {
                 model.Event = _eventService.GetEvent(model.EventID);
             }
-            TempData["error"] = "Save failed";
             return View(model);
         }
 

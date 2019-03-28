@@ -10,7 +10,7 @@ namespace PQT.Domain.Abstract
     public interface ILeadService
     {
         IEnumerable<Lead> GetAllLeads(Func<Lead, bool> predicate);
-        IEnumerable<Lead> GetAllLeadsForKPI(int eventId, int userId,Func<Lead, bool> predicate);
+        IEnumerable<Lead> GetAllLeadsForKPI(int eventId, int userId, DateTime dateFrom, DateTime dateTo, string searchValue);
         Lead GetLead(int id);
         Lead CreateLead(Lead info);
         bool UpdateLead(Lead info);

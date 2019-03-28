@@ -22,26 +22,37 @@ namespace PQT.Domain.Concrete
         }
         public virtual IEnumerable<UserNotification> GetAllUserNotifications(int userId, string type, int pageSize = 10, int page = 1)
         {
-            return GetAll<UserNotification>(m => m.UserID == userId &&
-                                                 ((string.IsNullOrEmpty(type)
-                                                   && m.NotifyType == NotifyType.Lead
-                                                  ) || m.NotifyType == type))
+            var leadValue = NotifyType.Lead.Value;
+            if (string.IsNullOrEmpty(type))
+                return _db.Set<UserNotification>().Where(m => m.UserID == userId &&
+                                                              m.NotifyType.Value == leadValue)
+                    .OrderByDescending(m => m.CreatedTime)
+                    .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            return _db.Set<UserNotification>().Where(m => m.UserID == userId &&
+                                                          m.NotifyType.Value == type)
                 .OrderByDescending(m => m.CreatedTime)
-                .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
         }
-        public virtual IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int eventId, int pageSize = 10, int page = 1)
+        //public virtual IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, string eventId, int pageSize = 10, int page = 1)
+        //{
+        //    return _db.Set<UserNotification>().Where(m => m.UserID == userId &&
+        //                                                  m.EventId == eventId)
+        //        .OrderByDescending(m => m.CreatedTime)
+        //        .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        //}
+        public virtual IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int[] eventIds, int pageSize = 10, int page = 1)
         {
-            return GetAll<UserNotification>(m => m.UserID == userId && m.EventId == eventId).OrderByDescending(m => m.CreatedTime)
-                .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
-        }
-        public virtual IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int[] eventId, int pageSize = 10, int page = 1)
-        {
-            return GetAll<UserNotification>(m => m.UserID == userId && eventId.Contains(m.EventId)).OrderByDescending(m => m.CreatedTime)
+            return _db.Set<UserNotification>()
+                .Where(m => m.UserID == userId &&
+                            eventIds.Contains(m.EventId))
+                .OrderByDescending(m => m.CreatedTime)
                 .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
         }
         public virtual IEnumerable<UserNotification> GetAllUserNotificationsByNewEvent(int userId, int pageSize = 10, int page = 1)
         {
-            return GetAll<UserNotification>(m => m.UserID == userId && m.NotifyType == NotifyType.NewEvent).OrderByDescending(m => m.CreatedTime)
+            var newEventValue = NotifyType.NewEvent.Value;
+            return _db.Set<UserNotification>().Where(m => m.UserID == userId &&
+            m.NotifyType.Value == newEventValue).OrderByDescending(m => m.CreatedTime)
                 .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
         }
         public virtual UserNotification CreateUserNotification(UserNotification notify)

@@ -35,7 +35,7 @@ namespace PQT.Web.Controllers
         public ActionResult Index(int role = 0)
         {
             //IEnumerable<User> users = _membershipService.GetUsers(m => m.Status == EntityUserStatus.Normal);
-            ViewBag.roles = _roleService.GetAllRoles();
+            //ViewBag.roles = _roleService.GetAllRoles();
             return View(new List<User>());
         }
 
@@ -43,15 +43,12 @@ namespace PQT.Web.Controllers
         public ActionResult ListDeletedUsers()
         {
             IEnumerable<User> users = _membershipService.GetUsersDeleted();
-            ViewBag.roles = _roleService.GetAllRoles();
+            //ViewBag.roles = _roleService.GetAllRoles();
             return View(users);
         }
         public ActionResult Create()
         {
-            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
-                                                            m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                            m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
-                                                            m.ProjectManagementUnit != ProjectManagementUnit.None);
+            var allSupervisors = _membershipService.GetAllSupervisors();
             //var supervisors = new List<SelectListItem>();
             //supervisors.AddRange(allSupervisors.Where(m => m.FinanceAdminUnit != FinanceAdminUnit.None).Select(m => new SelectListItem
             //{
@@ -85,10 +82,7 @@ namespace PQT.Web.Controllers
                                                      .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                                                      .Select(id => Convert.ToInt32(id));
             var exist = _membershipService.GetUserByEmail(model.Email);
-            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
-                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                                  m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
-                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None);
+            var allSupervisors = _membershipService.GetAllSupervisors();
             if (exist != null)
                 ModelState.AddModelError("Email", Resource.EmailExists);
 
@@ -203,7 +197,7 @@ namespace PQT.Web.Controllers
                 BankAccountNumber = model.BankAccountNumber,
                 BankAccountName = model.BankAccountName,
                 BranchAddress = model.BranchAddress
-        };
+            };
 
             user = _membershipService.CreateUser(user);
 
@@ -216,11 +210,7 @@ namespace PQT.Web.Controllers
         public ActionResult Edit(int id)
         {
             User user = _membershipService.GetUserIncludeAll(id);
-            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
-                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                                  m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
-                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None);
-
+            var allSupervisors = _membershipService.GetAllSupervisors();
             var model = new EditUserModel(user)
             {
                 Roles = _roleService.GetAllRoles(),
@@ -246,10 +236,7 @@ namespace PQT.Web.Controllers
                                                      .Select(id => Convert.ToInt32(id));
 
 
-            var allSupervisors = _membershipService.GetUsers(m => m.FinanceAdminUnit != FinanceAdminUnit.None ||
-                                                                  m.SalesManagementUnit != SalesManagementUnit.None ||
-                                                                  m.HumanResourceUnit == HumanResourceUnit.Coordinator ||
-                                                                  m.ProjectManagementUnit != ProjectManagementUnit.None);
+            var allSupervisors = _membershipService.GetAllSupervisors();
             var exist = _membershipService.GetUserByEmail(model.Email);
             if (exist != null && exist.ID != model.ID)
                 ModelState.AddModelError("Email", Resource.EmailExists);
@@ -460,82 +447,16 @@ namespace PQT.Web.Controllers
         [AjaxOnly]
         public ActionResult GetPossibleSalesman(string q)
         {
-
             var salesUser = PermissionHelper.SalesmanId();
-            if (salesUser > 0)
-            {
-                var currentUser = CurrentUser.Identity;
-                IEnumerable<User> bookings = new List<User>();
-                if (currentUser != null && currentUser.BusinessDevelopmentUnit != BusinessDevelopmentUnit.None)
-                {
-                    bookings =
-                        _membershipService.GetUsers(m => m.DirectSupervisorID == currentUser.ID &&
-                                                         m.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel) &&
-                                                         (m.DisplayName != null &&
-                                                          m.DisplayName.ToLower().Contains(q.ToLower())) ||
-                                                         (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
-                }
-                else if (currentUser != null && currentUser.SalesManagementUnit != SalesManagementUnit.None)
-                {
-                    bookings =
-                        _membershipService.GetUsers(m => m.DirectSupervisorID == currentUser.ID &&
-                                                         m.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel) &&
-                                                         (m.DisplayName != null &&
-                                                          m.DisplayName.ToLower().Contains(q.ToLower())) ||
-                                                         (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
-                }
-                return Json(bookings.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                var bookings =
-                    _membershipService.GetUsers(m => m.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel) &&
-                                                     (m.DisplayName != null &&
-                                                      m.DisplayName.ToLower().Contains(q.ToLower())) ||
-                                                     (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
-                return Json(bookings.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
-
-            }
+            var bookings = _membershipService.GetPossibleUsers("Sales",q, salesUser > 0, CurrentUser.Identity);
+            return Json(bookings.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
         }
         [AjaxOnly]
         public ActionResult GetPossibleHR(string q)
         {
-
             var salesUser = PermissionHelper.HRId();
-            if (salesUser > 0)
-            {
-                var currentUser = CurrentUser.Identity;
-                IEnumerable<User> users = new List<User>();
-                if (currentUser != null && currentUser.BusinessDevelopmentUnit != BusinessDevelopmentUnit.None)
-                {
-                    users =
-                        _membershipService.GetUsers(m => m.DirectSupervisorID == currentUser.ID &&
-                                                         m.Roles.Any(r => r.Name.ToUpper().Contains("HR")) &&
-                                                         (m.DisplayName != null &&
-                                                          m.DisplayName.ToLower().Contains(q.ToLower())) ||
-                                                         (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
-                }
-                else if (currentUser != null && currentUser.SalesManagementUnit != SalesManagementUnit.None)
-                {
-                    users =
-                        _membershipService.GetUsers(m => m.DirectSupervisorID == currentUser.ID &&
-                                                         m.Roles.Any(r => r.Name.ToUpper().Contains("HR")) &&
-                                                         (m.DisplayName != null &&
-                                                          m.DisplayName.ToLower().Contains(q.ToLower())) ||
-                                                         (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
-                }
-                return Json(users.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                var bookings =
-                    _membershipService.GetUsers(m => m.Roles.Any(r => r.Name.ToUpper().Contains("HR")) &&
-                                                     (m.DisplayName != null &&
-                                                      m.DisplayName.ToLower().Contains(q.ToLower())) ||
-                                                     (m.Email != null && m.Email.ToLower().Contains(q.ToLower())));
-                return Json(bookings.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
-
-            }
+            var bookings = _membershipService.GetPossibleUsers("HR", q, salesUser > 0, CurrentUser.Identity);
+            return Json(bookings.Select(m => new { id = m.ID, text = m.DisplayName }), JsonRequestBehavior.AllowGet);
         }
 
         [AjaxOnly]
@@ -562,110 +483,16 @@ namespace PQT.Web.Controllers
                 searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
             }
 
-            var roleID = 0;
-            // ReSharper disable once AssignNullToNotNullAttribute
-            if (Request.Form.GetValues("RoleID").FirstOrDefault() != null && !string.IsNullOrEmpty(Request.Form.GetValues("RoleID").FirstOrDefault()))
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                roleID = Convert.ToInt32(Request.Form.GetValues("RoleID").FirstOrDefault().Trim());
-            }
-
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
             IEnumerable<User> users = new HashSet<User>();
             Func<User, bool> predicate = null;
-            bool isRecruitmentIntern = CurrentUser.HasRole("HR") || CurrentUser.HasRole("Recruitment Intern");
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                predicate = m =>
-                (!isRecruitmentIntern || m.UserStatus == UserStatus.Live) &&
-                    (m.Status == EntityUserStatus.Normal ||
-                     m.Status == EntityUserStatus.ApprovedEmployment) &&
-                    (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID)) &&
-                    ((m.DisplayName.ToLower().Contains(searchValue)) ||
-                     (m.UserStatusDisplay.ToLower().Contains(searchValue)) ||
-                     (m.EmploymentDateDisplay.ToLower().Contains(searchValue)) ||
-                     (m.EmploymentEndDateDisplay.ToLower().Contains(searchValue)) ||
-                     (m.DirectSupervisorDisplay.ToLower().Contains(searchValue)) ||
-                     (m.UserNo != null && m.UserNo.ToLower().Contains(searchValue)) ||
-                     (m.Email != null && m.Email.ToLower().Contains(searchValue)) ||
-                     (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue)) ||
-                     (m.BusinessPhone != null && m.BusinessPhone.ToLower().Contains(searchValue)) ||
-                     (m.MobilePhone != null && m.MobilePhone.ToLower().Contains(searchValue)) ||
-                     (m.Roles != null && m.Roles.Any(r => r.Name.ToLower().Contains(searchValue))));
-            }
-            else
-            {
-                predicate = m =>
-                    (!isRecruitmentIntern || m.UserStatus == UserStatus.Live) &&
-                    (m.Status == EntityUserStatus.Normal ||
-                    m.Status == EntityUserStatus.ApprovedEmployment) &&
-                    (roleID == 0 || m.Roles.Select(r => m.ID).Contains(roleID));
-            }
+            bool isHrUser = CurrentUser.HasRole("HR") || CurrentUser.HasRole("Recruitment Intern");
 
-            recordsTotal = _membershipService.GetCountUsers(predicate);
-
-
-            switch (sortColumn)
-            {
-                case "UserNo":
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.UserNo,
-                        skip, pageSize);
-                    break;
-                case "DisplayName":
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.DisplayName,
-                        skip, pageSize);
-                    break;
-                case "FirstName":
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.FirstName,
-                        skip, pageSize);
-                    break;
-                case "LastName":
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.LastName,
-                        skip, pageSize);
-                    break;
-                case "Email":
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.Email,
-                        skip, pageSize);
-                    break;
-                case "PersonalEmail":
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.PersonalEmail,
-                        skip, pageSize);
-                    break;
-                case "UserStatus":
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.UserStatusDisplay,
-                        skip, pageSize);
-                    break;
-                case "DirectSupervisor":
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.DirectSupervisorDisplay,
-                        skip, pageSize);
-                    break;
-                case "BusinessPhone":
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.BusinessPhone,
-                        skip, pageSize);
-                    break;
-                case "MobilePhone":
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.MobilePhone,
-                        skip, pageSize);
-                    break;
-                case "Extension":
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.Extension,
-                        skip, pageSize);
-                    break;
-                case "RolesHtml":
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.RolesHtml,
-                        skip, pageSize);
-                    break;
-                case "DateOfBirth":
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.DateOfBirth,
-                        skip, pageSize);
-                    break;
-                default:
-                    users = _membershipService.GetUsers(predicate, sortColumnDir, s => s.ID,
-                        skip, pageSize);
-                    break;
-            }
+            recordsTotal = _membershipService.GetCountUsers(searchValue, isHrUser);
+            users = _membershipService.GetUsers(searchValue, isHrUser, sortColumnDir, sortColumn,
+                skip, pageSize);
 
             #endregion For Search
 

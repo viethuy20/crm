@@ -24,57 +24,28 @@ namespace PQT.Domain.Concrete
             return GetAll(predicate2, m => m.Event, m => m.LeadStatusRecord).AsEnumerable();
         }
 
-        public IEnumerable<Lead> GetAllLeadsForKPI(int eventId, int userId, Func<Lead, bool> predicate)
+        public IEnumerable<Lead> GetAllLeadsForKPI(int eventId, int userId, DateTime dateFrom, DateTime dateTo, string searchValue)
         {
-            Func<Lead, bool> predicate2 = null;
-            if (eventId > 0 && userId > 0)
+            dateTo = dateTo.AddDays(1);
+            var queries = _db.Set<Lead>().Where(m =>
+                dateFrom <= m.CreatedTime &&
+                m.CreatedTime < dateTo &&
+                m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
+                m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
+                m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value);
+            if (!string.IsNullOrEmpty(searchValue))
+                queries = queries.Where(m => m.User.DisplayName.Contains(searchValue));
+            if (eventId > 0)
             {
-                predicate2 =
-                    m => m.EventID == eventId &&
-                         (m.UserID == userId 
-                         //|| m.User.TransferUserID == userId
-                         ) &&
-                         m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
-                          m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
-                          m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value &&
-                        predicate(m);
+                queries = queries.Where(m => m.EventID == eventId);
             }
-            else if (eventId > 0)
+            if (userId > 0)
             {
-                predicate2 =
-                    m => m.EventID == eventId &&
-                         m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
-                         m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
-                         m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value &&
-                         predicate(m);
+                queries = queries.Where(m => m.UserID == userId);
             }
-            else if (userId > 0)
-            {
-                predicate2 =
-                    m => (m.UserID == userId 
-                    //|| m.User.TransferUserID == userId
-                    ) &&
-                         m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
-                         m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
-                         m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value &&
-                         predicate(m);
-            }
-            else
-            {
-                predicate2 =
-                    m =>
-                        m.LeadStatusRecord.Status.Value != LeadStatus.Reject.Value &&
-                        m.LeadStatusRecord.Status.Value != LeadStatus.Initial.Value &&
-                        m.LeadStatusRecord.Status.Value != LeadStatus.Deleted.Value &&
-                        predicate(m);
-            }
-
-            return _db.Set<Lead>()
-                .Include(m=>m.LeadStatusRecord)
-                .Include(m=>m.User)
-                .Where(predicate2).AsEnumerable();
-
+            return queries.Include(m => m.User).ToList();
         }
+
         public Lead GetLead(int id)
         {
             if (id == 0)

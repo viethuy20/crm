@@ -27,7 +27,7 @@
                 @foreach (var item in Model)
                 {
                     var url = item.NotifyType == NotifyType.Booking ? Url.Action("Detail", "Booking", new { id = item.EntryId, eventId = item.EventId }) :
-                (item.NotifyType == NotifyType.NewEvent ? Url.Action("Detail", "NewEvent", new {id = item.EntryId, eventId = item.EventId}) : (item.NotifyType == NotifyType.OpeEvent ? Url.Action("Detail", "Operation", new { id = item.EntryId }) :
+                (item.NotifyType == NotifyType.NewEvent ? Url.Action("Detail", "NewEvent", new {id = item.EntryId, eventId = item.EventId }) : (item.NotifyType == NotifyType.OpeEvent ? Url.Action("Detail", "Operation", new { id = item.EntryId }) :
                             (item.NotifyType == NotifyType.Recruitment ? Url.Action("Detail", "Recruitment", new { id = item.EntryId }) :
                                 (item.NotifyType == NotifyType.MasterFiles ? Url.Action("Detail", "RecruitmentPosition", new { id = item.EntryId }) :
                                     (item.NotifyType == NotifyType.ReportCall ? Url.Action("Detail", "ReportCall", new { id = item.EntryId }) :

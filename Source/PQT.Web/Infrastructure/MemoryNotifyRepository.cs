@@ -50,11 +50,11 @@ namespace PQT.Web.Infrastructure
                                          ) || m.NotifyType == type)).OrderByDescending(m => m.CreatedTime)
                 .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
         }
-        public override IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int eventId, int pageSize = 10, int page = 1)
-        {
-            return _resoures.Where(m => m.UserID == userId && m.EventId == eventId).OrderByDescending(m => m.CreatedTime)
-                .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
-        }
+        //public override IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int eventId, int pageSize = 10, int page = 1)
+        //{
+        //    return _resoures.Where(m => m.UserID == userId && m.EventId == eventId).OrderByDescending(m => m.CreatedTime)
+        //        .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
+        //}
         public override IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int[] eventIds, int pageSize = 10, int page = 1)
         {
             return _resoures.Where(m => m.UserID == userId && eventIds.Contains(m.EventId)).OrderByDescending(m => m.CreatedTime)

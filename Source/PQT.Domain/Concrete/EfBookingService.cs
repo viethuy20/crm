@@ -15,52 +15,40 @@ namespace PQT.Domain.Concrete
             : base(db)
         {
         }
-
-        public IEnumerable<Booking> GetAllBookings()
-        {
-            return GetAll<Booking>().AsEnumerable();
-        }
         public IEnumerable<Booking> GetAllBookings(Func<Booking, bool> predicate)
         {
             return GetAll(predicate, m => m.Delegates).AsEnumerable();
         }
 
-        public IEnumerable<Booking> GetAllBookingsForKPI(int eventId, int userId, Func<Booking, bool> predicate)
+        public IEnumerable<Booking> GetAllBookingsForKPI(int eventId, int userId, DateTime dateFrom, DateTime dateTo, string searchValue)
         {
-            Func<Booking, bool> predicate2 = null;
-            if (eventId > 0 && userId > 0)
+            dateTo = dateTo.AddDays(1);
+            var queries = _db.Set<Booking>().Where(m =>
+                dateFrom <= m.CreatedTime &&
+                m.CreatedTime < dateTo &&
+                m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value);
+            if (!string.IsNullOrEmpty(searchValue))
+                queries = queries.Where(m => m.Salesman.DisplayName.Contains(searchValue));
+            if (eventId > 0)
             {
-                predicate2 =
-                    m => m.EventID == eventId &&
-                         (m.SalesmanID == userId 
-                         //|| m.Salesman.TransferUserID == userId
-                         )
-                         && predicate(m);
+                queries = queries.Where(m => m.EventID == eventId);
             }
-            else if (eventId > 0)
+            if (userId > 0)
             {
-                predicate2 =
-                    m => m.EventID == eventId
-                         && predicate(m);
+                queries = queries.Where(m => m.SalesmanID == userId);
             }
-            else if (userId > 0)
-            {
-                predicate2 =
-                    //m => (m.SalesmanID == userId || m.Salesman.TransferUserID == userId)
-                    m => (m.SalesmanID == userId )
-                         && predicate(m);
-            }
-            else
-            {
-                predicate2 =
-                    m => predicate(m);
-            }
-
-            return _db.Set<Booking>()
-                .Include(m => m.BookingStatusRecord)
-                .Include(m => m.Salesman)
-                .Where(predicate2).AsEnumerable();
-
+            return queries.Include(m => m.Salesman).ToList();
+        }
+        public IEnumerable<Booking> GetAllBookingsForTopSalesKPI(DateTime dateFrom, string searchValue)
+        {
+            var liveUser = UserStatus.Live.Value;
+            var queries = _db.Set<Booking>().Where(
+                m => dateFrom <= m.CreatedTime && 
+                m.Salesman.UserStatus.Value == liveUser &&
+            m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value);
+            if (!string.IsNullOrEmpty(searchValue))
+                queries = queries.Where(m => m.Salesman.DisplayName.Contains(searchValue));
+            return queries.Include(m => m.Salesman).ToList();
         }
         public Booking GetBooking(int id)
         {

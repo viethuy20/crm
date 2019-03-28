@@ -11,12 +11,14 @@ namespace PQT.Domain.Entities
     {
         public Leave()
         {
-            LeaveDate = DateTime.Today;
+            LeaveDateFrom = DateTime.Today;
+            LeaveDateTo = DateTime.Today;
             TypeOfLeave = TypeOfLeave.None;
             TypeOfLatenes = TypeOfLatenes.None;
             //LeaveStatus = LeaveStatus.None;
         }
-        public DateTime LeaveDate { get; set; }
+        public DateTime LeaveDateFrom { get; set; }
+        public DateTime LeaveDateTo { get; set; }
         public string Summary { get; set; }
         //public LeaveStatus LeaveStatus { get; set; }
         public LeaveType LeaveType { get; set; }
@@ -34,9 +36,54 @@ namespace PQT.Domain.Entities
         //[ForeignKey("AprroveUserID")]
         //public User AprroveUser { get; set; }
 
-        public string LeaveDateDisplay
+        public string LeaveDateDesc
         {
-            get { return LeaveDate.ToString("dd/MM/yyyy"); }
+            get
+            {
+                if (LeaveDateFrom < LeaveDateTo)
+                {
+                    return LeaveDateFrom.ToString("dd/MM/yyyy") + " - " + LeaveDateTo.ToString("dd/MM/yyyy");
+                }
+                return LeaveDateFrom.ToString("dd/MM/yyyy");
+            }
+        }
+        public string LeaveDateFromDisplay
+        {
+            get { return LeaveDateFrom.ToString("dd/MM/yyyy"); }
+        }
+        public string LeaveDateToDisplay
+        {
+            get { return LeaveDateTo.ToString("dd/MM/yyyy"); }
+        }
+
+        public double GetLeaveDays(DateTime dateFrom, DateTime dateTo)
+        {
+            if (dateTo < LeaveDateFrom)
+                return 0;
+            if (LeaveDateTo < dateFrom)
+                return 0;
+            if (dateFrom <= LeaveDateFrom && LeaveDateTo <= dateTo)
+                return (LeaveDateTo - LeaveDateFrom).TotalDays + 1;
+            if (LeaveDateFrom <= dateFrom && LeaveDateTo <= dateTo)
+                return (LeaveDateTo - dateFrom).TotalDays + 1;
+            if (LeaveDateFrom <= dateFrom && dateTo <= LeaveDateTo)
+                return (dateTo - dateFrom).TotalDays + 1;
+            if (dateFrom <= LeaveDateFrom && dateTo <= LeaveDateTo)
+                return (dateTo - LeaveDateFrom).TotalDays + 1;
+            return 0;
+        }
+        public double GetLeaveDaysByMonth(DateTime reportMonth)
+        {
+            if (reportMonth.Month == LeaveDateFrom.Month &&
+                reportMonth.Month == LeaveDateTo.Month)
+                return (LeaveDateTo - LeaveDateFrom).TotalDays + 1;
+            if (reportMonth.Month == LeaveDateFrom.Month && 
+                reportMonth.Month < LeaveDateTo.Month)
+                return (reportMonth.AddMonths(1) - LeaveDateFrom).TotalDays;
+            if (LeaveDateFrom.Month < reportMonth.Month && 
+                reportMonth.Month == LeaveDateTo.Month )
+                return (LeaveDateFrom - reportMonth).TotalDays + 1;
+            return 0;
         }
         public string UserDisplay
         {
@@ -79,6 +126,7 @@ namespace PQT.Domain.Entities
         public string TempMonth { get; set; }
         public DateTime IssueMonth { get; set; }
         public int NonSalesDays { get; set; }
+        public string Remarks { get; set; }
         public int? UserID { get; set; }
         [ForeignKey("UserID")]
         public User User { get; set; }
@@ -106,6 +154,7 @@ namespace PQT.Domain.Entities
         public string TempMonth { get; set; }
         public DateTime IssueMonth { get; set; }
         public int TechnicalIssueDays { get; set; }
+        public string Remarks { get; set; }
         public int? UserID { get; set; }
         [ForeignKey("UserID")]
         public User User { get; set; }

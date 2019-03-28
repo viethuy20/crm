@@ -29,37 +29,55 @@ namespace PQT.Web.Models
         {
             var settingService = DependencyHelper.GetService<ISettingRepository>();
             var leaveService = DependencyHelper.GetService<ILeaveService>();
-            var leaves = leaveService.GetAllLeavesNotInclude(m => m.LeaveDate >= DateFrom &&
-                                                     m.LeaveDate <= DateTo &&
-                                                     m.LeaveType.Value == LeaveType.Leave.Value 
-            );
-            var nonSalesDays = leaveService.GetAllNonSalesDaysNotInclude(m => m.IssueMonth.Month >= DateFrom.Month &&
-                                                                    m.IssueMonth.Month <= DateTo.Month).Sum(m => m.NonSalesDays);
-            var technicialIssueDays = leaveService.GetAllTechnicalIssueDaysNotInclude(m => m.IssueMonth.Month >= DateFrom.Month &&
-                                                                                 m.IssueMonth.Month <= DateTo.Month).Sum(m => m.TechnicalIssueDays);
-            var totalSundayDays = DateTimeHelper.CountDays(DayOfWeek.Sunday, DateFrom, DateTo);
-            var totalSaturdayDays = DateTimeHelper.CountDays(DayOfWeek.Saturday, DateFrom, DateTo);
-            var totalWorkingDays = (DateTo - DateFrom).TotalDays + 1 - totalSaturdayDays - totalSundayDays;
+            var leaves = leaveService.GetAllLeavesForKpi(DateFrom, DateTo).AsEnumerable();
+            var nonSalesDays = leaveService.GetAllNonSalesDaysForKpi(DateFrom, DateTo).AsEnumerable();
+            var technicialIssueDays = leaveService.GetAllTechnicalIssueDaysForKpi(DateFrom, DateTo).AsEnumerable();
+
             var defaultBufferForNew = Settings.KPI.BufferForNewUser();
+            var dailyRequiredCallForIntern = Settings.KPI.DailyRequiredCallKpiForIntern();
+            var dailyRequiredCallForFull = Settings.KPI.DailyRequiredCallKpiForFull();
             ConsolidateKpis = new List<ConsolidateKPI>();
             var users = leads.DistinctBy(m => m.UserID).Select(m => m.User).ToList();
             users.AddRange(leadNews.DistinctBy(m => m.UserID).Select(m => m.User));
             foreach (var user in users.Where(m => m.UserStatus == UserStatus.Live).DistinctBy(m => m.ID))
             {
+                var employmentDate = Convert.ToDateTime(user.EmploymentDate);
+                var employmentEndDate = Convert.ToDateTime(user.EmploymentEndDate);
+                var dateStart = employmentDate != default(DateTime) &&
+                                DateFrom <= employmentDate
+                    ? employmentDate
+                    : DateFrom;
+                var dateEnd = employmentEndDate != default(DateTime) &&
+                              dateStart <= employmentEndDate &&
+                              employmentEndDate <= DateTo
+                    ? employmentEndDate
+                    : DateTo;
+
+                var totalSundayDays = DateTimeHelper.CountDays(DayOfWeek.Sunday, dateStart, dateEnd);
+                var totalSaturdayDays = DateTimeHelper.CountDays(DayOfWeek.Saturday, dateStart, dateEnd);
+                var totalWorkingDays = (dateEnd - dateStart).TotalDays + 1 - totalSaturdayDays - totalSundayDays;
+
                 int? country = null;
                 if (user.OfficeLocation != null)
                     country = user.OfficeLocation.CountryID;
-                var totalHolidays = settingService.TotalHolidays(DateFrom, DateTo, country);
-                var totalLeave = leaves.Count(m => m.UserID == user.ID && m.TypeOfLeave != TypeOfLeave.HalfDayUnpaid) +
-                    ((double)leaves.Count(m => m.UserID == user.ID && m.TypeOfLeave == TypeOfLeave.HalfDayUnpaid) / 2);
+                var totalHolidays = settingService.TotalHolidays(dateStart, dateEnd, country);
+                //var totalLeave = leaves.Count(m => m.UserID == user.ID && m.TypeOfLeave != TypeOfLeave.HalfDayUnpaid) +
+                //    ((double)leaves.Count(m => m.UserID == user.ID && m.TypeOfLeave == TypeOfLeave.HalfDayUnpaid) / 2);
+                var totalLeave = leaves.Where(m => m.UserID == user.ID && !m.TypeOfLeave.DisplayName.Contains("Unpaid"))
+                    .Sum(m => m.GetLeaveDays(DateFrom, DateTo));
                 var actualWorkingDays = totalWorkingDays - totalHolidays - totalLeave;
 
-                //var totalNonSalesDays = nonSalesDays.Where(m => m.UserID == user.ID).Sum(m => m.NonSalesDays);
+                var totalNonSalesDays = nonSalesDays.Where(m => m.UserID == user.ID).Sum(m => m.NonSalesDays);
+                var totalTechnicialIssueDays = technicialIssueDays.Where(m => m.UserID == user.ID).Sum(m => m.TechnicalIssueDays);
 
                 var bufferForNewSales = GetBufferForNewSales(user, country, defaultBufferForNew, settingService);
 
+                var dailyRequiredCall = user.BusinessDevelopmentUnit == BusinessDevelopmentUnit.Level10
+                    ? dailyRequiredCallForIntern
+                    : dailyRequiredCallForFull;
+
                 var actualRequiredCallKpis =
-                    (actualWorkingDays - bufferForNewSales - nonSalesDays - technicialIssueDays) * 3;
+                    (actualWorkingDays - bufferForNewSales - totalNonSalesDays - totalTechnicialIssueDays) * dailyRequiredCall;
                 var item = new ConsolidateKPI
                 {
                     User = user

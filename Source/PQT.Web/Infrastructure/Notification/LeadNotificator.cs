@@ -778,7 +778,7 @@ namespace PQT.Web.Infrastructure.Notification
                         NotifyType = NotifyType.Leave,
                         Title = title,
                         EventCode = "",
-                        Description = eventData.LeaveDateDisplay + " - " + eventData.UserDisplay,
+                        Description = eventData.LeaveDateDesc + ": " + eventData.UserDisplay,
                         HighlightColor = "#ffffff"
                     };
                     if (!string.IsNullOrEmpty(title))

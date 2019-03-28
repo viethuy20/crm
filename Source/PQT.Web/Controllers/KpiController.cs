@@ -23,16 +23,14 @@ namespace PQT.Web.Controllers
         private readonly IEventService _eventService;
         private readonly IBookingService _bookingService;
         private readonly IRecruitmentService _recruitmentService;
-        private readonly ILeaveService _leaveService;
 
-        public KpiController(ILeadService leadService, IEventService eventService, ILeadNewService leadNewService, IBookingService bookingService, IRecruitmentService recruitmentService, ILeaveService leaveService)
+        public KpiController(ILeadService leadService, IEventService eventService, ILeadNewService leadNewService, IBookingService bookingService, IRecruitmentService recruitmentService)
         {
             _leadService = leadService;
             _eventService = eventService;
             _leadNewService = leadNewService;
             _bookingService = bookingService;
             _recruitmentService = recruitmentService;
-            _leaveService = leaveService;
         }
 
         [DisplayName(@"Enquire KPIs")]
@@ -882,43 +880,9 @@ namespace PQT.Web.Controllers
             IEnumerable<Lead> leads = new HashSet<Lead>();
             IEnumerable<LeadNew> leadNews = new HashSet<LeadNew>();
             IEnumerable<Booking> bookings = new HashSet<Booking>();
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                leads = _leadService.GetAllLeadsForKPI(eventId, userId, m =>
-                     datefrom <= m.CreatedTime.Date &&
-                     m.CreatedTime.Date <= dateto &&
-                     m.SalesmanName.Contains(searchValue)
-                );
-                leadNews = _leadNewService.GetAllLeadNewsForKPI(eventId, userId, m =>
-                     m.AssignUserID > 0 &&
-                     datefrom <= m.FirstAssignDate.Date &&
-                     m.FirstAssignDate.Date <= dateto &&
-                      m.SalesmanName.Contains(searchValue)
-                );
-                bookings = _bookingService.GetAllBookingsForKPI(eventId, userId, m =>
-                    m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value &&
-                    datefrom <= m.BookingDate.Date &&
-                   m.BookingDate.Date <= dateto &&
-                     m.SalesmanName.Contains(searchValue)
-                );
-            }
-            else
-            {
-                leads = _leadService.GetAllLeadsForKPI(eventId, userId, m =>
-                    datefrom <= m.CreatedTime.Date &&
-                    m.CreatedTime.Date <= dateto
-                );
-                leadNews = _leadNewService.GetAllLeadNewsForKPI(eventId, userId, m =>
-                    m.AssignUserID > 0 &&
-                    datefrom <= m.FirstAssignDate.Date &&
-                    m.FirstAssignDate.Date <= dateto
-                );
-                bookings = _bookingService.GetAllBookingsForKPI(eventId, userId, m =>
-                    m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value &&
-                    datefrom <= m.BookingDate.Date &&
-                    m.BookingDate.Date <= dateto
-                );
-            }
+            leads = _leadService.GetAllLeadsForKPI(eventId, userId, datefrom, dateto, searchValue).AsEnumerable();
+            leadNews = _leadNewService.GetAllLeadNewsForKPI(eventId, userId, datefrom, dateto, searchValue).AsEnumerable();
+            bookings = _bookingService.GetAllBookingsForKPI(eventId, userId, datefrom, dateto, searchValue).AsEnumerable();
             // ReSharper disable once AssignNullToNotNullAttribute
             var model = new ConsolidateKPIModel { DateFrom = datefrom, DateTo = dateto };
             model.Prepare(leads, leadNews, bookings);
@@ -1049,21 +1013,7 @@ namespace PQT.Web.Controllers
             IEnumerable<Booking> bookings = new HashSet<Booking>();
             var dateMonth = DateTime.Today.AddMonths(-2);
             var month = new DateTime(dateMonth.Year, dateMonth.Month, 1);
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                bookings = _bookingService.GetAllBookingsForKPI(0, 0, m =>
-                     m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value &&
-                     m.CreatedTime >= month &&
-                      m.SalesmanName.Contains(searchValue)
-                );
-            }
-            else
-            {
-                bookings = _bookingService.GetAllBookingsForKPI(0, 0, m =>
-                    m.BookingStatusRecord.Status.Value == BookingStatus.Approved.Value &&
-                    m.CreatedTime >= month
-                );
-            }
+            bookings = _bookingService.GetAllBookingsForTopSalesKPI(month, searchValue).AsEnumerable();
             // ReSharper disable once AssignNullToNotNullAttribute
             var model = new ConsolidateKPIModel();
             model.Prepare(bookings);
@@ -1201,42 +1151,7 @@ namespace PQT.Web.Controllers
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
             IEnumerable<Candidate> candidates = new HashSet<Candidate>();
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                if (userId > 0)
-                {
-                    candidates = _recruitmentService.GetAllCandidatesForKpis(m =>
-                        datefrom <= m.CreatedTime.Date &&
-                        m.CreatedTime.Date <= dateto && m.UserID == userId &&
-                        m.SalesmanName.Contains(searchValue)
-                    );
-                }
-                else
-                {
-                    candidates = _recruitmentService.GetAllCandidatesForKpis(m =>
-                        datefrom <= m.CreatedTime.Date &&
-                        m.CreatedTime.Date <= dateto &&
-                        m.SalesmanName.Contains(searchValue)
-                    );
-                }
-            }
-            else
-            {
-                if (userId > 0)
-                {
-                    candidates = _recruitmentService.GetAllCandidatesForKpis(m =>
-                        datefrom <= m.CreatedTime.Date &&
-                        m.CreatedTime.Date <= dateto
-                    );
-                }
-                else
-                {
-                    candidates = _recruitmentService.GetAllCandidatesForKpis(m =>
-                        datefrom <= m.CreatedTime.Date &&
-                        m.CreatedTime.Date <= dateto
-                    );
-                }
-            }
+            candidates = _recruitmentService.GetAllCandidatesForKpis(searchValue,userId,datefrom,dateto).AsEnumerable();
             // ReSharper disable once AssignNullToNotNullAttribute
             var model = new HRConsolidateKPIModel();
             model.Prepare(candidates);

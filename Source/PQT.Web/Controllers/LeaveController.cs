@@ -232,81 +232,8 @@ namespace PQT.Web.Controllers
                                  currentUser.ProjectManagementUnit != ProjectManagementUnit.None;
             IEnumerable<Leave> data = new HashSet<Leave>();
             Func<Leave, bool> predicate = null;
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                if (currentUserId > 0)
-                {
-                    if (isSupervisor)
-                    {
-                        predicate = m =>
-                            (m.UserID == currentUserId || m.User.DirectSupervisorID == currentUserId) &&
-                            ((m.AprroveUserDisplay.ToLower().Contains(searchValue)) ||
-                             (m.Summary != null && m.Summary.ToLower().Contains(searchValue)) ||
-                             (m.LeaveType.DisplayName.ToLower().Contains(searchValue)) ||
-                             (m.TypeOfLeave.DisplayName.ToLower().Contains(searchValue)) ||
-                             (m.TypeOfLatenes.DisplayName.ToLower().Contains(searchValue)) ||
-                             m.LeaveDateDisplay.ToLower().Contains(searchValue));
-                    }
-                    else
-                    {
-                        predicate = m =>
-                            (m.UserID == currentUserId) &&
-                            ((m.AprroveUserDisplay.ToLower().Contains(searchValue)) ||
-                             (m.Summary != null && m.Summary.ToLower().Contains(searchValue)) ||
-                             (m.LeaveType.DisplayName.ToLower().Contains(searchValue)) ||
-                             (m.TypeOfLeave.DisplayName.ToLower().Contains(searchValue)) ||
-                             (m.TypeOfLatenes.DisplayName.ToLower().Contains(searchValue)) ||
-                             m.LeaveDateDisplay.ToLower().Contains(searchValue));
-                    }
-                }
-                else
-                {
-                    predicate = m =>
-                        (m.AprroveUserDisplay.ToLower().Contains(searchValue)) ||
-                        (m.Summary != null && m.Summary.ToLower().Contains(searchValue)) ||
-                        (m.LeaveType.DisplayName.ToLower().Contains(searchValue)) ||
-                        (m.TypeOfLeave.DisplayName.ToLower().Contains(searchValue)) ||
-                        (m.TypeOfLatenes.DisplayName.ToLower().Contains(searchValue)) ||
-                        m.LeaveDateDisplay.ToLower().Contains(searchValue);
-                }
-            }
-            else
-            {
-                if (currentUserId > 0)
-                {
-                    if (isSupervisor)
-                    {
-                        predicate = m => (m.UserID == currentUserId || m.User.DirectSupervisorID == currentUserId);
-                    }
-                    else
-                    {
-                        predicate = m => (m.UserID == currentUserId);
-                    }
-                }
-            }
-            recordsTotal = _leaveService.GetCountLeaves(predicate);
-
-            switch (sortColumn)
-            {
-                case "UserDisplay":
-                    data = _leaveService.GetAllLeaves(predicate, sortColumnDir, s => s.UserDisplay, skip, pageSize);
-                    break;
-                case "LeaveDateDisplay":
-                    data = _leaveService.GetAllLeaves(predicate, sortColumnDir, s => s.LeaveDate, skip, pageSize);
-                    break;
-                case "AprroveUserDisplay":
-                    data = _leaveService.GetAllLeaves(predicate, sortColumnDir, s => s.AprroveUserDisplay, skip, pageSize);
-                    break;
-                case "LeaveType":
-                    data = _leaveService.GetAllLeaves(predicate, sortColumnDir, s => s.LeaveType.DisplayName, skip, pageSize);
-                    break;
-                case "ReasonLeave":
-                    data = _leaveService.GetAllLeaves(predicate, sortColumnDir, s => s.ReasonLeave, skip, pageSize);
-                    break;
-                default:
-                    data = _leaveService.GetAllLeaves(predicate, sortColumnDir, s => s.ID, skip, pageSize); ;
-                    break;
-            }
+            recordsTotal = _leaveService.GetCountLeaves(currentUserId, isSupervisor, searchValue);
+            data = _leaveService.GetAllLeaves(currentUserId, isSupervisor, searchValue, sortColumnDir, sortColumn, skip, pageSize);
 
             var json = new
             {
@@ -318,8 +245,10 @@ namespace PQT.Web.Controllers
                     m.ID,
                     m.CreatedUserID,
                     m.UserDisplay,
-                    m.LeaveDateDisplay,
+                    m.LeaveDateFromDisplay,
+                    m.LeaveDateToDisplay,
                     m.AprroveUserDisplay,
+                    m.LeaveDateDesc,
                     m.Summary,
                     LeaveType = m.LeaveType.DisplayName,
                     m.ReasonLeave,
@@ -368,113 +297,9 @@ namespace PQT.Web.Controllers
                                currentUser.SalesManagementUnit != SalesManagementUnit.None ||
                                currentUser.HumanResourceUnit == HumanResourceUnit.Coordinator ||
                                currentUser.ProjectManagementUnit != ProjectManagementUnit.None;
-            IEnumerable<Leave> leaves = new HashSet<Leave>();
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                if (currentUserId > 0)
-                {
-                    if (isSupervisor)
-                    {
-                        leaves = _leaveService.GetAllLeaves(m =>
-                            (m.UserID == currentUserId || m.User.DirectSupervisorID == currentUserId) &&
-                            m.LeaveDate.Month == monthReport.Month &&
-                            (m.User.DisplayName.ToLower().Contains(searchValue)));
-                    }
-                    else
-                    {
-                        leaves = _leaveService.GetAllLeaves(m =>
-                            (m.UserID == currentUserId) &&
-                            m.LeaveDate.Month == monthReport.Month &&
-                            (m.User.DisplayName.ToLower().Contains(searchValue)));
-                    }
-                }
-                else
-                {
-                    leaves = _leaveService.GetAllLeaves(m =>
-                        m.LeaveDate.Month == monthReport.Month &&
-                        (m.User.DisplayName.ToLower().Contains(searchValue)));
-                }
-            }
-            else
-            {
-                if (currentUserId > 0)
-                {
-                    if (isSupervisor)
-                    {
-                        leaves = _leaveService.GetAllLeaves(m =>
-                            (m.UserID == currentUserId || m.User.DirectSupervisorID == currentUserId) &&
-                            m.LeaveDate.Month == monthReport.Month);
-                    }
-                    else
-                    {
-                        leaves = _leaveService.GetAllLeaves(m =>
-                            (m.UserID == currentUserId) &&
-                            m.LeaveDate.Month == monthReport.Month);
-                    }
-                }
-                else
-                {
-                    leaves = _leaveService.GetAllLeaves(m =>
-                        m.LeaveDate.Month == monthReport.Month
-                    );
-                }
-            }
-            // ReSharper disable once AssignNullToNotNullAttribute
-            var model = new LeaveMonthlyReport();
-            model.Prepare(leaves);
-
-            #region sort
-            if (sortColumnDir == "asc")
-            {
-                switch (sortColumn)
-                {
-                    case "Leaves":
-                        model.UserMonthlyReports = model.UserMonthlyReports.OrderBy(s => s.Leaves).ThenBy(s => s.User.ID).ToList();
-                        break;
-                    case "Lateness":
-                        model.UserMonthlyReports = model.UserMonthlyReports.OrderBy(s => s.Lateness).ThenBy(s => s.User.ID).ToList();
-                        break;
-                    case "Resignation":
-                        model.UserMonthlyReports = model.UserMonthlyReports.OrderBy(s => s.Resignation).ThenBy(s => s.User.ID).ToList();
-                        break;
-                    case "Total":
-                        model.UserMonthlyReports = model.UserMonthlyReports.OrderBy(s => s.Total).ThenBy(s => s.User.ID).ToList();
-                        break;
-                    default:
-                        model.UserMonthlyReports = model.UserMonthlyReports.OrderBy(s => s.User.DisplayName).ToList();
-                        break;
-                }
-            }
-            else
-            {
-                switch (sortColumn)
-                {
-                    case "Leaves":
-                        model.UserMonthlyReports = model.UserMonthlyReports.OrderByDescending(s => s.Leaves).ThenBy(s => s.User.ID).ToList();
-                        break;
-                    case "Lateness":
-                        model.UserMonthlyReports = model.UserMonthlyReports.OrderByDescending(s => s.Lateness).ThenBy(s => s.User.ID).ToList();
-                        break;
-                    case "Resignation":
-                        model.UserMonthlyReports = model.UserMonthlyReports.OrderByDescending(s => s.Resignation).ThenBy(s => s.User.ID).ToList();
-                        break;
-                    case "Total":
-                        model.UserMonthlyReports = model.UserMonthlyReports.OrderByDescending(s => s.Total).ThenBy(s => s.User.ID).ToList();
-                        break;
-                    default:
-                        model.UserMonthlyReports = model.UserMonthlyReports.OrderByDescending(s => s.User.DisplayName).ToList();
-                        break;
-                }
-            }
-
-            #endregion sort
-
-            recordsTotal = model.UserMonthlyReports.Count();
-            if (pageSize > recordsTotal)
-            {
-                pageSize = recordsTotal;
-            }
-            var data = model.UserMonthlyReports.Skip(skip).Take(pageSize).ToList();
+            IEnumerable<Leave> data = new HashSet<Leave>();
+            recordsTotal = _leaveService.GetCountLeavesByMonthlyReport(monthReport, currentUserId, isSupervisor, searchValue);
+            data = _leaveService.GetAllLeavesByMonthlyReport(monthReport, currentUserId, isSupervisor, searchValue, sortColumnDir, sortColumn, skip, pageSize);
 
             var json = new
             {
@@ -483,13 +308,16 @@ namespace PQT.Web.Controllers
                 recordsTotal = recordsTotal,
                 data = data.Select(m => new
                 {
-                    UserID = m.User.ID,
-                    UserName = m.User.DisplayName,
-                    UserEmail = m.User.Email,
-                    m.Leaves,
-                    m.Lateness,
-                    m.Resignation,
-                    m.Total,
+                    m.ID,
+                    m.CreatedUserID,
+                    m.UserDisplay,
+                    m.LeaveDateFromDisplay,
+                    m.LeaveDateToDisplay,
+                    m.AprroveUserDisplay,
+                    m.LeaveDateDesc,
+                    m.Summary,
+                    LeaveType = m.LeaveType.DisplayName,
+                    m.ReasonLeave,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);

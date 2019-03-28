@@ -2,7 +2,7 @@
 @model PQT.Web.Models.LeaveMonthlyReport
 
 @{
-    ViewBag.Title = "Monthly attendance report";
+    ViewBag.Title = "Monthly Attendance Report";
 }
 
 <section>
@@ -24,14 +24,15 @@
                             @Html.Bootstrap().Button().Text("Search").Id("btnSearch").PrependIcon("md md-search").Size(ButtonSize.Mini).HtmlAttributes(new { @class = "btn btn-primary" })
                         </div>
                     </div>
-                    <table class="table" id="kpiTable">
+                    <table class="table" id="leaveTable">
                         <thead>
-                            <tr>
-                                <th>User name</th>
-                                <th class="text-center">Leave</th>
-                                <th class="text-center">Lateness</th>
-                                <th class="text-center">Resignation</th>
-                            </tr>
+                        <tr>
+                            <th>Leave Date</th>
+                            <th>User Name</th>
+                            <th>Type</th>
+                            <th>Reason</th>
+                            <th>Approver</th>
+                        </tr>
                         </thead>
                     </table>
                 </div>
@@ -42,7 +43,61 @@
 </section>
 
 
+
 @Html.Script(
+
+    @<script>
+        initMonthpicker();
+        var windowW = $(window).width();
+        var windowH = $(window).height();
+        var fixedColumn = 0;
+        var sizeLenght = 50;
+
+        var leaveTable = $("#leaveTable");
+        leaveTable.dataTable({
+            "processing": true, // for show progress bar
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "stateSave": false,
+            "ajax": {
+                "url": "@Url.Action("AjaxGetMonthlyReport")",
+                 "type": "POST",
+                 "datatype": "json",
+                 "data": function(d) {
+                     d.Month = $('@Html.JquerySelectorFor(m=>m.Month)').val();
+                 }
+             },
+             "columns": [
+                 { "data": "LeaveDateDesc", "name": "LeaveDateDesc", "orderable": true },
+                 { "data": "UserDisplay", "name": "UserDisplay", "orderable": true },
+                 { "data": "LeaveType", "name": "LeaveType", "orderable": true },
+                 { "data": "ReasonLeave", "name": "ReasonLeave", "orderable": true },
+                 { "data": "AprroveUserDisplay", "name": "AprroveUserDisplay", "orderable": true }
+             ],
+             "iDisplayLength": sizeLenght,
+             "aaSorting": [[0, "desc"]],
+             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+             },
+             initComplete: function () {
+                 var _table = this;
+                 _table.parent().find('input[type="search"]').unbind();
+                 var timeOutTyping;
+                 _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function () {
+                         _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                     }, 600);
+                 });
+             },
+         });
+        
+
+        $('#btnSearch').click(function () {
+            leaveTable.fnFilter('');
+        });
+    </script>)
+@*@Html.Script(
     @<script>
          initMonthpicker();
          var oTable = $("#kpiTable");
@@ -92,4 +147,4 @@
 
     </script>
 
-)
+)*@

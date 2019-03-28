@@ -102,8 +102,6 @@
             {
                 @Html.Bootstrap().ActionLinkButton("Reject Employment", "RejectAction").RouteValues(new { id = Model.Candidate.ID }).Class("simple-ajax-popup-align-top btn-danger").PrependIcon("md md-cancel")
             }
-
-
         </div>
     </div>
     @if (Model.Candidate.CandidateStatusRecord != CandidateStatus.Initial)
@@ -167,7 +165,7 @@
                 <div class="col-sm-4">
                     <div class="form-group">
                         <div class="input-group">
-                            <span class="input-group-addon dialingCode" style="color: #000;font-size: 16px;padding-bottom: 9px;font-weight: 500;">@Model.Candidate.DialingCode</span>
+                            <span class="input-group-addon dialingCode" style="color: #000;font-size: 16px;padding-bottom: 9px;padding-top: 2px;font-weight: 500;">@Model.Candidate.DialingCode</span>
                             <div class="input-group-content">
                                 @Html.Bootstrap().TextBoxFor(m => m.Candidate.MobileNumber).Class("form-control").Disabled().ShowValidationMessage(true)
                             </div>

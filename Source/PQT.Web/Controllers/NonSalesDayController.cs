@@ -45,7 +45,7 @@ namespace PQT.Web.Controllers
         public ActionResult CreateOrEdit(NonSalesDay model)
         {
             model.IssueMonth = DateTime.ParseExact(model.TempMonth, "MM/yyyy", CultureInfo.InvariantCulture);
-            var exist = _unitRepo.GetNonSalesDayByMonth(model.IssueMonth);
+            var exist = _unitRepo.GetNonSalesDayByMonth(model.IssueMonth, model.UserID);
             if (exist != null && exist.ID != model.ID)
                 return Json(new
                 {
@@ -113,32 +113,8 @@ namespace PQT.Web.Controllers
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
             IEnumerable<NonSalesDay> data = new HashSet<NonSalesDay>();
-            Func<NonSalesDay, bool> predicate = null;
-
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                predicate = m =>
-                    (m.User != null && m.User.DisplayName.ToLower().Contains(searchValue)) ||
-                    m.IssueMonth.ToString("MMM/yyyy").ToLower().Contains(searchValue);
-            }
-            recordsTotal = _unitRepo.GetCountNonSalesDays(predicate);
-
-            switch (sortColumn)
-            {
-                case "UserDisplay":
-                    data = _unitRepo.GetAllNonSalesDays(predicate, sortColumnDir, s => s.UserDisplay, skip, pageSize);
-                    break;
-                case "IssueMonthDisplay":
-                    data = _unitRepo.GetAllNonSalesDays(predicate, sortColumnDir, s => s.IssueMonth, skip, pageSize);
-                    break;
-                case "NonSalesDays":
-                    data = _unitRepo.GetAllNonSalesDays(predicate, sortColumnDir, s => s.NonSalesDays, skip, pageSize);
-                    break;
-                default:
-                    data = _unitRepo.GetAllNonSalesDays(predicate, sortColumnDir, s => s.ID, skip, pageSize); ;
-                    break;
-            }
-
+            recordsTotal = _unitRepo.GetCountNonSalesDays(searchValue);
+            data = _unitRepo.GetAllNonSalesDays(searchValue, sortColumnDir, sortColumn, skip, pageSize);
             var json = new
             {
                 draw = draw,
@@ -148,6 +124,7 @@ namespace PQT.Web.Controllers
                 {
                     m.ID,
                     m.UserDisplay,
+                    m.Remarks,
                     m.UserID,
                     m.NonSalesDays,
                     m.IssueMonth,

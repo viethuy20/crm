@@ -5,8 +5,8 @@
 @using Resources
 @model PQT.Domain.Entities.NonSalesDay
 @{
-//var memberService = DependencyHelper.GetService<IMembershipService>();
-//var salesmans = memberService.GetUsers(m => m.UserStatus.Value == UserStatus.Live.Value && m.Status.Value != EntityUserStatus.Deleted);
+    var memberService = DependencyHelper.GetService<IMembershipService>();
+    var salesmans = memberService.GetAllUsersByLive();
 }
 <div class="card card-underline" style="background: white; margin: auto; max-width: 700px; position: relative;">
     <div class="card-head">
@@ -34,13 +34,17 @@
                 @Html.Bootstrap().TextBoxFor(m => m.TempMonth).Class("form-control month-picker").Placeholder("mm/yyyy").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.TempMonth).LabelText("Month").ShowRequiredStar(true)
             </div>
-            @*<div class="form-group">
+            <div class="form-group">
                 @Html.Bootstrap().DropDownListFor(m => m.UserID, salesmans.ToSelectList(m => m.ID, m => m.DisplayName)).HtmlAttributes(new { required = "required" }).OptionLabel("").Class("form-control").ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.UserID).LabelText("Sales").ShowRequiredStar(true)
-            </div>*@
+            </div>
             <div class="form-group">
                 @Html.Bootstrap().TextBoxFor(m => m.NonSalesDays).Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.NonSalesDays).ShowRequiredStar(true)
+            </div>
+            <div class="form-group">
+                @Html.Bootstrap().TextAreaFor(m => m.Remarks).Rows(3).Class("form-control").ShowValidationMessage(true)
+                @Html.Bootstrap().LabelFor(m => m.Remarks)
             </div>
             <div class="form-group">
                 <div class="pull-right">

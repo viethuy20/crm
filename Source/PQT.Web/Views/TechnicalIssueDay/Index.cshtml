@@ -23,7 +23,9 @@
                 <thead>
                     <tr>
                         <th>Month</th>
+                        <th>Sales</th>
                         <th>Technical Issue Days</th>
+                        <th>Remarks</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -52,13 +54,15 @@
             },
             "columns": [
                 { "data": "IssueMonthDisplay", "name": "IssueMonthDisplay", "orderable": true },
+                { "data": "UserDisplay", "name": "UserDisplay", "orderable": true },
                 { "data": "TechnicalIssueDays", "name": "TechnicalIssueDays", "orderable": true },
+                { "data": "Remarks", "name": "Remarks", "orderable": true },
                 { "data": "ID", "name": "ID", "orderable": false },
             ],
             "iDisplayLength": 25,
             "aaSorting": [[0, "desc"]],
             "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                $(nRow).find('td:eq(2)').html('<a class="simple-ajax-popup-align-top" data-action="edit" href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '"><i class="md md-edit text-info"></i></a>');
+                $(nRow).find('td:eq(4)').html('<a class="simple-ajax-popup-align-top" data-action="edit" href="@Url.Action("CreateOrEdit")?id=' + aData["ID"] + '"><i class="md md-edit text-info"></i></a>');
                 $(nRow).attr("data-id", aData["ID"]);
             },
             initComplete: function () {

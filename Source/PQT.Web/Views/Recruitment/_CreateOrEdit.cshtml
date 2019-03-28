@@ -45,7 +45,8 @@
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    <span class="input-group-addon dialingCode" style="color: #000;font-size: 16px;padding-bottom: 9px;font-weight: 500;"></span>
+                    <span class="input-group-addon dialingCode" style="color: #000;font-size: 16px;
+padding-bottom: 9px;padding-top: 2px;font-weight: 500;"></span>
                     <div class="input-group-content" style="padding-top:0">
                         @Html.Bootstrap().TextBoxFor(m => m.Candidate.MobileNumber).Class("form-control").ShowValidationMessage(true)
                     </div>
@@ -90,6 +91,12 @@
                 </div>
             </div>
             <div class="col-sm-4">
+                <div class="form-group">
+                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.RecruitmentPositionID, recruitmentPositions.ToSelectList(m => m.ID, m => m.Description)).HtmlAttributes(new { required = "required" }).OptionLabel("").Class("form-control").ShowValidationMessage(true)
+                    @Html.Bootstrap().LabelFor(m => m.Candidate.RecruitmentPosition).ShowRequiredStar(true)
+                </div>
+            </div>
+            <div class="col-sm-4">
                 @Html.HiddenFor(m => m.Candidate.Resume)
                 <div class="form-group ">
                     @if (!string.IsNullOrEmpty(Model.Candidate.Resume))
@@ -105,12 +112,6 @@
                         @Html.Bootstrap().FileFor(m => m.ResumeFile).Class("form-control").ShowValidationMessage(true).HtmlAttributes(new { required = "required" })
                     }
                     @Html.Bootstrap().LabelFor(m => m.ResumeFile).LabelText("Resume").ShowRequiredStar(true)
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    @Html.Bootstrap().DropDownListFor(m => m.Candidate.RecruitmentPositionID, recruitmentPositions.ToSelectList(m => m.ID, m => m.Description)).HtmlAttributes(new { required = "required" }).OptionLabel("").Class("form-control").ShowValidationMessage(true)
-                    @Html.Bootstrap().LabelFor(m => m.Candidate.RecruitmentPosition).ShowRequiredStar(true)
                 </div>
             </div>
             <div class="col-sm-12">

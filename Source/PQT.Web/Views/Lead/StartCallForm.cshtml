@@ -750,4 +750,8 @@
          $(document).on("change", "select[name=table_length]", function () {
              fixedColumn = 0;
          });
+
+         if (company_id_selected_val > 0) {
+             wizard.bootstrapWizard('next');
+         }
      </script>)

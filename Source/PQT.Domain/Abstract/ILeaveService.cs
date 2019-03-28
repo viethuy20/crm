@@ -9,10 +9,15 @@ namespace PQT.Domain.Abstract
     public interface ILeaveService
     {
         #region Leave
-        int GetCountLeaves(Func<Leave, bool> predicate);
-        IEnumerable<Leave> GetAllLeaves(Func<Leave, bool> predicate, string sortColumnDir, Func<Leave, object> orderBy, int page, int pageSize);
-        IEnumerable<Leave> GetAllLeaves(Func<Leave, bool> predicate);
-        IEnumerable<Leave> GetAllLeavesNotInclude(Func<Leave, bool> predicate);
+        int GetCountLeaves(int userId, bool isSupervisor,string searchValue);
+        IEnumerable<Leave> GetAllLeaves(int userId, bool isSupervisor, string searchValue, string sortColumnDir, string sortColumn, int page, int pageSize);
+
+        int GetCountLeavesByMonthlyReport(DateTime month, int userId, bool isSupervisor, string searchValue);
+        IEnumerable<Leave> GetAllLeavesByMonthlyReport(DateTime month, int userId, bool isSupervisor,
+            string searchValue, string sortColumnDir,
+            string sortColumn, int page, int pageSize);
+        IEnumerable<Leave> GetAllLeavesMonthlyReport(DateTime month, int userId, bool isSupervisor, string searchValue);
+        IEnumerable<Leave> GetAllLeavesForKpi(DateTime dateFrom, DateTime dateTo);
         Leave GetLeave(int id);
         Leave CreateLeave(Leave info);
         bool UpdateLeave(Leave info);
@@ -20,13 +25,12 @@ namespace PQT.Domain.Abstract
 
         #endregion Leave
         #region NonSalesDay
-        int GetCountNonSalesDays(Func<NonSalesDay, bool> predicate);
-        IEnumerable<NonSalesDay> GetAllNonSalesDays(Func<NonSalesDay, bool> predicate, string sortColumnDir,Func<NonSalesDay, object> orderBy, int page, int pageSize);
-        IEnumerable<NonSalesDay> GetAllNonSalesDays(Func<NonSalesDay, bool> predicate);
-        IEnumerable<NonSalesDay> GetAllNonSalesDaysNotInclude(Func<NonSalesDay, bool> predicate);
+        int GetCountNonSalesDays(string searchValue);
+        IEnumerable<NonSalesDay> GetAllNonSalesDays(string searchValue, string sortColumnDir, string sortColumn, int page, int pageSize);
+        IEnumerable<NonSalesDay> GetAllNonSalesDaysForKpi(DateTime dateFrom, DateTime dateTo);
 
         NonSalesDay GetNonSalesDay(int id);
-        NonSalesDay GetNonSalesDayByMonth(DateTime month);
+        NonSalesDay GetNonSalesDayByMonth(DateTime month, int? userId);
         NonSalesDay CreateNonSalesDay(NonSalesDay info);
         bool UpdateNonSalesDay(NonSalesDay info);
         bool DeleteNonSalesDay(int id);
@@ -34,13 +38,11 @@ namespace PQT.Domain.Abstract
 
         #endregion NonSalesDay
         #region TechnicalIssueDay
-        int GetCountTechnicalIssueDays(Func<TechnicalIssueDay, bool> predicate);
-        IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDays(Func<TechnicalIssueDay, bool> predicate, string sortColumnDir, Func<TechnicalIssueDay, object> orderBy, int page, int pageSize);
-        IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDays(Func<TechnicalIssueDay, bool> predicate);
-        IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDaysNotInclude(Func<TechnicalIssueDay, bool> predicate);
-
+        int GetCountTechnicalIssueDays(string searchValue);
+        IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDays(string searchValue, string sortColumnDir, string sortColumn, int page, int pageSize);
+        IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDaysForKpi(DateTime dateFrom, DateTime dateTo);
         TechnicalIssueDay GetTechnicalIssueDay(int id);
-        TechnicalIssueDay GetTechnicalIssueDayByMonth(DateTime month);
+        TechnicalIssueDay GetTechnicalIssueDayByMonth(DateTime month, int? userId);
         TechnicalIssueDay CreateTechnicalIssueDay(TechnicalIssueDay info);
         bool UpdateTechnicalIssueDay(TechnicalIssueDay info);
         bool DeleteTechnicalIssueDay(int id);

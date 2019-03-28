@@ -20,20 +20,30 @@
 
 <div class="card">
     <div class="card-body">
-        <div class="col-sm-4">
-            <div class="form-group ">
-                @Html.DatePickerFor(m => m.Leave.LeaveDate, new { @class = "form-control", required = "required" })
-                @Html.ValidationMessageFor(m => m.Leave.LeaveDate)
-                @Html.Bootstrap().LabelFor(m => m.Leave.LeaveDate).ShowRequiredStar(true)
+        <div class="col-sm-6">
+            <div class="form-group">
+                <div class="input-daterange input-group">
+                    <div class="input-group-content">
+                        @Html.DatePickerRangeFor(m => m.Leave.LeaveDateFrom, new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Leave.LeaveDateFrom)
+                        @Html.Bootstrap().LabelFor(m => m.Leave.LeaveDateFrom).LabelText("Leave Date From").ShowRequiredStar(true)
+                    </div>
+                    <span class="input-group-addon">to</span>
+                    <div class="input-group-content">
+                        @Html.DatePickerRangeFor(m => m.Leave.LeaveDateTo, new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Leave.LeaveDateTo)
+                        @Html.Bootstrap().LabelFor(m => m.Leave.LeaveDateTo).LabelText("Leave Date To").ShowRequiredStar(true)
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <div class="form-group">
                 @Html.Bootstrap().DropDownListFor(m => m.Leave.UserID, Model.Users.ToSelectList(m => m.ID, m => m.DisplayName)).OptionLabel("").Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.Leave.UserID).LabelText("User").ShowRequiredStar(true)
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <div class="form-group">
                 @Html.Bootstrap().DropDownListFor(m => m.Leave.LeaveType, EnumerationHelper.ToSelectList<LeaveType>()).OptionLabel("").Class("form-control").HtmlAttributes(new { required = "required" }).ShowValidationMessage(true)
                 @Html.Bootstrap().LabelFor(m => m.Leave.LeaveType).ShowRequiredStar(true)
@@ -51,11 +61,11 @@
                 @Html.Bootstrap().LabelFor(m => m.Leave.TypeOfLatenes).ShowRequiredStar(true)
             </div>
         </div>
-        <div class=" col-sm-4">
+        <div class=" col-sm-8">
             <div class="form-group">
                 @if (Model.Leave != null && !string.IsNullOrEmpty(Model.Leave.Document))
                 {
-                    <a href="@FileUpload.GetImageUrl(FileUploadType.Leave, Model.Leave.Document)" target="_blank">@Model.Leave.Document</a>
+                    <a href="@FileUpload.GetImageUrl(FileUploadType.Leave, Model.Leave.Document)" class="file-name-trim-text" title="@Model.Leave.Document" target="_blank">@Model.Leave.Document</a>
                 }
                 @Html.HiddenFor(m=>m.Leave.Document)
                 @Html.Bootstrap().FileFor(m => m.DocumentFile).Class("form-control").ShowValidationMessage(true)

@@ -43,8 +43,8 @@
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group">
-                        @Html.Bootstrap().TextBoxFor(m => m.Leave.LeaveDateDisplay).Class("form-control").Disabled().ShowValidationMessage(true)
-                        @Html.Bootstrap().LabelFor(m => m.Leave.LeaveDate)
+                        @Html.Bootstrap().TextBoxFor(m => m.Leave.LeaveDateDesc).Class("form-control").Disabled().ShowValidationMessage(true)
+                        @Html.Bootstrap().LabelFor(m => m.Leave.LeaveDateDesc).LabelText("Leave Date")
                     </div>
                 </div>
                 <div class="col-sm-4">
@@ -65,7 +65,7 @@
                         <div class="form-group">
                             @if (!string.IsNullOrEmpty(Model.Leave.Document))
                             {
-                                @Html.Bootstrap().Link(Model.Leave.Document, FileUpload.GetImageUrl(FileUploadType.Leave, Model.Leave.Document)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                                @Html.Bootstrap().Link(Model.Leave.Document, FileUpload.GetImageUrl(FileUploadType.Leave, Model.Leave.Document)).Class("form-control").HtmlAttributes(new { target = "_blank", @class = "file-name-trim-text", title = Model.Leave.Document })
                             }
                             else
                             {
@@ -105,7 +105,7 @@
                         <div class="form-group">
                             @if (!string.IsNullOrEmpty(Model.Leave.Document))
                             {
-                                @Html.Bootstrap().Link(Model.Leave.Document, FileUpload.GetImageUrl(FileUploadType.Leave, Model.Leave.Document)).Class("form-control").HtmlAttributes(new { target = "_blank" })
+                                @Html.Bootstrap().Link(Model.Leave.Document, FileUpload.GetImageUrl(FileUploadType.Leave, Model.Leave.Document)).Class("form-control").HtmlAttributes(new { target = "_blank", @class = "file-name-trim-text", title = Model.Leave.Document })
                             }
                             else
                             {

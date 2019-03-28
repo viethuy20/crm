@@ -77,7 +77,9 @@ namespace PQT.Domain.Entities
             {
                 VoIpBuffer,
                 ExceptCode,
-                BufferForNewUser
+                BufferForNewUser,
+                DailyRequiredCallKpiForIntern,
+                DailyRequiredCallKpiForFull
             }
         }
 
