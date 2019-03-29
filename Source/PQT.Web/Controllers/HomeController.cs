@@ -153,6 +153,8 @@ namespace PQT.Web.Controllers
         //    return Json(notifications, JsonRequestBehavior.AllowGet);
         //}
 
+        [AjaxOnly]
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         public ActionResult GetNotifyForEvents(string eventIds)
         {
             if (string.IsNullOrEmpty(eventIds))
@@ -165,7 +167,8 @@ namespace PQT.Web.Controllers
                     Settings.System.NotificationNumber());
             return Json(notifications, JsonRequestBehavior.AllowGet);
         }
-
+        [AjaxOnly]
+        [ExcludeFilters(typeof(RequestAuthorizeAttribute))]
         public ActionResult GetNotifyForNewEvent()
         {
             var notifications =

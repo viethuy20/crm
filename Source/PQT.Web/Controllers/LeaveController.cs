@@ -196,7 +196,37 @@ namespace PQT.Web.Controllers
         [DisplayName(@"Monthly Report")]
         public ActionResult MonthlyReport()
         {
+            //    var today = DateTime.Today;
+            //    var monthReport = new DateTime(today.Year, today.Month, 1);
+            //    var currentUser = CurrentUser.Identity;
+            //    var currentUserId = CurrentUser.HasRole("Manager") ? 0 : currentUser.ID;
+            //    var isSupervisor = currentUser.FinanceAdminUnit != FinanceAdminUnit.None ||
+            //                       currentUser.SalesManagementUnit != SalesManagementUnit.None ||
+            //                       currentUser.HumanResourceUnit == HumanResourceUnit.Coordinator ||
+            //                       currentUser.ProjectManagementUnit != ProjectManagementUnit.None;
+            //    IEnumerable<Leave> leaves = new HashSet<Leave>();
+            //    leaves = _leaveService.GetAllLeavesMonthlyReport(monthReport, currentUserId, isSupervisor, "");
+            // ReSharper disable once AssignNullToNotNullAttribute
             var model = new LeaveMonthlyReport();
+            //model.Prepare(leaves, monthReport);
+            return View(model);
+        }
+        [DisplayName(@"Monthly Report")]
+        [HttpPost]
+        public ActionResult MonthlyReport(LeaveMonthlyReport model)
+        {
+            var today = DateTime.Today;
+            var monthReport = new DateTime(today.Year, today.Month, 1);
+            var currentUser = CurrentUser.Identity;
+            var currentUserId = CurrentUser.HasRole("Manager") ? 0 : currentUser.ID;
+            var isSupervisor = currentUser.FinanceAdminUnit != FinanceAdminUnit.None ||
+                               currentUser.SalesManagementUnit != SalesManagementUnit.None ||
+                               currentUser.HumanResourceUnit == HumanResourceUnit.Coordinator ||
+                               currentUser.ProjectManagementUnit != ProjectManagementUnit.None;
+            IEnumerable<Leave> leaves = new HashSet<Leave>();
+            leaves = _leaveService.GetAllLeavesMonthlyReport(monthReport, currentUserId, isSupervisor, model.Sales?.ToLower().Trim() ?? "");
+            // ReSharper disable once AssignNullToNotNullAttribute
+            model.Prepare(leaves, monthReport);
             return View(model);
         }
         [AjaxOnly]
@@ -297,9 +327,52 @@ namespace PQT.Web.Controllers
                                currentUser.SalesManagementUnit != SalesManagementUnit.None ||
                                currentUser.HumanResourceUnit == HumanResourceUnit.Coordinator ||
                                currentUser.ProjectManagementUnit != ProjectManagementUnit.None;
-            IEnumerable<Leave> data = new HashSet<Leave>();
-            recordsTotal = _leaveService.GetCountLeavesByMonthlyReport(monthReport, currentUserId, isSupervisor, searchValue);
-            data = _leaveService.GetAllLeavesByMonthlyReport(monthReport, currentUserId, isSupervisor, searchValue, sortColumnDir, sortColumn, skip, pageSize);
+            IEnumerable<Leave> leaves = new HashSet<Leave>();
+            leaves = _leaveService.GetAllLeavesMonthlyReport(monthReport, currentUserId, isSupervisor, searchValue);
+            // ReSharper disable once AssignNullToNotNullAttribute
+            var model = new LeaveMonthlyReport();
+            model.Prepare(leaves, monthReport);
+            var userMonthlyReport = model.UserMonthlyReports.SelectMany(m=>m.LeaveTypes);
+            #region sort
+            if (sortColumnDir == "asc")
+            {
+                switch (sortColumn)
+                {
+                    case "Type":
+                        userMonthlyReport = userMonthlyReport.OrderBy(s => s.Type).ThenBy(s => s.Username).ToList();
+                        break;
+                    case "Total":
+                        userMonthlyReport = userMonthlyReport.OrderBy(s => s.Total).ThenBy(s => s.Username).ToList();
+                        break;
+                    default:
+                        userMonthlyReport = userMonthlyReport.OrderBy(s => s.Username).ToList();
+                        break;
+                }
+            }
+            else
+            {
+                switch (sortColumn)
+                {
+                    case "Type":
+                        userMonthlyReport = userMonthlyReport.OrderByDescending(s => s.Type).ThenBy(s => s.Username).ToList();
+                        break;
+                    case "Total":
+                        userMonthlyReport = userMonthlyReport.OrderByDescending(s => s.Total).ThenBy(s => s.Username).ToList();
+                        break;
+                    default:
+                        userMonthlyReport = userMonthlyReport.OrderByDescending(s => s.Username).ToList();
+                        break;
+                }
+            }
+
+            #endregion sort
+
+            recordsTotal = userMonthlyReport.Count();
+            if (pageSize > recordsTotal)
+            {
+                pageSize = recordsTotal;
+            }
+            var data = userMonthlyReport.Skip(skip).Take(pageSize).ToList();
 
             var json = new
             {
@@ -308,19 +381,13 @@ namespace PQT.Web.Controllers
                 recordsTotal = recordsTotal,
                 data = data.Select(m => new
                 {
-                    m.ID,
-                    m.CreatedUserID,
-                    m.UserDisplay,
-                    m.LeaveDateFromDisplay,
-                    m.LeaveDateToDisplay,
-                    m.AprroveUserDisplay,
-                    m.LeaveDateDesc,
-                    m.Summary,
-                    LeaveType = m.LeaveType.DisplayName,
-                    m.ReasonLeave,
+                    UserName = m.Username,
+                    m.Type,
+                    m.Total,
                 })
             };
             return Json(json, JsonRequestBehavior.AllowGet);
+
         }
 
     }

@@ -72,7 +72,8 @@ namespace PQT.Web.Controllers
             leads = _leadService.GetAllLeadsForKPI(eventId, userId, datefrom, dateto,null);
             leadNews = _leadNewService.GetAllLeadNewsForKPI(eventId, userId, datefrom, dateto, null);
             bookings = _bookingService.GetAllBookingsForKPI(eventId, userId, datefrom, dateto, null);
-            model.Prepare(leads, leadNews, bookings);
+            model.Prepare(leads, leadNews);
+            model.PrepareCalc(leads, leadNews, bookings);
             return View(model);
         }
 

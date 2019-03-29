@@ -12,31 +12,58 @@
                 <div class="card-head">
                     <header><i class="fa fa-database"></i> @ViewBag.Title</header>
                 </div>
+
+                @*@using (Html.BeginForm())
+                    {*@
                 <div class="card-body">
                     <div class="row form">
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 @Html.Bootstrap().TextBoxFor(m => m.Month).Class("form-control month-picker").Placeholder("mm/yyyy").ShowValidationMessage(true)
                                 @Html.Bootstrap().LabelFor(m => m.Month).LabelText("Month")
                             </div>
                         </div>
-                        <div class="col-sm-6">
-                            @Html.Bootstrap().Button().Text("Search").Id("btnSearch").PrependIcon("md md-search").Size(ButtonSize.Mini).HtmlAttributes(new { @class = "btn btn-primary" })
+                        @*<div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.Bootstrap().TextBoxFor(m => m.Sales).Class("form-control").ShowValidationMessage(true)
+                                    @Html.Bootstrap().LabelFor(m => m.Sales).LabelText("Username")
+                                </div>
+                            </div>*@
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                @Html.Bootstrap().SubmitButton().Text("Search").Id("btnSearch").PrependIcon("md md-search").Size(ButtonSize.Mini).HtmlAttributes(new { @class = "btn btn-primary" })
+                            </div>
                         </div>
                     </div>
                     <table class="table" id="leaveTable">
                         <thead>
-                        <tr>
-                            <th>Leave Date</th>
-                            <th>User Name</th>
-                            <th>Type</th>
-                            <th>Reason</th>
-                            <th>Approver</th>
-                        </tr>
+                            <tr>
+                                <th>User Name</th>
+                                <th>Type</th>
+                                <th>Total</th>
+                            </tr>
                         </thead>
+                        @*<tbody>
+                                @foreach (var item in Model.UserMonthlyReports)
+                                {
+                                    <tr>
+                                        <td rowspan="@item.LeaveTypes.Count" style="vertical-align: middle;border-top: 1px solid #333;">@item.User.DisplayName</td>
+                                        <td style="vertical-align: middle;border-top: 1px solid #333;">@item.LeaveTypes[0].Type</td>
+                                        <td style="vertical-align: middle;border-top: 1px solid #333;">@item.LeaveTypes[0].Total</td>
+                                    </tr>
+                                    for (int i = 1; i < item.LeaveTypes.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>@item.LeaveTypes[i].Type</td>
+                                            <td>@item.LeaveTypes[i].Total</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>*@
                     </table>
                 </div>
                 <!--end .card-body -->
+                @*}*@
             </div><!--end .card -->
         </div>
     </div>
@@ -45,7 +72,6 @@
 
 
 @Html.Script(
-
     @<script>
         initMonthpicker();
         var windowW = $(window).width();
@@ -69,11 +95,9 @@
                  }
              },
              "columns": [
-                 { "data": "LeaveDateDesc", "name": "LeaveDateDesc", "orderable": true },
-                 { "data": "UserDisplay", "name": "UserDisplay", "orderable": true },
-                 { "data": "LeaveType", "name": "LeaveType", "orderable": true },
-                 { "data": "ReasonLeave", "name": "ReasonLeave", "orderable": true },
-                 { "data": "AprroveUserDisplay", "name": "AprroveUserDisplay", "orderable": true }
+                 { "data": "UserName", "name": "UserName", "orderable": true },
+                 { "data": "Type", "name": "Type", "orderable": true },
+                 { "data": "Total", "name": "Total", "orderable": true },
              ],
              "iDisplayLength": sizeLenght,
              "aaSorting": [[0, "desc"]],
@@ -91,60 +115,60 @@
                  });
              },
          });
-        
+
 
         $('#btnSearch').click(function () {
             leaveTable.fnFilter('');
         });
     </script>)
 @*@Html.Script(
-    @<script>
-         initMonthpicker();
-         var oTable = $("#kpiTable");
-         oTable.dataTable({
-             "processing": true, // for show progress bar
-             "serverSide": true, // for process server side
-             "filter": true, // this is for disable filter (search box)
-             "orderMulti": false, // for disable multiple column at once
-             "stateSave": false,
-             "ajax": {
-                 "url": "@Url.Action("AjaxGetMonthlyReport")",
-                 "type": "POST",
-                 "datatype": "json",
-                 "data": function (d) {
-                     d.Month = $('@Html.JquerySelectorFor(m=>m.Month)').val();
-                 }
-             },
-             "columns": [
-                 { "data": "UserName", "name": "UserName", "orderable": true },
-                 { "data": "Leaves", "name": "Leaves", "orderable": true },
-                 { "data": "Lateness", "name": "Lateness", "orderable": true },
-                 { "data": "Resignation", "name": "Resignation", "orderable": true }
-             ],
-             "iDisplayLength": 25,
-             "aaSorting": [[0, "asc"]],
-             "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 $(nRow).find('td:eq(1)').attr("style", "text-align:center");
-                 $(nRow).find('td:eq(2)').attr("style", "text-align:center");
-                 $(nRow).find('td:eq(3)').attr("style", "text-align:center");
-             },
-             initComplete: function () {
-                 var _table = this;
-                 _table.parent().find('input[type="search"]').unbind();
-                 var timeOutTyping;
-                 _table.parent().find('input[type="search"]').bind('keyup', function (e) {
-                     clearTimeout(timeOutTyping);
-                     timeOutTyping = setTimeout(function () {
-                         _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
-                     }, 600);
-                 });
-             },
-         });
+        @<script>
+             initMonthpicker();
+             var oTable = $("#kpiTable");
+             oTable.dataTable({
+                 "processing": true, // for show progress bar
+                 "serverSide": true, // for process server side
+                 "filter": true, // this is for disable filter (search box)
+                 "orderMulti": false, // for disable multiple column at once
+                 "stateSave": false,
+                 "ajax": {
+                     "url": "@Url.Action("AjaxGetMonthlyReport")",
+                     "type": "POST",
+                     "datatype": "json",
+                     "data": function (d) {
+                         d.Month = $('@Html.JquerySelectorFor(m=>m.Month)').val();
+                     }
+                 },
+                 "columns": [
+                     { "data": "UserName", "name": "UserName", "orderable": true },
+                     { "data": "Leaves", "name": "Leaves", "orderable": true },
+                     { "data": "Lateness", "name": "Lateness", "orderable": true },
+                     { "data": "Resignation", "name": "Resignation", "orderable": true }
+                 ],
+                 "iDisplayLength": 25,
+                 "aaSorting": [[0, "asc"]],
+                 "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                     $(nRow).find('td:eq(1)').attr("style", "text-align:center");
+                     $(nRow).find('td:eq(2)').attr("style", "text-align:center");
+                     $(nRow).find('td:eq(3)').attr("style", "text-align:center");
+                 },
+                 initComplete: function () {
+                     var _table = this;
+                     _table.parent().find('input[type="search"]').unbind();
+                     var timeOutTyping;
+                     _table.parent().find('input[type="search"]').bind('keyup', function (e) {
+                         clearTimeout(timeOutTyping);
+                         timeOutTyping = setTimeout(function () {
+                             _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                         }, 600);
+                     });
+                 },
+             });
 
-         $('#btnSearch').click(function () {
-             oTable.fnFilter('');
-         });
+             $('#btnSearch').click(function () {
+                 oTable.fnFilter('');
+             });
 
-    </script>
+        </script>
 
-)*@
+    )*@

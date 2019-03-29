@@ -885,7 +885,7 @@ namespace PQT.Web.Controllers
             bookings = _bookingService.GetAllBookingsForKPI(eventId, userId, datefrom, dateto, searchValue).AsEnumerable();
             // ReSharper disable once AssignNullToNotNullAttribute
             var model = new ConsolidateKPIModel { DateFrom = datefrom, DateTo = dateto };
-            model.Prepare(leads, leadNews, bookings);
+            model.Prepare(leads, leadNews);
 
             #region sort
             if (sortColumnDir == "asc")
@@ -962,8 +962,10 @@ namespace PQT.Web.Controllers
             {
                 pageSize = recordsTotal;
             }
-            var data = model.ConsolidateKpis.Skip(skip).Take(pageSize).ToList();
-
+            model.ConsolidateKpis = model.ConsolidateKpis.Skip(skip).Take(pageSize).ToList();
+            //Calc
+            model.PrepareCalc(leads, leadNews, bookings);
+            var data = model.ConsolidateKpis;
             var json = new
             {
                 draw = draw,
@@ -1151,7 +1153,7 @@ namespace PQT.Web.Controllers
             int skip = start != null ? Convert.ToInt32(start) : 0;
             int recordsTotal = 0;
             IEnumerable<Candidate> candidates = new HashSet<Candidate>();
-            candidates = _recruitmentService.GetAllCandidatesForKpis(searchValue,userId,datefrom,dateto).AsEnumerable();
+            candidates = _recruitmentService.GetAllCandidatesForKpis(searchValue, userId, datefrom, dateto).AsEnumerable();
             // ReSharper disable once AssignNullToNotNullAttribute
             var model = new HRConsolidateKPIModel();
             model.Prepare(candidates);

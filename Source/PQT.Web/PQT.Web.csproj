@@ -391,6 +391,7 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Hubs\ProgressHub.cs" />
     <Compile Include="Infrastructure\Helpers\ImageHelper.cs" />
+    <Compile Include="Infrastructure\Helpers\LeaveHelper.cs" />
     <Compile Include="Infrastructure\Helpers\LeadHelper.cs" />
     <Compile Include="Infrastructure\MemoryNotifyRepository.cs" />
     <Compile Include="Infrastructure\MemorySettingsRepository.cs" />

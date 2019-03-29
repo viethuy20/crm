@@ -46,14 +46,14 @@ namespace PQT.Domain.Concrete
                 .Where(m => m.UserID == userId &&
                             eventIds.Contains(m.EventId))
                 .OrderByDescending(m => m.CreatedTime)
-                .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
         }
         public virtual IEnumerable<UserNotification> GetAllUserNotificationsByNewEvent(int userId, int pageSize = 10, int page = 1)
         {
             var newEventValue = NotifyType.NewEvent.Value;
             return _db.Set<UserNotification>().Where(m => m.UserID == userId &&
             m.NotifyType.Value == newEventValue).OrderByDescending(m => m.CreatedTime)
-                .Skip((page - 1) * pageSize).Take(pageSize).AsEnumerable();
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
         }
         public virtual UserNotification CreateUserNotification(UserNotification notify)
         {

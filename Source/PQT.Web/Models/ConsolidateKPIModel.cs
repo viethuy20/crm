@@ -25,7 +25,22 @@ namespace PQT.Web.Models
             EventName = "All";
             Date = "All";
         }
-        public void Prepare(IEnumerable<Lead> leads, IEnumerable<LeadNew> leadNews, IEnumerable<Booking> bookings)
+        public void Prepare(IEnumerable<Lead> leads, IEnumerable<LeadNew> leadNews)
+        {
+            ConsolidateKpis = new List<ConsolidateKPI>();
+            var users = leads.DistinctBy(m => m.UserID).Select(m => m.User).ToList();
+            users.AddRange(leadNews.DistinctBy(m => m.UserID).Select(m => m.User));
+            foreach (var user in users.Where(m => m.UserStatus == UserStatus.Live).DistinctBy(m => m.ID))
+            {
+                var item = new ConsolidateKPI
+                {
+                    User = user
+                };
+                ConsolidateKpis.Add(item);
+            }
+        }
+
+        public void PrepareCalc(IEnumerable<Lead> leads, IEnumerable<LeadNew> leadNews, IEnumerable<Booking> bookings)
         {
             var settingService = DependencyHelper.GetService<ISettingRepository>();
             var leaveService = DependencyHelper.GetService<ILeaveService>();
@@ -36,13 +51,10 @@ namespace PQT.Web.Models
             var defaultBufferForNew = Settings.KPI.BufferForNewUser();
             var dailyRequiredCallForIntern = Settings.KPI.DailyRequiredCallKpiForIntern();
             var dailyRequiredCallForFull = Settings.KPI.DailyRequiredCallKpiForFull();
-            ConsolidateKpis = new List<ConsolidateKPI>();
-            var users = leads.DistinctBy(m => m.UserID).Select(m => m.User).ToList();
-            users.AddRange(leadNews.DistinctBy(m => m.UserID).Select(m => m.User));
-            foreach (var user in users.Where(m => m.UserStatus == UserStatus.Live).DistinctBy(m => m.ID))
+            foreach (var consolidate in ConsolidateKpis)
             {
-                var employmentDate = Convert.ToDateTime(user.EmploymentDate);
-                var employmentEndDate = Convert.ToDateTime(user.EmploymentEndDate);
+                var employmentDate = Convert.ToDateTime(consolidate.User.EmploymentDate);
+                var employmentEndDate = Convert.ToDateTime(consolidate.User.EmploymentEndDate);
                 var dateStart = employmentDate != default(DateTime) &&
                                 DateFrom <= employmentDate
                     ? employmentDate
@@ -58,38 +70,33 @@ namespace PQT.Web.Models
                 var totalWorkingDays = (dateEnd - dateStart).TotalDays + 1 - totalSaturdayDays - totalSundayDays;
 
                 int? country = null;
-                if (user.OfficeLocation != null)
-                    country = user.OfficeLocation.CountryID;
+                if (consolidate.User.OfficeLocation != null)
+                    country = consolidate.User.OfficeLocation.CountryID;
                 var totalHolidays = settingService.TotalHolidays(dateStart, dateEnd, country);
                 //var totalLeave = leaves.Count(m => m.UserID == user.ID && m.TypeOfLeave != TypeOfLeave.HalfDayUnpaid) +
                 //    ((double)leaves.Count(m => m.UserID == user.ID && m.TypeOfLeave == TypeOfLeave.HalfDayUnpaid) / 2);
-                var totalLeave = leaves.Where(m => m.UserID == user.ID && !m.TypeOfLeave.DisplayName.Contains("Unpaid"))
+                var totalLeave = leaves.Where(m => m.UserID == consolidate.User.ID)
                     .Sum(m => m.GetLeaveDays(DateFrom, DateTo));
                 var actualWorkingDays = totalWorkingDays - totalHolidays - totalLeave;
 
-                var totalNonSalesDays = nonSalesDays.Where(m => m.UserID == user.ID).Sum(m => m.NonSalesDays);
-                var totalTechnicialIssueDays = technicialIssueDays.Where(m => m.UserID == user.ID).Sum(m => m.TechnicalIssueDays);
+                var totalNonSalesDays = nonSalesDays.Where(m => m.UserID == consolidate.User.ID).Sum(m => m.NonSalesDays);
+                var totalTechnicialIssueDays = technicialIssueDays.Where(m => m.UserID == consolidate.User.ID).Sum(m => m.TechnicalIssueDays);
 
-                var bufferForNewSales = GetBufferForNewSales(user, country, defaultBufferForNew, settingService);
+                var bufferForNewSales = GetBufferForNewSales(consolidate.User, country, defaultBufferForNew, settingService);
 
-                var dailyRequiredCall = user.BusinessDevelopmentUnit == BusinessDevelopmentUnit.Level10
+                var dailyRequiredCall = consolidate.User.BusinessDevelopmentUnit == BusinessDevelopmentUnit.Level10
                     ? dailyRequiredCallForIntern
                     : dailyRequiredCallForFull;
 
                 var actualRequiredCallKpis =
                     (actualWorkingDays - bufferForNewSales - totalNonSalesDays - totalTechnicialIssueDays) * dailyRequiredCall;
-                var item = new ConsolidateKPI
-                {
-                    User = user
-                };
-                item.Prepare(leads.Where(m => m.UserID == user.ID).AsEnumerable(),
-                    leadNews.Where(m => m.UserID == user.ID).AsEnumerable(),
-                    bookings.Where(m => m.SalesmanID == user.ID).AsEnumerable(),
+
+                consolidate.Prepare(leads.Where(m => m.UserID == consolidate.User.ID).AsEnumerable(),
+                    leadNews.Where(m => m.UserID == consolidate.User.ID).AsEnumerable(),
+                    bookings.Where(m => m.SalesmanID == consolidate.User.ID).AsEnumerable(),
                     actualRequiredCallKpis);
-                ConsolidateKpis.Add(item);
             }
         }
-
         public double GetBufferForNewSales(User user, int? country, int defaultBufferForNewUser, ISettingRepository settingService)
         {
             if (user.EmploymentDate == null ||

@@ -56,35 +56,6 @@ namespace PQT.Domain.Entities
             get { return LeaveDateTo.ToString("dd/MM/yyyy"); }
         }
 
-        public double GetLeaveDays(DateTime dateFrom, DateTime dateTo)
-        {
-            if (dateTo < LeaveDateFrom)
-                return 0;
-            if (LeaveDateTo < dateFrom)
-                return 0;
-            if (dateFrom <= LeaveDateFrom && LeaveDateTo <= dateTo)
-                return (LeaveDateTo - LeaveDateFrom).TotalDays + 1;
-            if (LeaveDateFrom <= dateFrom && LeaveDateTo <= dateTo)
-                return (LeaveDateTo - dateFrom).TotalDays + 1;
-            if (LeaveDateFrom <= dateFrom && dateTo <= LeaveDateTo)
-                return (dateTo - dateFrom).TotalDays + 1;
-            if (dateFrom <= LeaveDateFrom && dateTo <= LeaveDateTo)
-                return (dateTo - LeaveDateFrom).TotalDays + 1;
-            return 0;
-        }
-        public double GetLeaveDaysByMonth(DateTime reportMonth)
-        {
-            if (reportMonth.Month == LeaveDateFrom.Month &&
-                reportMonth.Month == LeaveDateTo.Month)
-                return (LeaveDateTo - LeaveDateFrom).TotalDays + 1;
-            if (reportMonth.Month == LeaveDateFrom.Month && 
-                reportMonth.Month < LeaveDateTo.Month)
-                return (reportMonth.AddMonths(1) - LeaveDateFrom).TotalDays;
-            if (LeaveDateFrom.Month < reportMonth.Month && 
-                reportMonth.Month == LeaveDateTo.Month )
-                return (LeaveDateFrom - reportMonth).TotalDays + 1;
-            return 0;
-        }
         public string UserDisplay
         {
             get
@@ -111,9 +82,7 @@ namespace PQT.Domain.Entities
                     return TypeOfLeave.DisplayName;
                 if (LeaveType.Value == LeaveType.Lateness)
                     return TypeOfLatenes.DisplayName;
-                if (Summary != null)
-                    return Summary;
-                return "";
+                return LeaveType.DisplayName;
             }
         }
     }
