@@ -104,7 +104,7 @@ namespace PQT.Domain.Entities
         public string Tel { get; set; }
         public string Fax { get; set; }
         public string Remarks { get; set; }
-        public virtual ICollection<User> ManagerUsers { get; set; }
+        public ICollection<User> ManagerUsers { get; set; }
 
         [NotMapped]
         public bool BlockStartCall { get; set; }

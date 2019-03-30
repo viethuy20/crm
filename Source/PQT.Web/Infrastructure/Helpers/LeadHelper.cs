@@ -52,39 +52,26 @@ namespace PQT.Web.Infrastructure.Helpers
                 foreach (var lead in leads)
                 {
                     count++;
-                    var existResources =
-                        comService.GetAllCompanyResources(
-                            m =>
-                                m.Role == lead.JobTitle && (
-                                (!string.IsNullOrEmpty(m.DirectLine) && !string.IsNullOrEmpty(lead.DirectLine) &&
-                                 m.DirectLine == lead.DirectLine) ||
-                                (!string.IsNullOrEmpty(m.MobilePhone1) && !string.IsNullOrEmpty(lead.MobilePhone1) &&
-                                 m.MobilePhone1 == lead.MobilePhone1) ||
-                                (!string.IsNullOrEmpty(m.MobilePhone2) && !string.IsNullOrEmpty(lead.MobilePhone2) &&
-                                 m.MobilePhone2 == lead.MobilePhone2) ||
-                                (!string.IsNullOrEmpty(m.MobilePhone3) && !string.IsNullOrEmpty(lead.MobilePhone3) &&
-                                 m.MobilePhone3 == lead.MobilePhone3))).ToList();
+                    var existResource =
+                        comService.GetAllCompanyResourcesCheckPhoneForMerge(lead.JobTitle, lead.DirectLine, lead.MobilePhone1, lead.MobilePhone2, lead.MobilePhone3);
                     //var eventCompany = _repo.GetEventCompany(lead.EventID, lead.CompanyID);
-                    if (existResources.Any())
+                    if (existResource != null)
                     {
-                        foreach (var item in existResources)
-                        {
-                            item.CompanyID = lead.CompanyID;
-                            item.CountryID = lead.Company.CountryID;
-                            item.Country = lead.Company.CountryCode;
-                            item.FirstName = lead.FirstName;
-                            item.LastName = lead.LastName;
-                            item.Organisation = lead.CompanyName;
-                            item.PersonalEmail = lead.PersonalEmail;
-                            item.Role = lead.JobTitle;
-                            item.Salutation = lead.Salutation;
-                            item.WorkEmail = lead.WorkEmail;
-                            item.DirectLine = lead.DirectLine;
-                            item.MobilePhone1 = lead.MobilePhone1;
-                            item.MobilePhone2 = lead.MobilePhone2;
-                            item.MobilePhone3 = lead.MobilePhone3;
-                            comService.UpdateCompanyResource(item);
-                        }
+                        existResource.CompanyID = lead.CompanyID;
+                        existResource.CountryID = lead.Company.CountryID;
+                        existResource.Country = lead.Company.CountryCode;
+                        existResource.FirstName = lead.FirstName;
+                        existResource.LastName = lead.LastName;
+                        existResource.Organisation = lead.CompanyName;
+                        existResource.PersonalEmail = lead.PersonalEmail;
+                        existResource.Role = lead.JobTitle;
+                        existResource.Salutation = lead.Salutation;
+                        existResource.WorkEmail = lead.WorkEmail;
+                        existResource.DirectLine = lead.DirectLine;
+                        existResource.MobilePhone1 = lead.MobilePhone1;
+                        existResource.MobilePhone2 = lead.MobilePhone2;
+                        existResource.MobilePhone3 = lead.MobilePhone3;
+                        comService.UpdateCompanyResource(existResource);
                     }
                     else
                     {

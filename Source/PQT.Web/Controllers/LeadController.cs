@@ -1539,12 +1539,6 @@ namespace PQT.Web.Controllers
                  (!string.IsNullOrEmpty(m.Ownership) && m.Ownership.ToLower().Contains(ownership)));
             companies = companies.Where(predicate);
 
-            foreach (var company in companies)
-            {
-                company.BlockStartCall = companiesInNcl.Contains(company.ID);
-                company.ComResourceNumber = _companyRepo.GetAllCompanyResources(m => m.CompanyID == company.ID).Count();
-            }
-
             #region sort
             if (sortColumnDir == "asc")
             {
@@ -1615,6 +1609,12 @@ namespace PQT.Web.Controllers
                 pageSize = recordsTotal;
             }
             var data = companies.Skip(page).Take(pageSize).ToList();
+
+            foreach (var company in data)
+            {
+                company.BlockStartCall = companiesInNcl.Contains(company.ID);
+                company.ComResourceNumber = _companyRepo.CountCompanyResources(company.ID);
+            }
 
             var json = new
             {

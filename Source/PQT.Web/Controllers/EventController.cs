@@ -195,100 +195,14 @@ namespace PQT.Web.Controllers
                     .Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => Convert.ToInt32(m)).ToList();
             }
 
-
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
-            int recordsTotal = 0;
             var countries = countryName.Split(new[] { ",", ";" }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
             var productServices = productService.Split(new[] { ",", ";" }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
             var sectors = sector.Split(new[] { ",", ";" }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
             var industries = industry.Split(new[] { ",", ";" }, StringSplitOptions.RemoveEmptyEntries).Select(m => m.ToLower().Trim());
-            IEnumerable<Company> companies = new HashSet<Company>();
-            Func<Company, bool> predicate = m =>
-                (m.Tier == type) &&
-                (type != 1 || !m.ManagerUsers.Any() || m.ManagerUsers.Any(s => saleIds.Contains(s.ID))) &&
-                (string.IsNullOrEmpty(companyName) ||
-                 (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
-                (!countries.Any() ||
-                 (m.Country != null && countries.Any(c => m.Country.Code.ToLower().Contains(c))) ||
-                 (m.Country != null && countries.Any(c => m.Country.Name.ToLower().Contains(c)))) &&
-                (!productServices.Any() ||
-                 (!string.IsNullOrEmpty(m.ProductOrService) &&
-                  productServices.Any(c => m.ProductOrService.ToLower().Contains(c)))) &&
-                (!sectors.Any() ||
-                 (!string.IsNullOrEmpty(m.Sector) && sectors.Any(c => m.Sector.ToLower().Contains(c)))) &&
-                (!industries.Any() ||
-                 (!string.IsNullOrEmpty(m.Industry) && industries.Any(c => m.Industry.ToLower().Contains(c))));
-            companies = _comRepo.GetAllCompanies(predicate).ToList();
-
-            if (sortColumnDir == "asc")
-            {
-                switch (sortColumn)
-                {
-                    case "CountryName":
-                        companies = companies.OrderBy(s => s.Country.Name).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    case "ProductOrService":
-                        companies = companies.OrderBy(s => s.ProductOrService).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    case "Sector":
-                        companies = companies.OrderBy(s => s.Sector).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    case "Industry":
-                        companies = companies.OrderBy(s => s.Industry).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    case "Tier":
-                        companies = companies.OrderBy(s => s.Tier).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    case "BusinessUnit":
-                        companies = companies.OrderBy(s => s.BusinessUnit).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    case "FinancialYear":
-                        companies = companies.OrderBy(s => s.FinancialYear).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    default:
-                        companies = companies.OrderBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                }
-            }
-            else
-            {
-                switch (sortColumn)
-                {
-                    case "CountryName":
-                        companies = companies.OrderByDescending(s => s.Country.Name).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    case "ProductOrService":
-                        companies = companies.OrderByDescending(s => s.ProductOrService).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    case "Sector":
-                        companies = companies.OrderByDescending(s => s.Sector).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    case "Industry":
-                        companies = companies.OrderByDescending(s => s.Industry).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    case "Tier":
-                        companies = companies.OrderByDescending(s => s.Tier).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    case "BusinessUnit":
-                        companies = companies.OrderByDescending(s => s.BusinessUnit).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    case "FinancialYear":
-                        companies = companies.OrderByDescending(s => s.FinancialYear).ThenBy(s => s.CompanyName).AsEnumerable();
-                        break;
-                    default:
-                        companies = companies.OrderByDescending(s => s.CompanyName).AsEnumerable();
-                        break;
-                }
-            }
-
-            recordsTotal = companies.Count();
-            if (pageSize > recordsTotal)
-            {
-                pageSize = recordsTotal;
-            }
-            var data = companies.Skip(skip).Take(pageSize).ToList();
-
+            int recordsTotal = _comRepo.GetCountCompaniesForAssignEvent(type, saleIds.ToArray(), companyName, countries.ToArray(), productServices.ToArray(), sectors.ToArray(), industries.ToArray());
+            var data = _comRepo.GetAllCompaniesForAssignEvent(type, saleIds.ToArray(), companyName, countries.ToArray(), productServices.ToArray(), sectors.ToArray(), industries.ToArray(), sortColumnDir, sortColumn, skip, pageSize);
             var json = new
             {
                 draw = draw,
@@ -332,8 +246,7 @@ namespace PQT.Web.Controllers
                     return Json(true);
                 }
                 var leads = _leadService.GetAllLeads(m => m.EventID == ID);
-                var companyResources = _comRepo.GetAllCompanyResources(m => m.CompanyID != null &&
-                ev.EventCompanies.Select(n => n.CompanyID).Contains(Convert.ToInt32(m.CompanyID))).ToList();
+                var companyResources = _comRepo.GetAllCompanyResources(ev.EventCompanies.Select(n => n.CompanyID).Distinct().ToArray()).ToList();
                 var count = 0;
                 var totalCount = leads.Count();
                 var userId = CurrentUser.Identity.ID;

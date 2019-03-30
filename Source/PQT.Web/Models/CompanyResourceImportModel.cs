@@ -140,20 +140,9 @@ namespace PQT.Web.Models
             var userId = CurrentUser.Identity.ID;
             foreach (var com in CompanyResources)
             {
-                var existResources =
-                    comRepo.GetAllCompanyResources(
-                        m =>
-                            m.Role == com.Role && (
-                                (!string.IsNullOrEmpty(m.DirectLine) && !string.IsNullOrEmpty(com.DirectLine) &&
-                                 m.DirectLine == com.DirectLine) ||
-                                (!string.IsNullOrEmpty(m.MobilePhone1) && !string.IsNullOrEmpty(com.MobilePhone1) &&
-                                 m.MobilePhone1 == com.MobilePhone1) ||
-                                (!string.IsNullOrEmpty(m.MobilePhone2) && !string.IsNullOrEmpty(com.MobilePhone2) &&
-                                 m.MobilePhone2 == com.MobilePhone2) ||
-                                (!string.IsNullOrEmpty(m.MobilePhone3) && !string.IsNullOrEmpty(com.MobilePhone3) &&
-                                 m.MobilePhone3 == com.MobilePhone3))).ToList();
-                //var eventCompany = _repo.GetEventCompany(lead.EventID, lead.CompanyID);
-                if (!existResources.Any())
+                var existResource =
+                    comRepo.GetAllCompanyResourcesCheckPhoneForMerge(com.Role, com.DirectLine, com.MobilePhone1, com.MobilePhone2, com.MobilePhone3);
+                if (existResource == null)
                 {
                     var comExist = comRepo.GetCompany(com.Organisation);
                     if (comExist == null)

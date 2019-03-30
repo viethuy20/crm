@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
@@ -26,7 +27,7 @@ namespace PQT.Domain.Concrete
 
         public int GetCountCandidates(string searchValue)
         {
-            var queries = _db.Set<Candidate>().Where(m =>
+            var queries = _db.Set<Candidate>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value &&
                 m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value);
             if (string.IsNullOrEmpty(searchValue)) return queries.Count();
             bool isValid = DateTime.TryParseExact(
@@ -52,7 +53,7 @@ namespace PQT.Domain.Concrete
         public int GetCountCandidatesInterviewToday(string searchValue)
         {
             var today = DateTime.Today;
-            var queries = _db.Set<Candidate>().Where(m =>
+            var queries = _db.Set<Candidate>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value &&
                 m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value &&
                 ((m.PsSummary != null && m.PsSummary.DateSelected == today) ||
                 (m.OneFaceToFaceSummary != null && m.OneFaceToFaceSummary.DateSelected == today) ||
@@ -80,7 +81,7 @@ namespace PQT.Domain.Concrete
         }
         public IEnumerable<Candidate> GetAllCandidates(string searchValue, string sortColumnDir, string sortColumn, int page, int pageSize)
         {
-            var queries = _db.Set<Candidate>().Where(m =>
+            var queries = _db.Set<Candidate>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value &&
                 m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value);
             if (!string.IsNullOrEmpty(searchValue))
             {
@@ -199,7 +200,7 @@ namespace PQT.Domain.Concrete
         public IEnumerable<Candidate> GetAllCandidatesInterviewToday(string searchValue, string sortColumnDir, string sortColumn, int page, int pageSize)
         {
             var today = DateTime.Today;
-            var queries = _db.Set<Candidate>().Where(m =>
+            var queries = _db.Set<Candidate>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value &&
                 m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value &&
                 ((m.PsSummary != null && m.PsSummary.DateSelected == today) ||
                  (m.OneFaceToFaceSummary != null && m.OneFaceToFaceSummary.DateSelected == today) ||
@@ -323,7 +324,7 @@ namespace PQT.Domain.Concrete
             dateTo = dateTo.AddDays(1);
             var queries = _db.Set<Candidate>()
                 .Where(m => dateFrom <= m.CreatedTime &&
-                            m.CreatedTime < dateTo &&
+                            m.CreatedTime < dateTo && m.EntityStatus.Value == EntityStatus.Normal.Value &&
                             m.CandidateStatusRecord.Status.Value != CandidateStatus.Deleted.Value);
             if (userId > 0)
             {
@@ -344,7 +345,7 @@ namespace PQT.Domain.Concrete
             {
                 return null;
             }
-            return _db.Set<Candidate>().Where(m => m.ID == id)
+            return _db.Set<Candidate>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value && m.ID == id)
                 .Include(m => m.OfficeLocation)
                 .Include(m => m.User)
                 .Include(m => m.CandidateStatusRecord)
@@ -361,7 +362,7 @@ namespace PQT.Domain.Concrete
                 return null;
             }
             return _db.Set<Candidate>()
-                .FirstOrDefault(m => m.CandidateNo == number);
+                .FirstOrDefault(m => m.EntityStatus.Value == EntityStatus.Normal.Value && m.CandidateNo == number);
         }
         public Candidate GetExistCandidatesByMobile(int positionId, int locationId, string national, string mobileNumber)
         {
@@ -370,7 +371,7 @@ namespace PQT.Domain.Concrete
                 return null;
             }
             return _db.Set<Candidate>()
-                .FirstOrDefault(m =>
+                .FirstOrDefault(m => m.EntityStatus.Value == EntityStatus.Normal.Value &&
                     m.RecruitmentPositionID == positionId &&
                     m.OfficeLocationID == locationId &&
                     m.Nationality == national &&
@@ -385,7 +386,7 @@ namespace PQT.Domain.Concrete
             }
 
             return _db.Set<Candidate>()
-                .FirstOrDefault(m =>
+                .FirstOrDefault(m => m.EntityStatus.Value == EntityStatus.Normal.Value &&
                     m.RecruitmentPositionID == positionId &&
                     m.OfficeLocationID == locationId &&
                     m.Nationality == national &&

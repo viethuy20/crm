@@ -264,7 +264,6 @@ namespace PQT.Web.Controllers
             Func<Leave, bool> predicate = null;
             recordsTotal = _leaveService.GetCountLeaves(currentUserId, isSupervisor, searchValue);
             data = _leaveService.GetAllLeaves(currentUserId, isSupervisor, searchValue, sortColumnDir, sortColumn, skip, pageSize);
-
             var json = new
             {
                 draw = draw,

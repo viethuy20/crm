@@ -2992,7 +2992,6 @@
     <Content Include="Views\CompanyResource\Index.cshtml" />
     <Content Include="Views\CompanyResource\ImportFromExcel.cshtml" />
     <Content Include="Views\Kpi\ImportVoIp.cshtml" />
-    <Content Include="Views\Lead\_CompanyResourceList.cshtml" />
     <Content Include="Views\Booking\Index.cshtml" />
     <Content Include="Views\Booking\Action.cshtml" />
     <Content Include="Views\Booking\Edit.cshtml" />
@@ -3015,7 +3014,6 @@
     <Content Include="Views\OfficeLocation\Index.cshtml" />
     <Content Include="Views\Event\EndEvent.cshtml" />
     <Content Include="Views\Lead\EditCallRecord.cshtml" />
-    <Content Include="Views\Lead\_CompanyResourceList2.cshtml" />
     <Content Include="Views\CompanyResource\CreateOrEdit.cshtml" />
     <Content Include="Views\Booking\BookingsApproved.cshtml" />
     <Content Include="Views\UploadTemplate\Index.cshtml" />

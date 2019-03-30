@@ -830,21 +830,7 @@ namespace PQT.Web.Controllers
             IEnumerable<Lead> leads = new HashSet<Lead>();
             if (CurrentUser.HasRole("Manager"))
             {
-                Func<CompanyResource, bool> predicate1 =
-                    m => m.CompanyID == companyId &&
-                         (string.IsNullOrEmpty(name) ||
-                          (!string.IsNullOrEmpty(m.FullName) && m.FullName.ToLower().Contains(name))) &&
-                         (string.IsNullOrEmpty(designation) ||
-                          (!string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(designation))) &&
-                         (string.IsNullOrEmpty(email) ||
-                          (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email)) ||
-                          (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(email))) &&
-                         (string.IsNullOrEmpty(phone) ||
-                          (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(phone)) ||
-                          (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(phone)) ||
-                          (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(phone)) ||
-                          (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(phone)));
-                leads = Mapper.Map<IEnumerable<Lead>>(_companyRepo.GetAllCompanyResources(predicate1));
+                leads = Mapper.Map<IEnumerable<Lead>>(_companyRepo.GetAllCompanyResources(companyId, name, designation, email, phone));
             }
             else
             {

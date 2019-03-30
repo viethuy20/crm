@@ -44,7 +44,7 @@ namespace PQT.Domain.Concrete
         {
             return _db.Set<UserNotification>()
                 .Where(m => m.UserID == userId &&
-                            eventIds.Contains(m.EventId))
+                            eventIds.Any(c => m.EventId == c))
                 .OrderByDescending(m => m.CreatedTime)
                 .Skip((page - 1) * pageSize).Take(pageSize).ToList();
         }

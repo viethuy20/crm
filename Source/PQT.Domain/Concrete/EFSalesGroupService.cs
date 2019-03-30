@@ -57,7 +57,10 @@ namespace PQT.Domain.Concrete
         }
         public IEnumerable<User> GetAllSalesmans()
         {
-            return GetAll<User>().AsEnumerable().Where(u => u.Roles.Any(r => r.RoleLevel == RoleLevel.SalesLevel));
+            return _db.Set<User>().Include(m => m.Roles)
+                .Where(u => u.Status.Value == EntityUserStatus.Normal.Value &&
+                            u.UserStatus.Value == UserStatus.Live.Value &&
+                            u.Roles.Any(r => r.RoleLevel.Value == RoleLevel.SalesLevel.Value)).AsEnumerable();
         }
 
     }

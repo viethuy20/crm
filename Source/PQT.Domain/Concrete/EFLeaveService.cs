@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using NS;
+using NS.Entity;
 using PQT.Domain.Abstract;
 using PQT.Domain.Entities;
 using PQT.Domain.Enum;
@@ -20,18 +22,14 @@ namespace PQT.Domain.Concrete
         #region Leave
         public int GetCountLeaves(int userId, bool isSupervisor, string searchValue)
         {
-            IQueryable<Leave> queries = null;
+            IQueryable<Leave> queries = _db.Set<Leave>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value);
             if (userId > 0)
             {
                 if (isSupervisor)
-                    queries = _db.Set<Leave>().Where(m => m.UserID == userId ||
-                                                          m.User.DirectSupervisorID == userId);
+                    queries = queries.Where(m => m.UserID == userId ||
+                                                 m.User.DirectSupervisorID == userId);
                 else
-                    queries = _db.Set<Leave>().Where(m => m.UserID == userId);
-            }
-            else
-            {
-                queries = _db.Set<Leave>();
+                    queries = queries.Where(m => m.UserID == userId);
             }
             if (!string.IsNullOrEmpty(searchValue))
             {
@@ -63,18 +61,14 @@ namespace PQT.Domain.Concrete
         public IEnumerable<Leave> GetAllLeaves(int userId, bool isSupervisor, string searchValue, string sortColumnDir,
             string sortColumn, int page, int pageSize)
         {
-            IQueryable<Leave> queries = null;
+            IQueryable<Leave> queries = _db.Set<Leave>().Where(m=>m.EntityStatus.Value == EntityStatus.Normal.Value);
             if (userId > 0)
             {
                 if (isSupervisor)
-                    queries = _db.Set<Leave>().Where(m => m.UserID == userId ||
+                    queries = queries.Where(m => m.UserID == userId ||
                                                           m.User.DirectSupervisorID == userId);
                 else
-                    queries = _db.Set<Leave>().Where(m => m.UserID == userId);
-            }
-            else
-            {
-                queries = _db.Set<Leave>();
+                    queries = queries.Where(m => m.UserID == userId);
             }
             if (!string.IsNullOrEmpty(searchValue))
             {
@@ -144,7 +138,8 @@ namespace PQT.Domain.Concrete
             var monthInt = month.Month;
             var yearInt = month.Year;
             IQueryable<Leave> queries = _db.Set<Leave>()
-                .Where(m => m.LeaveDateFrom.Month == monthInt &&
+                .Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value &&
+                            m.LeaveDateFrom.Month == monthInt &&
                             m.LeaveDateFrom.Year == yearInt ||
                             m.LeaveDateTo.Month == monthInt &&
                             m.LeaveDateTo.Year == yearInt);
@@ -186,7 +181,8 @@ namespace PQT.Domain.Concrete
             var monthInt = month.Month;
             var yearInt = month.Year;
             IQueryable<Leave> queries = _db.Set<Leave>()
-                .Where(m => m.LeaveDateFrom.Month == monthInt &&
+                .Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value &&
+                            m.LeaveDateFrom.Month == monthInt &&
                             m.LeaveDateFrom.Year == yearInt ||
                             m.LeaveDateTo.Month == monthInt &&
                             m.LeaveDateTo.Year == yearInt);
@@ -264,7 +260,8 @@ namespace PQT.Domain.Concrete
             var monthInt = month.Month;
             var yearInt = month.Year;
             var queries = _db.Set<Leave>()
-                .Where(m => m.LeaveDateFrom.Month == monthInt &&
+                .Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value &&
+                            m.LeaveDateFrom.Month == monthInt &&
                             m.LeaveDateFrom.Year == yearInt ||
                             m.LeaveDateTo.Month == monthInt &&
                             m.LeaveDateTo.Year == yearInt);
@@ -287,7 +284,8 @@ namespace PQT.Domain.Concrete
         public IEnumerable<Leave> GetAllLeavesForKpi(DateTime dateFrom, DateTime dateTo)
         {
             var leaveTypeValue = LeaveType.Leave.Value;
-            return _db.Set<Leave>().Where(m => ((m.LeaveDateFrom >= dateFrom &&
+            return _db.Set<Leave>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value &&
+                                               ((m.LeaveDateFrom >= dateFrom &&
                                                m.LeaveDateFrom <= dateTo) ||
                                                 (m.LeaveDateTo >= dateFrom &&
                                                  m.LeaveDateTo <= dateTo)) &&
@@ -328,7 +326,7 @@ namespace PQT.Domain.Concrete
 
         public int GetCountNonSalesDays(string searchValue)
         {
-            IQueryable<NonSalesDay> queries = _db.Set<NonSalesDay>();
+            IQueryable<NonSalesDay> queries = _db.Set<NonSalesDay>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value);
             if (string.IsNullOrEmpty(searchValue)) return queries.Count();
             bool isValid = DateTime.TryParseExact(
                 searchValue, "dd/MM/yyyy", CultureInfo.InvariantCulture,
@@ -342,7 +340,7 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<NonSalesDay> GetAllNonSalesDays(string searchValue, string sortColumnDir, string sortColumn, int page, int pageSize)
         {
-            IQueryable<NonSalesDay> queries = _db.Set<NonSalesDay>();
+            IQueryable<NonSalesDay> queries = _db.Set<NonSalesDay>().Where(m=> m.EntityStatus.Value == EntityStatus.Normal.Value);
             if (!string.IsNullOrEmpty(searchValue))
             {
                 bool isValid = DateTime.TryParseExact(
@@ -395,7 +393,7 @@ namespace PQT.Domain.Concrete
         {
             var dateFromMonth = new DateTime(dateFrom.Year, dateFrom.Month, 1);
             var dateToMonth = new DateTime(dateTo.Year, dateTo.Month, 1);
-            return _db.Set<NonSalesDay>()
+            return _db.Set<NonSalesDay>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                 .Where(m => m.IssueMonth >= dateFromMonth &&
                             m.IssueMonth <= dateToMonth).ToList();
         }
@@ -439,7 +437,7 @@ namespace PQT.Domain.Concrete
 
         public int GetCountTechnicalIssueDays(string searchValue)
         {
-            IQueryable<TechnicalIssueDay> queries = _db.Set<TechnicalIssueDay>();
+            IQueryable<TechnicalIssueDay> queries = _db.Set<TechnicalIssueDay>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value);
             if (string.IsNullOrEmpty(searchValue)) return queries.Count();
             bool isValid = DateTime.TryParseExact(
                 searchValue, "dd/MM/yyyy", CultureInfo.InvariantCulture,
@@ -453,7 +451,7 @@ namespace PQT.Domain.Concrete
 
         public IEnumerable<TechnicalIssueDay> GetAllTechnicalIssueDays(string searchValue, string sortColumnDir, string sortColumn, int page, int pageSize)
         {
-            IQueryable<TechnicalIssueDay> queries = _db.Set<TechnicalIssueDay>();
+            IQueryable<TechnicalIssueDay> queries = _db.Set<TechnicalIssueDay>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value);
             if (!string.IsNullOrEmpty(searchValue))
             {
                 bool isValid = DateTime.TryParseExact(
@@ -505,7 +503,7 @@ namespace PQT.Domain.Concrete
         {
             var dateFromMonth = new DateTime(dateFrom.Year, dateFrom.Month, 1);
             var dateToMonth = new DateTime(dateTo.Year, dateTo.Month, 1);
-            return _db.Set<TechnicalIssueDay>()
+            return _db.Set<TechnicalIssueDay>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                 .Where(m => m.IssueMonth >= dateFromMonth &&
                             m.IssueMonth <= dateToMonth).ToList();
         }
