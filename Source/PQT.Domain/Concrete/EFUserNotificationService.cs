@@ -40,11 +40,17 @@ namespace PQT.Domain.Concrete
         //        .OrderByDescending(m => m.CreatedTime)
         //        .Skip((page - 1) * pageSize).Take(pageSize).ToList();
         //}
+        public virtual IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int eventId, int pageSize = 10, int page = 1)
+        {
+            return _db.Set<UserNotification>()
+                .Where(m => m.UserID == userId && m.EventId == eventId)
+                .OrderByDescending(m => m.CreatedTime)
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        }
         public virtual IEnumerable<UserNotification> GetAllUserNotificationsByEvent(int userId, int[] eventIds, int pageSize = 10, int page = 1)
         {
             return _db.Set<UserNotification>()
-                .Where(m => m.UserID == userId &&
-                            eventIds.Any(c => m.EventId == c))
+                .Where(m => m.UserID == userId && eventIds.Contains(m.EventId))
                 .OrderByDescending(m => m.CreatedTime)
                 .Skip((page - 1) * pageSize).Take(pageSize).ToList();
         }

@@ -122,7 +122,6 @@ namespace PQT.Domain.Concrete
                     break;
             }
             return queries.Skip(page).Take(pageSize)
-                .Include(m => m.Country)
                 .ToList();
         }
 
@@ -159,7 +158,7 @@ namespace PQT.Domain.Concrete
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Sector) && sectors.Any(c => m.Sector.ToLower().Contains(c)));
             if (industries.Any())
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Industry) && industries.Any(c => m.Industry.ToLower().Contains(c)));
-            return queries.Include(m => m.Country).Count();
+            return queries.Count();
         }
         public IEnumerable<Company> GetAllCompaniesForAssignEvent(int tier, int[] saleIds, string companyName,
             string[] countries, string[] productServices, string[] sectors, string[] industries,
@@ -232,7 +231,6 @@ namespace PQT.Domain.Concrete
                     break;
             }
             return queries.Skip(page).Take(pageSize)
-                .Include(m => m.Country)
                 .ToList();
         }
         public virtual IEnumerable<Company> GetAllCompanies(Func<Company, bool> predicate)
@@ -246,11 +244,7 @@ namespace PQT.Domain.Concrete
 
         public virtual Company GetCompany(int companyID)
         {
-            return _db.Set<Company>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
-                .Where(m => m.ID == companyID)
-                .Include(m=>m.Country)
-                .Include(m=>m.ManagerUsers)
-                .FirstOrDefault();
+            return _db.Set<Company>().FirstOrDefault(m => m.EntityStatus.Value == EntityStatus.Normal.Value && m.ID == companyID);
             //return Get<Company>(m => m.ID == companyID, m => new
             //{
             //    m.Country,

@@ -28,10 +28,10 @@ namespace PQT.Domain.Entities
         public string ReasonReject { get; set; }
         public int? UserID { get; set; }//leave user 
         [ForeignKey("UserID")]
-        public User User { get; set; }
+        public virtual User User { get; set; }
         public int? CreatedUserID { get; set; }//approve or reject user
         [ForeignKey("CreatedUserID")]
-        public User CreatedUser { get; set; }
+        public virtual User CreatedUser { get; set; }
         //public int? AprroveUserID { get; set; }//approve or reject user
         //[ForeignKey("AprroveUserID")]
         //public User AprroveUser { get; set; }

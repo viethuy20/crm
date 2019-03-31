@@ -129,8 +129,6 @@ namespace PQT.Domain.Concrete
                     break;
             }
             return queries.Skip(page).Take(pageSize)
-                .Include(m => m.User)
-                .Include(m => m.CreatedUser)
                 .ToList();
         }
         public int GetCountLeavesByMonthlyReport(DateTime month, int userId, bool isSupervisor, string searchValue)
@@ -251,8 +249,6 @@ namespace PQT.Domain.Concrete
                     break;
             }
             return queries.Skip(page).Take(pageSize)
-                .Include(m => m.User)
-                .Include(m => m.CreatedUser)
                 .ToList();
         }
         public IEnumerable<Leave> GetAllLeavesMonthlyReport(DateTime month, int userId, bool isSupervisor, string searchValue)
@@ -278,7 +274,6 @@ namespace PQT.Domain.Concrete
             }
 
             return queries
-                .Include(m => m.User)
                 .ToList();
         }
         public IEnumerable<Leave> GetAllLeavesForKpi(DateTime dateFrom, DateTime dateTo)
@@ -298,10 +293,7 @@ namespace PQT.Domain.Concrete
             {
                 return null;
             }
-            return _db.Set<Leave>().Where(m => m.ID == id)
-                .Include(m => m.User)
-                .Include(m => m.CreatedUser)
-                .FirstOrDefault();
+            return _db.Set<Leave>().FirstOrDefault(m => m.ID == id);
         }
 
         public Leave CreateLeave(Leave info)

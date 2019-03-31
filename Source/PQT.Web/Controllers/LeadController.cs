@@ -1468,12 +1468,19 @@ namespace PQT.Web.Controllers
                 // ReSharper disable once PossibleNullReferenceException
                 industry = Request.Form.GetValues("Industry").FirstOrDefault().Trim().ToLower();
             }
-            var tier = "";
+            var tier = 0;
             // ReSharper disable once AssignNullToNotNullAttribute
             if (Request.Form.GetValues("Tier") != null && Request.Form.GetValues("Tier").FirstOrDefault() != null)
             {
-                // ReSharper disable once PossibleNullReferenceException
-                tier = Request.Form.GetValues("Tier").FirstOrDefault().Trim().ToLower();
+                try
+                {
+                    // ReSharper disable once PossibleNullReferenceException
+                    tier = Convert.ToInt32(Request.Form.GetValues("Tier").FirstOrDefault().Trim().ToLower());
+                }
+                catch
+                {
+                    
+                }
             }
             var businessUnit = "";
             // ReSharper disable once AssignNullToNotNullAttribute
@@ -1493,122 +1500,18 @@ namespace PQT.Web.Controllers
 
 
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
-            int page = start != null ? Convert.ToInt32(start) : 0;
-            int recordsTotal = 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
 
             var currentUser = CurrentUser.Identity;
-            IEnumerable<Company> companies = new HashSet<Company>();
             IEnumerable<int> companiesInNcl = new HashSet<int>();
-            var eventLead = _eventService.GetEvent(eventId);
-            if (eventLead != null)
-            {
-                var daysExpired = Settings.Lead.NumberDaysExpired();
-                companiesInNcl = _repo.GetAllLeads(m => m.EventID == eventId).Where(m =>
-                    m.UserID != currentUser.ID &&
-                    m.User.TransferUserID != currentUser.ID &&
-                    m.User.UserStatus == UserStatus.Live &&
-                    m.CheckInNCL(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
-                companies = eventLead.EventCompanies.Where(m =>
-                        m.EntityStatus == EntityStatus.Normal && m.Company != null &&
-                        m.Company.EntityStatus == EntityStatus.Normal)
-                    .Select(m => m.Company);
-            }
-            else
-            {
-                companies = new List<Company>();
-            }
-            Func<Company, bool> predicate = m =>
-            (m.Tier.ToString() == TierType.Tier3 || m.Tier.ToString() == TierType.Tier2 || !m.ManagerUsers.Any() || (
-            m.Tier.ToString() == TierType.Tier1 && m.ManagerUsers.Select(u => u.ID).Contains(currentUser.ID)
-            )) &&
-                (string.IsNullOrEmpty(companyName) ||
-                 (!string.IsNullOrEmpty(m.CompanyName) && m.CompanyName.ToLower().Contains(companyName))) &&
-                (string.IsNullOrEmpty(productService) || (!string.IsNullOrEmpty(m.ProductOrService) &&
-                                                          m.ProductOrService.ToLower().Contains(productService))) &&
-                (string.IsNullOrEmpty(countryName) ||
-                 (m.Country != null && m.Country.Code.ToLower().Contains(countryName)) ||
-                 (m.Country != null && m.Country.Name.ToLower().Contains(countryName))) &&
-                (string.IsNullOrEmpty(sector) ||
-                 (!string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector))) &&
-                (string.IsNullOrEmpty(industry) ||
-                 (!string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry))) &&
-                (string.IsNullOrEmpty(businessUnit) ||
-                 (!string.IsNullOrEmpty(m.BusinessUnit) && m.BusinessUnit.ToLower().Contains(businessUnit))) &&
-                (string.IsNullOrEmpty(tier) || (m.Tier.ToString().Contains(tier))) &&
-                (string.IsNullOrEmpty(ownership) ||
-                 (!string.IsNullOrEmpty(m.Ownership) && m.Ownership.ToLower().Contains(ownership)));
-            companies = companies.Where(predicate);
-
-            #region sort
-            if (sortColumnDir == "asc")
-            {
-                switch (sortColumn)
-                {
-                    case "ComResourceNumber":
-                        companies = companies.OrderBy(s => s.ComResourceNumber).ThenBy(s => s.Tier);
-                        break;
-                    case "CountryName":
-                        companies = companies.OrderBy(s => s.CountryCode).ThenBy(s => s.Tier);
-                        break;
-                    case "ProductOrService":
-                        companies = companies.OrderBy(s => s.ProductOrService).ThenBy(s => s.Tier);
-                        break;
-                    case "Sector":
-                        companies = companies.OrderBy(s => s.Sector).ThenBy(s => s.Tier);
-                        break;
-                    case "Industry":
-                        companies = companies.OrderBy(s => s.Industry).ThenBy(s => s.Tier);
-                        break;
-                    case "BusinessUnit":
-                        companies = companies.OrderBy(s => s.BusinessUnit).ThenBy(s => s.Tier);
-                        break;
-                    case "Ownership":
-                        companies = companies.OrderBy(s => s.Ownership).ThenBy(s => s.Tier);
-                        break;
-                    default:
-                        companies = companies.OrderBy(s => s.Tier).ThenBy(s => s.CompanyName);
-                        break;
-                }
-            }
-            else
-            {
-                switch (sortColumn)
-                {
-                    case "ComResourceNumber":
-                        companies = companies.OrderByDescending(s => s.ComResourceNumber).ThenBy(s => s.Tier);
-                        break;
-                    case "CountryName":
-                        companies = companies.OrderByDescending(s => s.CountryCode).ThenBy(s => s.Tier);
-                        break;
-                    case "ProductOrService":
-                        companies = companies.OrderByDescending(s => s.ProductOrService).ThenBy(s => s.Tier);
-                        break;
-                    case "Sector":
-                        companies = companies.OrderByDescending(s => s.Sector).ThenBy(s => s.Tier);
-                        break;
-                    case "Industry":
-                        companies = companies.OrderByDescending(s => s.Industry).ThenBy(s => s.Tier);
-                        break;
-                    case "BusinessUnit":
-                        companies = companies.OrderByDescending(s => s.BusinessUnit).ThenBy(s => s.Tier);
-                        break;
-                    case "Ownership":
-                        companies = companies.OrderByDescending(s => s.Ownership).ThenBy(s => s.Tier);
-                        break;
-                    default:
-                        companies = companies.OrderByDescending(s => s.Tier).ThenBy(s => s.CompanyName);
-                        break;
-                }
-            }
-
-            #endregion sort
-
-            recordsTotal = companies.Count();
-            if (pageSize > recordsTotal)
-            {
-                pageSize = recordsTotal;
-            }
-            var data = companies.Skip(page).Take(pageSize).ToList();
+            var daysExpired = Settings.Lead.NumberDaysExpired();
+            companiesInNcl = _repo.GetAllLeads(m => m.EventID == eventId).Where(m =>
+                m.UserID != currentUser.ID &&
+                m.User.TransferUserID != currentUser.ID &&
+                m.User.UserStatus == UserStatus.Live &&
+                m.CheckInNCL(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
+            int recordsTotal = _eventService.GetCountEventCompaniesForCall(eventId, currentUser.ID,companyName, productService, countryName, tier, sector, industry);
+            var data = _eventService.GetAllEventCompaniesForCall(eventId, currentUser.ID, companyName, productService, countryName, tier, sector, industry, sortColumnDir, sortColumn, skip, pageSize);
 
             foreach (var company in data)
             {
@@ -1643,24 +1546,24 @@ namespace PQT.Web.Controllers
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
-        [AjaxOnly]
-        public ActionResult AjaxGetTotalCallSummary(int eventId)
-        {
-            //var saleId = PermissionHelper.SalesmanId();
-            var leads = _repo.GetAllLeads(m => m.EventID == eventId && !m.ExpiredForReopen);// && (saleId == 0 || m.UserID == saleId ||
-                                                                                            //(m.User != null && m.User.TransferUserID == saleId)));
-            var eventData = _eventService.GetEvent(eventId);
-            return Json(new
-            {
-                Tier3 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier3),
-                Tier1 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier1),
-                Tier2 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier2),
-                TotalTier3 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier3),
-                TotalTier1 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier1),
-                TotalTier2 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier2),
-                TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked),
-            }, JsonRequestBehavior.AllowGet);
-        }
+        //[AjaxOnly]
+        //public ActionResult AjaxGetTotalCallSummary(int eventId)
+        //{
+        //    //var saleId = PermissionHelper.SalesmanId();
+        //    var leads = _repo.GetAllLeads(m => m.EventID == eventId && !m.ExpiredForReopen);// && (saleId == 0 || m.UserID == saleId ||
+        //                                                                                    //(m.User != null && m.User.TransferUserID == saleId)));
+        //    var eventData = _eventService.GetEvent(eventId);
+        //    return Json(new
+        //    {
+        //        Tier3 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier3),
+        //        Tier1 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier1),
+        //        Tier2 = leads.DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier2),
+        //        TotalTier3 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier3),
+        //        TotalTier1 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier1),
+        //        TotalTier2 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier2),
+        //        TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked),
+        //    }, JsonRequestBehavior.AllowGet);
+        //}
         [AjaxOnly]
         public ActionResult AjaxGetTotalCallSummaries(string eventIds)
         {
@@ -1670,21 +1573,18 @@ namespace PQT.Web.Controllers
             }
             //var saleId = PermissionHelper.SalesmanId();
             var ids = eventIds.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(m => Convert.ToInt32(m));
-            var leads = _repo.GetAllLeads(m => !m.ExpiredForReopen && ids.Contains(m.EventID));// && (saleId == 0 || m.UserID == saleId ||
-            //(m.User != null && m.User.TransferUserID == saleId)));
             var listObj = new List<object>();
             foreach (var id in ids)
             {
-                var eventData = _eventService.GetEvent(id);
                 listObj.Add(new
                 {
-                    Tier3 = leads.Where(m => m.EventID == id).DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier3),
-                    Tier1 = leads.Where(m => m.EventID == id).DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier1),
-                    Tier2 = leads.Where(m => m.EventID == id).DistinctBy(m => m.CompanyID).Count(m => m.Company != null && m.Company.Tier.ToString() == TierType.Tier2),
-                    TotalTier3 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier3),
-                    TotalTier1 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier1),
-                    TotalTier2 = eventData.EventCompanies.Count(m => m.EntityStatus == EntityStatus.Normal && m.Company != null && m.Company.EntityStatus == EntityStatus.Normal && m.Company.Tier.ToString() == TierType.Tier2),
-                    TotalBooked = leads.Where(m => m.EventID == id).Count(m => m.LeadStatusRecord == LeadStatus.Booked),
+                    Tier3 = _repo.CountLeadsByTier(id, Convert.ToInt16(TierType.Tier3)),
+                    Tier1 = _repo.CountLeadsByTier(id, Convert.ToInt16(TierType.Tier1)),
+                    Tier2 = _repo.CountLeadsByTier(id, Convert.ToInt16(TierType.Tier2)),
+                    TotalTier3 = _eventService.CountEventCompanies(id,Convert.ToInt16(TierType.Tier3)),
+                    TotalTier1 = _eventService.CountEventCompanies(id, Convert.ToInt16(TierType.Tier1)),
+                    TotalTier2 = _eventService.CountEventCompanies(id, Convert.ToInt16(TierType.Tier2)),
+                    TotalBooked = _repo.CountLeadsByStatusBooked(id),
                     EventId = id
                 });
             }

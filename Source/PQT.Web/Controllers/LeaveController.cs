@@ -253,17 +253,14 @@ namespace PQT.Web.Controllers
 
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
-            int recordsTotal = 0;
             var currentUser = CurrentUser.Identity;
             var currentUserId = CurrentUser.HasRole("Manager") ? 0 : currentUser.ID;
             var isSupervisor = currentUser.FinanceAdminUnit != FinanceAdminUnit.None ||
                                  currentUser.SalesManagementUnit != SalesManagementUnit.None ||
                                  currentUser.HumanResourceUnit == HumanResourceUnit.Coordinator ||
                                  currentUser.ProjectManagementUnit != ProjectManagementUnit.None;
-            IEnumerable<Leave> data = new HashSet<Leave>();
-            Func<Leave, bool> predicate = null;
-            recordsTotal = _leaveService.GetCountLeaves(currentUserId, isSupervisor, searchValue);
-            data = _leaveService.GetAllLeaves(currentUserId, isSupervisor, searchValue, sortColumnDir, sortColumn, skip, pageSize);
+            int recordsTotal = _leaveService.GetCountLeaves(currentUserId, isSupervisor, searchValue);
+            var data = _leaveService.GetAllLeaves(currentUserId, isSupervisor, searchValue, sortColumnDir, sortColumn, skip, pageSize);
             var json = new
             {
                 draw = draw,
@@ -285,7 +282,6 @@ namespace PQT.Web.Controllers
             };
             return Json(json, JsonRequestBehavior.AllowGet);
         }
-
 
         [AjaxOnly]
         public ActionResult AjaxGetMonthlyReport()

@@ -190,126 +190,16 @@ namespace PQT.Web.Controllers
 
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
-            int recordsTotal = 0;
 
-            IEnumerable<Event> events = new HashSet<Event>();
             var bookings = _bookingService.GetAllBookings(m => m.BookingStatusRecord == BookingStatus.Approved);
 
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                events = _repo.GetAllEvents(m =>
-                    m.EventStatus != EventStatus.Completed &&
-                    m.EventStatus != EventStatus.Cancelled && (
-                    m.EventCode.ToLower().Contains(searchValue) ||
-                    m.EventName.ToLower().Contains(searchValue) ||
-                    m.StartDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
-                    m.EndDate.ToString("dd/MM/yyyy").Contains(searchValue) ||
-                    m.DateOfConfirmationStr.Contains(searchValue) ||
-                    m.EventStatusDisplay.ToLower().Contains(searchValue) ||
-                    (m.Location != null && m.Location.ToLower().Contains(searchValue)) ||
-                    (m.HotelVenue != null && m.HotelVenue.ToLower().Contains(searchValue))
-                   ));
-            }
-            else
-            {
-                events = _repo.GetAllEvents(m =>
-                        m.EventStatus != EventStatus.Completed &&
-                        m.EventStatus != EventStatus.Cancelled);
-            }
+            int recordsTotal = _repo.GetCountEventsForOpe(searchValue);
+            var data = _repo.GetAllEventsForOpe(searchValue, sortColumnDir, sortColumn, skip, pageSize);
 
-
-
-            foreach (var item in events)
+            foreach (var item in data)
             {
                 item.TotalDelegates = bookings.Where(m => m.EventID == item.ID).Sum(m => m.Delegates.Count);
             }
-
-            if (sortColumnDir == "asc")
-            {
-                switch (sortColumn)
-                {
-                    case "EventCode":
-                        events = events.OrderBy(s => s.EventCode).ThenBy(s => s.ID);
-                        break;
-                    case "EventName":
-                        events = events.OrderBy(s => s.EventName).ThenBy(s => s.ID);
-                        break;
-                    case "EventStatusDisplay":
-                        events = events.OrderBy(s => s.EventStatusDisplay).ThenBy(s => s.ID);
-                        break;
-                    case "StartDate":
-                        events = events.OrderBy(s => s.StartDate).ThenBy(s => s.ID);
-                        break;
-                    case "EndDate":
-                        events = events.OrderBy(s => s.EndDate).ThenBy(s => s.ID);
-                        break;
-                    case "DateOfConfirmation":
-                        events = events.OrderBy(s => s.DateOfConfirmation).ThenBy(s => s.ID);
-                        break;
-                    case "ClosingDate":
-                        events = events.OrderBy(s => s.ClosingDate).ThenBy(s => s.ID);
-                        break;
-                    case "TotalDelegates":
-                        events = events.OrderBy(s => s.TotalDelegates).ThenBy(s => s.ID);
-                        break;
-                    case "Location":
-                        events = events.OrderBy(s => s.Location).ThenBy(s => s.ID);
-                        break;
-                    case "HotelVenue":
-                        events = events.OrderBy(s => s.HotelVenue).ThenBy(s => s.ID);
-                        break;
-                    default:
-                        events = events.OrderBy(s => s.ID);
-                        break;
-                }
-            }
-            else
-            {
-                switch (sortColumn)
-                {
-                    case "EventCode":
-                        events = events.OrderByDescending(s => s.EventCode).ThenBy(s => s.ID);
-                        break;
-                    case "EventName":
-                        events = events.OrderByDescending(s => s.EventName).ThenBy(s => s.ID);
-                        break;
-                    case "EventStatusDisplay":
-                        events = events.OrderByDescending(s => s.EventStatusDisplay).ThenBy(s => s.ID);
-                        break;
-                    case "StartDate":
-                        events = events.OrderByDescending(s => s.StartDate).ThenBy(s => s.ID);
-                        break;
-                    case "EndDate":
-                        events = events.OrderByDescending(s => s.EndDate).ThenBy(s => s.ID);
-                        break;
-                    case "DateOfConfirmation":
-                        events = events.OrderByDescending(s => s.DateOfConfirmation).ThenBy(s => s.ID);
-                        break;
-                    case "ClosingDate":
-                        events = events.OrderByDescending(s => s.ClosingDate).ThenBy(s => s.ID);
-                        break;
-                    case "TotalDelegates":
-                        events = events.OrderByDescending(s => s.TotalDelegates).ThenBy(s => s.ID);
-                        break;
-                    case "Location":
-                        events = events.OrderByDescending(s => s.Location).ThenBy(s => s.ID);
-                        break;
-                    case "HotelVenue":
-                        events = events.OrderByDescending(s => s.HotelVenue).ThenBy(s => s.ID);
-                        break;
-                    default:
-                        events = events.OrderByDescending(s => s.ID);
-                        break;
-                }
-            }
-
-
-            recordsTotal = events.Count();
-            if (pageSize > recordsTotal)
-            {
-                pageSize = recordsTotal;
-            }
-            var data = events.Skip(skip).Take(pageSize).ToList();
 
             var json = new
             {

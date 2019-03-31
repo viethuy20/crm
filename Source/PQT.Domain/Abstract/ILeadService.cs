@@ -9,6 +9,9 @@ namespace PQT.Domain.Abstract
 {
     public interface ILeadService
     {
+
+        int CountLeadsByTier(int eventId, int tier);
+        int CountLeadsByStatusBooked(int eventId);
         IEnumerable<Lead> GetAllLeads(Func<Lead, bool> predicate);
         IEnumerable<Lead> GetAllLeadsForKPI(int eventId, int userId, DateTime dateFrom, DateTime dateTo, string searchValue);
         Lead GetLead(int id);

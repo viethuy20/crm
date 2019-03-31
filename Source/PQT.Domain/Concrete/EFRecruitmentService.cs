@@ -185,16 +185,6 @@ namespace PQT.Domain.Concrete
                     break;
             }
             return queries.Skip(page).Take(pageSize)
-                .Include(m => m.OfficeLocation)
-                .Include(m => m.User)
-                .Include(m => m.CandidateStatusRecord)
-                .Include(m => m.PsSummary)
-                .Include(m => m.PsSummary.User)
-                .Include(m => m.OneFaceToFaceSummary)
-                .Include(m => m.OneFaceToFaceSummary.User)
-                .Include(m => m.TwoFaceToFaceSummary)
-                .Include(m => m.TwoFaceToFaceSummary.User)
-                .Include(m => m.RecruitmentPosition)
                 .ToList();
         }
         public IEnumerable<Candidate> GetAllCandidatesInterviewToday(string searchValue, string sortColumnDir, string sortColumn, int page, int pageSize)
@@ -307,16 +297,6 @@ namespace PQT.Domain.Concrete
                     break;
             }
             return queries.Skip(page).Take(pageSize)
-                .Include(m => m.OfficeLocation)
-                .Include(m => m.User)
-                .Include(m => m.CandidateStatusRecord)
-                .Include(m => m.PsSummary)
-                .Include(m => m.PsSummary.User)
-                .Include(m => m.OneFaceToFaceSummary)
-                .Include(m => m.OneFaceToFaceSummary.User)
-                .Include(m => m.TwoFaceToFaceSummary)
-                .Include(m => m.TwoFaceToFaceSummary.User)
-                .Include(m => m.RecruitmentPosition)
                 .ToList();
         }
         public IEnumerable<Candidate> GetAllCandidatesForKpis(string searchValue, int userId, DateTime dateFrom, DateTime dateTo)
@@ -335,8 +315,6 @@ namespace PQT.Domain.Concrete
                 queries = queries.Where(m => m.User.DisplayName.ToLower().Contains(searchValue));
             }
             return queries
-                .Include(m => m.User)
-                .Include(m => m.CandidateStatusRecord)
                 .ToList();
         }
         public Candidate GetCandidate(int id)
@@ -345,15 +323,7 @@ namespace PQT.Domain.Concrete
             {
                 return null;
             }
-            return _db.Set<Candidate>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value && m.ID == id)
-                .Include(m => m.OfficeLocation)
-                .Include(m => m.User)
-                .Include(m => m.CandidateStatusRecord)
-                .Include(m => m.PsSummary)
-                .Include(m => m.OneFaceToFaceSummary)
-                .Include(m => m.TwoFaceToFaceSummary)
-                .Include(m => m.RecruitmentPosition)
-                .FirstOrDefault();
+            return _db.Set<Candidate>().FirstOrDefault(m => m.EntityStatus.Value == EntityStatus.Normal.Value && m.ID == id);
         }
         public Candidate GetCandidateByNo(string number)
         {

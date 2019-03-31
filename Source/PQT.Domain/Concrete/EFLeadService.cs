@@ -17,6 +17,14 @@ namespace PQT.Domain.Concrete
         {
         }
 
+        public int CountLeadsByTier(int eventId, int tier)
+        {
+            return _db.Set<Lead>().Count(m => !m.ExpiredForReopen && m.EventID == eventId && m.Company.Tier == tier);
+        }
+        public int CountLeadsByStatusBooked(int eventId)
+        {
+            return _db.Set<Lead>().Count(m => m.EventID == eventId && m.LeadStatusRecord.Status.Value == LeadStatus.Booked.Value);
+        }
         public IEnumerable<Lead> GetAllLeads(Func<Lead, bool> predicate)
         {
             Func<Lead, bool> predicate2 =
