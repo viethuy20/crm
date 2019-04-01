@@ -50,7 +50,7 @@ namespace PQT.Domain.Concrete
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Ownership) && m.Ownership.ToLower().Contains(ownership));
             if (financialYear > 0)
                 queries = queries.Where(m => m.FinancialYear > 0 && m.FinancialYear == financialYear);
-            return queries.Count();
+            return queries.Include(m => m.Country).Include(m => m.ManagerUsers).Count();
         }
 
         public IEnumerable<Company> GetAllCompanies(string companyName, string countryName, string productService,
@@ -121,7 +121,7 @@ namespace PQT.Domain.Concrete
                         : queries.OrderByDescending(s => s.CompanyName);
                     break;
             }
-            return queries.Skip(page).Take(pageSize)
+            return queries.Skip(page).Take(pageSize).Include(m=>m.Country).Include(m => m.ManagerUsers)
                 .ToList();
         }
 
@@ -158,7 +158,7 @@ namespace PQT.Domain.Concrete
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Sector) && sectors.Any(c => m.Sector.ToLower().Contains(c)));
             if (industries.Any())
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Industry) && industries.Any(c => m.Industry.ToLower().Contains(c)));
-            return queries.Count();
+            return queries.Include(m => m.Country).Include(m => m.ManagerUsers).Count();
         }
         public IEnumerable<Company> GetAllCompaniesForAssignEvent(int tier, int[] saleIds, string companyName,
             string[] countries, string[] productServices, string[] sectors, string[] industries,
@@ -230,7 +230,7 @@ namespace PQT.Domain.Concrete
                         : queries.OrderByDescending(s => s.CompanyName);
                     break;
             }
-            return queries.Skip(page).Take(pageSize)
+            return queries.Skip(page).Take(pageSize).Include(m => m.Country).Include(m => m.ManagerUsers)
                 .ToList();
         }
         public virtual IEnumerable<Company> GetAllCompanies(Func<Company, bool> predicate)
@@ -267,7 +267,7 @@ namespace PQT.Domain.Concrete
 
         public virtual Company GetCompany(string name)
         {
-            name = name?.Trim().ToLower()??"";
+            name = name?.Trim().ToLower() ?? "";
             return _db.Set<Company>()
                 .Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value)
                 .Where(m => m.CompanyName.Trim().ToLower() == name)
@@ -366,7 +366,7 @@ namespace PQT.Domain.Concrete
 
         public virtual Company MergeCompany(int companyID, int mergeCompanyID)
         {
-            var com =  _db.Set<Company>().FirstOrDefault(m => m.ID == companyID);
+            var com = _db.Set<Company>().FirstOrDefault(m => m.ID == companyID);
             if (com == null) return null;
             var mergeCom = _db.Set<Company>().FirstOrDefault(m => m.ID == mergeCompanyID);
             if (mergeCom == null) return null;
@@ -458,11 +458,11 @@ namespace PQT.Domain.Concrete
         }
 
         public IEnumerable<CompanyResource> GetAllCompanyResources(int comId, string name, string role,
-            string email, string phone)
+            string email, string phone, string searchValue)
         {
             IQueryable<CompanyResource> queries = _db.Set<CompanyResource>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(m => m.CompanyID == comId);
             if (!string.IsNullOrEmpty(name))
-                queries = queries.Where(m => m.FullName.ToLower().Contains(name));
+                queries = queries.Where(m => m.FirstName.ToLower().Contains(name) || m.LastName.ToLower().Contains(name));
             if (!string.IsNullOrEmpty(role))
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(role));
             if (!string.IsNullOrEmpty(email))
@@ -473,6 +473,20 @@ namespace PQT.Domain.Concrete
                                              (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(phone)) ||
                                              (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(phone)) ||
                                              (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(phone)));
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                queries = queries.Where(m =>
+                     (!string.IsNullOrEmpty(m.Salutation) && m.Salutation.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.FirstName) && m.FirstName.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.LastName) && m.LastName.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(searchValue)) ||
+                     (!string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(searchValue)));
+            }
             return queries.ToList();
         }
         public IEnumerable<CompanyResource> GetAllCompanyResources(string[] countries, string[] organisations, string[] roles, string[] name, string[] email, string[] phone)

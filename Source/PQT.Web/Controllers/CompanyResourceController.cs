@@ -546,13 +546,13 @@ namespace PQT.Web.Controllers
             // ReSharper disable once AssignNullToNotNullAttribute
             var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
 
-            //var searchValue = "";
-            //// ReSharper disable once AssignNullToNotNullAttribute
-            //if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
-            //{
-            //    // ReSharper disable once PossibleNullReferenceException
-            //    searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
-            //}
+            var searchValue = "";
+            // ReSharper disable once AssignNullToNotNullAttribute
+            if (Request.Form.GetValues("search[value]").FirstOrDefault() != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                searchValue = Request.Form.GetValues("search[value]").FirstOrDefault().Trim().ToLower();
+            }
 
             var comId = 0;
             // ReSharper disable once AssignNullToNotNullAttribute
@@ -611,7 +611,7 @@ namespace PQT.Web.Controllers
             //}
             //else 
             if (comId > 0)
-                companyResources = _comRepo.GetAllCompanyResources(comId, name, role, email, mobile);
+                companyResources = _comRepo.GetAllCompanyResources(comId, name, role, email, mobile, searchValue);
             //companyResources = _comRepo.GetAllCompanyResources(m => m.CompanyID == comId);
 
             //Func<CompanyResource, bool> predicate = m =>

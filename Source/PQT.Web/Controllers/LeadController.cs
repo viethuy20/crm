@@ -329,7 +329,7 @@ namespace PQT.Web.Controllers
                     {
                         var currentUser = CurrentUser.Identity;
                         var daysExpired = Settings.Lead.NumberDaysExpired();
-                        var allLeads = _repo.GetAllLeads(m => m.EventID == model.EventID && !m.ExpiredForReopen);
+                        var allLeads = _repo.GetAllLeadsByEventExcludeReopen(model.EventID, 0);
                         var leadExists = allLeads.Where(m =>
                             m.CompanyID == model.CompanyID &&
                             m.UserID != currentUser.ID &&
@@ -347,9 +347,7 @@ namespace PQT.Web.Controllers
                                                                 m.WorkEmail1 == model.WorkEmail1) ||
                                                                (!string.IsNullOrEmpty(m.PersonalEmail) &&
                                                                 m.PersonalEmail == model.PersonalEmail)) &&
-                                                              (m.UserID == currentUser.ID &&
-                                                                  //m.User.TransferUserID == currentUser.ID &&
-                                                                  m.LeadStatusRecord != LeadStatus.Deleted));
+                                                              (m.UserID == currentUser.ID));
                         if (emailExists.Any())
                         {
                             TempData["error"] = "Email existing in another entry of same event";
@@ -367,10 +365,7 @@ namespace PQT.Web.Controllers
                                                                m.MobilePhone2 == model.MobilePhone2) ||
                                                               (!string.IsNullOrEmpty(m.MobilePhone3) &&
                                                                m.MobilePhone3 == model.MobilePhone3)) &&
-                                                             (
-                                                             m.UserID == currentUser.ID &&
-                                                               //  m.User.TransferUserID != currentUser.ID &&
-                                                               m.LeadStatusRecord != LeadStatus.Deleted));
+                                                             (m.UserID == currentUser.ID));
                         if (callExists.Any())
                         {
                             TempData["error"] = "Number existing in another entry of same event";
@@ -477,14 +472,8 @@ namespace PQT.Web.Controllers
             }
             if (isValid)
             {
-                var callExists = _repo.GetAllLeads(m =>
-                    m.EventID == model.EventID &&
-                    m.ID != model.LeadID &&
-                    !m.ExpiredForReopen &&
-                    (
-                     //m.LeadStatusRecord != LeadStatus.Initial &&
-                     // m.LeadStatusRecord != LeadStatus.Reject &&
-                     m.LeadStatusRecord != LeadStatus.Deleted) &&
+                var allLeads = _repo.GetAllLeadsByEventExcludeReopen(model.EventID, model.LeadID);
+                var callExists = allLeads.Where(m =>
                     ((!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail == model.WorkEmail) ||
                      (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1 == model.WorkEmail1) ||
                      (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail == model.PersonalEmail) ||
@@ -640,205 +629,10 @@ namespace PQT.Web.Controllers
 
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
-            int recordsTotal = 0;
             var saleId = CurrentUser.Identity.ID;
-            IEnumerable<Lead> leads = new HashSet<Lead>();
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId &&
-                                               (saleId == 0 || m.UserID == saleId ||
-                                                (m.User != null && m.User.TransferUserID == saleId)) && (
-                                                   m.DateCreatedDisplay.Contains(searchValue) ||
-                                                   m.StatusDisplay.Contains(searchValue) ||
-                                                   m.CompanyName.ToLower().Contains(searchValue) ||
-                                                   m.CountryCode.ToLower().Contains(searchValue) ||
-                                                   m.JobTitle.ToLower().Contains(searchValue) ||
-                                                   m.DirectLine.ToLower().Contains(searchValue) ||
-                                                   m.CallBackDateTimeDisplay.ToLower().Contains(searchValue) ||
-                                                   (m.Salutation != null && m.Salutation.ToLower().Contains(searchValue)) ||
-                                                   (m.FirstName != null && m.FirstName.ToLower().Contains(searchValue)) ||
-                                                   (m.LastName != null && m.LastName.ToLower().Contains(searchValue)) ||
-                                                   (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
-                                                   (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
-                                                   (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
-                                                   (m.WorkEmail != null && m.WorkEmail.ToLower().Contains(searchValue)) ||
-                                                   (m.WorkEmail1 != null && m.WorkEmail1.ToLower().Contains(searchValue)) ||
-                                                   (m.PersonalEmail != null && m.PersonalEmail.ToLower().Contains(searchValue)) ||
-                                                   (m.FirstFollowUpStatusDisplay.ToLower().Contains(searchValue)) ||
-                                                   (m.FinalStatusDisplay.ToLower().Contains(searchValue))));
-            }
-            else
-            {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId && m.User.UserStatus == UserStatus.Live && (saleId == 0 || m.UserID == saleId || (m.User != null && m.User.TransferUserID == saleId)));
-            }
-            // ReSharper disable once AssignNullToNotNullAttribute
+            int recordsTotal = _repo.GetCountLeads(eventId, saleId, searchValue);
+            var data = _repo.GetAllLeads(eventId, saleId, searchValue, sortColumnDir, sortColumn, skip, pageSize);
 
-            #region sort
-            if (sortColumnDir == "asc")
-            {
-                switch (sortColumn)
-                {
-                    case "CreatedTime":
-                        leads = leads.OrderBy(s => s.StatusUpdateTime).ThenBy(s => s.ID);
-                        break;
-                    case "Company":
-                        leads = leads.OrderBy(s => s.Company.CompanyName).ThenBy(s => s.ID);
-                        break;
-                    case "Country":
-                        leads = leads.OrderBy(s => s.Company.CountryCode).ThenBy(s => s.ID);
-                        break;
-                    case "JobTitle":
-                        leads = leads.OrderBy(s => s.JobTitle).ThenBy(s => s.ID);
-                        break;
-                    case "DirectLine":
-                        leads = leads.OrderBy(s => s.DirectLine).ThenBy(s => s.ID);
-                        break;
-                    case "CallBackDate":
-                        leads = leads.OrderBy(s => s.CallBackDate).ThenBy(s => s.ID);
-                        break;
-                    case "Salutation":
-                        leads = leads.OrderBy(s => s.Salutation).ThenBy(s => s.ID);
-                        break;
-                    case "FirstName":
-                        leads = leads.OrderBy(s => s.FirstName).ThenBy(s => s.ID);
-                        break;
-                    case "LastName":
-                        leads = leads.OrderBy(s => s.LastName).ThenBy(s => s.ID);
-                        break;
-                    case "MobilePhone1":
-                        leads = leads.OrderBy(s => s.MobilePhone1).ThenBy(s => s.ID);
-                        break;
-                    case "MobilePhone2":
-                        leads = leads.OrderBy(s => s.MobilePhone2).ThenBy(s => s.ID);
-                        break;
-                    case "MobilePhone3":
-                        leads = leads.OrderBy(s => s.MobilePhone3).ThenBy(s => s.ID);
-                        break;
-                    case "WorkEmail":
-                        leads = leads.OrderBy(s => s.WorkEmail).ThenBy(s => s.ID);
-                        break;
-                    case "PersonalEmail":
-                        leads = leads.OrderBy(s => s.PersonalEmail).ThenBy(s => s.ID);
-                        break;
-                    case "EstimatedDelegateNumber":
-                        leads = leads.OrderBy(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
-                        break;
-                    case "TrainingBudgetPerHead":
-                        leads = leads.OrderBy(s => s.TrainingBudgetPerHead).ThenBy(s => s.ID);
-                        break;
-                    case "GoodTrainingMonth":
-                        leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
-                        break;
-                    case "StatusDisplay":
-                        leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
-                        break;
-                    case "KPIRemarks":
-                        leads = leads.OrderBy(s => s.KPIRemarks).ThenBy(s => s.ID);
-                        break;
-                    case "MarkKPI":
-                        leads = leads.OrderBy(s => s.MarkKPI).ThenBy(s => s.ID);
-                        break;
-                    case "FirstFollowUpStatus":
-                        leads = leads.OrderBy(s => s.FirstFollowUpStatusDisplay).ThenBy(s => s.ID);
-                        break;
-                    case "FinalStatus":
-                        leads = leads.OrderBy(s => s.FinalStatusDisplay).ThenBy(s => s.ID);
-                        break;
-                    case "CallBackDateTime":
-                        leads = leads.OrderBy(s => s.CallBackDateTime).ThenBy(s => s.ID);
-                        break;
-                    default:
-                        leads = leads.OrderBy(s => s.ID);
-                        break;
-                }
-            }
-            else
-            {
-                switch (sortColumn)
-                {
-                    case "CreatedTime":
-                        leads = leads.OrderByDescending(s => s.StatusUpdateTime).ThenBy(s => s.ID);
-                        break;
-                    case "Company":
-                        leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenBy(s => s.ID);
-                        break;
-                    case "Country":
-                        leads = leads.OrderByDescending(s => s.Company.CountryCode).ThenBy(s => s.ID);
-                        break;
-                    case "JobTitle":
-                        leads = leads.OrderByDescending(s => s.JobTitle).ThenBy(s => s.ID);
-                        break;
-                    case "DirectLine":
-                        leads = leads.OrderByDescending(s => s.DirectLine).ThenBy(s => s.ID);
-                        break;
-                    case "CallBackDate":
-                        leads = leads.OrderByDescending(s => s.CallBackDate).ThenBy(s => s.ID);
-                        break;
-                    case "Salutation":
-                        leads = leads.OrderByDescending(s => s.Salutation).ThenBy(s => s.ID);
-                        break;
-                    case "FirstName":
-                        leads = leads.OrderByDescending(s => s.FirstName).ThenBy(s => s.ID);
-                        break;
-                    case "LastName":
-                        leads = leads.OrderByDescending(s => s.LastName).ThenBy(s => s.ID);
-                        break;
-                    case "MobilePhone1":
-                        leads = leads.OrderByDescending(s => s.MobilePhone1).ThenBy(s => s.ID);
-                        break;
-                    case "MobilePhone2":
-                        leads = leads.OrderByDescending(s => s.MobilePhone2).ThenBy(s => s.ID);
-                        break;
-                    case "MobilePhone3":
-                        leads = leads.OrderByDescending(s => s.MobilePhone3).ThenBy(s => s.ID);
-                        break;
-                    case "WorkEmail":
-                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenBy(s => s.ID);
-                        break;
-                    case "PersonalEmail":
-                        leads = leads.OrderByDescending(s => s.PersonalEmail).ThenBy(s => s.ID);
-                        break;
-                    case "EstimatedDelegateNumber":
-                        leads = leads.OrderByDescending(s => s.EstimatedDelegateNumber).ThenBy(s => s.ID);
-                        break;
-                    case "TrainingBudgetPerHead":
-                        leads = leads.OrderByDescending(s => s.TrainingBudgetPerHead).ThenBy(s => s.ID);
-                        break;
-                    case "GoodTrainingMonth":
-                        leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenBy(s => s.ID);
-                        break;
-                    case "StatusDisplay":
-                        leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
-                        break;
-                    case "KPIRemarks":
-                        leads = leads.OrderByDescending(s => s.KPIRemarks).ThenBy(s => s.ID);
-                        break;
-                    case "MarkKPI":
-                        leads = leads.OrderByDescending(s => s.MarkKPI).ThenBy(s => s.ID);
-                        break;
-                    case "FirstFollowUpStatus":
-                        leads = leads.OrderByDescending(s => s.FirstFollowUpStatusDisplay).ThenBy(s => s.ID);
-                        break;
-                    case "FinalStatus":
-                        leads = leads.OrderByDescending(s => s.FinalStatusDisplay).ThenBy(s => s.ID);
-                        break;
-                    case "CallBackDateTime":
-                        leads = leads.OrderByDescending(s => s.CallBackDateTime).ThenBy(s => s.ID);
-                        break;
-                    default:
-                        leads = leads.OrderByDescending(s => s.ID);
-                        break;
-                }
-            }
-
-            #endregion sort
-
-            recordsTotal = leads.Count();
-            if (pageSize > recordsTotal)
-            {
-                pageSize = recordsTotal;
-            }
-            var data = leads.Skip(skip).Take(pageSize).ToList();
             var daysExpired = Settings.Lead.NumberDaysExpired();
             var json = new
             {
@@ -934,93 +728,11 @@ namespace PQT.Web.Controllers
 
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
-            int recordsTotal = 0;
 
-            IEnumerable<Lead> leads = new HashSet<Lead>();
             var daysExpired = Settings.Lead.NumberDaysExpired();
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId &&
-                                               !m.ExpiredForReopen &&
-                                               m.CheckInNCL(daysExpired) && (
-                                                   m.Salesman.Contains(searchValue) ||
-                                                   m.StatusUpdateTimeStr.Contains(searchValue) ||
-                                                   m.StatusDisplay.Contains(searchValue) ||
-                                                   m.CompanyName.ToLower().Contains(searchValue) ||
-                                                   m.CountryCode.ToLower().Contains(searchValue) ||
-                                                   m.JobTitle.ToLower().Contains(searchValue)));
-            }
-            else
-            {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId &&
-                                               !m.ExpiredForReopen
-                                               && m.CheckInNCL(daysExpired));
-            }
-            // ReSharper disable once AssignNullToNotNullAttribute
+            int recordsTotal = _repo.GetCountLeadsForNCL(eventId, daysExpired, searchValue);
+            var data = _repo.GetAllLeadsForNCL(eventId, daysExpired, searchValue, sortColumnDir, sortColumn, skip, pageSize);
 
-
-            if (sortColumnDir == "asc")
-            {
-                switch (sortColumn)
-                {
-                    case "DateCreatedDisplay":
-                        leads = leads.OrderBy(s => s.StatusUpdateTime).ThenBy(s => s.ID);
-                        break;
-                    case "CompanyName":
-                        leads = leads.OrderBy(s => s.Company.CompanyName).ThenBy(s => s.ID);
-                        break;
-                    case "CountryCode":
-                        leads = leads.OrderBy(s => s.Company.CountryCode).ThenBy(s => s.ID);
-                        break;
-                    case "JobTitle":
-                        leads = leads.OrderBy(s => s.JobTitle).ThenBy(s => s.ID);
-                        break;
-                    case "Salesman":
-                        leads = leads.OrderBy(s => s.User.DisplayName).ThenBy(s => s.ID);
-                        break;
-                    case "StatusDisplay":
-                        leads = leads.OrderBy(s => s.StatusDisplay).ThenBy(s => s.ID);
-                        break;
-                    default:
-                        leads = leads.OrderBy(s => s.ID);
-                        break;
-                }
-            }
-            else
-            {
-                switch (sortColumn)
-                {
-                    case "DateCreatedDisplay":
-                        leads = leads.OrderByDescending(s => s.StatusUpdateTime).ThenBy(s => s.ID);
-                        break;
-                    case "CompanyName":
-                        leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenBy(s => s.ID);
-                        break;
-                    case "CountryCode":
-                        leads = leads.OrderByDescending(s => s.Company.CountryCode).ThenBy(s => s.ID);
-                        break;
-                    case "JobTitle":
-                        leads = leads.OrderByDescending(s => s.JobTitle).ThenBy(s => s.ID);
-                        break;
-                    case "Salesman":
-                        leads = leads.OrderByDescending(s => s.User.DisplayName).ThenBy(s => s.ID);
-                        break;
-                    case "StatusDisplay":
-                        leads = leads.OrderByDescending(s => s.StatusDisplay).ThenBy(s => s.ID);
-                        break;
-                    default:
-                        leads = leads.OrderByDescending(s => s.ID);
-                        break;
-                }
-            }
-
-
-            recordsTotal = leads.Count();
-            if (pageSize > recordsTotal)
-            {
-                pageSize = recordsTotal;
-            }
-            var data = leads.Skip(skip).Take(pageSize).ToList();
 
             var json = new
             {
@@ -1069,213 +781,9 @@ namespace PQT.Web.Controllers
 
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
-            int recordsTotal = 0;
-            IEnumerable<Lead> leads = new HashSet<Lead>();
-
             var daysExpired = Settings.Lead.NumberDaysExpired();
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                leads = _repo.GetAllLeads(m => m.EventID == eventId &&
-                                               !m.ExpiredForReopen &&
-                                               (m.LeadStatusRecord == LeadStatus.Booked ||
-                                                ((m.User.UserStatus == UserStatus.Live ||
-                                                  m.User.DirectSupervisorID > 0) &&
-                                                 (m.LeadStatusRecord == LeadStatus.Blocked ||
-                                                  m.LeadStatusRecord == LeadStatus.Live ||
-                                                  m.LeadStatusRecord == LeadStatus.LOI))) && (
-                                                   m.StatusUpdateTimeStr.Contains(searchValue) ||
-                                                   m.StatusDisplay.ToLower().Contains(searchValue) ||
-                                                   m.CompanyName.ToLower().Contains(searchValue) ||
-                                                   m.CountryCode.ToLower().Contains(searchValue) ||
-                                                   m.JobTitle.ToLower().Contains(searchValue) ||
-                                                   m.DirectLine.ToLower().Contains(searchValue) ||
-                                                   m.CallBackDateDisplay.ToLower().Contains(searchValue) ||
-                                                   (m.Salutation != null &&
-                                                    m.Salutation.ToLower().Contains(searchValue)) ||
-                                                   (m.FirstName != null &&
-                                                    m.FirstName.ToLower().Contains(searchValue)) ||
-                                                   (m.LastName != null && m.LastName.ToLower().Contains(searchValue)) ||
-                                                   (m.MobilePhone1 != null && m.MobilePhone1.Contains(searchValue)) ||
-                                                   (m.MobilePhone2 != null && m.MobilePhone2.Contains(searchValue)) ||
-                                                   (m.MobilePhone3 != null && m.MobilePhone3.Contains(searchValue)) ||
-                                                   (m.WorkEmail != null &&
-                                                    m.WorkEmail.ToLower().Contains(searchValue)) ||
-                                                   (m.WorkEmail1 != null &&
-                                                    m.WorkEmail1.ToLower().Contains(searchValue)) ||
-                                                   (m.PersonalEmail != null &&
-                                                    m.PersonalEmail.ToLower().Contains(searchValue)) ||
-                                                   (m.FirstFollowUpStatusDisplay.ToLower().Contains(searchValue)) ||
-                                                   (m.FinalStatusDisplay.ToLower().Contains(searchValue))));
-            }
-            else
-            {
-                leads = _repo.GetAllLeads(m =>
-                    m.EventID == eventId &&
-                    !m.ExpiredForReopen &&
-                    (m.LeadStatusRecord == LeadStatus.Booked ||
-                     ((m.User.UserStatus == UserStatus.Live ||
-                       m.User.DirectSupervisorID > 0) &&
-                      (m.LeadStatusRecord == LeadStatus.Blocked ||
-                       m.LeadStatusRecord == LeadStatus.Live ||
-                       m.LeadStatusRecord == LeadStatus.LOI))));
-            }
-            // ReSharper disable once AssignNullToNotNullAttribute
-
-            #region sort
-            if (sortColumnDir == "asc")
-            {
-                switch (sortColumn)
-                {
-                    case "CreatedTime":
-                        leads = leads.OrderBy(s => s.StatusUpdateTime).ThenBy(s => s.StatusCode);
-                        break;
-                    case "Company":
-                        leads = leads.OrderBy(s => s.Company.CompanyName).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "Salesman":
-                        leads = leads.OrderBy(s => s.User.DisplayName).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "Country":
-                        leads = leads.OrderBy(s => s.Company.CountryCode).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "JobTitle":
-                        leads = leads.OrderBy(s => s.JobTitle).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "DirectLine":
-                        leads = leads.OrderBy(s => s.DirectLine).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "CallBackDate":
-                        leads = leads.OrderBy(s => s.CallBackDate).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "Salutation":
-                        leads = leads.OrderBy(s => s.Salutation).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "FirstName":
-                        leads = leads.OrderBy(s => s.FirstName).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "LastName":
-                        leads = leads.OrderBy(s => s.LastName).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "MobilePhone1":
-                        leads = leads.OrderBy(s => s.MobilePhone1).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "MobilePhone2":
-                        leads = leads.OrderBy(s => s.MobilePhone2).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "MobilePhone3":
-                        leads = leads.OrderBy(s => s.MobilePhone3).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "WorkEmail":
-                        leads = leads.OrderBy(s => s.WorkEmail).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "PersonalEmail":
-                        leads = leads.OrderBy(s => s.PersonalEmail).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "EstimatedDelegateNumber":
-                        leads = leads.OrderBy(s => s.EstimatedDelegateNumber).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "TrainingBudgetPerHead":
-                        leads = leads.OrderBy(s => s.TrainingBudgetPerHead).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "GoodTrainingMonth":
-                        leads = leads.OrderBy(s => s.GoodTrainingMonth).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "FirstFollowUpStatus":
-                        leads = leads.OrderBy(s => s.FirstFollowUpStatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "FinalStatus":
-                        leads = leads.OrderBy(s => s.FinalStatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "StatusDisplay":
-                        leads = leads.OrderBy(s => s.StatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    default:
-                        leads = leads.OrderBy(s => s.StatusCode).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                }
-            }
-            else
-            {
-                switch (sortColumn)
-                {
-                    case "CreatedTime":
-                        leads = leads.OrderByDescending(s => s.StatusUpdateTime).ThenBy(s => s.StatusCode);
-                        break;
-                    case "Company":
-                        leads = leads.OrderByDescending(s => s.Company.CompanyName).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "Salesman":
-                        leads = leads.OrderByDescending(s => s.User.DisplayName).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "Country":
-                        leads = leads.OrderByDescending(s => s.Company.CountryCode).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "JobTitle":
-                        leads = leads.OrderByDescending(s => s.JobTitle).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "DirectLine":
-                        leads = leads.OrderByDescending(s => s.DirectLine).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "CallBackDate":
-                        leads = leads.OrderByDescending(s => s.CallBackDate).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "Salutation":
-                        leads = leads.OrderByDescending(s => s.Salutation).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "FirstName":
-                        leads = leads.OrderByDescending(s => s.FirstName).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "LastName":
-                        leads = leads.OrderByDescending(s => s.LastName).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "MobilePhone1":
-                        leads = leads.OrderByDescending(s => s.MobilePhone1).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "MobilePhone2":
-                        leads = leads.OrderByDescending(s => s.MobilePhone2).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "MobilePhone3":
-                        leads = leads.OrderByDescending(s => s.MobilePhone3).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "WorkEmail":
-                        leads = leads.OrderByDescending(s => s.WorkEmail).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "PersonalEmail":
-                        leads = leads.OrderByDescending(s => s.PersonalEmail).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "EstimatedDelegateNumber":
-                        leads = leads.OrderByDescending(s => s.EstimatedDelegateNumber).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "TrainingBudgetPerHead":
-                        leads = leads.OrderByDescending(s => s.TrainingBudgetPerHead).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "GoodTrainingMonth":
-                        leads = leads.OrderByDescending(s => s.GoodTrainingMonth).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "FirstFollowUpStatus":
-                        leads = leads.OrderByDescending(s => s.FirstFollowUpStatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "FinalStatus":
-                        leads = leads.OrderByDescending(s => s.FinalStatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    case "StatusDisplay":
-                        leads = leads.OrderByDescending(s => s.StatusDisplay).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                    default:
-                        leads = leads.OrderByDescending(s => s.StatusCode).ThenByDescending(s => s.StatusUpdateTime);
-                        break;
-                }
-            }
-
-            #endregion sort
-
-            recordsTotal = leads.Count();
-            if (pageSize > recordsTotal)
-            {
-                pageSize = recordsTotal;
-            }
-            var data = leads.Skip(skip).Take(pageSize).ToList();
-
+            int recordsTotal = _repo.GetCountLeadsForNCLManger(eventId, searchValue);
+            var data = _repo.GetAllLeadsForNCLManger(eventId, searchValue, sortColumnDir, sortColumn, skip, pageSize);
             var json = new
             {
                 draw = draw,
@@ -1323,24 +831,12 @@ namespace PQT.Web.Controllers
             //var saleId = PermissionHelper.SalesmanId();
             var daysExpired = Settings.Lead.NumberDaysExpired();
             var saleId = CurrentUser.Identity.ID;
-            var leads = _repo.GetAllLeads(m => m.EventID == eventId &&
-                                               !m.ExpiredForReopen &&
-                                               (saleId == 0 || m.UserID == saleId ||
-                                                (m.User != null && m.User.TransferUserID == saleId)) &&
-                                               (m.LeadStatusRecord == LeadStatus.Booked ||
-                                                ((m.User.UserStatus == UserStatus.Live ||
-                                                  m.User.DirectSupervisorID > 0) &&
-                                                 (m.MarkKPI ||
-                                                  (m.LeadStatusRecord == LeadStatus.LOI &&
-                                                   !m.CheckNCLExpired(daysExpired)) ||
-                                                  m.LeadStatusRecord == LeadStatus.Blocked))));
-
             return Json(new
             {
-                TotalLOI = leads.Count(m => m.LeadStatusRecord == LeadStatus.LOI),
-                TotalBlocked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Blocked),
-                TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked),
-                TotalKPI = leads.Count(m => m.MarkKPI)
+                TotalLOI = _repo.CountLeadsTotalLOINCL(eventId, saleId, daysExpired),
+                TotalBlocked = _repo.CountLeadsTotalBlockedNCL(eventId, saleId),
+                TotalBooked = _repo.CountLeadsTotalBooked(eventId, saleId),
+                TotalKPI = _repo.CountLeadsTotalTotalKPI(eventId, saleId)
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -1349,17 +845,9 @@ namespace PQT.Web.Controllers
         public ActionResult AjaxGetTotalBlocked()
         {
             var saleId = CurrentUser.Identity.ID;
-            var leads = _repo.GetAllLeads(m =>
-                !m.ExpiredForReopen &&
-                m.LeadStatusRecord == LeadStatus.Blocked &&
-                (m.Event.EventStatus == EventStatus.Live ||
-                 m.Event.EventStatus == EventStatus.Confirmed) &&
-                (saleId == 0 || m.UserID == saleId ||
-                 (m.User != null && m.User.TransferUserID == saleId)));
-
             return Json(new
             {
-                TotalBlocked = leads.Count()
+                TotalBlocked = _repo.CountLeadsTotalBlockedNCL(0, saleId),
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -1367,23 +855,12 @@ namespace PQT.Web.Controllers
         public ActionResult AjaxGetTotalNCLForManager(int eventId)
         {
             var daysExpired = Settings.Lead.NumberDaysExpired();
-            //var saleId = PermissionHelper.SalesmanId();
-            var leads = _repo.GetAllLeads(m => m.EventID == eventId &&
-                                               !m.ExpiredForReopen &&
-                                               (m.LeadStatusRecord == LeadStatus.Booked ||
-                                               ((m.User.UserStatus == UserStatus.Live ||
-                                                 m.User.DirectSupervisorID > 0) &&
-                                               (m.MarkKPI ||
-                                                (m.LeadStatusRecord == LeadStatus.LOI &&
-                                                 !m.CheckNCLExpired(daysExpired)) ||
-                                                m.LeadStatusRecord == LeadStatus.Blocked))));
-
             return Json(new
             {
-                TotalLOI = leads.Count(m => m.LeadStatusRecord == LeadStatus.LOI),
-                TotalBlocked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Blocked),
-                TotalBooked = leads.Count(m => m.LeadStatusRecord == LeadStatus.Booked),
-                TotalKPI = leads.Count(m => m.MarkKPI)
+                TotalLOI = _repo.CountLeadsTotalLOINCL(eventId, 0, daysExpired),
+                TotalBlocked = _repo.CountLeadsTotalBlockedNCL(eventId, 0),
+                TotalBooked = _repo.CountLeadsTotalBooked(eventId, 0),
+                TotalKPI = _repo.CountLeadsTotalTotalKPI(eventId, 0)
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -1479,7 +956,7 @@ namespace PQT.Web.Controllers
                 }
                 catch
                 {
-                    
+
                 }
             }
             var businessUnit = "";
@@ -1498,20 +975,15 @@ namespace PQT.Web.Controllers
                 ownership = Request.Form.GetValues("Ownership").FirstOrDefault().Trim().ToLower();
             }
 
-
             int pageSize = length != null ? Convert.ToInt32(length) : 0;
             int skip = start != null ? Convert.ToInt32(start) : 0;
 
             var currentUser = CurrentUser.Identity;
             IEnumerable<int> companiesInNcl = new HashSet<int>();
             var daysExpired = Settings.Lead.NumberDaysExpired();
-            companiesInNcl = _repo.GetAllLeads(m => m.EventID == eventId).Where(m =>
-                m.UserID != currentUser.ID &&
-                m.User.TransferUserID != currentUser.ID &&
-                m.User.UserStatus == UserStatus.Live &&
-                m.CheckInNCL(daysExpired)).Select(m => m.CompanyID).Distinct();// get list company blocked
-            int recordsTotal = _eventService.GetCountEventCompaniesForCall(eventId, currentUser.ID,companyName, productService, countryName, tier, sector, industry);
-            var data = _eventService.GetAllEventCompaniesForCall(eventId, currentUser.ID, companyName, productService, countryName, tier, sector, industry, sortColumnDir, sortColumn, skip, pageSize);
+            companiesInNcl = _repo.GetCompaniesInNCL(eventId,currentUser.ID,daysExpired);// get list company blocked
+            int recordsTotal = _eventService.GetCountEventCompaniesForCall(eventId, currentUser.ID, companyName, productService, countryName, tier, sector, industry, businessUnit, ownership);
+            var data = _eventService.GetAllEventCompaniesForCall(eventId, currentUser.ID, companyName, productService, countryName, tier, sector, industry, businessUnit, ownership, sortColumnDir, sortColumn, skip, pageSize);
 
             foreach (var company in data)
             {
@@ -1581,10 +1053,10 @@ namespace PQT.Web.Controllers
                     Tier3 = _repo.CountLeadsByTier(id, Convert.ToInt16(TierType.Tier3)),
                     Tier1 = _repo.CountLeadsByTier(id, Convert.ToInt16(TierType.Tier1)),
                     Tier2 = _repo.CountLeadsByTier(id, Convert.ToInt16(TierType.Tier2)),
-                    TotalTier3 = _eventService.CountEventCompanies(id,Convert.ToInt16(TierType.Tier3)),
+                    TotalTier3 = _eventService.CountEventCompanies(id, Convert.ToInt16(TierType.Tier3)),
                     TotalTier1 = _eventService.CountEventCompanies(id, Convert.ToInt16(TierType.Tier1)),
                     TotalTier2 = _eventService.CountEventCompanies(id, Convert.ToInt16(TierType.Tier2)),
-                    TotalBooked = _repo.CountLeadsByStatusBooked(id),
+                    TotalBooked = _repo.CountLeadsTotalBooked(id, 0),
                     EventId = id
                 });
             }

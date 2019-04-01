@@ -50,7 +50,7 @@ namespace PQT.Domain.Concrete
                         (m.VenueInfo != null && m.VenueInfo.HotelVenue.ToLower().Contains(searchValue)));
                 }
             }
-            return queries.Count();
+            return queries.Include(m => m.EventCategory).Include(m => m.VenueInfo).Count();
         }
 
         public IEnumerable<Event> GetAllEvents(int userId, string searchValue, string sortColumnDir,
@@ -143,6 +143,8 @@ namespace PQT.Domain.Concrete
                     break;
             }
             return queries.Skip(page).Take(pageSize)
+                .Include(m => m.EventCategory)
+                .Include(m => m.VenueInfo)
                 .ToList();
         }
         public int GetCountEventsForOpe(string searchValue)
@@ -172,7 +174,7 @@ namespace PQT.Domain.Concrete
                         (m.VenueInfo != null && m.VenueInfo.HotelVenue.ToLower().Contains(searchValue)));
                 }
             }
-            return queries.Count();
+            return queries.Include(m => m.EventCategory).Include(m => m.VenueInfo).Count();
         }
 
         public IEnumerable<Event> GetAllEventsForOpe(string searchValue, string sortColumnDir,
@@ -262,7 +264,7 @@ namespace PQT.Domain.Concrete
                         : queries.OrderByDescending(s => s.ID);
                     break;
             }
-            return queries.Skip(page).Take(pageSize)
+            return queries.Skip(page).Take(pageSize).Include(m => m.EventCategory).Include(m => m.VenueInfo)
                 .ToList();
         }
 
@@ -409,7 +411,7 @@ namespace PQT.Domain.Concrete
                 .ToList();
         }
 
-        public int GetCountEventCompaniesForCall(int eventId, int userId, string companyName, string productService, string countryName, int tier, string sector, string industry)
+        public int GetCountEventCompaniesForCall(int eventId, int userId, string companyName, string productService, string countryName, int tier, string sector, string industry, string businessUnit, string ownership)
         {
             int tier1 = Convert.ToInt16(TierType.Tier1);
             int tier2 = Convert.ToInt16(TierType.Tier2);
@@ -436,11 +438,15 @@ namespace PQT.Domain.Concrete
                 queries = queries.Where(m => m.Company.Tier == tier);
             if (!string.IsNullOrEmpty(industry))
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Company.Industry) && m.Company.Industry.ToLower().Contains(industry));
+            if (!string.IsNullOrEmpty(businessUnit))
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.Company.BusinessUnit) && m.Company.BusinessUnit.ToLower().Contains(businessUnit));
+            if (!string.IsNullOrEmpty(ownership))
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.Company.Ownership) && m.Company.Ownership.ToLower().Contains(ownership));
 
             return queries.Count();
         }
 
-        public IEnumerable<Company> GetAllEventCompaniesForCall(int eventId,int userId, string companyName, string productService, string countryName, int tier, string sector, string industry, string sortColumnDir,
+        public IEnumerable<Company> GetAllEventCompaniesForCall(int eventId, int userId, string companyName, string productService, string countryName, int tier, string sector, string industry, string businessUnit, string ownership, string sortColumnDir,
             string sortColumn, int page, int pageSize)
         {
             int tier1 = Convert.ToInt16(TierType.Tier1);
@@ -468,6 +474,10 @@ namespace PQT.Domain.Concrete
                 queries = queries.Where(m => m.Company.Tier == tier);
             if (!string.IsNullOrEmpty(industry))
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Company.Industry) && m.Company.Industry.ToLower().Contains(industry));
+            if (!string.IsNullOrEmpty(businessUnit))
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.Company.BusinessUnit) && m.Company.BusinessUnit.ToLower().Contains(businessUnit));
+            if (!string.IsNullOrEmpty(ownership))
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.Company.Ownership) && m.Company.Ownership.ToLower().Contains(ownership));
 
             switch (sortColumn)
             {

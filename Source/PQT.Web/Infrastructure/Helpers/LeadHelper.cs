@@ -45,9 +45,7 @@ namespace PQT.Web.Infrastructure.Helpers
                     ActionId = 0
                 };
                 auditService.CreateRecord(record);
-                var leads = leadService.GetAllLeads(m =>
-                    m.UserID == userId &&
-                    m.Event.EventStatus != EventStatus.Completed);
+                var leads = leadService.GetAllLeadsOfUserForMerge(userId);
                 var count = 0;
                 foreach (var lead in leads)
                 {
@@ -121,11 +119,7 @@ namespace PQT.Web.Infrastructure.Helpers
             {
                 var leadService = DependencyHelper.GetService<ILeadService>();
                 var auditService = DependencyHelper.GetService<IAuditTracker>();
-                var leads = leadService.GetAllLeads(m =>
-                    !m.ExpiredForReopen &&
-                    (m.LeadStatusRecord != LeadStatus.Booked) &&
-                    m.Event.ClosingDate != null &&
-                    m.Event.ClosingDate < DateTime.Today);
+                var leads = leadService.GetAllLeadsForMakeExpiredLead();
                 foreach (var lead in leads)
                 {
                     lead.ExpiredForReopen = true;

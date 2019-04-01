@@ -830,26 +830,11 @@ namespace PQT.Web.Controllers
             IEnumerable<Lead> leads = new HashSet<Lead>();
             if (CurrentUser.HasRole("Manager"))
             {
-                leads = Mapper.Map<IEnumerable<Lead>>(_companyRepo.GetAllCompanyResources(companyId, name, designation, email, phone));
+                leads = Mapper.Map<IEnumerable<Lead>>(_companyRepo.GetAllCompanyResources(companyId, name, designation, email, phone,""));
             }
             else
             {
-                Func<Lead, bool> predicate = m =>
-                    m.UserID == currentUser.ID && m.CompanyID == companyId &&
-                    (string.IsNullOrEmpty(name) ||
-                     (!string.IsNullOrEmpty(m.Name) && m.Name.ToLower().Contains(name))) &&
-                    (string.IsNullOrEmpty(designation) ||
-                     (!string.IsNullOrEmpty(m.JobTitle) && m.JobTitle.ToLower().Contains(designation))) &&
-                    (string.IsNullOrEmpty(email) ||
-                     (!string.IsNullOrEmpty(m.WorkEmail) && m.WorkEmail.ToLower().Contains(email)) ||
-                     (!string.IsNullOrEmpty(m.WorkEmail1) && m.WorkEmail1.ToLower().Contains(email)) ||
-                     (!string.IsNullOrEmpty(m.PersonalEmail) && m.PersonalEmail.ToLower().Contains(email))) &&
-                    (string.IsNullOrEmpty(phone) ||
-                     (!string.IsNullOrEmpty(m.MobilePhone1) && m.MobilePhone1.ToLower().Contains(phone)) ||
-                     (!string.IsNullOrEmpty(m.MobilePhone2) && m.MobilePhone2.ToLower().Contains(phone)) ||
-                     (!string.IsNullOrEmpty(m.MobilePhone3) && m.MobilePhone3.ToLower().Contains(phone)) ||
-                     (!string.IsNullOrEmpty(m.DirectLine) && m.DirectLine.ToLower().Contains(phone)));
-                leads = _leadService.GetAllLeads(predicate);
+                leads = _leadService.GetAllLeadsForCallResources(companyId, currentUser.ID, name, designation, email, phone);
             }
             leads = leads.DistinctBy(m => m.Name);
             #region sort

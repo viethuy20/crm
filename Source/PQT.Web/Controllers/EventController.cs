@@ -245,7 +245,7 @@ namespace PQT.Web.Controllers
                 {
                     return Json(true);
                 }
-                var leads = _leadService.GetAllLeads(m => m.EventID == ID);
+                var leads = _leadService.GetAllLeadsByEvent(ID);
                 var companyResources = _comRepo.GetAllCompanyResources(ev.EventCompanies.Select(n => n.CompanyID).Distinct().ToArray()).ToList();
                 var count = 0;
                 var totalCount = leads.Count();

@@ -57,21 +57,12 @@ namespace PQT.Web.Models
             if (lead == null) return "Block failed";
             if (lead.LeadStatusRecord == LeadStatus.Booked)
                 return "Cannot process ... This item has been booked";
-            var leads = leadRepo.GetAllLeads(m =>
-                        !m.ExpiredForReopen && (m.Event.EventStatus == EventStatus.Live ||
-            m.Event.EventStatus == EventStatus.Confirmed));
             var maxBlock = Settings.Lead.MaxBlockeds();
             var currentUser = CurrentUser.Identity;
-            if (leads.Count(m => (m.User.TransferUserID == currentUser.ID || m.UserID == currentUser.ID) && m.LeadStatusRecord == LeadStatus.Blocked) >= maxBlock)
+            if (leadRepo.CountCompaniesBlocked(currentUser.ID) >= maxBlock)
                 return "Limit blocked is not exceed " + maxBlock;
             var daysExpired = Settings.Lead.NumberDaysExpired();
-            if (leads.Any(m => m.User.TransferUserID != currentUser.ID &&
-                               m.UserID != currentUser.ID &&
-                               m.User.UserStatus == UserStatus.Live &&
-                               m.CompanyID == lead.CompanyID &&
-                               m.LeadStatusRecord != LeadStatus.Initial &&
-                               m.LeadStatusRecord != LeadStatus.Reject &&
-                               !m.CheckNCLExpired(daysExpired)))
+            if (leadRepo.CheckCompaniesInNCL(lead.EventID, lead.CompanyID,currentUser.ID,daysExpired))
                 return "Cannot block this company... Company is requesting to NCL or exists in NCL";
 
             if (lead.LeadStatusRecord == LeadStatus.Blocked) return "Block failed";
@@ -121,16 +112,8 @@ namespace PQT.Web.Models
             //if (lead.LeadStatusRecord != LeadStatus.Initial && lead.LeadStatusRecord != LeadStatus.Reject) return "Submit failed";
 
             var daysExpired = Settings.Lead.NumberDaysExpired();
-            var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID &&
-                                                  !m.ExpiredForReopen);
             var currentUser = CurrentUser.Identity;
-            if (leads.Any(m => m.User.TransferUserID != currentUser.ID &&
-                               m.UserID != currentUser.ID &&
-                               m.User.UserStatus == UserStatus.Live &&
-                               m.CompanyID == lead.CompanyID &&
-                               m.LeadStatusRecord != LeadStatus.Initial &&
-                               m.LeadStatusRecord != LeadStatus.Reject
-                               && !m.CheckNCLExpired(daysExpired)))
+            if (leadRepo.CheckCompaniesInNCL(lead.EventID ,lead.CompanyID,currentUser.ID, daysExpired))
                 return "Cannot block this company... Company is requesting to NCL or exists in NCL by another";
 
             string fileName = null;
@@ -208,15 +191,8 @@ namespace PQT.Web.Models
                     IsSuccess = false
                 };
 
-            var leads = leadRepo.GetAllLeads(m => m.EventID == lead.EventID && !m.ExpiredForReopen);
             var daysExpired = Settings.Lead.NumberDaysExpired();
-            if (leads.Any(m => m.UserID != lead.UserID &&
-                               m.User.TransferUserID != lead.UserID &&
-                               m.User.UserStatus == UserStatus.Live &&
-                               m.CompanyID == lead.CompanyID &&
-                               m.LeadStatusRecord != LeadStatus.Initial &&
-                               m.LeadStatusRecord != LeadStatus.Reject
-                               && !m.CheckNCLExpired(daysExpired)))
+            if (leadRepo.CheckCompaniesInNCL(lead.EventID, lead.CompanyID, lead.UserID, daysExpired))
                 return new
                 {
                     Message = "Cannot approve this company... Company is requesting to NCL or exists in NCL",

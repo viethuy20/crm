@@ -26,9 +26,9 @@ namespace PQT.Domain.Abstract
             string sortColumn, int page, int pageSize);
 
         int GetCountEventCompaniesForCall(int eventId,int userId, string companyName, string productService, string countryName, int tier,
-            string sector, string industry);
+            string sector, string industry,string businessUnit, string ownership);
         IEnumerable<Company> GetAllEventCompaniesForCall(int eventId, int userId, string companyName, string productService,
-            string countryName, int tier, string sector, string industry, string sortColumnDir,
+            string countryName, int tier, string sector, string industry, string businessUnit, string ownership, string sortColumnDir,
             string sortColumn, int page, int pageSize);
 
         int CountEventCompanies(int eventId, int tier);

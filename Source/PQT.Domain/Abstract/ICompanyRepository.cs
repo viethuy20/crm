@@ -44,7 +44,7 @@ namespace PQT.Domain.Abstract
         IEnumerable<CompanyResource> GetAllCompanyResources();
         int GetAllCompanyResourcesCheckPhone(int id, string directLine,string mobilePhone1,string mobilePhone2,string mobilePhone3);
         CompanyResource GetAllCompanyResourcesCheckPhoneForMerge(string role,string directLine,string mobilePhone1,string mobilePhone2,string mobilePhone3);
-        IEnumerable<CompanyResource> GetAllCompanyResources(int comId,string name,string role,string email,string phone);
+        IEnumerable<CompanyResource> GetAllCompanyResources(int comId,string name,string role,string email,string phone,string searchValue);
         IEnumerable<CompanyResource> GetAllCompanyResources(string[] countries, string[] organisations,string[] roles, string[] name, string[] email,string[] phone);
         int GetCountCompanyResources(string[] countries, string[] organisations,string[] roles, string[] name, string[] email,string[] phone);
         IEnumerable<CompanyResource> GetAllCompanyResources(string[] countries, string[] organisations,string[] roles, string[] name, string[] email,string[] phone, string sortColumnDir, string sortColumn, int page, int pageSize);

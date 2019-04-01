@@ -104,15 +104,27 @@
                  $(nRow).find('td:eq(8)').addClass('nowrap');
                  $(nRow).find('td:eq(9)').addClass('nowrap');
              },
-             initComplete: function() {
+             initComplete: function () {
+
                  var _table = this;
-                 var filter_box = _table.parent().find("#crtable2_filter");
-                 var htmlFilter = '<label>Name:<input type="search" name="search_name" /></label>';
-                 htmlFilter += '<label>Mobile:<input type="search" name="search_mobile" /></label>';
-                 htmlFilter += '<label>Email:<input type="search" name="search_email" /></label>';
-                 htmlFilter += '<label>Role:<input type="search" name="search_role" /></label>';
-                 filter_box.html(htmlFilter);
-                 searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
+                 _table.parents("#crtable2_wrapper").find('input[type="search"]').unbind();
+                 var timeOutTyping;
+                 _table.parents("#crtable2_wrapper").find('input[type="search"]').bind('keyup', function (e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function () {
+                         fixedColumnTable2 = 0;
+                         _table.fnFilter(_table.parents("#crtable2_wrapper").find('input[type="search"]').eq(0).val());
+                     }, 600);
+                 });
+
+                 //var _table = this;
+                 //var filter_box = _table.parent().find("#crtable2_filter");
+                 //var htmlFilter = '<label>Name:<input type="search" name="search_name" /></label>';
+                 //htmlFilter += '<label>Mobile:<input type="search" name="search_mobile" /></label>';
+                 //htmlFilter += '<label>Email:<input type="search" name="search_email" /></label>';
+                 //htmlFilter += '<label>Role:<input type="search" name="search_role" /></label>';
+                 //filter_box.html(htmlFilter);
+                 //searchBindingKeyUp(_table.parent().find('input[type="search"]'), _table);
              },
              scrollY: false,
              scrollX: true,

@@ -114,13 +114,13 @@
              },
              initComplete: function() {
                  var _table = this;
-                 _table.parent().find('input[type="search"]').unbind();
+                 _table.parents("#users-table_wrapper").find('input[type="search"]').unbind();
                  var timeOutTyping;
-                 _table.parent().find('input[type="search"]').bind('keyup',
+                 _table.parents("#users-table_wrapper").find('input[type="search"]').bind('keyup',
                      function(e) {
                          clearTimeout(timeOutTyping);
                          timeOutTyping = setTimeout(function() {
-                                 _table.fnFilter(_table.parent().find('input[type="search"]').eq(0).val());
+                             _table.fnFilter(_table.parents("#users-table_wrapper").find('input[type="search"]').eq(0).val());
                              },
                              600);
                      });

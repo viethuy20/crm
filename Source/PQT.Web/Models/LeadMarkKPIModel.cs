@@ -168,14 +168,7 @@ namespace PQT.Web.Models
             {
                 var leadRepo = DependencyHelper.GetService<ILeadService>();
                 var eventRepo = DependencyHelper.GetService<IEventService>();
-                var leads = leadRepo.GetAllLeads(m =>
-                    (EventID == 0 || m.EventID == EventID) &&
-                    //m.CreatedTime.Date >= DateFrom.Date &&
-                    //m.CreatedTime.Date <= DateTo.Date &&
-                    !m.MarkKPI &&
-                    (m.LeadStatusRecord != LeadStatus.Reject &&
-                     m.LeadStatusRecord != LeadStatus.Initial&&
-                     m.LeadStatusRecord != LeadStatus.Deleted));
+                var leads = leadRepo.GetAllLeadsForMarkKPIs(EventID);
                 var count = 0;
                 var totalCount = leads.Count();
                 var userId = CurrentUser.Identity.ID;
