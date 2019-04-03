@@ -10,20 +10,23 @@
 
 
 <style>
-    .table > tbody > tr > td{
+    .table > tbody > tr > td {
         vertical-align: middle;
     }
-    .table > tbody > tr > td > p{
-        margin-bottom: 0px;
-    }
+
+        .table > tbody > tr > td > p {
+            margin-bottom: 0px;
+        }
+
     .truncate {
         width: 150px;
         display: -webkit-box;
         -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical; 
+        -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
     .truncate100 {
         width: 100px;
         display: -webkit-box;
@@ -32,6 +35,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
     .table th {
         white-space: nowrap;
     }
@@ -41,45 +45,48 @@
         color: #000;
     }
 
-    
+
     .DTFC_Cloned {
         background: #fff;
     }
 
-    .DTFC_Cloned td {
-        background-color: #fff;
-    }
+        .DTFC_Cloned td {
+            background-color: #fff;
+        }
 
-    .DTFC_Cloned th {
-        background-color: #f5f5f5 !important;
-    }
+        .DTFC_Cloned th {
+            background-color: #f5f5f5 !important;
+        }
 
-    #tableLead tbody tr.follow_status_neutral td,
-    .DTFC_Cloned tbody tr.follow_status_neutral td {
-        color: #333;
-        background-color: #fff !important;
-    }
-    #tableLead tbody tr.follow_status_rejected td,
-    .DTFC_Cloned tbody tr.follow_status_rejected td {
-        color: #333;
-        background-color: #bdd192 !important;
-    }
-    #tableLead tbody tr.follow_status_interests td,
-    .DTFC_Cloned tbody tr.follow_status_interests td {
-        color: #333;
-        background-color: #f8c397 !important;
-    }
-    #tableLead tbody tr.follow_status_pending td,
-    .DTFC_Cloned tbody tr.follow_status_pending td {
-        color: #333;
-        background-color: #ffa7a7 !important;
-    }
+        #tableLead tbody tr.follow_status_neutral td,
+        .DTFC_Cloned tbody tr.follow_status_neutral td {
+            color: #333;
+            background-color: #fff !important;
+        }
 
-    #tableLead tbody tr.Brochure td,
-    .DTFC_Cloned tbody tr.Brochure td{
-        color: #333;
-        background-color: #abd8ff !important;
-    }
+        #tableLead tbody tr.follow_status_rejected td,
+        .DTFC_Cloned tbody tr.follow_status_rejected td {
+            color: #333;
+            background-color: #bdd192 !important;
+        }
+
+        #tableLead tbody tr.follow_status_interests td,
+        .DTFC_Cloned tbody tr.follow_status_interests td {
+            color: #333;
+            background-color: #f8c397 !important;
+        }
+
+        #tableLead tbody tr.follow_status_pending td,
+        .DTFC_Cloned tbody tr.follow_status_pending td {
+            color: #333;
+            background-color: #ffa7a7 !important;
+        }
+
+        #tableLead tbody tr.Brochure td,
+        .DTFC_Cloned tbody tr.Brochure td {
+            color: #333;
+            background-color: #abd8ff !important;
+        }
 
 
     .table a {
@@ -98,6 +105,7 @@
         padding: 20px;
         border: 1px solid #e2e2e2;
     }
+
     .color_status {
         cursor: default;
         display: inline-block;
@@ -231,9 +239,9 @@
              "iDisplayLength": sizeLenght,
              "aaSorting": [[0, "desc"]],
              "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")/' +
+                 $(nRow).find('td:eq(0)').html('<a href="@Url.Action("Detail")?id=' +
                      aData["ID"] +
-                     '">' +
+                     '&back=Assigned">' +
                      aData["AssignDate"] +
                      '</a>');
                  $(nRow).find('td:eq(2)').html('<p title="' + aData["Company"] + '" class="truncate">' + aData["Company"] + '</p>');
@@ -242,9 +250,9 @@
                  $(nRow).find('td:eq(14)').html('<p title="' + aData["NewTopics"] + '" class="truncate">' + aData["NewTopics"] + '</p>');
                  $(nRow).find('td:eq(15)').html('<p title="' + aData["NewLocations"] + '" class="truncate">' + aData["NewLocations"] + '</p>');
 
-                 var htmlAction = '<span style="white-space: nowrap;"><a href="@Url.Action("Detail")/' +
-                     aData["ID"] +
-                     '"><span class=" text-default" style="white-space: nowrap;" title="View Detail"><i class="fa fa-eye"></i><span></a> ';
+                 var htmlAction = '<span style="white-space: nowrap;"><a href="@Url.Action("Detail")?id=' +
+                 aData["ID"] +
+                     '&back=Assigned"><span class=" text-default" style="white-space: nowrap;" title="View Detail"><i class="fa fa-eye"></i><span></a> ';
                  if ('@CurrentUser.HasPermission("NewEvent", "Edit")' == 'True') {
                      htmlAction += ' | <a class="simple-ajax-popup-align-top" href="@Url.Action("Edit")?id=' +
                          aData["ID"] + '" title="Edit"><i class="fa fa-pencil-square-o text-primary"></i></a>';
@@ -394,7 +402,7 @@
              });
          });
 
-     </script>)
+    </script>)
 
 
 @Html.Script(

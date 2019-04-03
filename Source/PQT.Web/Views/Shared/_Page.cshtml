@@ -820,17 +820,22 @@
                 url: '@Url.Action("UpdateSeenNotify","Home")?entryId=' + entryId + '&type=' + type,
                 type: 'GET',
                 success: function (count) {
-                    var currentNotifyCount = parseInt($notifyCounter.text());
+                    var $notifyCount = $triggerNotify.find('.notify-count');
+                    if (type !== '@NotifyType.Lead.Value') {
+                        $notifyCount = $(".menu_notify_child_" + type).find('.notify-count');
+                    }
+
+                    var currentNotifyCount = parseInt($notifyCount.text());
                     if (count > 0 && currentNotifyCount > 0) {
                         currentNotifyCount = currentNotifyCount - count;
                         if (currentNotifyCount > 0) {
-                            $notifyCounter.html(currentNotifyCount);
+                            $notifyCount.html(currentNotifyCount);
                             documentTitle = documentTitle.substring(documentTitle.lastIndexOf(")") + 1,
                                 documentTitle.length);
                             document.title = '(' + currentNotifyCount + ') ' + documentTitle;
                         } else {
-                            $notifyCounter.addClass('hide');
-                            $notifyCounter.html('0');
+                            $notifyCount.addClass('hide');
+                            $notifyCount.html('0');
                             document.title =
                                 documentTitle.substring(documentTitle.lastIndexOf(")") + 1, documentTitle.length);
                         }

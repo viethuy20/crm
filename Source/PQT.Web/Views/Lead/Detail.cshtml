@@ -429,6 +429,7 @@
     @<script>
 
          var company_id_selected = $("@Html.JquerySelectorFor(m=>m.Lead.CompanyID)");
+         company_id_selected_val = @Model.Lead.CompanyID;
 
          function updateCanvas() {
              var windowW = $(window).width();

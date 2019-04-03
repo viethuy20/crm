@@ -174,13 +174,23 @@
              initComplete: function () {
                  var _table = this;
                  _table.parents("#kpiTable_wrapper").find('input[type="search"]').unbind();
-                 _table.parents("#kpiTable_wrapper").find('input[type="search"]').bind('keydown', function (e) {
-                    if (e.which === 13 || e.keyCode === 13) {
-                        //code to execute here
-                        fixedColumn = 0;
-                        _table.fnFilter(_table.parents("#kpiTable_wrapper").find('input[type="search"]').eq(0).val());
-                    }
+                 var timeOutTyping;
+                 _table.parents("#kpiTable_wrapper").find('input[type="search"]').bind('keyup', function (e) {
+                     clearTimeout(timeOutTyping);
+                     timeOutTyping = setTimeout(function () {
+                         fixedColumn = 0;
+                         _table.fnFilter(_table.parents("#kpiTable_wrapper").find('input[type="search"]').eq(0).val());
+                     }, 700);
                  });
+                 //var _table = this;
+                 //_table.parents("#kpiTable_wrapper").find('input[type="search"]').unbind();
+                 //_table.parents("#kpiTable_wrapper").find('input[type="search"]').bind('keydown', function (e) {
+                 //   if (e.which === 13 || e.keyCode === 13) {
+                 //       //code to execute here
+                 //       fixedColumn = 0;
+                 //       _table.fnFilter(_table.parents("#kpiTable_wrapper").find('input[type="search"]').eq(0).val());
+                 //   }
+                 //});
              },
              scrollY: false,
              scrollX: true,

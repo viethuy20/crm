@@ -60,8 +60,14 @@
     <div class="col-sm-12">
         <div class="row">
             <div class="col-sm-12" style="padding-right: 24px;padding-bottom: 12px">
-
-                @Html.Bootstrap().ActionLinkButton("Back to list", "Index").Id("btnBacklist").RouteValues(new { id = Model.ID }).PrependIcon("md md-arrow-back")
+                @if (!string.IsNullOrEmpty(ViewBag.GoBack))
+                {
+                    @Html.Bootstrap().ActionLinkButton("Back to list", ViewBag.GoBack).Id("btnBacklist").PrependIcon("md md-arrow-back")
+                }
+                else
+                {
+                    @Html.Bootstrap().ActionLinkButton("Back to list", "Index").Id("btnBacklist").PrependIcon("md md-arrow-back")
+                }
                 @if (CurrentUser.HasPermission("NewEvent", "Edit"))
                 {
                     @Html.Bootstrap().ActionLinkButton("Edit", "Edit").RouteValues(new { id = Model.ID }).Class("simple-ajax-popup-align-top btn-primary").PrependIcon("md md-edit")

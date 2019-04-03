@@ -13,6 +13,10 @@ namespace PQT.Domain.Entities
             StartTime = DateTime.Now;
         }
         public string Remark { get; set; }
+        [NotMapped]
+        public double DurationSeconds { get; set; }
+        [NotMapped]
+        public double DurationMinutes { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public DateTime? CallBackDate { get; set; }
@@ -33,7 +37,7 @@ namespace PQT.Domain.Entities
                 {
                     return CallBackDateStr + " " + CallBackTimingStr;
                 }
-                if (CallBackDate !=null)
+                if (CallBackDate != null)
                 {
                     return CallBackDateStr;
                 }

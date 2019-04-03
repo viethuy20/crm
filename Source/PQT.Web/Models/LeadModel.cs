@@ -62,7 +62,7 @@ namespace PQT.Web.Models
             if (leadRepo.CountCompaniesBlocked(currentUser.ID) >= maxBlock)
                 return "Limit blocked is not exceed " + maxBlock;
             var daysExpired = Settings.Lead.NumberDaysExpired();
-            if (leadRepo.CheckCompaniesInNCL(lead.EventID, lead.CompanyID,currentUser.ID,daysExpired))
+            if (leadRepo.CheckCompaniesInNCL(lead.EventID, lead.CompanyID, currentUser.ID, daysExpired))
                 return "Cannot block this company... Company is requesting to NCL or exists in NCL";
 
             if (lead.LeadStatusRecord == LeadStatus.Blocked) return "Block failed";
@@ -113,7 +113,7 @@ namespace PQT.Web.Models
 
             var daysExpired = Settings.Lead.NumberDaysExpired();
             var currentUser = CurrentUser.Identity;
-            if (leadRepo.CheckCompaniesInNCL(lead.EventID ,lead.CompanyID,currentUser.ID, daysExpired))
+            if (leadRepo.CheckCompaniesInNCL(lead.EventID, lead.CompanyID, currentUser.ID, daysExpired))
                 return "Cannot block this company... Company is requesting to NCL or exists in NCL by another";
 
             string fileName = null;
@@ -639,6 +639,8 @@ namespace PQT.Web.Models
                     //LeadNotificator.NotifyUser(result.Event.Users, result);
                     //LeadNotificator.NotifyUser(result.Event.SalesGroups.SelectMany(m => m.Users), result);
                     PhoneCall.EndTime = DateTime.Now;
+                    PhoneCall.StartTime = PhoneCall.EndTime.AddSeconds(-PhoneCall.DurationSeconds);
+                    PhoneCall.StartTime = PhoneCall.StartTime.AddMinutes(-PhoneCall.DurationMinutes);
                     PhoneCall.LeadID = Lead.ID;
                     var result = leadRepo.CreatePhoneCall(PhoneCall);
 
@@ -669,6 +671,8 @@ namespace PQT.Web.Models
                 var leadRepo = DependencyHelper.GetService<ILeadService>();
                 var comRepo = DependencyHelper.GetService<ICompanyRepository>();
                 PhoneCall.EndTime = DateTime.Now;
+                PhoneCall.StartTime = PhoneCall.EndTime.AddSeconds(-PhoneCall.DurationSeconds);
+                PhoneCall.StartTime = PhoneCall.StartTime.AddMinutes(-PhoneCall.DurationMinutes);
                 var result = leadRepo.CreatePhoneCall(PhoneCall);
                 if (result != null)
                 {

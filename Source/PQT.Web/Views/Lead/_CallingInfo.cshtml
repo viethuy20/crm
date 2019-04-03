@@ -68,8 +68,10 @@
                     </div>
                 </div>
                 <div class="card-body" style="padding-top: 0px;">
-                    @Html.HiddenFor(m => m.PhoneCall.StartTime, new { @class = "phoneCallStartTime" })
+                    @Html.HiddenFor(m => m.PhoneCall.StartTime)
                     @Html.HiddenFor(m => m.PhoneCall.LeadID)
+                    @Html.HiddenFor(m => m.PhoneCall.DurationSeconds)
+                    @Html.HiddenFor(m => m.PhoneCall.DurationMinutes)
                     @Html.HiddenFor(m => m.TypeSubmit, new { @class = "typeSubmit" })
                     <div class="row" style="margin-top: 30px;">
                         <div class="col-sm-2">
@@ -307,21 +309,23 @@
         }
 
         var tickStarted = false;
-        var clientNow = new Date(); // Current date now.
-        var serverNow = new Date("@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")");
+        @*var clientNow = new Date(); // Current date now.
+        var serverNow = new Date("@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")");*@
 
-        var differSeconds = parseInt((clientNow - serverNow) / 1000);
+        //var differSeconds = parseInt((clientNow - serverNow) / 1000);
         var startTime = new Date();
         function tickTime()
         {
             var dateNow = new Date();
-            dateNow.setSeconds(dateNow.getSeconds() + differSeconds);
+            //dateNow.setSeconds(dateNow.getSeconds() + differSeconds);
             var seconds = precisionRound((dateNow- startTime) / 1000, 0);
             var m = Math.floor(seconds / 60);
             var s = seconds - m * 60;
             m = checkTime(m);
             s = checkTime(s);
             $('#call-tick').html(m + ":" + s);
+            $('@Html.JquerySelectorFor(m => m.PhoneCall.DurationSeconds)').val(s);
+            $('@Html.JquerySelectorFor(m => m.PhoneCall.DurationMinutes)').val(m);
             if (tickStarted) {
                 var t = setTimeout(tickTime, 500);
             } else {
@@ -334,9 +338,9 @@
         }
         function StartTick() {
             startTime = new Date();
-            startTime.setSeconds(startTime.getSeconds() + differSeconds);
+            //startTime.setSeconds(startTime.getSeconds() + differSeconds);
             tickStarted = true;
-            $('.phoneCallStartTime').val(moment(startTime).format("DD/MM/YYYY HH:mm:ss"));
+            //$('.phoneCallStartTime').val(moment(startTime).format("DD/MM/YYYY HH:mm:ss"));
             tickTime();
         }
         

@@ -47,8 +47,8 @@ namespace PQT.Web.Infrastructure.Helpers
                        GetWeekendOrHolidays(leave.User.OfficeLocation?.CountryID ?? 0, leave.LeaveDateFrom, reportMonth.AddMonths(1).AddDays(-1));
             if (leave.LeaveDateFrom.Month < reportMonth.Month &&
                 reportMonth.Month == leave.LeaveDateTo.Month)
-                return (leave.LeaveDateFrom - reportMonth).TotalDays + 1 -
-                       GetWeekendOrHolidays(leave.User.OfficeLocation?.CountryID ?? 0, reportMonth, leave.LeaveDateFrom);
+                return (leave.LeaveDateTo - reportMonth).TotalDays + 1 -
+                       GetWeekendOrHolidays(leave.User.OfficeLocation?.CountryID ?? 0, reportMonth, leave.LeaveDateTo);
             return 0;
         }
 
