@@ -137,7 +137,8 @@
                      actionHtml += ' | <a href="@Url.Action("Edit")?id=' + aData["ID"] +
                          '" data-action="edit"><i class="md md-edit text-info"></i></a>';
                  }
-                 if ('@CurrentUser.HasPermission("Leave", "Delete")' === 'True' && aData["CreatedUserID"] === @currentUserId) {
+                 if (('@CurrentUser.HasPermission("Leave", "Delete")' === 'True' && aData["CreatedUserID"] === @currentUserId) ||
+                     ('@CurrentUser.HasPermission("Leave", "Delete")' === 'True' && '@CurrentUser.HasRole("Manager")'  === 'True')) {
                      actionHtml += ' | <a href="#"  data-action="delete" data-id="' + aData["ID"] + '"><i class="md md-delete text-danger"></i></a>';
                  }
                  $(nRow).find('td:eq(5)').html(actionHtml);
