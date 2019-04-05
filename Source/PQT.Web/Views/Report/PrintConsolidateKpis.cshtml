@@ -15,6 +15,10 @@
         background-color: #c7fcca;
     }
 
+    #kpiTable tbody .NewEventRequest {
+        color: #333;
+        background-color: #fafcc7;
+    }
     table {
         page-break-after: auto!important;
     }
@@ -50,7 +54,7 @@
         </tr>
         <tr>
             <td>&nbsp;Print Time: </td>
-            <td><b>@DateTime.Today.ToString("dd/MM/yyyy HH:mm")</b></td>
+            <td><b>@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</b></td>
         </tr>
     </table>
     <br />
@@ -58,10 +62,12 @@
         <thead>
             <tr>
                 <th>Salesman</th>
-                <th>Email</th>
+                <th class="text-center">(USD) Written Revenue</th>
+                <th class="text-center">New Event Request</th>
                 <th class="text-center">KPI</th>
                 <th class="text-center">No KPI</th>
                 <th class="text-center">No Check</th>
+                <th class="text-center">Actual Required Call KPIs</th>
             </tr>
         </thead>
         <tbody>
@@ -69,10 +75,12 @@
             {
                 <tr>
                     <td>@item.User.DisplayName</td>
-                    <td>@item.User.Email</td>
+                    <td style="text-align:center">@item.WrittenRevenue.ToString("N0")</td>
+                    <td class="NewEventRequest" style="text-align:center">@item.NewEventRequest</td>
                     <td class="KPI" style="text-align:center">@item.KPI</td>
                     <td class="NoKPI" style="text-align:center">@item.NoKPI</td>
                     <td style="text-align:center">@item.NoCheck</td>
+                    <td style="text-align:center">@item.ActualRequiredCallKpis</td>
                 </tr>
             }
         </tbody>

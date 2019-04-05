@@ -44,6 +44,11 @@ namespace PQT.Domain
         public DbSet<Leave> Leaves { get; set; }
         public DbSet<NonSalesDay> NonSalesDays { get; set; }
         public DbSet<TechnicalIssueDay> TechnicalIssueDays { get; set; }
+        //public DbSet<EmailResource> EmailResources { get; set; }
+        //public DbSet<SublistEmail> SublistEmails { get; set; }
+        //public DbSet<EmailCompany> EmailCompanies { get; set; }
+        //public DbSet<EmailTemplate> EmailTemplates { get; set; }
+        //public DbSet<EmailSignature> EmailSignatures { get; set; }
         protected override void OnModelCreating(DbModelBuilder mb)
         {
             mb.Entity<Company>().HasMany(m => m.ManagerUsers).WithMany().Map(map => map.ToTable("Company_Users").MapLeftKey("Company_Id").MapRightKey("User_Id"));

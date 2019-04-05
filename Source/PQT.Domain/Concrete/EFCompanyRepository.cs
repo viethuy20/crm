@@ -50,7 +50,7 @@ namespace PQT.Domain.Concrete
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Ownership) && m.Ownership.ToLower().Contains(ownership));
             if (financialYear > 0)
                 queries = queries.Where(m => m.FinancialYear > 0 && m.FinancialYear == financialYear);
-            return queries.Include(m => m.Country).Include(m => m.ManagerUsers).Count();
+            return queries.Count();
         }
 
         public IEnumerable<Company> GetAllCompanies(string companyName, string countryName, string productService,
@@ -58,26 +58,7 @@ namespace PQT.Domain.Concrete
             string sortColumnDir, string sortColumn, int page, int pageSize)
         {
 
-            IQueryable<Company> queries = _db.Set<Company>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value);
-            if (!string.IsNullOrEmpty(companyName))
-                queries = queries.Where(m => m.CompanyName.ToLower().Contains(companyName));
-            if (!string.IsNullOrEmpty(countryName))
-                queries = queries.Where(m => m.Country != null && (m.Country.Code.ToLower().Contains(countryName) ||
-                                                                   m.Country.Name.ToLower().Contains(countryName)));
-            if (!string.IsNullOrEmpty(productService))
-                queries = queries.Where(m => !string.IsNullOrEmpty(m.ProductOrService) && m.ProductOrService.ToLower().Contains(productService));
-            if (!string.IsNullOrEmpty(sector))
-                queries = queries.Where(m => !string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector));
-            if (tier > 0)
-                queries = queries.Where(m => m.Tier == tier);
-            if (!string.IsNullOrEmpty(industry))
-                queries = queries.Where(m => !string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry));
-            if (!string.IsNullOrEmpty(businessUnit))
-                queries = queries.Where(m => !string.IsNullOrEmpty(m.BusinessUnit) && m.BusinessUnit.ToLower().Contains(businessUnit));
-            if (!string.IsNullOrEmpty(ownership))
-                queries = queries.Where(m => !string.IsNullOrEmpty(m.Ownership) && m.Ownership.ToLower().Contains(ownership));
-            if (financialYear > 0)
-                queries = queries.Where(m => m.FinancialYear > 0 && m.FinancialYear == financialYear);
+            IQueryable<Company> queries = _db.Set<Company>();
             switch (sortColumn)
             {
                 case "CountryName":
@@ -121,8 +102,28 @@ namespace PQT.Domain.Concrete
                         : queries.OrderByDescending(s => s.CompanyName);
                     break;
             }
-            return queries.Skip(page).Take(pageSize).Include(m=>m.Country).Include(m => m.ManagerUsers)
-                .ToList();
+            queries = queries.Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value);
+            if (!string.IsNullOrEmpty(companyName))
+                queries = queries.Where(m => m.CompanyName.ToLower().Contains(companyName));
+            if (!string.IsNullOrEmpty(countryName))
+                queries = queries.Where(m => m.Country != null && (m.Country.Code.ToLower().Contains(countryName) ||
+                                                                   m.Country.Name.ToLower().Contains(countryName)));
+            if (!string.IsNullOrEmpty(productService))
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.ProductOrService) && m.ProductOrService.ToLower().Contains(productService));
+            if (!string.IsNullOrEmpty(sector))
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.Sector) && m.Sector.ToLower().Contains(sector));
+            if (tier > 0)
+                queries = queries.Where(m => m.Tier == tier);
+            if (!string.IsNullOrEmpty(industry))
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.Industry) && m.Industry.ToLower().Contains(industry));
+            if (!string.IsNullOrEmpty(businessUnit))
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.BusinessUnit) && m.BusinessUnit.ToLower().Contains(businessUnit));
+            if (!string.IsNullOrEmpty(ownership))
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.Ownership) && m.Ownership.ToLower().Contains(ownership));
+            if (financialYear > 0)
+                queries = queries.Where(m => m.FinancialYear > 0 && m.FinancialYear == financialYear);
+            queries = queries.Skip(page).Take(pageSize);
+            return queries.Include(m => m.Country).Include(m => m.ManagerUsers).ToList();
         }
 
 
@@ -158,35 +159,14 @@ namespace PQT.Domain.Concrete
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Sector) && sectors.Any(c => m.Sector.ToLower().Contains(c)));
             if (industries.Any())
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Industry) && industries.Any(c => m.Industry.ToLower().Contains(c)));
-            return queries.Include(m => m.Country).Include(m => m.ManagerUsers).Count();
+            return queries.Count();
         }
         public IEnumerable<Company> GetAllCompaniesForAssignEvent(int tier, int[] saleIds, string companyName,
             string[] countries, string[] productServices, string[] sectors, string[] industries,
             string sortColumnDir, string sortColumn, int page, int pageSize)
         {
 
-            IQueryable<Company> queries = _db.Set<Company>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value);
-            if (tier > 0)
-                queries = queries.Where(m => m.Tier == tier);
-            if (saleIds.Any())
-            {
-                queries = queries.Where(m => !m.ManagerUsers.Any() || m.ManagerUsers.Any(s => saleIds.Contains(s.ID)));
-            }
-            if (!string.IsNullOrEmpty(companyName))
-                queries = queries.Where(m => m.CompanyName.ToLower().Contains(companyName));
-            if (countries.Any())
-            {
-                var countryIds = _db.Set<Country>().Where(m => countries.Any(c => m.Code.ToLower().Contains(c)) ||
-                                                               countries.Any(c => m.Name.ToLower().Contains(c))).Select(m => m.ID).ToArray();
-                queries = queries.Where(m => m.CountryID != null && countryIds.Contains((int)m.CountryID));
-            }
-            if (productServices.Any())
-                queries = queries.Where(m => !string.IsNullOrEmpty(m.ProductOrService) &&
-                                             productServices.Any(c => m.ProductOrService.ToLower().Contains(c)));
-            if (sectors.Any())
-                queries = queries.Where(m => !string.IsNullOrEmpty(m.Sector) && sectors.Any(c => m.Sector.ToLower().Contains(c)));
-            if (industries.Any())
-                queries = queries.Where(m => !string.IsNullOrEmpty(m.Industry) && industries.Any(c => m.Industry.ToLower().Contains(c)));
+            IQueryable<Company> queries = _db.Set<Company>();
             switch (sortColumn)
             {
                 case "CountryName":
@@ -230,8 +210,30 @@ namespace PQT.Domain.Concrete
                         : queries.OrderByDescending(s => s.CompanyName);
                     break;
             }
-            return queries.Skip(page).Take(pageSize).Include(m => m.Country).Include(m => m.ManagerUsers)
-                .ToList();
+            queries = queries.Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value);
+            if (tier > 0)
+                queries = queries.Where(m => m.Tier == tier);
+            if (saleIds.Any())
+            {
+                queries = queries.Where(m => !m.ManagerUsers.Any() || m.ManagerUsers.Any(s => saleIds.Contains(s.ID)));
+            }
+            if (!string.IsNullOrEmpty(companyName))
+                queries = queries.Where(m => m.CompanyName.ToLower().Contains(companyName));
+            if (countries.Any())
+            {
+                var countryIds = _db.Set<Country>().Where(m => countries.Any(c => m.Code.ToLower().Contains(c)) ||
+                                                               countries.Any(c => m.Name.ToLower().Contains(c))).Select(m => m.ID).ToArray();
+                queries = queries.Where(m => m.CountryID != null && countryIds.Contains((int)m.CountryID));
+            }
+            if (productServices.Any())
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.ProductOrService) &&
+                                             productServices.Any(c => m.ProductOrService.ToLower().Contains(c)));
+            if (sectors.Any())
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.Sector) && sectors.Any(c => m.Sector.ToLower().Contains(c)));
+            if (industries.Any())
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.Industry) && industries.Any(c => m.Industry.ToLower().Contains(c)));
+            queries = queries.Skip(page).Take(pageSize);
+            return queries.Include(m=>m.Country).Include(m=>m.ManagerUsers).ToList();
         }
         public virtual IEnumerable<Company> GetAllCompanies(Func<Company, bool> predicate)
         {
@@ -351,7 +353,7 @@ namespace PQT.Domain.Concrete
                 exist.ManagerUsers = _db.Set<User>().Where(r => users.Contains(r.ID)).ToList();
             if (Update(exist))
             {
-                var allResources = _db.Set<CompanyResource>().Where(m => m.CompanyID == company.ID).AsEnumerable();
+                var allResources = _db.Set<CompanyResource>().Where(m => m.CompanyID == company.ID).ToList();
                 foreach (var companyResource in allResources)
                 {
                     companyResource.Organisation = exist.CompanyName;
@@ -391,7 +393,7 @@ namespace PQT.Domain.Concrete
             if (Update(mergeCom))
             {
                 //Delete<Company>(companyID);
-                var resources = _db.Set<CompanyResource>().Where(m => m.CompanyID == companyID || m.CompanyID == mergeCompanyID).AsEnumerable();
+                var resources = _db.Set<CompanyResource>().Where(m => m.CompanyID == companyID || m.CompanyID == mergeCompanyID).ToList();
                 foreach (var companyResource in resources)
                 {
                     companyResource.Organisation = mergeCom.CompanyName;
@@ -462,7 +464,7 @@ namespace PQT.Domain.Concrete
         {
             IQueryable<CompanyResource> queries = _db.Set<CompanyResource>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value).Where(m => m.CompanyID == comId);
             if (!string.IsNullOrEmpty(name))
-                queries = queries.Where(m => m.FirstName.ToLower().Contains(name) || m.LastName.ToLower().Contains(name));
+                queries = queries.Where(m => (m.FirstName + " " + m.LastName).ToLower().Contains(name));
             if (!string.IsNullOrEmpty(role))
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Role) && m.Role.ToLower().Contains(role));
             if (!string.IsNullOrEmpty(email))
@@ -497,7 +499,7 @@ namespace PQT.Domain.Concrete
             if (organisations.Any())
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Organisation) && organisations.Any(c => m.Organisation.ToLower().Contains(c)));
             if (name.Any())
-                queries = queries.Where(m => name.Any(c => m.FullName.ToLower().Contains(c)));
+                queries = queries.Where(m => name.Any(c => (m.FirstName + " " + m.LastName).ToLower().Contains(c)));
             if (email.Any())
                 queries = queries.Where(m =>
                     (!string.IsNullOrEmpty(m.WorkEmail) && email.Any(c => m.WorkEmail.ToLower().Contains(c))) ||
@@ -521,7 +523,7 @@ namespace PQT.Domain.Concrete
             if (roles.Any())
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.Role) && roles.Any(c => m.Role.ToLower().Contains(c)));
             if (name.Any())
-                queries = queries.Where(m => name.Any(c => m.FullName.ToLower().Contains(c)));
+                queries = queries.Where(m => name.Any(c => (m.FirstName + " " + m.LastName).ToLower().Contains(c)));
             if (email.Any())
                 queries = queries.Where(m =>
                     (!string.IsNullOrEmpty(m.WorkEmail) && email.Any(c => m.WorkEmail.ToLower().Contains(c))) ||
@@ -537,26 +539,7 @@ namespace PQT.Domain.Concrete
         public IEnumerable<CompanyResource> GetAllCompanyResources(string[] countries, string[] organisations, string[] roles, string[] name,
             string[] email, string[] phone, string sortColumnDir, string sortColumn, int page, int pageSize)
         {
-            IQueryable<CompanyResource> queries = _db.Set<CompanyResource>().Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value);
-            if (countries.Any())
-                queries = queries.Where(m => !string.IsNullOrEmpty(m.Country) && countries.Any(c => m.Country.ToLower().Contains(c)));
-            if (organisations.Any())
-                queries = queries.Where(m => !string.IsNullOrEmpty(m.Organisation) && organisations.Any(c => m.Organisation.ToLower().Contains(c)));
-            if (roles.Any())
-                queries = queries.Where(m => !string.IsNullOrEmpty(m.Role) && roles.Any(c => m.Role.ToLower().Contains(c)));
-            if (name.Any())
-                queries = queries.Where(m => name.Any(c => m.FullName.ToLower().Contains(c)));
-            if (email.Any())
-                queries = queries.Where(m =>
-                    (!string.IsNullOrEmpty(m.WorkEmail) && email.Any(c => m.WorkEmail.ToLower().Contains(c))) ||
-                    (!string.IsNullOrEmpty(m.PersonalEmail) && email.Any(c => m.PersonalEmail.ToLower().Contains(c))));
-            if (phone.Any())
-                queries = queries.Where(m =>
-                    (!string.IsNullOrEmpty(m.DirectLine) && phone.Any(c => m.DirectLine.Contains(c))) ||
-                    (!string.IsNullOrEmpty(m.MobilePhone1) && phone.Any(c => m.MobilePhone1.Contains(c))) ||
-                    (!string.IsNullOrEmpty(m.MobilePhone2) && phone.Any(c => m.MobilePhone2.Contains(c))) ||
-                    (!string.IsNullOrEmpty(m.MobilePhone3) && phone.Any(c => m.MobilePhone3.Contains(c))));
-
+            IQueryable<CompanyResource> queries = _db.Set<CompanyResource>();
             switch (sortColumn)
             {
                 case "Country":
@@ -615,8 +598,27 @@ namespace PQT.Domain.Concrete
                         : queries.OrderByDescending(s => s.Organisation);
                     break;
             }
-            return queries.Skip(page).Take(pageSize)
-                .ToList();
+            queries = queries.Skip(page).Take(pageSize);
+            queries = queries.Where(m => m.EntityStatus.Value == EntityStatus.Normal.Value);
+            if (countries.Any())
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.Country) && countries.Any(c => m.Country.ToLower().Contains(c)));
+            if (organisations.Any())
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.Organisation) && organisations.Any(c => m.Organisation.ToLower().Contains(c)));
+            if (roles.Any())
+                queries = queries.Where(m => !string.IsNullOrEmpty(m.Role) && roles.Any(c => m.Role.ToLower().Contains(c)));
+            if (name.Any())
+                queries = queries.Where(m => name.Any(c => (m.FirstName + " " + m.LastName).ToLower().Contains(c)));
+            if (email.Any())
+                queries = queries.Where(m =>
+                    (!string.IsNullOrEmpty(m.WorkEmail) && email.Any(c => m.WorkEmail.ToLower().Contains(c))) ||
+                    (!string.IsNullOrEmpty(m.PersonalEmail) && email.Any(c => m.PersonalEmail.ToLower().Contains(c))));
+            if (phone.Any())
+                queries = queries.Where(m =>
+                    (!string.IsNullOrEmpty(m.DirectLine) && phone.Any(c => m.DirectLine.Contains(c))) ||
+                    (!string.IsNullOrEmpty(m.MobilePhone1) && phone.Any(c => m.MobilePhone1.Contains(c))) ||
+                    (!string.IsNullOrEmpty(m.MobilePhone2) && phone.Any(c => m.MobilePhone2.Contains(c))) ||
+                    (!string.IsNullOrEmpty(m.MobilePhone3) && phone.Any(c => m.MobilePhone3.Contains(c))));
+            return queries.ToList();
         }
 
         public IEnumerable<CompanyResource> GetAllCompanyResources(int[] comIds)

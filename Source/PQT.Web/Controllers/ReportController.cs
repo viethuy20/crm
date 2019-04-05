@@ -32,7 +32,6 @@ namespace PQT.Web.Controllers
 
         public ActionResult PrintConsolidateKpis(int eventId, int userId, string dfrom, string dto)
         {
-            var model = new ConsolidateKPIModel();
             var datefrom = default(DateTime);
             if (!string.IsNullOrEmpty(dfrom))
             {
@@ -43,6 +42,8 @@ namespace PQT.Web.Controllers
             {
                 dateto = Convert.ToDateTime(dto);
             }
+
+            var model = new ConsolidateKPIModel { DateFrom = datefrom, DateTo = dateto };
             if (!string.IsNullOrEmpty(dfrom) && !string.IsNullOrEmpty(dto))
             {
                 model.Date = dfrom + " - " + dto;

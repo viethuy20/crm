@@ -99,7 +99,7 @@ namespace PQT.Domain.Concrete
             IQueryable<Lead> queries = _db.Set<Lead>().Where(m => m.UserID == userId && m.CompanyID == comId &&
                                                                   m.EntityStatus.Value == EntityStatus.Normal.Value);
             if (!string.IsNullOrEmpty(name))
-                queries = queries.Where(m => m.FullName.ToLower().Contains(name));
+                queries = queries.Where(m => (m.Salutation + " " + m.FirstName + " " + m.LastName).ToLower().Contains(name));
             if (!string.IsNullOrEmpty(role))
                 queries = queries.Where(m => !string.IsNullOrEmpty(m.JobTitle) && m.JobTitle.ToLower().Contains(role));
             if (!string.IsNullOrEmpty(email))
@@ -1023,8 +1023,8 @@ namespace PQT.Domain.Concrete
             var expiredDate = DateTime.Today.AddDays(-daysExpired);
             IQueryable<Lead> queries = _db.Set<Lead>()
                 .Where(m => m.CompanyID == comId && m.EventID == eventId && !m.ExpiredForReopen &&
-                            m.EntityStatus.Value == EntityStatus.Normal.Value && 
-                            (m.UserID != userId 
+                            m.EntityStatus.Value == EntityStatus.Normal.Value &&
+                            (m.UserID != userId
                             //&& m.User.TransferUserID != userId
                             ) &&
                             (m.LeadStatusRecord.Status.Value == LeadStatus.Booked.Value ||
@@ -1051,7 +1051,7 @@ namespace PQT.Domain.Concrete
                 .Where(m => m.EventID == eventId && !m.ExpiredForReopen &&
                             m.EntityStatus.Value == EntityStatus.Normal.Value &&
                             (m.UserID != userId
-                                //&& m.User.TransferUserID != userId
+                            //&& m.User.TransferUserID != userId
                             ) &&
                             (m.LeadStatusRecord.Status.Value == LeadStatus.Booked.Value ||
                              ((m.User.UserStatus.Value == UserStatus.Live.Value || m.User.DirectSupervisorID > 0) &&
